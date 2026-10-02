@@ -1,6 +1,6 @@
 import tempfile
 
-from adaptadores.cache_catalogo import NodoLRU, ListaLRU, ArbolAVL, CacheCatalogo, ErrorCatalogo
+from Disco_red.cache_catalogo import NodoLRU, ListaLRU, ArbolAVL, CacheCatalogo, ErrorCatalogo
 
 
 def comprobar(descripcion, condicion):
@@ -22,7 +22,6 @@ def ids_hacia_el_frente(lista):
         resultado.append(nodo.id_ficha)
         nodo = nodo.anterior
     return resultado
-
 
 lista = ListaLRU()
 comprobar("lista vacia: sin frente ni final", lista.frente is None and lista.final is None)

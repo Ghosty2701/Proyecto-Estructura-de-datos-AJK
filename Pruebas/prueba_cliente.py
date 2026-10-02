@@ -1,8 +1,8 @@
 import sys
 
 import requests
-import adaptadores.cliente_http as modulo
-from adaptadores.cliente_http import ClienteHTTP, ErrorHTTP, PresupuestoAgotado
+import Disco_red.cliente_http as modulo
+from Disco_red.cliente_http import ClienteHTTP, ErrorHTTP, PresupuestoAgotado
 
 
 class RespuestaFalsa:

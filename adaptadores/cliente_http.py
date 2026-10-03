@@ -1,4 +1,3 @@
-# Cliente HTTP del API de Cripta: cuenta solicitudes, respeta el presupuesto y maneja 429.
 import time
 import uuid
 import requests
@@ -6,12 +5,10 @@ import requests
 URL_BASE = "https://cripta-api.kad06a0zhgs84.us-east-2.cs.amazonlightsail.com/v1"
 
 class ErrorHTTP(Exception):
-    # Error de red o respuesta inesperada, siempre con la operacion que fallo.
     pass
 
 
 class PresupuestoAgotado(Exception):
-    # Se lanza cuando una solicitud superaria presupuesto_solicitudes.
     pass
 
 class ClienteHTTP:

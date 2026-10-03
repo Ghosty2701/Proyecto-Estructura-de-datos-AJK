@@ -2,8 +2,8 @@ import struct
 
 import pytest
 
-import Disco_red.guardado_binario as modulo
-from Disco_red.guardado_binario import (
+import adaptadores.guardado_binario as modulo
+from adaptadores.guardado_binario import (
     ErrorGuardado, escribir_guardado, leer_globales, leer_sala)
 
 

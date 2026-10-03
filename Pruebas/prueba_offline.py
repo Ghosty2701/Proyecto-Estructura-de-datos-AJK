@@ -2,8 +2,8 @@ import json
 import os
 import tempfile
 
-from Disco_red.fuente_datos import FuenteDatos
-from Disco_red.modo_offline import ModoOffline, ErrorOffline
+from adaptadores.fuente_datos import FuenteDatos
+from adaptadores.modo_offline import ModoOffline, ErrorOffline
 
 
 def comprobar(descripcion, condicion):

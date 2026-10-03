@@ -1,6 +1,6 @@
 import tempfile
 
-from Disco_red.cache_catalogo import NodoLRU, ListaLRU, ArbolAVL, CacheCatalogo, ErrorCatalogo
+from adaptadores.cache_catalogo import NodoLRU, ListaLRU, ArbolAVL, CacheCatalogo, ErrorCatalogo
 
 
 def comprobar(descripcion, condicion):

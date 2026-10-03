@@ -38,7 +38,7 @@ def _leer_valor(archivo, clave_esperada):
     linea = archivo.readline().rstrip("\n")
     clave, separador, valor = linea.partition("=")
     if separador == "" or clave != clave_esperada:
-        raise ErrorBitacora(f"encabezado mal formado")
+        raise ErrorBitacora(f"encabezado mal formado: se esperaba '{clave_esperada}=###'")
     return valor
 
 
@@ -73,7 +73,8 @@ def leer_bitacora(ruta):
 def verificar_compatibilidad(encabezado, id_cripta_actual, version_cripta_actual, version_catalogo_actual):
     if encabezado.id_cripta != id_cripta_actual:
         raise ErrorBitacora(
-            f"el log es de la cripta '{encabezado.id_cripta}' y se esta usando '{id_cripta_actual}': ")
+            f"el log es de la cripta '{encabezado.id_cripta}' y se esta usando '{id_cripta_actual}': "
+            "no se puede garantizar una reproduccion fiel")
 
     if encabezado.version_cripta != version_cripta_actual:
         raise ErrorBitacora(

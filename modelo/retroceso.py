@@ -32,8 +32,8 @@ class CambiosAccion:
         if anterior is nuevo:
             raise ValueError("La reprogramación requiere un evento nuevo")
 
-        self.cancelar_evento(agenda, anterior)
         self.programar_evento(agenda, nuevo)
+        self.cancelar_evento(agenda, anterior)
         return nuevo
 
     def extraer_evento(self, agenda):

@@ -1,9 +1,31 @@
+class SalaRastro:
+    def __init__(self, sala_id):
+        self.sala_id = sala_id
+        self.ultimo_rastro = None
+        self.salidas = []
+
+
+class SalidaRastro:
+    def __init__(self, destino, abierta=True):
+        self.destino = destino
+        self.abierta = abierta
+
+
+def elegir_destino_rastreador(sala, reloj_actual):
+    vecinos_abiertos = (
+        (salida.destino.sala_id, salida.destino.ultimo_rastro)
+        for salida in sala.salidas
+        if salida.abierta
+    )
+
+    return elegir_vecino(vecinos_abiertos, reloj_actual)
+
 def rastro_fresco(ultimo_rastro, reloj_actual):
-    # Un rastro ausente o con 400 unidades de tiempo cumplidas ya no es fresco.
     if ultimo_rastro is None:
         return False
 
-    return reloj_actual - ultimo_rastro < 400
+    antiguedad = reloj_actual - ultimo_rastro
+    return 0 <= antiguedad < 400
     
 def elegir_vecino(vecinos, reloj_actual):
     # Recibe pares (sala_id, ultimo_rastro); devuelve None si no hay rastro fresco.

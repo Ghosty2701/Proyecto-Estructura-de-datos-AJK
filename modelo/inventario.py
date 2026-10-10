@@ -74,14 +74,29 @@ class Inventario:
         # costo es O(1) porque ya se tiene la referencia directa al nodo (§4.5).
         if self.cursor is None:
             return None
+        return self._quitar_nodo(self.cursor)
 
-        nodo = self.cursor
+    def consumir_primero(self, cumple):
+        # Contrato que usa MotorEventos.usar_pergamino: quita del inventario el primer
+        # objeto (en orden real) que cumpla el predicado y devuelve True; False si
+        # ninguno cumple. Costo O(n) por el recorrido; el retiro en si es O(1).
+        # Este retiro queda FUERA del historial de retroceso (§2.11): este modulo no
+        # registra nada alli, asi que el pergamino consumido nunca se restaura.
+        nodo = self.frente
+        while nodo is not None:
+            if cumple(nodo.objeto):
+                self._quitar_nodo(nodo)
+                return True
+            nodo = nodo.siguiente
+        return False
+
+    def _quitar_nodo(self, nodo):
         objeto = nodo.objeto
 
-        # El cursor pasa a un vecino antes de desligar el nodo que va a salir.
-        vecino = nodo.siguiente if nodo.siguiente is not None else nodo.anterior
+        # Si el cursor esta en este nodo, pasa a un vecino antes de desligarlo.
+        if self.cursor is nodo:
+            self.cursor = nodo.siguiente if nodo.siguiente is not None else nodo.anterior
         self._desligar(nodo)
-        self.cursor = vecino
 
         if self._arma_equipada is nodo:
             self._arma_equipada = None

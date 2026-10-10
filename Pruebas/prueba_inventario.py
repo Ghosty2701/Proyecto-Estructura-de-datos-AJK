@@ -242,3 +242,44 @@ def test_vista_ordenada_por_nombre():
 
     vista = inv.vista_ordenada(clave=lambda o: o.nombre)
     assert [o.nombre for o in vista] == ["alfa", "beta", "zeta"]
+
+
+# --- consumir_primero (contrato que usa MotorEventos.usar_pergamino) ---
+
+def test_consumir_primero_quita_el_primer_objeto_que_cumple():
+    inv = Inventario(capacidad=5)
+    inv.recoger(Objeto("daga"))
+    inv.recoger(Objeto("pergamino"))
+    inv.recoger(Objeto("pergamino"))
+
+    assert inv.consumir_primero(lambda o: o.nombre == "pergamino") is True
+    assert [o.nombre for o in inv.listar()] == ["daga", "pergamino"]
+    assert inv.cantidad == 2
+
+
+def test_consumir_primero_sin_coincidencias_devuelve_false_y_no_cambia_nada():
+    inv = Inventario(capacidad=3)
+    inv.recoger(Objeto("daga"))
+    assert inv.consumir_primero(lambda o: o.nombre == "pergamino") is False
+    assert inv.cantidad == 1
+
+
+def test_consumir_primero_en_inventario_vacio():
+    assert Inventario(capacidad=3).consumir_primero(lambda o: True) is False
+
+
+def test_consumir_primero_mueve_el_cursor_si_estaba_en_ese_objeto():
+    inv = Inventario(capacidad=3)
+    inv.recoger(Objeto("pergamino"))
+    inv.recoger(Objeto("daga"))
+    assert inv.actual().nombre == "pergamino"
+    inv.consumir_primero(lambda o: o.nombre == "pergamino")
+    assert inv.actual().nombre == "daga"
+
+
+def test_consumir_primero_desequipa_si_era_el_equipado():
+    inv = Inventario(capacidad=3)
+    inv.recoger(Objeto("espada"))
+    inv.equipar_actual("arma")
+    inv.consumir_primero(lambda o: o.nombre == "espada")
+    assert inv.arma_equipada is None

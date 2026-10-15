@@ -75,6 +75,9 @@ class MotorEventos(MotorEfectos):
         self.historial.registrar_azar(self.azar)
 
     def _cambiar(self, objeto, nombre, valor):
+        if getattr(objeto, nombre) is valor:
+            return
+
         if self.historial.acciones:
             self.historial.registrar_atributo(objeto, nombre)
 

@@ -70,7 +70,10 @@ class CambiosAccion:
 
             elif tipo == "evento_extraido":
                 objeto.insertar(anterior, conservar_secuencia=True)
-                
+
+            elif tipo == "azar":
+                objeto.setstate(anterior)
+
             elif tipo == "atributo":
                 nombre, valor = anterior
                 setattr(objeto, nombre, valor)
@@ -89,6 +92,9 @@ class CambiosAccion:
             self.cambios.append(("evento_extraido", agenda, evento))
 
         return evento
+    
+    def registrar_azar(self, azar):
+        self.cambios.append(("azar", azar, azar.getstate()))
 
 
 class HistorialRetroceso:
@@ -139,3 +145,6 @@ class HistorialRetroceso:
 
     def extraer_evento_bruto(self, agenda):
         return self._accion_actual().extraer_evento_bruto(agenda)
+    
+    def registrar_azar(self, azar):
+        self._accion_actual().registrar_azar(azar)

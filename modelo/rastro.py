@@ -3,14 +3,49 @@ class SalaRastro:
         self.sala_id = sala_id
         self.ultimo_rastro = None
         self.salidas = []
+        self.enemigos = []
+        self.trampas = []
+        self.contenido_cargado = False
 
+class Puerta:
+    def __init__(
+        self,
+        abierta=True,
+        llave=None,
+        *,
+        cierre_automatico=None,
+    ):
+        if cierre_automatico is not None and (
+            not isinstance(cierre_automatico, int)
+            or cierre_automatico <= 0
+        ):
+            raise ValueError(
+                "El cierre automático debe ser un entero positivo"
+            )
+
+        self.abierta = abierta
+        self.llave = llave
+        self.cierre_automatico = cierre_automatico
 
 class SalidaRastro:
-    def __init__(self, destino, abierta=True):
+    def __init__(
+        self, destino, abierta=True, *, llave=None, puerta=None
+    ):
         self.destino = destino
-        self.abierta = abierta
+        self.puerta = (
+            puerta
+            if puerta is not None
+            else Puerta(abierta=abierta, llave=llave)
+        )
 
+    @property
+    def abierta(self):
+        return self.puerta.abierta
 
+    @abierta.setter
+    def abierta(self, valor):
+        self.puerta.abierta = valor
+        
 def elegir_destino_rastreador(sala, reloj_actual):
     vecinos_abiertos = (
         (salida.destino.sala_id, salida.destino.ultimo_rastro)

@@ -1,4 +1,9 @@
+import random
 import time
+
+from adaptadores.cache_catalogo import ArbolAVL
+
+SEMILLA_BENCH = 2026
 
 class NodoSimple:
     def __init__(self, clave, valor):
@@ -91,4 +96,33 @@ def microsegundos_por_busqueda(arbol, ids, repeticiones):
 def microsegundos_por_insercion(clase_arbol, ids, repeticiones):
     return medir(lambda: construir(clase_arbol, ids), repeticiones) / len(ids)
 
-# Revisar mejor esto cuando haya time
+def bench_busqueda_cache():
+    print("Busqueda en la cache: AVL vs arbol simple")
+    print(f"  {'n':<6}{'orden':<11}{'altura AVL/simple':<20}{'buscar AVL/simple':<22}{'insertar AVL/simple'}")
+
+    for cantidad in (25, 100, 1000):
+        for mezclados in (False, True):
+            ids = generar_ids(cantidad, mezclados)
+            repeticiones = max(2, 5000 // cantidad)
+
+            avl = construir(ArbolAVL, ids)
+            simple = construir(ArbolSimple, ids)
+
+            buscar_avl = microsegundos_por_busqueda(avl, ids, repeticiones)
+            buscar_simple = microsegundos_por_busqueda(simple, ids, repeticiones)
+            insertar_avl = microsegundos_por_insercion(ArbolAVL, ids, repeticiones)
+            insertar_simple = microsegundos_por_insercion(ArbolSimple, ids, repeticiones)
+
+            orden = "mezclados" if mezclados else "ordenados"
+            alturas = f"{avl.raiz.altura} / {simple.altura}"
+            buscar = f"{buscar_avl:.3f} / {buscar_simple:.3f}"
+            insertar = f"{insertar_avl:.3f} / {insertar_simple:.3f}"
+            print(f"  {cantidad:<6}{orden:<11}{alturas:<20}{buscar:<22}{insertar}")
+
+
+def ejecutar_bench():
+    bench_busqueda_cache()
+
+
+if __name__ == "__main__":
+    ejecutar_bench()

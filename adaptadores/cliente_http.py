@@ -47,7 +47,7 @@ class ClienteHTTP:
         return self._get("version del catalogo", "/catalogo/version")
 
     def _verificar_presupuesto(self, operacion):
-        # Con presupuesto conocido, la solicitud numero (presupuesto + 1) no se realiza.
+        # Con presupuesto conocido, la solicitud presupuesto++ no se realiza.
         if (self.presupuesto_solicitudes is not None
                 and self.solicitudes_realizadas >= self.presupuesto_solicitudes):
             raise PresupuestoAgotado(
@@ -68,11 +68,17 @@ class ClienteHTTP:
                 raise ErrorHTTP(f"{operacion}: fallo de red ({error})") from error
 
             if respuesta.status_code == 200:
-                return respuesta.json()
+                try:
+                    return respuesta.json()
+                except ValueError as error:
+                    raise ErrorHTTP(f"{operacion}: la respuesta no es un JSON") from error
 
             if respuesta.status_code == 429 and reintentos < self.max_reintentos_429:
-                # Espera en tiempo real; nunca toca el reloj virtual.
-                time.sleep(respuesta.json()["reintentar_en"])
+                try:
+                    espera = respuesta.json()["reintentar_en"]
+                except (ValueError, KeyError, TypeError) as error:
+                    raise ErrorHTTP(f"{operacion}: HTTP 429 sin 'reintentar_en' valido") from error
+                time.sleep(espera)
                 reintentos += 1
                 continue
 

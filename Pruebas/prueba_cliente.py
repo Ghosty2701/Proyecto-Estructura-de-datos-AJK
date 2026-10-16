@@ -29,7 +29,6 @@ esperas = []
 
 
 def preparar(respuestas):
-    # Respuestas en orden; una excepcion en la lista se lanza como fallo de red.
     llamadas.clear()
     esperas.clear()
     pendientes = list(respuestas)
@@ -94,3 +93,19 @@ try:
     ClienteHTTP().listar_criptas()
 except ErrorHTTP as e:
     comprobar("timeout con contexto: " + str(e), "listar criptas" in str(e))
+
+
+class RespuestaNoJson:
+    def __init__(self, codigo):
+        self.status_code = codigo
+
+    def json(self):
+        raise ValueError("no es JSON")
+
+for codigo in (200, 429):
+    preparar([RespuestaNoJson(codigo)])
+    try:
+        ClienteHTTP().version_catalogo()
+        comprobar(f"{codigo} sin JSON falla", False)
+    except ErrorHTTP as e:
+        comprobar(f"{codigo} sin JSON con contexto: " + str(e), "version del catalogo" in str(e))

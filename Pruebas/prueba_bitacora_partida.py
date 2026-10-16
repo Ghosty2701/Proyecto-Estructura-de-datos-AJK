@@ -1,6 +1,6 @@
 import pytest
 
-from adaptadores.bitacora_Partida import (EscritorBitacora,ErrorBitacora,leer_bitacora,verificar_compatibilidad)
+from adaptadores.bitacora_partida import (EscritorBitacora,ErrorBitacora,leer_bitacora,verificar_compatibilidad)
 
 def crear_bitacora(carpeta, acciones=()):
     ruta = str(carpeta / "partida.log")

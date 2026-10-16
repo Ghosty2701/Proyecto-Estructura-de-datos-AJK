@@ -10,7 +10,7 @@ class ErrorOffline(Exception):
 class ModoOffline(FuenteDatos):
     def __init__(self, carpeta="datos_offline"):
         self.carpeta = carpeta
-        # Leer de disco es una solicitud de red
+        # Leer de disco no es una solicitud de red
         self.solicitudes_realizadas = 0
         self.presupuesto_solicitudes = None
 

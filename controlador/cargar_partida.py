@@ -8,7 +8,11 @@ from adaptadores.cache_catalogo import ArbolAVL, ErrorCatalogo
 from adaptadores.cliente_http import ErrorHTTP, PresupuestoAgotado
 from adaptadores.modo_offline import ErrorOffline
 from adaptadores.servicio_cripta import ErrorCripta
-from adaptadores.estado_binario import ObjetoPartida
+from adaptadores.estado_binario import (
+    ObjetoPartida, guardar_partida, cargar_partida, leer_identidad_guardada,
+)
+from adaptadores.guardado_binario import ErrorGuardado
+from adaptadores.bitacora_partida import verificar_compatibilidad
 from controlador.partida import Partida
 from controlador.controlador import AccionInvalida
 from modelo.efectos import Trampa
@@ -78,11 +82,17 @@ class CargadorPartida:
         self.enemigos = []
         self.jugador = None
 
-    def crear(self, cripta_id, semilla):
+    def crear(self, cripta_id, semilla, *, encabezado_log=None):
         if self.jugador is not None:
             raise ErrorDatosPartida("Usa un cargador nuevo para iniciar otra partida.")
         try:
             datos = self.servicio.cargar(cripta_id)
+            if encabezado_log is not None:
+                # Valida versiones antes de construir entidades o ejecutar acciones.
+                self.servicio.cache.obtener_varias(())
+                verificar_compatibilidad(
+                    encabezado_log, cripta_id, datos["version"], self.servicio.cache.version,
+                )
             self._construir_esqueleto()
             inicial = self.salas.buscar(datos["sala_inicial"])
             if inicial is None:
@@ -100,7 +110,13 @@ class CargadorPartida:
             raise ErrorDatosPartida(f"Datos incompatibles de {cripta_id}: {error}") from error
         self.jugador = jugador
         self.servicio.cache.esta_en_uso = self.ficha_en_uso
-        return Partida(motor, jugador, self.enemigos, self.preparar_destino, self.servicio.fuente)
+        partida = Partida(
+            motor, jugador, self.enemigos, self.preparar_destino, self.servicio.fuente,
+            sala_salida=datos["sala_salida"], llave_salida=datos["llave_salida"],
+            id_cripta=cripta_id, version_cripta=datos["version"],
+        )
+        partida.gestor_guardado = self
+        return partida
 
     def preparar_destino(self, sala):
         try:
@@ -111,6 +127,116 @@ class CargadorPartida:
                 f"No se confirmo el movimiento: {str(error).rstrip('.')}. "
                 "Sigues en la misma sala y el reloj no avanzo. Puedes elegir otra accion o salir."
             ) from error
+
+    def guardar_sesion(self, partida, ruta):
+        self.servicio.cache.obtener_varias(())
+        salas = list(_recorrer_arbol(self.salas.raiz))
+        fichas = ArbolAVL()
+        for nodo in _recorrer_arbol(self.servicio.cache.arbol.raiz):
+            ficha = nodo.ficha
+            fichas.insertar(ficha["id"], ficha)
+        for sala in salas:
+            entidades = list(sala.objetos_suelo) + list(sala.trampas)
+            for enemigo in sala.enemigos:
+                entidades.append(enemigo)
+                entidades.extend(enemigo.suelta)
+            for entidad in entidades:
+                ficha = getattr(entidad, "ficha", None)
+                if ficha is not None:
+                    fichas.insertar(ficha["id"], ficha)
+        for objeto in partida.inventario.listar():
+            ficha = getattr(objeto, "ficha", None)
+            if ficha is not None:
+                fichas.insertar(ficha["id"], ficha)
+        guardar_partida(
+            ruta, partida.motor, partida.jugador, salas,
+            id_cripta=partida.id_cripta, version_cripta=partida.version_cripta,
+            version_catalogo=self.servicio.cache.version,
+            datos_extra={
+                "partida": partida,
+                "contenido": list(_recorrer_arbol(self.servicio.contenido.raiz)),
+                "fichas": list(_recorrer_arbol(fichas.raiz)),
+            },
+        )
+
+    def leer_sesion(self, ruta, id_cripta, version_cripta):
+        self.servicio.cache.obtener_varias(())
+        cargada = cargar_partida(
+            ruta, id_cripta=id_cripta, version_cripta=version_cripta,
+            version_catalogo=self.servicio.cache.version,
+        )
+        extra = cargada.datos_extra
+        if type(extra) is not dict or type(extra.get("partida")) is not Partida:
+            raise ErrorGuardado("El archivo no contiene una sesion de consola completa.")
+        partida = extra["partida"]
+        if (
+            partida.motor is not cargada.motor or partida.jugador is not cargada.jugador
+            or partida.id_cripta != cargada.identidad.id_cripta
+            or partida.version_cripta != cargada.identidad.version_cripta
+        ):
+            raise ErrorGuardado("La sesion no coincide con las raices del guardado.")
+        if partida.victoria or partida.jugador.vida <= 0:
+            raise ErrorGuardado("El guardado corresponde a una partida terminada.")
+        if len(cargada.salas) != self.servicio.esqueleto.cantidad:
+            raise ErrorGuardado("Las salas del guardado no coinciden con el esqueleto actual.")
+        for sala in cargada.salas:
+            if self.servicio.esqueleto.buscar(sala.sala_id) is None:
+                raise ErrorGuardado("El guardado contiene una sala desconocida.")
+        for campo in ("contenido", "fichas"):
+            if type(extra.get(campo)) is not list:
+                raise ErrorGuardado(f"Falta la lista de {campo} del guardado.")
+        for datos in extra["contenido"]:
+            if type(datos) is not dict or self.servicio.esqueleto.buscar(datos.get("sala")) is None:
+                raise ErrorGuardado("Contenido guardado incompatible con el esqueleto.")
+        for ficha in extra["fichas"]:
+            if type(ficha) is not dict or type(ficha.get("id")) is not str:
+                raise ErrorGuardado("Ficha guardada invalida.")
+        return cargada
+
+    def aplicar_sesion(self, actual, cargada):
+        nueva = cargada.datos_extra["partida"]
+        salas = ArbolAVL()
+        for sala in cargada.salas:
+            salas.insertar(sala.sala_id, sala)
+        # Mantener el objeto de sesion que conocen main y el controlador.
+        # Los deltas de sus contadores deben apuntar a ese mismo objeto.
+        for accion in nueva.motor.historial.acciones:
+            for indice, (tipo, objeto, anterior) in enumerate(accion.cambios):
+                if objeto is nueva:
+                    accion.cambios[indice] = (tipo, actual, anterior)
+        # Los datos de infraestructura no retroceden al cargar un guardado.
+        for datos in cargada.datos_extra["contenido"]:
+            if self.servicio.contenido.buscar(datos["sala"]) is None:
+                self.servicio.contenido.insertar(datos["sala"], datos)
+        for ficha in cargada.datos_extra["fichas"]:
+            self.servicio.cache._guardar_en_disco(ficha)
+        for campo in (
+            "motor", "jugador", "enemigos", "sala_salida", "llave_salida", "id_cripta",
+            "version_cripta", "nombre_jugador", "acciones_ejecutadas", "victoria",
+        ):
+            setattr(actual, campo, getattr(nueva, campo))
+        actual.preparar_sala = self.preparar_destino
+        actual.fuente = self.servicio.fuente
+        actual.gestor_guardado = self
+        actual._mensajes = []
+        actual._inicio_pendiente = False
+        actual._ataque_pendiente = None
+        self.salas = salas
+        self.enemigos = actual.enemigos
+        self.jugador = actual.jugador
+        self.servicio.cache.esta_en_uso = self.ficha_en_uso
+
+    def reanudar(self, ruta):
+        if self.jugador is not None:
+            raise ErrorGuardado("Usa un cargador nuevo para reanudar otra partida.")
+        identidad = leer_identidad_guardada(ruta)
+        datos = self.servicio.cargar(identidad.id_cripta)
+        cargada = self.leer_sesion(ruta, identidad.id_cripta, datos["version"])
+        partida = cargada.datos_extra["partida"]
+        partida.ruta_guardado = str(ruta)
+        partida.bitacora_activa = False
+        self.aplicar_sesion(partida, cargada)
+        return partida
 
     def _construir_esqueleto(self):
         for datos in _recorrer_arbol(self.servicio.esqueleto.raiz):

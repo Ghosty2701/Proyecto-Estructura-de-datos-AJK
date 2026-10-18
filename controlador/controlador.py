@@ -23,11 +23,44 @@ class AccionInvalida(Exception):
     pass
 
 
+def ejecutar_comando_partida(partida, comando):
+    """Operaciones compartidas por la consola y el replay, sin usar una vista."""
+    if partida.estado().terminada:
+        raise AccionInvalida("La partida ya termino.")
+    if comando.nombre == "siguiente":
+        if not partida.inventario.avanzar():
+            raise AccionInvalida("Ya estás en el último objeto.")
+        return []
+    if comando.nombre == "anterior":
+        if not partida.inventario.retroceder():
+            raise AccionInvalida("Ya estás en el primer objeto.")
+        return []
+    accion = getattr(partida, comando.nombre)
+    if comando.argumento is None:
+        return accion()
+    return accion(comando.argumento)
+
+
+def ejecutar_accion_replay(partida, texto):
+    comando = parsear(texto)
+    if comando is None or comando.nombre not in (
+        "mover", "abrir", "atacar", "esperar", "recoger", "usar", "equipar",
+        "soltar", "retroceder", "siguiente", "anterior",
+    ):
+        raise AccionInvalida("El registro no contiene una accion reproducible.")
+    return ejecutar_comando_partida(partida, comando)
+
+
 class Controlador:
-    def __init__(self, partida, vista):
+    def __init__(self, partida, vista, registrar_accion=None):
         self.partida = partida
         self.vista = vista
         self._solo_consulta = False
+        self.registrar_accion = registrar_accion
+
+    def _registrar(self, texto):
+        if self.registrar_accion is not None:
+            self.registrar_accion(" ".join(texto.strip().lower().split()))
 
     def ejecutar(self):
         # Bucle principal. Termina al salir o cuando la partida acaba.
@@ -57,31 +90,30 @@ class Controlador:
             return True
         if nombre in ("inventario", "siguiente", "anterior", "orden"):
             self._solo_consulta = True
-            self._navegar_inventario(comando)
+            if self._navegar_inventario(comando) and nombre in ("siguiente", "anterior"):
+                self._registrar(texto)
             return True
 
-        accion = getattr(self.partida, nombre)
         try:
-            if comando.argumento is None:
-                mensajes = accion()
-            else:
-                mensajes = accion(comando.argumento)
+            mensajes = ejecutar_comando_partida(self.partida, comando)
         except AccionInvalida as error:
             mensajes = [str(error)]
+        else:
+            # Guardar no cambia la simulacion; cargar solo se permite sin bitacora.
+            if nombre not in ("guardar", "cargar"):
+                self._registrar(texto)
         self.vista.agregar_mensajes(mensajes)
         return True
 
     def _navegar_inventario(self, comando):
         # Recorrer o consultar el inventario no consume tiempo virtual.
         inv = self.partida.inventario
-        if comando.nombre == "siguiente":
-            if not inv.avanzar():
-                self.vista.agregar_mensajes(["Ya estás en el último objeto."])
-                return
-        elif comando.nombre == "anterior":
-            if not inv.retroceder():
-                self.vista.agregar_mensajes(["Ya estás en el primer objeto."])
-                return
+        if comando.nombre in ("siguiente", "anterior"):
+            try:
+                ejecutar_comando_partida(self.partida, comando)
+            except AccionInvalida as error:
+                self.vista.agregar_mensajes([str(error)])
+                return False
 
         if comando.nombre == "orden":
             clave = lambda objeto: getattr(objeto, comando.argumento)
@@ -104,3 +136,4 @@ class Controlador:
                 arma=inv.arma_equipada,
                 armadura=inv.armadura_equipada,
             )
+        return True

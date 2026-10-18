@@ -22,6 +22,13 @@ class CambiosAccion:
         if cambio is not None:
             self.cambios.append(("inventario", inventario, cambio))
 
+    def registrar_objeto_soltado(self, inventario, cambio, suelo):
+        if cambio is not None:
+            self.cambios.append(("objeto_soltado", inventario, (cambio, suelo)))
+
+    def registrar_botin(self, suelo, objeto):
+        self.cambios.append(("botin", suelo, objeto))
+
     def programar_evento(self, agenda, evento):
         secuencia_anterior = agenda.siguiente_secuencia
         agenda.insertar(evento)
@@ -70,6 +77,27 @@ class CambiosAccion:
 
             elif tipo == "inventario":
                 objeto.deshacer_cambio(anterior)
+
+            elif tipo == "botin":
+                if (
+                    getattr(anterior, "clase", None) == "pergamino_retroceso"
+                    and getattr(anterior, "recogido_fuera_historial", False)
+                ):
+                    continue
+                for indice, elemento in enumerate(objeto):
+                    if elemento is anterior:
+                        objeto.pop(indice)
+                        break
+
+            elif tipo == "objeto_soltado":
+                cambio, suelo = anterior
+                for indice, elemento in enumerate(suelo):
+                    if elemento is cambio.nodo.objeto:
+                        objeto.deshacer_cambio(cambio)
+                        suelo.pop(indice)
+                        break
+                else:
+                    raise RuntimeError("El objeto soltado no esta en el suelo")
 
             elif tipo == "recogida":
                 cambio, suelo, siguiente = anterior
@@ -133,6 +161,33 @@ class HistorialRetroceso:
 
     def registrar_inventario(self, inventario, cambio):
         self._accion_actual().registrar_inventario(inventario, cambio)
+
+    def registrar_objeto_soltado(self, inventario, cambio, suelo):
+        self._accion_actual().registrar_objeto_soltado(inventario, cambio, suelo)
+
+    def registrar_botin(self, suelo, objeto):
+        self._accion_actual().registrar_botin(suelo, objeto)
+
+    def cabe_inventario_al_deshacer(self, inventario, espacios_liberados=0):
+        if not self.acciones:
+            return True
+        cantidad = inventario.cantidad - espacios_liberados
+        for tipo, objeto, anterior in reversed(self.acciones[-1].cambios):
+            if objeto is not inventario:
+                continue
+            if tipo == "inventario":
+                cambio = anterior
+            elif tipo in ("recogida", "objeto_soltado"):
+                cambio = anterior[0]
+            else:
+                continue
+            if cambio.tipo == "retirar":
+                cantidad += 1
+            elif cambio.tipo == "recoger":
+                cantidad -= 1
+            if cantidad > inventario.capacidad:
+                return False
+        return True
 
     def iniciar_accion(self, reloj_actual):
         self.acciones.append(CambiosAccion(reloj_actual))

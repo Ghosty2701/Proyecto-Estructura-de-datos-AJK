@@ -26,3 +26,14 @@ def test_benchmark_completo_valida_cache_y_archivos_reales(capsys):
     assert "Tamano modelo binario:" in salida
     assert "us/operacion" in salida
     assert "Comprobaciones funcionales: OK" in salida
+
+
+def test_bench_inventario_y_ordenamientos_validan_cargas_comunes(capsys):
+    from modelo.bench_modelo import medir_inventario, medir_ordenamientos
+
+    medir_inventario(10, 1)
+    medir_ordenamientos((8, 40), 1, 2026)
+    salida = capsys.readouterr().out
+    assert "INVENTARIO:" in salida and "ORDENAMIENTOS:" in salida
+    assert "insertion_sort" in salida and "merge_sort" in salida
+    assert "casi ordenados" in salida and "clave costosa" in salida

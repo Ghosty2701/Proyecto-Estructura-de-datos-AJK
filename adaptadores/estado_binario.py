@@ -22,11 +22,13 @@ from modelo.agenda_eventos import AgendaEventos
 from modelo.efectos import EstadoEfecto, Trampa
 from modelo.evento import Evento
 from modelo.inventario import Inventario, NodoInventario
+from modelo.inventario_reversible import InventarioReversible, NodoReversible, CambioInventario
+from controlador.partida import Partida
 from modelo.motor_eventos import ActorTurnos, EventoActor, EventoEntorno, MotorEventos
 from modelo.rastro import Puerta, SalaRastro, SalidaRastro
 from modelo.retroceso import CambiosAccion, HistorialRetroceso
 
-VERSION_MODELO = 1
+VERSION_MODELO = 2
 MAGIC_MODELO = b"MDLO"
 MAGIC_SALA = b"SALA"
 
@@ -83,7 +85,7 @@ class SalaGuardada:
 # Cada campo requerido y opcional se enumera: no se serializa __dict__.
 _ITEM_OPCIONALES = (
     "id", "clase", "nombre", "peso", "valor", "ataque_bonus", "defensa_bonus",
-    "ficha", "cantidad", "curacion", "duracion", "modificador_velocidad",
+    "ficha", "cantidad", "curacion", "duracion", "modificador_velocidad", "recogido_fuera_historial",
 )
 _ESQUEMAS = (
     (1, MotorEventos, ("reloj", "agenda", "historial", "semilla", "azar"), ()),
@@ -99,7 +101,7 @@ _ESQUEMAS = (
     (6, SalaRastro, (
         "sala_id", "ultimo_rastro", "salidas", "enemigos", "trampas", "contenido_cargado",
     ), ("nombre", "objetos_suelo")),
-    (7, Puerta, ("abierta", "llave", "cierre_automatico"), ()),
+    (7, Puerta, ("abierta", "llave", "cierre_automatico"), ("abierta_con_llave",)),
     (8, SalidaRastro, ("destino", "puerta"), ("direccion",)),
     (9, Evento, ("tiempo", "tipo", "actor_id", "secuencia", "cancelado"), ()),
     (10, EventoActor, (
@@ -112,20 +114,40 @@ _ESQUEMAS = (
     (12, EstadoEfecto, ("tipo", "cantidad", "fin", "anterior", "evento"), ()),
     (13, Trampa, (
         "instancia_id", "tipo", "cantidad", "duracion", "rearme", "armada", "evento_rearme",
-    ), ()),
+    ), ("ficha",)),
     (14, Inventario, (
         "capacidad", "frente", "final", "cantidad", "cursor", "_arma_equipada", "_armadura_equipada",
     ), ()),
     (15, NodoInventario, ("objeto", "anterior", "siguiente"), ()),
     (16, ObjetoPartida, (
         "id", "clase", "nombre", "peso", "valor", "ataque_bonus", "defensa_bonus", "ficha",
-    ), ()),
+    ), ("recogido_fuera_historial",)),
     # Compatibilidad con registros de objeto usados por las pruebas actuales.
     (17, SimpleNamespace, (), _ITEM_OPCIONALES),
     (18, list, (), ()),
     # Solo registros de datos (p. ej. fichas JSON); los indices usan ArbolAVL.
     (19, dict, (), ()),
     (20, random.Random, (), ()),
+    (21, InventarioReversible, (
+        "capacidad", "frente", "final", "cantidad", "cursor", "_arma_equipada", "_armadura_equipada",
+        "frente_reversible", "final_reversible",
+    ), ()),
+    (22, NodoReversible, (
+        "objeto", "anterior", "siguiente", "reversible", "anterior_reversible", "siguiente_reversible",
+    ), ()),
+    (23, CambioInventario, (
+        "inventario", "tipo", "nodo", "anterior", "siguiente", "anterior_reversible",
+        "siguiente_reversible", "cursor", "arma", "armadura", "deshecho",
+    ), ()),
+    (24, Partida, (
+        "motor", "jugador", "enemigos", "sala_salida", "llave_salida", "id_cripta",
+        "version_cripta", "nombre_jugador", "acciones_ejecutadas", "victoria",
+    ), ()),
+)
+
+_PARTIDA_NO_PERSISTENTES = (
+    "preparar_sala", "fuente", "_mensajes", "_inicio_pendiente", "_ataque_pendiente",
+    "_tiempo_accion", "_vida_inicial", "gestor_guardado", "ruta_guardado", "bitacora_activa",
 )
 
 
@@ -310,6 +332,8 @@ class _Registro:
             raise ErrorGuardado(f"la sala referenciada {propietario} no fue incluida")
         if esquema[1] not in (list, dict, random.Random):
             for nombre in vars(objeto):
+                if type(objeto) is Partida and nombre in _PARTIDA_NO_PERSISTENTES:
+                    continue
                 if nombre not in esquema[2] and nombre not in esquema[3]:
                     raise ErrorGuardado(f"campo sin esquema: {type(objeto).__name__}.{nombre}")
         numero = len(self.objetos) + 1
@@ -585,7 +609,7 @@ def _validar_inventario(inventario):
     actual = inventario.frente
     cantidad = 0
     while actual is not None:
-        _exigir(type(actual) is NodoInventario and vistos.buscar(id(actual)) is None,
+        _exigir(type(actual) in (NodoInventario, NodoReversible) and vistos.buscar(id(actual)) is None,
                 "enlaces de inventario invalidos o ciclicos")
         _exigir(actual.anterior is anterior, "enlace anterior del inventario inconsistente")
         vistos.insertar(id(actual), True)
@@ -597,6 +621,25 @@ def _validar_inventario(inventario):
         _exigir(nodo is None or vistos.buscar(id(nodo)) is not None,
                 "cursor o equipo fuera del inventario")
     _exigir((inventario.cursor is None) == (cantidad == 0), "cursor de inventario inconsistente")
+    if type(inventario) is InventarioReversible:
+        anterior = None
+        esperado = inventario.frente_reversible
+        actual = inventario.frente
+        while actual is not None:
+            _exigir(type(actual) is NodoReversible and type(actual.reversible) is bool,
+                    "nodo reversible invalido")
+            _exigir(actual.reversible == (getattr(actual.objeto, "clase", None) != "pergamino_retroceso"),
+                    "marca reversible incompatible con el objeto")
+            if actual.reversible:
+                _exigir(actual is esperado and actual.anterior_reversible is anterior,
+                        "orden auxiliar del inventario inconsistente")
+                anterior, esperado = actual, actual.siguiente_reversible
+            else:
+                _exigir(actual.anterior_reversible is None and actual.siguiente_reversible is None,
+                        "pergamino enlazado al orden reversible")
+            actual = actual.siguiente
+        _exigir(esperado is None and anterior is inventario.final_reversible,
+                "final del orden reversible inconsistente")
 
 
 def _validar_enlaces_actor(actor):
@@ -630,7 +673,8 @@ def _validar_modelo(motor, jugador, salas, objetos):
             _exigir(type(cambio) is tuple and len(cambio) == 3, "delta reversible invalido")
             tipo, objeto, anterior = cambio
             _exigir(tipo in ("rastro", "vida", "evento_cancelado", "evento_programado",
-                            "evento_extraido", "azar", "atributo"), "tipo de delta desconocido")
+                            "evento_extraido", "azar", "atributo", "inventario", "recogida",
+                            "objeto_soltado", "botin"), "tipo de delta desconocido")
             if tipo == "atributo":
                 _exigir(type(anterior) is tuple and len(anterior) == 2, "delta de atributo invalido")
                 esquema = _esquema(type(objeto))
@@ -641,6 +685,19 @@ def _validar_modelo(motor, jugador, salas, objetos):
             elif tipo == "vida":
                 _exigir(type(objeto) is ActorTurnos and type(anterior) is int and anterior >= 0,
                         "delta de vida invalido")
+            elif tipo in ("inventario", "recogida", "objeto_soltado"):
+                _exigir(type(objeto) is InventarioReversible, "inventario de delta invalido")
+                if tipo == "inventario":
+                    cambio_inventario = anterior
+                else:
+                    _exigir(type(anterior) is tuple and len(anterior) == (3 if tipo == "recogida" else 2),
+                            "delta de suelo invalido")
+                    cambio_inventario = anterior[0]
+                    _exigir(type(anterior[1]) is list, "suelo de delta invalido")
+                _exigir(type(cambio_inventario) is CambioInventario and cambio_inventario.inventario is objeto
+                        and not cambio_inventario.deshecho, "cambio de inventario inconsistente")
+            elif tipo == "botin":
+                _exigir(type(objeto) is list, "suelo de botin invalido")
             elif tipo == "evento_cancelado":
                 _exigir(type(objeto) in (Evento, EventoActor, EventoEntorno) and type(anterior) is bool,
                         "delta de cancelacion invalido")
@@ -682,7 +739,7 @@ def _validar_modelo(motor, jugador, salas, objetos):
     _exigir(salas_validas.buscar(id(jugador.sala_actual)) is not None,
             "jugador fuera de las salas guardadas")
     for objeto in objetos:
-        if type(objeto) is Inventario:
+        if type(objeto) in (Inventario, InventarioReversible):
             _validar_inventario(objeto)
         elif type(objeto) is ActorTurnos:
             _exigir(type(objeto.vida) is int and type(objeto.vida_max) is int and
@@ -693,7 +750,7 @@ def _validar_modelo(motor, jugador, salas, objetos):
                     type(objeto.defensa) is int and objeto.defensa >= 0, "atributos de actor invalidos")
             _exigir(objeto.comportamiento in (None, "guardian", "errante", "rastreador"),
                     "comportamiento de actor invalido")
-            _exigir(objeto.inventario is None or type(objeto.inventario) is Inventario,
+            _exigir(objeto.inventario is None or type(objeto.inventario) in (Inventario, InventarioReversible),
                     "referencia de inventario invalida")
             _exigir(objeto.sala_actual is None or salas_validas.buscar(id(objeto.sala_actual)) is not None,
                     "actor fuera de las salas guardadas")
@@ -716,6 +773,7 @@ def _validar_modelo(motor, jugador, salas, objetos):
             if hasattr(objeto, "objetos_suelo"):
                 _exigir(type(objeto.objetos_suelo) is list, "lista de objetos del suelo invalida")
         elif type(objeto) is Puerta:
+            _exigir(type(getattr(objeto, "abierta_con_llave", False)) is bool, "marca de apertura invalida")
             _exigir(type(objeto.abierta) is bool and (objeto.cierre_automatico is None or
                     (type(objeto.cierre_automatico) is int and objeto.cierre_automatico > 0)),
                     "estado de puerta invalido")
@@ -751,3 +809,16 @@ def _validar_modelo(motor, jugador, salas, objetos):
             _exigir(objeto.evento_rearme is None or
                     (type(objeto.evento_rearme) is EventoEntorno and objeto.evento_rearme.objetivo is objeto),
                     "referencia del rearme de trampa invalida")
+        elif type(objeto) is CambioInventario:
+            _exigir(type(objeto.inventario) is InventarioReversible and type(objeto.nodo) is NodoReversible,
+                    "referencias de cambio de inventario invalidas")
+            _exigir(objeto.tipo in ("recoger", "retirar", "equipar") and type(objeto.deshecho) is bool,
+                    "estado de cambio de inventario invalido")
+        elif type(objeto) is Partida:
+            _exigir(objeto.motor is motor and objeto.jugador is jugador,
+                    "raices de la sesion inconsistentes")
+            _exigir(type(objeto.acciones_ejecutadas) is int and objeto.acciones_ejecutadas >= 0
+                    and type(objeto.victoria) is bool and type(objeto.nombre_jugador) is str,
+                    "contadores de la sesion invalidos")
+            _exigir(type(objeto.enemigos) is list and all(type(e) is ActorTurnos for e in objeto.enemigos),
+                    "lista de enemigos de la sesion invalida")

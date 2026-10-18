@@ -14,6 +14,41 @@ python main.py --listar
 python main.py --cripta cripta-01 --semilla 2026
 ```
 
+Con el paquete local del curso, sin solicitudes HTTP:
+
+```powershell
+python main.py --offline --listar
+python main.py --offline --cripta cripta-01 --semilla 2026
+```
+
+`--offline` usa `datos_offline`; para otra carpeta, usa `--offline ruta_del_paquete`.
+Tambien se puede combinar con `--cargar` o `--replay`. Requiere los archivos del paquete local.
+
+`python main.py --bench` ejecuta las mediciones de estructuras sin HTTP ni informes
+persistentes. Usa `--repeticiones 1` para una revision rapida. Al terminar una sesion
+de juego se muestran solicitudes, presupuesto y aciertos/fallos de cache en consola.
+
+Para medir ciclos completos con datos reales: `python main.py --bench --cripta cripta-01`.
+Se precarga la cripta fuera del cronometro y se informa el maximo de todos los ciclos
+entre decisiones, sin red ni renderizado. Un ciclo de 20 ms o mas devuelve codigo 1.
+
+Para registrar y reproducir los comandos con la misma semilla y versiones:
+
+```powershell
+python main.py --cripta cripta-01 --semilla 2026 --bitacora partida.log
+python main.py --replay partida.log
+python main.py --replay partida.log --sin-interfaz
+```
+
+Durante la partida, `guardar` y `cargar` usan `partida.bin` sin consumir tiempo.
+Puedes elegir la ruta con `--archivo-guardado mi_partida.bin` y reanudar despues con
+`python main.py --cargar mi_partida.bin`. Se permite guardar mientras se registra
+una bitacora; cargar requiere otra ejecucion sin grabacion activa.
+
+La bitacora no sobrescribe archivos existentes. Replay muestra cada accion por
+defecto; `--sin-interfaz` muestra solo el resumen. No registra otro puntaje y
+requiere acceso a los datos de las versiones originales.
+
 Escoge un ID de la lista del servicio. `cripta-01` estuvo disponible durante la
 verificacion del 17 de octubre de 2026; la disponibilidad posterior depende del
 servicio. La semilla es configurable y su valor predeterminado es 2026.
@@ -38,6 +73,9 @@ crea al utilizarla y esta excluida de Git. No contiene un guardado de la partida
 | `recoger` o `recoger 2` | Recoger un objeto del suelo; coste 25 ajustado por velocidad. |
 | `equipar` | Equipar el arma o armadura seleccionada con `sig`/`ant`; coste 50 ajustado por velocidad. |
 | `usar` | Consumir la pocion, antidoto o antorcha seleccionada; coste 50 ajustado por velocidad. |
+| `soltar` | Dejar en el suelo el objeto seleccionado; coste 25 ajustado por velocidad. |
+| `retroceder` | Consumir un pergamino y deshacer el ultimo intervalo, sin tiempo adicional; hasta cinco acciones disponibles. |
+| `guardar`, `cargar` | Guardar o restaurar el estado completo y los cinco intervalos disponibles. |
 | `abrir n` | Abrir la puerta hacia el norte con la llave correspondiente; coste 50 ajustado por velocidad. |
 | `esperar` | Dejar pasar el intervalo de una accion. |
 | `inv`, `sig`, `ant`, `orden peso` | Consultar o recorrer el inventario, sin tiempo virtual. |
@@ -55,14 +93,13 @@ consumidas y presupuesto. La bitacora conserva los ultimos 20 mensajes e incluye
 tiempo virtual, daño de trampas, resultado de ataques y movimientos enemigos
 visibles, ademas de regeneracion y avisos de efectos y entorno.
 
-Esta etapa **no permite completar la cripta**: soltar objetos,
-retroceder, guardar y cargar aun no estan conectados. Esos
-comandos informan que estan pendientes y no consumen tiempo. El inventario empieza
-vacio y permite recoger objetos y consultar sus vistas. La ayuda general del controlador incluye
-los comandos pendientes; el mensaje inicial identifica los disponibles.
+El inventario empieza vacio y permite recoger objetos y consultar sus vistas.
 
-Victoria, puntajes, bitacora de reproduccion y el guardado de los nuevos tipos de
-inventario requieren integracion posterior. No se presenta esta prueba como el
+La victoria ocurre al entrar por la puerta de salida abierta con su llave.
+Al ganar o morir se registra el resultado en `puntajes.json`; puedes indicar
+`--nombre Kendall` y `--puntajes otra_ruta.json`. Salir voluntariamente no registra resultado.
+El guardado usa el esquema binario 2, con inventario reversible, contadores y efectos.
+Los archivos del esquema anterior se rechazan. No se presenta esta prueba como el
 proyecto completo ni como evidencia del limite de 20 ms.
 
 ## Organizacion de esta integracion
@@ -138,10 +175,10 @@ con contexto y devuelve el control a la consola. El movimiento no se confirma:
 posicion, reloj e historial quedan como antes de intentarlo. Las solicitudes ya
 realizadas y la cache no se deshacen. Se puede seguir actuando en salas disponibles
 o salir; un presupuesto agotado no se reinicia ni se ignora. Si el fallo ocurre
-antes de crear la partida, se informa y termina el arranque. No hay reanudacion
-desde disco. Los errores de programacion no se ocultan con una captura general.
-Los cambios de botin tampoco estan conectados al retroceso: este permanece
-deshabilitado en la consola hasta integrar todo el intervalo reversible.
+antes de crear la partida, se informa y termina el arranque.
+Los errores de programacion no se ocultan con una captura general.
+El botin normal se retira al deshacer una muerte. Los pergaminos recogidos conservan
+su estado fuera del historial y no se duplican al volver a derrotar al mismo enemigo.
 
 ## Pruebas
 

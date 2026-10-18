@@ -3,6 +3,7 @@
 from dataclasses import dataclass, field
 
 from controlador.controlador import AccionInvalida
+from adaptadores.guardado_binario import ErrorGuardado
 
 
 @dataclass
@@ -36,10 +37,12 @@ class EstadoPartida:
     limite_normal: int | None = None
     reserva: int = 0
     reintentos: int = 0
+    resumen: dict | None = None
 
 
 class Partida:
-    def __init__(self, motor, jugador, enemigos, preparar_sala, fuente=None):
+    def __init__(self, motor, jugador, enemigos, preparar_sala, fuente=None, *,
+                 sala_salida=None, llave_salida=None, id_cripta=None, version_cripta=None):
         self.motor = motor
         self.jugador = jugador
         # Referencias a las instancias cargadas, incluso si cambian de sala.
@@ -49,6 +52,32 @@ class Partida:
         self._mensajes = []
         self._inicio_pendiente = False
         self._ataque_pendiente = None
+        self.sala_salida = sala_salida
+        self.llave_salida = llave_salida
+        self.id_cripta = id_cripta
+        self.version_cripta = version_cripta
+        self.nombre_jugador = "Jugador"
+        self.acciones_ejecutadas = 0
+        self.victoria = False
+        self.gestor_guardado = None
+        self.ruta_guardado = "partida.bin"
+        self.bitacora_activa = False
+
+    def resultado_final(self):
+        if not self.victoria and self.jugador.vida > 0:
+            return None
+        return {
+            "nombre_jugador": self.nombre_jugador,
+            "id_cripta": self.id_cripta,
+            "version_cripta": self.version_cripta,
+            "resultado": "victoria" if self.victoria else "derrota",
+            "acciones_jugador": self.acciones_ejecutadas,
+            "enemigos_derrotados": sum(1 for enemigo in self.enemigos if enemigo.vida == 0),
+            "tiempo_final": self.motor.reloj,
+        }
+
+    def _contar_accion(self):
+        self.motor._cambiar(self, "acciones_ejecutadas", self.acciones_ejecutadas + 1)
 
     @property
     def inventario(self):
@@ -87,8 +116,9 @@ class Partida:
             salidas=[(s.direccion, s.destino.sala_id, not s.abierta) for s in sala.salidas],
             enemigos=[(self._nombre_enemigo(e), e.vida, e.vida_max) for e in self._enemigos_presentes()],
             objetos_suelo=[o.nombre for o in sala.objetos_suelo],
-            terminada=derrota,
-            resultado="derrota" if derrota else None,
+            terminada=derrota or self.victoria,
+            resultado="victoria" if self.victoria else ("derrota" if derrota else None),
+            resumen=self.resultado_final(),
             rutas=[RutaSalida(s.direccion, s.destino.sala_id, s.destino.nombre,
                               not s.abierta, s.puerta.llave) for s in sala.salidas],
             solicitudes_usadas=getattr(self.fuente, "solicitudes_realizadas", None),
@@ -100,6 +130,8 @@ class Partida:
         )
 
     def _comprobar_activa(self):
+        if self.victoria:
+            raise AccionInvalida("La partida termino: escapaste de la cripta.")
         if self.jugador.vida <= 0:
             raise AccionInvalida("La partida termino: tu vida llego a cero.")
 
@@ -141,7 +173,13 @@ class Partida:
             if objetivo.vida == 0:
                 self._mensaje(f"Derrotaste a {nombre}.", self._tiempo_accion)
                 for objeto in getattr(objetivo, "suelta", []):
+                    if (
+                        getattr(objeto, "clase", None) == "pergamino_retroceso"
+                        and getattr(objeto, "recogido_fuera_historial", False)
+                    ):
+                        continue
                     objetivo.sala_actual.objetos_suelo.append(objeto)
+                    self.motor.historial.registrar_botin(objetivo.sala_actual.objetos_suelo, objeto)
                     self._mensaje(f"{nombre} deja {objeto.nombre} en el suelo.", self._tiempo_accion)
 
     def _ejecutar_evento(self, evento):
@@ -187,7 +225,19 @@ class Partida:
             raise AccionInvalida("La puerta esta cerrada; primero debes abrirla.")
         self.preparar_sala(salida.destino)
         self._iniciar_mensajes(f"Entras en {salida.destino.nombre}.")
-        self.motor.mover_jugador(self.jugador, salida, self._ejecutar_evento)
+        es_salida = (
+            self.sala_salida is not None
+            and salida.destino.sala_id == self.sala_salida
+            and self.llave_salida is not None
+            and salida.puerta.llave == self.llave_salida
+            and getattr(salida.puerta, "abierta_con_llave", False)
+        )
+        self.motor.mover_jugador(
+            self.jugador, salida, self._ejecutar_evento, finalizar_al_entrar=es_salida,
+        )
+        self._contar_accion()
+        if es_salida:
+            self.motor._cambiar(self, "victoria", True)
         self._informar_inicio()
         return self._mensajes
 
@@ -195,6 +245,7 @@ class Partida:
         self._comprobar_activa()
         self._iniciar_mensajes("Esperas.")
         self.motor.esperar_jugador(self.jugador, self._ejecutar_evento)
+        self._contar_accion()
         self._informar_inicio()
         return self._mensajes
 
@@ -208,6 +259,7 @@ class Partida:
         self._iniciar_mensajes(f"Atacas a {nombre}.")
         self._ataque_pendiente = objetivo, objetivo.vida
         self.motor.atacar_jugador(self.jugador, objetivo, self._ejecutar_evento)
+        self._contar_accion()
         self._informar_inicio()
         return self._mensajes
 
@@ -233,6 +285,10 @@ class Partida:
             f"Abres la puerta hacia {salida.destino.nombre} ({salida.direccion})."
         )
         self.motor.abrir_puerta_jugador(self.jugador, salida, self._ejecutar_evento)
+        if not hasattr(salida.puerta, "abierta_con_llave"):
+            salida.puerta.abierta_con_llave = False
+        self.motor._cambiar(salida.puerta, "abierta_con_llave", True)
+        self._contar_accion()
         self._informar_inicio()
         return self._mensajes
 
@@ -246,6 +302,7 @@ class Partida:
         objeto = suelo[indice - 1]
         self._iniciar_mensajes(f"Recoges {objeto.nombre}.")
         self.motor.recoger_jugador(self.jugador, indice, self._ejecutar_evento)
+        self._contar_accion()
         self._informar_inicio()
         return self._mensajes
 
@@ -287,7 +344,7 @@ class Partida:
                 raise AccionInvalida("La antorcha no declara una duracion valida.")
             mensaje = f"Enciendes {objeto.nombre} durante {duracion} unidades virtuales."
         elif tipo == "pergamino_retroceso":
-            raise AccionInvalida("Los pergaminos requieren integrar el retroceso completo de la partida.")
+            return self._retroceder_con_pergamino(objeto)
         else:
             raise AccionInvalida("Ese objeto no se puede consumir; usa equipar para armas y armaduras.")
         self._iniciar_mensajes(mensaje)
@@ -295,6 +352,7 @@ class Partida:
             self.jugador, self._ejecutar_evento, cantidad=cantidad,
             duracion=duracion, velocidad=velocidad,
         )
+        self._contar_accion()
         self._informar_inicio()
         return self._mensajes
 
@@ -311,17 +369,72 @@ class Partida:
             raise AccionInvalida("Ese objeto ya esta equipado.")
         self._iniciar_mensajes(f"Equipas {objeto.nombre}.")
         self.motor.equipar_jugador(self.jugador, self._ejecutar_evento)
+        self._contar_accion()
         self._informar_inicio()
         return self._mensajes
 
     def soltar(self):
-        return self._pendiente()
+        self._comprobar_activa()
+        objeto = self.inventario.actual()
+        if objeto is None:
+            raise AccionInvalida("El inventario esta vacio.")
+        self._iniciar_mensajes(f"Sueltas {objeto.nombre} en el suelo.")
+        self.motor.soltar_jugador(self.jugador, self._ejecutar_evento)
+        self._contar_accion()
+        self._informar_inicio()
+        return self._mensajes
 
     def retroceder(self):
-        return self._pendiente()
+        return self._retroceder_con_pergamino()
+
+    def _retroceder_con_pergamino(self, elegido=None):
+        self._comprobar_activa()
+        if not self.motor.historial.acciones:
+            raise AccionInvalida("No hay acciones disponibles para retroceder.")
+
+        def coincide(objeto):
+            return (
+                getattr(objeto, "clase", None) == "pergamino_retroceso"
+                and (elegido is None or objeto is elegido)
+            )
+
+        if not any(coincide(objeto) for objeto in self.inventario.listar()):
+            raise AccionInvalida("No tienes un pergamino de retroceso.")
+        if not self.motor.historial.cabe_inventario_al_deshacer(self.inventario, espacios_liberados=1):
+            raise AccionInvalida("No hay espacio para restaurar el inventario; conservas el pergamino.")
+        tiempo_anterior = self.motor.reloj
+        self.motor.usar_pergamino(self.jugador, coincide)
+        self._mensajes = []
+        self._inicio_pendiente = False
+        self._ataque_pendiente = None
+        self._mensaje(f"Consumes un pergamino y retrocedes de t={tiempo_anterior} a t={self.motor.reloj}.")
+        return self._mensajes
 
     def guardar(self):
-        return self._pendiente()
+        self._comprobar_activa()
+        if self.gestor_guardado is None:
+            raise AccionInvalida("No hay un gestor de guardado conectado a esta partida.")
+        try:
+            self.gestor_guardado.guardar_sesion(self, self.ruta_guardado)
+        except (ErrorGuardado, OSError) as error:
+            raise AccionInvalida(f"No se pudo guardar: {error}") from error
+        self._mensajes = []
+        self._mensaje(f"Partida guardada en {self.ruta_guardado}.")
+        return self._mensajes
 
     def cargar(self):
-        return self._pendiente()
+        self._comprobar_activa()
+        if self.bitacora_activa:
+            raise AccionInvalida(
+                "No puedes cargar mientras registras una bitacora. "
+                "Reanuda el archivo en otra ejecucion con --cargar."
+            )
+        if self.gestor_guardado is None:
+            raise AccionInvalida("No hay un gestor de guardado conectado a esta partida.")
+        try:
+            cargada = self.gestor_guardado.leer_sesion(self.ruta_guardado, self.id_cripta, self.version_cripta)
+            self.gestor_guardado.aplicar_sesion(self, cargada)
+        except (ErrorGuardado, OSError) as error:
+            raise AccionInvalida(f"No se pudo cargar: {error}") from error
+        self._mensaje(f"Partida cargada desde {self.ruta_guardado}.")
+        return self._mensajes

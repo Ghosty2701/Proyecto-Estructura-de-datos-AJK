@@ -9,3 +9,5 @@ venv/
 .idea/
 .vscode/
 .cache_cripta/
+puntajes.json
+partida.bin

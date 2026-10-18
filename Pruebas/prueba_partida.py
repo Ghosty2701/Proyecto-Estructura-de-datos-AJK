@@ -45,6 +45,94 @@ def test_partida_inicial_y_espera_usan_reloj_real_del_motor():
     assert len(partida.motor.historial.acciones) == 1
 
 
+def test_victoria_inmediata_exige_abrir_puerta_y_detiene_las_acciones():
+    partida = preparar_partida(enemigo=True)
+    partida.sala_salida = 2
+    partida.llave_salida = "llave-1"
+    salida = partida.jugador.sala_actual.salidas[0]
+    # Llegar a una salida que nunca se abrio con llave no es victoria.
+    partida.mover("N")
+    assert not partida.estado().terminada
+    partida.mover("S")
+    salida.abierta = False
+    salida.puerta.llave = "llave-1"
+    partida.inventario.recoger(SimpleNamespace(nombre="Llave", clase="llave", id="llave-1"))
+    partida.abrir("N")
+    reloj = partida.motor.reloj
+    vida = partida.jugador.vida
+    partida.mover("N")
+    assert partida.estado().resultado == "victoria"
+    assert partida.motor.reloj == reloj and partida.jugador.vida == vida
+    assert partida.resultado_final()["acciones_jugador"] == 4
+    with pytest.raises(AccionInvalida, match="escapaste"):
+        partida.esperar()
+    partida.motor.deshacer_ultima_accion()
+    assert not partida.victoria and partida.acciones_ejecutadas == 3
+
+
+def test_resultado_derrota_cuenta_acciones_validas_y_enemigos_derrotados():
+    partida = preparar_partida(vida=1, enemigo=True)
+    assert partida.resultado_final() is None
+    with pytest.raises(AccionInvalida):
+        partida.atacar(1)
+    partida.mover("N")
+    resumen = partida.resultado_final()
+    assert resumen["resultado"] == "derrota"
+    assert resumen["acciones_jugador"] == 1
+    assert resumen["enemigos_derrotados"] == 0 and resumen["tiempo_final"] == 66
+
+
+def test_tabla_json_conserva_resultados_y_rechaza_archivo_invalido(tmp_path):
+    import json
+    from adaptadores.puntajes import ErrorPuntajes, registrar_resultado
+
+    ruta = tmp_path / "puntajes.json"
+    partida = preparar_partida(vida=1, enemigo=True)
+    partida.mover("N")
+    resultado = partida.resultado_final()
+    registrar_resultado(ruta, resultado)
+    registrar_resultado(ruta, resultado)
+    assert json.loads(ruta.read_text(encoding="utf-8")) == [resultado, resultado]
+    ruta.write_text("contenido invalido", encoding="utf-8")
+    with pytest.raises(ErrorPuntajes):
+        registrar_resultado(ruta, resultado)
+    assert ruta.read_text(encoding="utf-8") == "contenido invalido"
+
+
+def test_main_gana_muestra_resumen_y_guarda_identidad_en_json(tmp_path, monkeypatch):
+    import json
+    import main as aplicacion
+
+    partida = preparar_partida(enemigo=True)
+    partida.sala_salida = 2
+    partida.llave_salida = "llave-1"
+    partida.id_cripta = "prueba"
+    partida.version_cripta = "v1"
+    salida = partida.jugador.sala_actual.salidas[0]
+    salida.abierta = False
+    salida.puerta.llave = "llave-1"
+    partida.inventario.recoger(SimpleNamespace(nombre="Llave", clase="llave", id="llave-1"))
+    monkeypatch.setattr(aplicacion, "CargadorPartida", lambda servicio: SimpleNamespace(
+        crear=lambda cripta, semilla: partida,
+    ))
+    comandos = iter(["abrir n", "w"])
+    lineas = []
+    monkeypatch.setattr(aplicacion, "VistaConsola", lambda: VistaConsola(
+        entrada=lambda _: next(comandos), salida=lineas.append,
+    ))
+    ruta = tmp_path / "puntajes.json"
+    assert aplicacion.main(["--cripta", "prueba", "--nombre", "Kendall",
+                            "--puntajes", str(ruta), "--cache-dir", str(tmp_path / "cache")]) == 0
+    registro = json.loads(ruta.read_text(encoding="utf-8"))[0]
+    assert registro == {
+        "nombre_jugador": "Kendall", "id_cripta": "prueba", "version_cripta": "v1",
+        "resultado": "victoria", "acciones_jugador": 2,
+        "enemigos_derrotados": 0, "tiempo_final": 50,
+    }
+    assert any("Victoria" in linea for linea in lineas)
+    assert any("Acciones: 2" in linea for linea in lineas)
+
+
 def test_recoger_y_consultar_inventario_sin_consumir_tiempo_extra():
     partida = preparar_partida()
     objeto = SimpleNamespace(nombre="Llave", clase="llave")
@@ -246,6 +334,148 @@ def test_equipar_rechaza_vacio_objeto_inadecuado_y_equipo_repetido():
     assert partida.motor.reloj == 50 and len(partida.motor.historial.acciones) == 1
 
 
+def test_retroceder_restaura_movimiento_enemigos_reloj_y_azar_sin_restaurar_pergamino():
+    partida = preparar_partida(enemigo=True)
+    pergamino = SimpleNamespace(nombre="Pergamino", clase="pergamino_retroceso")
+    partida.inventario.recoger(pergamino)
+    with pytest.raises(AccionInvalida, match="No hay acciones"):
+        partida.retroceder()
+    assert partida.inventario.actual() is pergamino
+    turno = partida.jugador.proxima_accion
+    azar = partida.motor.azar.getstate()
+    partida.mover("N")
+    partida.retroceder()
+    assert partida.jugador.sala_actual.sala_id == 1
+    assert partida.jugador.vida == 30 and partida.motor.reloj == 0
+    assert partida.jugador.proxima_accion is turno
+    assert partida.motor.consultar_siguiente_evento() is turno
+    assert partida.motor.azar.getstate() == azar
+    assert not partida.enemigos[0].activo
+    assert partida.inventario.esta_vacio() and partida.acciones_ejecutadas == 0
+    partida.mover("N")
+    with pytest.raises(AccionInvalida, match="No tienes un pergamino"):
+        partida.retroceder()
+    assert partida.motor.reloj == 100
+
+
+def test_usar_pergamino_consume_el_seleccionado():
+    partida = preparar_partida()
+    primero = SimpleNamespace(nombre="Primero", clase="pergamino_retroceso")
+    segundo = SimpleNamespace(nombre="Segundo", clase="pergamino_retroceso")
+    partida.inventario.recoger(primero)
+    partida.inventario.recoger(segundo)
+    partida.esperar()
+    partida.inventario.avanzar()
+    partida.usar()
+    assert partida.inventario.listar() == [primero]
+    assert partida.motor.reloj == 0 and partida.motor.historial.acciones == []
+
+
+def test_retroceso_se_limita_a_cinco_intervalos():
+    partida = preparar_partida()
+    partida.inventario.capacidad = 6
+    for _ in range(6):
+        partida.inventario.recoger(SimpleNamespace(nombre="Pergamino", clase="pergamino_retroceso"))
+        partida.esperar()
+    for _ in range(5):
+        partida.retroceder()
+    assert partida.motor.reloj == 100 and partida.acciones_ejecutadas == 1
+    assert partida.inventario.cantidad == 1
+    with pytest.raises(AccionInvalida, match="No hay acciones"):
+        partida.retroceder()
+    assert partida.inventario.cantidad == 1
+
+
+def test_retroceso_inventario_lleno_aprovecha_el_espacio_del_pergamino_consumido():
+    partida = preparar_partida()
+    partida.inventario.capacidad = 2
+    pergamino = SimpleNamespace(nombre="Pergamino", clase="pergamino_retroceso")
+    pocion = SimpleNamespace(nombre="Pocion", clase="pocion", ficha={"cura": 8})
+    partida.inventario.recoger(pergamino)
+    partida.inventario.recoger(pocion)
+    partida.inventario.avanzar()
+    partida.usar()
+    partida.jugador.sala_actual.objetos_suelo.append(SimpleNamespace(
+        nombre="Otro pergamino", clase="pergamino_retroceso",
+    ))
+    partida.recoger(1)
+    assert partida.inventario.esta_lleno()
+    partida.retroceder()
+    partida.retroceder()
+    assert partida.inventario.listar() == [pocion]
+    assert partida.motor.reloj == 0 and partida.acciones_ejecutadas == 0
+
+
+def test_pergamino_de_botin_recogido_y_consumido_no_se_duplica_al_repetir_muerte():
+    partida = preparar_partida(enemigo=True)
+    enemigo = partida.enemigos[0]
+    enemigo.vida = 1
+    botin = SimpleNamespace(nombre="Botin", clase="pergamino_retroceso")
+    enemigo.suelta = [botin]
+    partida.inventario.recoger(SimpleNamespace(nombre="Inicial", clase="pergamino_retroceso"))
+    partida.mover("N")
+    partida.atacar(1)
+    suelo = partida.jugador.sala_actual.objetos_suelo
+    assert suelo == [botin]
+    partida.recoger(1)
+    partida.retroceder()
+    assert partida.inventario.actual() is botin and suelo == []
+    partida.usar()
+    assert enemigo.vida == 1 and partida.inventario.esta_vacio()
+    partida.atacar(1)
+    assert enemigo.vida == 0 and suelo == []
+
+
+def test_soltar_objeto_seleccionado_y_deshacer_restauran_orden_y_cursor():
+    partida = preparar_partida()
+    objetos = [SimpleNamespace(nombre=nombre, clase="llave") for nombre in ("A", "B", "C")]
+    for objeto in objetos:
+        partida.inventario.recoger(objeto)
+    partida.inventario.avanzar()
+    suelo = partida.jugador.sala_actual.objetos_suelo
+    mensajes = partida.soltar()
+    assert len(suelo) == 1 and suelo[0] is objetos[1]
+    assert partida.inventario.listar() == [objetos[0], objetos[2]]
+    assert partida.motor.reloj == 25 and partida.acciones_ejecutadas == 1
+    assert any("Sueltas B" in mensaje for mensaje in mensajes)
+    partida.motor.deshacer_ultima_accion()
+    assert suelo == [] and partida.inventario.listar() == objetos
+    assert partida.inventario.actual() is objetos[1]
+    assert partida.motor.reloj == 0 and partida.acciones_ejecutadas == 0
+
+
+def test_soltar_equipo_retira_bonos_y_deshacer_los_recupera():
+    partida = preparar_partida()
+    arma = SimpleNamespace(nombre="Daga", clase="arma", ataque_bonus=3)
+    partida.inventario.recoger(arma)
+    partida.equipar()
+    assert partida.jugador.ataque == 8
+    partida.soltar()
+    assert partida.jugador.ataque == 5 and partida.inventario.arma_equipada is None
+    assert partida.jugador.sala_actual.objetos_suelo[0] is arma
+    partida.motor.deshacer_ultima_accion()
+    assert partida.jugador.ataque == 8 and partida.inventario.arma_equipada is arma
+    assert partida.jugador.sala_actual.objetos_suelo == []
+
+
+def test_soltar_pergamino_no_se_deshace():
+    partida = preparar_partida()
+    pergamino = SimpleNamespace(nombre="Pergamino", clase="pergamino_retroceso")
+    partida.inventario.recoger(pergamino)
+    partida.soltar()
+    partida.motor.deshacer_ultima_accion()
+    assert partida.inventario.esta_vacio()
+    assert partida.jugador.sala_actual.objetos_suelo[0] is pergamino
+    assert partida.motor.reloj == 0
+
+
+def test_soltar_inventario_vacio_no_consume_tiempo():
+    partida = preparar_partida()
+    with pytest.raises(AccionInvalida, match="vacio"):
+        partida.soltar()
+    assert partida.motor.reloj == 0 and partida.motor.historial.acciones == []
+
+
 def test_recoger_procesa_turnos_enemigos_dentro_del_intervalo():
     partida = preparar_partida(enemigo=True)
     partida.mover("N")
@@ -368,7 +598,7 @@ def test_partida_controlador_real_navega_espera_y_sale():
     vista = VistaConsola(entrada=lambda _: next(comandos), salida=salida.append)
     Controlador(partida, vista).ejecutar()
     assert partida.estado().sala_id == 1 and partida.estado().reloj == 300
-    assert any("todavia no esta integrado" in m for m in vista.bitacora.mensajes())
+    assert any("No hay un gestor de guardado" in m for m in vista.bitacora.mensajes())
 
 
 def test_partida_misma_semilla_y_acciones_producen_mismo_estado():
@@ -434,6 +664,265 @@ def crear_cargador(carpeta, tmp_path):
     return CargadorPartida(ServicioCripta(fuente, cache))
 
 
+def test_bitacora_y_replay_reproducen_seleccion_equipo_combate_y_pergamino(paquete_oficial_de_prueba, tmp_path):
+    import json
+    from adaptadores.bitacora_partida import EscritorBitacora, leer_bitacora, reproducir_bitacora
+    from controlador.controlador import ejecutar_accion_replay
+
+    archivo = paquete_oficial_de_prueba / "criptas/prueba/contenido/1.json"
+    contenido = json.loads(archivo.read_text(encoding="utf-8"))
+    contenido["objetos"] = ["daga", "coraza", "pergamino"]
+    archivo.write_text(json.dumps(contenido), encoding="utf-8")
+    for id_objeto, ficha in (
+        ("coraza", {"id": "coraza", "nombre": "Coraza", "clase": "armadura", "defensa_bonus": 4}),
+        ("pergamino", {"id": "pergamino", "nombre": "Pergamino", "clase": "pergamino_retroceso"}),
+    ):
+        (paquete_oficial_de_prueba / f"catalogo/{id_objeto}.json").write_text(json.dumps(ficha), encoding="utf-8")
+    directa = crear_cargador(paquete_oficial_de_prueba, tmp_path / "directa").crear("prueba", 2026)
+    ruta = tmp_path / "partida.log"
+    with EscritorBitacora(ruta, "prueba", "v1", "cat-prueba", 2026) as escritor:
+        ctl = Controlador(directa, VistaConsola(salida=lambda texto: None), escritor.registrar_accion)
+        for texto in (
+            "inv", "atacar", "recoger 1", "recoger 1", "recoger 1", "sig", "equipar",
+            "sig", "equipar", "ayuda", "w", "atacar", "retroceder", "atacar", "s", "esperar",
+        ):
+            ctl.procesar(texto)
+    encabezado, acciones = leer_bitacora(ruta)
+    assert acciones[:3] == ["recoger 1"] * 3
+    assert "sig" in acciones and "retroceder" in acciones
+    assert "inv" not in acciones and "ayuda" not in acciones
+    cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path / "replay")
+    repetida = reproducir_bitacora(
+        ruta, id_cripta_actual="prueba", version_cripta_actual="v1", version_catalogo_actual="cat-prueba",
+        crear_partida=lambda h: cargador.crear(h.id_cripta, h.semilla, encabezado_log=h),
+        ejecutar_accion=ejecutar_accion_replay,
+    )
+    assert repetida.estado() == directa.estado()
+    assert repetida.acciones_ejecutadas == directa.acciones_ejecutadas
+    assert repetida.motor.azar.getstate() == directa.motor.azar.getstate()
+    assert [objeto.id for objeto in repetida.inventario.listar()] == [objeto.id for objeto in directa.inventario.listar()]
+    assert repetida.inventario.arma_equipada.id == "daga"
+    assert repetida.inventario.armadura_equipada.id == "coraza"
+    assert [(e.tiempo, e.secuencia, e.tipo, e.cancelado) for e in repetida.motor.agenda.heap] == [
+        (e.tiempo, e.secuencia, e.tipo, e.cancelado) for e in directa.motor.agenda.heap
+    ]
+
+
+def test_main_registra_y_reproduce_sin_vista_ni_puntaje_adicional(paquete_oficial_de_prueba, tmp_path, monkeypatch, capsys):
+    import main as aplicacion
+    from adaptadores.modo_offline import ModoOffline
+
+    monkeypatch.setattr(aplicacion, "ClienteHTTP", lambda **opciones: ModoOffline(str(paquete_oficial_de_prueba)))
+    comandos = iter(["recoger", "esperar", "salir"])
+    monkeypatch.setattr(aplicacion, "VistaConsola", lambda: VistaConsola(
+        entrada=lambda _: next(comandos), salida=lambda texto: None,
+    ))
+    ruta = tmp_path / "partida.log"
+    puntajes = tmp_path / "puntajes.json"
+    assert aplicacion.main(["--cripta", "prueba", "--bitacora", str(ruta),
+                            "--puntajes", str(puntajes), "--cache-dir", str(tmp_path / "cache")]) == 0
+    monkeypatch.setattr(aplicacion, "VistaConsola", lambda: pytest.fail("El replay no debe crear una vista"))
+    assert aplicacion.main(["--replay", str(ruta), "--sin-interfaz", "--puntajes", str(puntajes),
+                            "--cache-dir", str(tmp_path / "cache-replay")]) == 0
+    assert "Replay completado: sala 1, vida 30, reloj 125" in capsys.readouterr().out
+    assert not puntajes.exists()
+
+
+@pytest.mark.parametrize("pasos", [("", ""), ("t",)])
+def test_replay_avanza_con_enter_o_completa_con_t(paquete_oficial_de_prueba, tmp_path, monkeypatch, pasos):
+    import main as aplicacion
+    from adaptadores.bitacora_partida import EscritorBitacora
+    from adaptadores.modo_offline import ModoOffline
+
+    ruta = tmp_path / "partida.log"
+    with EscritorBitacora(ruta, "prueba", "v1", "cat-prueba", 2026) as escritor:
+        for accion in ("recoger 1", "esperar"):
+            escritor.registrar_accion(accion)
+    monkeypatch.setattr(aplicacion, "ClienteHTTP", lambda **opciones: ModoOffline(str(paquete_oficial_de_prueba)))
+    lineas = []
+    entradas = iter(pasos)
+    consultas = []
+
+    def entrada(mensaje):
+        consultas.append(mensaje)
+        return next(entradas)
+
+    monkeypatch.setattr(aplicacion, "VistaConsola", lambda: VistaConsola(
+        entrada=entrada, salida=lineas.append,
+    ))
+    assert aplicacion.main(["--replay", str(ruta), "--cache-dir", str(tmp_path / "cache")]) == 0
+    estados = [linea for linea in lineas if "Entrada (sala 1)" in linea]
+    assert len(estados) == 3
+    assert "reloj: 0" in estados[0] and "reloj: 25" in estados[1] and "reloj: 125" in estados[2]
+    assert any("Replay > recoger 1" in linea for linea in lineas)
+    assert any("Recoges Daga" in linea for linea in lineas)
+    assert any("Replay > esperar" in linea for linea in lineas)
+    assert len(consultas) == len(pasos)
+
+
+def test_replay_rechaza_version_incompatible_antes_de_construir_entidades(paquete_oficial_de_prueba, tmp_path):
+    from adaptadores.bitacora_partida import EncabezadoLog, ErrorBitacora
+
+    cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path)
+    with pytest.raises(ErrorBitacora, match="reproduccion fiel"):
+        cargador.crear("prueba", 2026, encabezado_log=EncabezadoLog("prueba", "otra", "cat-prueba", 2026))
+    assert cargador.jugador is None and cargador.salas.cantidad == 0
+
+
+def test_guardado_binario_de_sesion_conserva_equipo_deltas_y_referencias(paquete_oficial_de_prueba, tmp_path):
+    cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path / "original")
+    partida = cargador.crear("prueba", 2026)
+    partida.recoger(1)
+    partida.recoger(1)
+    partida.inventario.avanzar()
+    partida.equipar()
+    partida.mover("N")
+    partida.atacar(1)
+    ruta = tmp_path / "partida.bin"
+    cargador.guardar_sesion(partida, ruta)
+    otro = crear_cargador(paquete_oficial_de_prueba, tmp_path / "nueva")
+    restaurada = otro.reanudar(ruta)
+    assert restaurada.estado() == partida.estado()
+    assert restaurada.acciones_ejecutadas == partida.acciones_ejecutadas == 5
+    assert restaurada.motor.azar.getstate() == partida.motor.azar.getstate()
+    assert restaurada.inventario.arma_equipada is restaurada.inventario.frente.objeto
+    assert otro.salas.buscar(2) is restaurada.jugador.sala_actual
+    restaurada.motor.deshacer_ultima_accion()
+    assert restaurada.acciones_ejecutadas == 4
+    assert restaurada.enemigos[0].vida == 12
+    assert restaurada.jugador.sala_actual.objetos_suelo == []
+    restaurada.atacar(1)
+    assert restaurada.estado() == partida.estado()
+
+
+def test_reanudar_reutiliza_contenido_guardado_sin_recrear_instancias(paquete_oficial_de_prueba, tmp_path, monkeypatch):
+    cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path / "original")
+    partida = cargador.crear("prueba", 2026)
+    partida.recoger(1)
+    ruta = tmp_path / "partida.bin"
+    cargador.guardar_sesion(partida, ruta)
+    otro = crear_cargador(paquete_oficial_de_prueba, tmp_path / "nueva")
+    restaurada = otro.reanudar(ruta)
+    monkeypatch.setattr(otro.servicio.fuente, "contenido", lambda *args: pytest.fail("El contenido ya estaba guardado"))
+    restaurada.mover("N")
+    enemigo = restaurada.enemigos[0]
+    otro.preparar_sala(restaurada.jugador.sala_actual)
+    assert restaurada.enemigos == [enemigo]
+    assert restaurada.jugador.sala_actual.enemigos[0] is enemigo
+
+
+def test_comandos_guardar_cargar_no_consumen_tiempo_y_reconectan_retroceso(paquete_oficial_de_prueba, tmp_path):
+    cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path)
+    partida = cargador.crear("prueba", 2026)
+    partida.ruta_guardado = str(tmp_path / "partida.bin")
+    partida.recoger(1)
+    partida.guardar()
+    assert partida.motor.reloj == 25 and partida.acciones_ejecutadas == 1
+    partida.esperar()
+    solicitudes = partida.fuente.solicitudes_realizadas
+    partida.cargar()
+    assert partida.motor.reloj == 25 and partida.acciones_ejecutadas == 1
+    assert partida.fuente.solicitudes_realizadas == solicitudes
+    assert cargador.jugador is partida.jugador
+    partida.motor.deshacer_ultima_accion()
+    assert partida.motor.reloj == 0 and partida.acciones_ejecutadas == 0
+    assert partida.inventario.esta_vacio()
+    partida.esperar()
+    anterior = partida.motor
+    (tmp_path / "partida.bin").write_bytes(b"guardado truncado")
+    with pytest.raises(AccionInvalida, match="No se pudo cargar"):
+        partida.cargar()
+    assert partida.motor is anterior and partida.motor.reloj == 100
+
+
+def test_guardado_conserva_efectos_y_excepcion_de_pergaminos(paquete_oficial_de_prueba, tmp_path):
+    from adaptadores.estado_binario import ObjetoPartida
+
+    cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path / "original")
+    partida = cargador.crear("prueba", 2026)
+    suelo = partida.jugador.sala_actual.objetos_suelo
+    suelo.append(ObjetoPartida("perg", "pergamino_retroceso", "Pergamino"))
+    partida.recoger(3)
+    suelo.append(ObjetoPartida("rapidez", "pocion", "Rapidez", ficha={
+        "id": "rapidez", "modificador_velocidad": 50, "duracion": 200,
+    }))
+    partida.recoger(3)
+    partida.inventario.avanzar()
+    partida.usar()
+    ruta = tmp_path / "partida.bin"
+    cargador.guardar_sesion(partida, ruta)
+    nueva = crear_cargador(paquete_oficial_de_prueba, tmp_path / "nueva").reanudar(ruta)
+    assert nueva.jugador.velocidad == 150
+    assert nueva.jugador.efecto_velocidad.fin == 250
+    assert nueva.inventario.actual().recogido_fuera_historial
+    nueva.retroceder()
+    assert nueva.jugador.velocidad == 100 and nueva.jugador.efecto_velocidad is None
+    assert nueva.inventario.actual().id == "rapidez"
+    assert nueva.motor.reloj == 50 and nueva.acciones_ejecutadas == 2
+
+
+def test_main_permite_guardar_con_bitacora_y_reanudar_en_otra_ejecucion(paquete_oficial_de_prueba, tmp_path, monkeypatch):
+    import main as aplicacion
+    from adaptadores.modo_offline import ModoOffline
+    from adaptadores.bitacora_partida import leer_bitacora
+
+    monkeypatch.setattr(aplicacion, "ClienteHTTP", lambda **opciones: ModoOffline(str(paquete_oficial_de_prueba)))
+    ruta = tmp_path / "partida.bin"
+    log = tmp_path / "partida.log"
+    lineas = []
+    comandos = iter(["recoger", "guardar", "esperar", "cargar", "salir"])
+    monkeypatch.setattr(aplicacion, "VistaConsola", lambda: VistaConsola(
+        entrada=lambda _: next(comandos), salida=lineas.append,
+    ))
+    assert aplicacion.main(["--cripta", "prueba", "--nombre", "Kendall", "--bitacora", str(log),
+                            "--archivo-guardado", str(ruta), "--cache-dir", str(tmp_path / "cache")]) == 0
+    assert ruta.exists()
+    assert any("No puedes cargar mientras registras una bitacora" in linea for linea in lineas)
+    assert leer_bitacora(log)[1] == ["recoger", "esperar"]
+    comandos = iter(["esperar", "salir"])
+    lineas.clear()
+    assert aplicacion.main(["--cargar", str(ruta), "--cache-dir", str(tmp_path / "otra-cache")]) == 0
+    assert any("reloj: 25" in linea for linea in lineas)
+    assert any("reloj: 125" in linea for linea in lineas)
+    assert any("--- Resumen de red y cache ---" in linea for linea in lineas)
+    assert any("Solicitudes HTTP: 0/10" in linea for linea in lineas)
+    assert any("Aciertos de cache:" in linea for linea in lineas)
+    assert any("Fallos de cache:" in linea for linea in lineas)
+
+
+def test_medicion_ciclos_usa_partida_real_precargada_y_repite_el_estado(paquete_oficial_de_prueba, tmp_path, monkeypatch, capsys):
+    from modelo.bench_modelo import medir_cripta_cargada
+
+    cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path)
+    partida = cargador.crear("prueba", 2026)
+    cargador.preparar_sala(cargador.salas.buscar(2))
+    monkeypatch.setattr(cargador.servicio.fuente, "contenido", lambda *args: pytest.fail("Los datos ya estan precargados"))
+    monkeypatch.setattr(cargador.servicio.fuente, "catalogo", lambda *args: pytest.fail("Las fichas ya estan precargadas"))
+    resultado = medir_cripta_cargada(cargador, partida, repeticiones=2, ciclos=6)
+    assert resultado["ciclos"] == 12
+    assert resultado["maximo_ms"] >= 0
+    salida = capsys.readouterr().out
+    assert "maximo:" in salida and "Ciclos con tiempo >= 20 ms:" in salida
+    assert partida.acciones_ejecutadas == 6
+
+
+def test_medicion_ciclos_rechaza_una_solicitud_dentro_del_cronometro():
+    from modelo.bench_modelo import medir_ciclos_partida
+
+    partida = preparar_partida()
+    partida.fuente = SimpleNamespace(solicitudes_realizadas=0)
+    original = partida.mover
+
+    def mover_con_solicitud(direccion):
+        mensajes = original(direccion)
+        partida.fuente.solicitudes_realizadas += 1
+        return mensajes
+
+    partida.mover = mover_con_solicitud
+    with pytest.raises(RuntimeError, match="HTTP durante un ciclo"):
+        medir_ciclos_partida(partida, 1)
+
+
 def test_cargador_comparte_fichas_y_salidas_pero_no_instancias(paquete_oficial_de_prueba, tmp_path):
     cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path)
     partida = cargador.crear("prueba", 2026)
@@ -481,6 +970,15 @@ def test_cargador_y_combate_dejan_botin_en_suelo_una_sola_vez(paquete_oficial_de
     with pytest.raises(AccionInvalida):
         partida.atacar(1)
     assert len(suelo) == 1
+    pergamino = SimpleNamespace(nombre="Pergamino", clase="pergamino_retroceso")
+    partida.inventario.recoger(pergamino)
+    assert partida.motor.usar_pergamino(
+        partida.jugador, lambda objeto: objeto.clase == "pergamino_retroceso",
+    )
+    assert enemigo.vida == 12 and suelo == []
+    assert partida.inventario.esta_vacio() and partida.motor.reloj == 100
+    partida.atacar(1)
+    assert len(suelo) == 1 and suelo[0] is enemigo.suelta[0]
 
 
 def test_cargador_no_publica_contenido_si_falla_una_entidad(paquete_oficial_de_prueba, tmp_path):
@@ -528,6 +1026,65 @@ def test_main_lista_y_juega_con_componentes_reales(paquete_oficial_de_prueba, tm
     assert aplicacion.main(["--cripta", "prueba", "--cache-dir", str(tmp_path / "cache")]) == 0
     assert any("reloj: 400" in linea for linea in salida)
     assert any("Derrotaste" in linea for linea in salida)
+
+
+def test_main_offline_lista_juega_y_reproduce_sin_crear_cliente_http(paquete_oficial_de_prueba, tmp_path, monkeypatch, capsys):
+    import main as aplicacion
+
+    monkeypatch.setattr(aplicacion, "ClienteHTTP", lambda **opciones: pytest.fail("Offline no debe crear un cliente HTTP"))
+    carpeta = str(paquete_oficial_de_prueba)
+    assert aplicacion.main(["--offline", carpeta, "--listar"]) == 0
+    assert "prueba: Cripta de prueba" in capsys.readouterr().out
+    comandos = iter(["recoger", "esperar", "salir"])
+    lineas = []
+    monkeypatch.setattr(aplicacion, "VistaConsola", lambda: VistaConsola(
+        entrada=lambda _: next(comandos), salida=lineas.append,
+    ))
+    ruta_log = str(tmp_path / "partida.log")
+    cache = str(tmp_path / "cache")
+    assert aplicacion.main(["--offline", carpeta, "--cripta", "prueba",
+                            "--cache-dir", cache, "--bitacora", ruta_log]) == 0
+    assert any("Solicitudes de red: 0/10" in linea for linea in lineas)
+    assert any("reloj: 125" in linea for linea in lineas)
+    assert aplicacion.main(["--offline", carpeta, "--replay", ruta_log,
+                            "--sin-interfaz", "--cache-dir", cache]) == 0
+    assert "Replay completado: sala 1, vida 30, reloj 125" in capsys.readouterr().out
+
+
+def test_main_bench_no_crea_cliente_http(monkeypatch):
+    import main as aplicacion
+    from modelo import bench_modelo
+
+    llamadas = []
+    monkeypatch.setattr(aplicacion, "ClienteHTTP", lambda **opciones: pytest.fail("Bench no debe crear un cliente HTTP"))
+    monkeypatch.setattr(bench_modelo, "ejecutar_bench_completo", lambda *args: llamadas.append(args))
+    assert aplicacion.main(["--bench", "--repeticiones", "1", "--semilla", "2026"]) == 0
+    assert llamadas == [(1, 2026, 25)]
+
+
+def test_main_bench_cripta_conecta_medicion_real_sin_vista(paquete_oficial_de_prueba, tmp_path, monkeypatch, capsys):
+    import main as aplicacion
+    from modelo import bench_modelo
+
+    monkeypatch.setattr(bench_modelo, "ejecutar_bench_completo", lambda *args: None)
+    monkeypatch.setattr(aplicacion, "ClienteHTTP", lambda **opciones: pytest.fail("Se pidio modo offline"))
+    monkeypatch.setattr(aplicacion, "VistaConsola", lambda: pytest.fail("La medicion excluye la vista"))
+    codigo = aplicacion.main([
+        "--bench", "--cripta", "prueba", "--offline", str(paquete_oficial_de_prueba),
+        "--repeticiones", "1", "--cache-dir", str(tmp_path / "cache"),
+    ])
+    salida = capsys.readouterr().out
+    assert "CICLO COMPLETO: cripta prueba" in salida
+    assert "Ciclos entre decisiones:" in salida and "maximo:" in salida
+    assert codigo == (1 if "NO CUMPLE" in salida else 0)
+
+
+def test_main_offline_informa_paquete_ausente(tmp_path, capsys):
+    import main as aplicacion
+
+    assert aplicacion.main(["--offline", str(tmp_path / "ausente"), "--listar"]) == 1
+    error = capsys.readouterr().err
+    assert "no existe" in error and "criptas.json" in error and "Traceback" not in error
 
 
 def test_main_error_http_se_informa_sin_traceback(monkeypatch, capsys):

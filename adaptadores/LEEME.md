@@ -99,6 +99,7 @@ de la acción. El adaptador no fija una sintaxis nueva para los comandos.
 La prueba `test_replay_con_motor_real_reproduce_azar_efectos_y_retroceso` conecta esos
 callbacks con `MotorEventos`, salas, un enemigo e inventario reales. Comprueba reloj,
 vida, posición, agenda, estado del azar e inventario tras reproducir acciones con
-veneno y pergamino. La conexión de estos callbacks con la futura clase de partida y
-las banderas globales de la aplicación sigue pendiente; no se han modificado los
-archivos de modelo, controlador o vista de los otros integrantes.
+veneno y pergamino. La aplicacion conecta la partida real mediante `--bitacora ruta.log`
+y `--replay ruta.log`, incluyendo la seleccion del inventario y el uso de pergaminos.
+El replay muestra la secuencia por defecto; `--sin-interfaz` evita crear una vista.
+Ninguno de los dos modos registra otro puntaje.

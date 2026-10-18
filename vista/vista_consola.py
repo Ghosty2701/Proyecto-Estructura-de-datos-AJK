@@ -11,12 +11,15 @@ AYUDA = """Comandos:
   atacar [numero]        ejemplo: atacar 1 (primer enemigo)
   esperar                pasar tiempo
   recoger [numero]       ejemplo: recoger 1 (primer objeto del suelo)
-  usar | equipar | soltar   actuar sobre el objeto que se esta viendo
-  inv | sig | ant        ver inventario / siguiente / anterior
-  orden peso|valor|nombre   vista ordenada del inventario
+  inv                    abrir el inventario y ver sus comandos
   retroceder             usar un pergamino de retroceso
   guardar | cargar       guardar o cargar la partida
   ayuda | salir"""
+
+AYUDA_INVENTARIO = """Comandos de inventario:
+  sig | ant              seleccionar el siguiente objeto o el anterior
+  orden peso|valor|nombre   consultar una vista ordenada
+  usar | equipar | soltar   actuar sobre el objeto seleccionado"""
 
 
 def _nombre(objeto):
@@ -28,12 +31,26 @@ class VistaConsola:
         self._entrada = entrada
         self._salida = salida
         self.bitacora = BitacoraPantalla(capacidad_bitacora)
+        self._inventario_visible = False
+        self.modo_replay = False
+        self.permitir_cargar = True
+
+    def mostrar_comandos(self):
+        if self.modo_replay:
+            self._salida("Replay: Enter = siguiente bloque | T + Enter = completar todo")
+            return
+        cargar = " | cargar" if self.permitir_cargar else ""
+        self._salida("Comandos: w/a/s/d | atacar [numero] | recoger [numero] | abrir <n/s/e/o> | "
+                     f"esperar | inv | retroceder | guardar{cargar} | ayuda | salir")
+        if self._inventario_visible:
+            self._salida("Inventario: sig | ant | orden peso/valor/nombre | usar | equipar | soltar")
 
     def agregar_mensajes(self, mensajes):
         for mensaje in mensajes:
             self.bitacora.agregar(mensaje)
 
     def mostrar_estado(self, estado):
+        self._inventario_visible = False
         s = self._salida
         s("")
         s("=" * 50)
@@ -88,14 +105,18 @@ class VistaConsola:
                 s(f"  {numero}. {nombre}")
 
         s("-" * 50)
-        mensajes = self.bitacora.mensajes()[-10:]
+        mensajes = self.bitacora.mensajes()[-20:]
         for mensaje in mensajes:
             s("  " + mensaje)
         if not mensajes:
             s("  (sin mensajes)")
+        if not estado.terminada:
+            self.mostrar_comandos()
 
     def mostrar_inventario(self, objetos, actual=None, arma=None, armadura=None, titulo="Inventario"):
         s = self._salida
+        self._inventario_visible = True
+        self.mostrar_comandos()
         s(f"--- {titulo} ({len(objetos)}) ---")
         if not objetos:
             s("  (vacio)")
@@ -112,7 +133,11 @@ class VistaConsola:
             s(f" {marca} {_nombre(objeto)}{equipo}{extra}")
 
     def mostrar_ayuda(self):
-        self._salida(AYUDA)
+        ayuda = AYUDA if self.permitir_cargar else AYUDA.replace("guardar | cargar", "guardar")
+        self._salida(ayuda)
+        if self._inventario_visible:
+            self._salida(AYUDA_INVENTARIO)
+        self.mostrar_comandos()
 
     def mostrar_fin(self, estado):
         if estado.resultado == "victoria":
@@ -121,9 +146,22 @@ class VistaConsola:
             self._salida("Derrota: tu vida llegó a 0.")
         else:
             self._salida("Partida terminada.")
+        resumen = getattr(estado, "resumen", None)
+        if resumen is not None:
+            self._salida(f"Jugador: {resumen['nombre_jugador']}; "
+                         f"cripta: {resumen['id_cripta']} (version {resumen['version_cripta']})")
+            self._salida(f"Acciones: {resumen['acciones_jugador']}; "
+                         f"enemigos derrotados: {resumen['enemigos_derrotados']}; "
+                         f"tiempo final: {resumen['tiempo_final']}")
 
-    def leer_comando(self):
+    def mostrar_resumen_red(self, solicitudes, presupuesto, aciertos, fallos):
+        self._salida("--- Resumen de red y cache ---")
+        self._salida(f"Solicitudes HTTP: {solicitudes}/{presupuesto}")
+        self._salida(f"Aciertos de cache: {aciertos}")
+        self._salida(f"Fallos de cache: {fallos}")
+
+    def leer_comando(self, mensaje="> "):
         try:
-            return self._entrada("> ")
+            return self._entrada(mensaje)
         except EOFError:
             return "salir"

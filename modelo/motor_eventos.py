@@ -269,6 +269,11 @@ class MotorEventos(MotorEfectos):
         if jugador.inventario is None:
             raise ValueError("El jugador no tiene inventario asignado")
 
+        if hasattr(jugador.inventario, "capacidad") and not self.historial.cabe_inventario_al_deshacer(
+            jugador.inventario, espacios_liberados=1,
+        ):
+            raise ValueError("No hay espacio para restaurar el inventario; no se consume el pergamino")
+
         if not jugador.inventario.consumir_primero(es_pergamino):
             return False
 
@@ -390,6 +395,35 @@ class MotorEventos(MotorEfectos):
         self.programar_accion(jugador, 50)
         return self.avanzar_hasta_jugador(jugador, ejecutar_evento)
 
+    def soltar_jugador(self, jugador, ejecutar_evento):
+        if jugador.vida <= 0 or jugador.sala_actual is None:
+            raise ValueError("El jugador debe estar vivo y tener una sala actual")
+        inventario = jugador.inventario
+        objeto = inventario.actual() if inventario is not None else None
+        if objeto is None:
+            raise ValueError("No hay un objeto seleccionado en el inventario")
+        turno = self.consultar_siguiente_evento()
+        if (
+            turno is None or turno is not jugador.proxima_accion
+            or turno.actor is not jugador or turno.tipo != "accion"
+            or turno.tiempo != self.reloj
+        ):
+            raise ValueError("Primero debes llegar a la decision del jugador")
+
+        equipado = objeto is inventario.arma_equipada or objeto is inventario.armadura_equipada
+        self.iniciar_accion()
+        self.siguiente_evento()
+        _, cambio = inventario.soltar_actual_reversible()
+        suelo = jugador.sala_actual.objetos_suelo
+        suelo.append(objeto)
+        self.historial.registrar_objeto_soltado(inventario, cambio, suelo)
+        if equipado:
+            self._cambiar(jugador, "ataque", jugador.ataque - getattr(objeto, "ataque_bonus", 0))
+            self._cambiar(jugador, "defensa", jugador.defensa - getattr(objeto, "defensa_bonus", 0))
+        self.refrescar_rastro_jugador(jugador)
+        self.programar_accion(jugador, 25)
+        return self.avanzar_hasta_jugador(jugador, ejecutar_evento)
+
     def recoger_jugador(self, jugador, indice, ejecutar_evento):
         if jugador.vida <= 0 or jugador.sala_actual is None:
             raise ValueError("El jugador debe estar vivo y tener una sala actual")
@@ -417,6 +451,9 @@ class MotorEventos(MotorEfectos):
         self.iniciar_accion()
         self.siguiente_evento()
         _, cambio = inventario.recoger_reversible(objeto)
+        if getattr(objeto, "clase", None) == "pergamino_retroceso":
+            # Esta marca comparte la excepcion del pergamino: nunca se deshace.
+            objeto.recogido_fuera_historial = True
         suelo.pop(indice - 1)
         self.historial.registrar_recogida(
             inventario, cambio, suelo, siguiente,
@@ -737,7 +774,7 @@ class MotorEventos(MotorEfectos):
 
         return True
     
-    def mover_jugador(self, jugador, salida, ejecutar_evento):
+    def mover_jugador(self, jugador, salida, ejecutar_evento, *, finalizar_al_entrar=False):
         if jugador.vida <= 0 or jugador.sala_actual is None:
             raise ValueError(
                 "El jugador debe estar vivo y ubicado en una sala"
@@ -798,6 +835,8 @@ class MotorEventos(MotorEfectos):
         self.siguiente_evento()
         self.refrescar_rastro_jugador(jugador)
         self.completar_movimiento_jugador(jugador, destino)
+        if finalizar_al_entrar:
+            return True
         self.programar_accion(jugador, 100)
         self.activar_enemigos(jugador, destino.enemigos)
         self.activar_trampas(jugador)

@@ -1,9 +1,7 @@
-import random
 import time
+import random
 
-from adaptadores.cache_catalogo import ArbolAVL
-
-SEMILLA_BENCH = 2026
+SEMILLA_BENCH = 2042
 
 class NodoSimple:
     def __init__(self, clave, valor):

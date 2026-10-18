@@ -1,3 +1,4 @@
+import math
 import time
 import uuid
 import requests
@@ -76,9 +77,14 @@ class ClienteHTTP:
             if respuesta.status_code == 429 and reintentos < self.max_reintentos_429:
                 try:
                     espera = respuesta.json()["reintentar_en"]
-                except (ValueError, KeyError, TypeError) as error:
+                    if type(espera) not in (int, float) or not math.isfinite(espera) or espera < 0:
+                        raise ValueError("la espera debe ser un numero finito no negativo")
+                except (ValueError, KeyError, TypeError, OverflowError) as error:
                     raise ErrorHTTP(f"{operacion}: HTTP 429 sin 'reintentar_en' valido") from error
-                time.sleep(espera)
+                try:
+                    time.sleep(espera)
+                except (ValueError, OverflowError) as error:
+                    raise ErrorHTTP(f"{operacion}: HTTP 429 con 'reintentar_en' fuera de rango") from error
                 reintentos += 1
                 continue
 

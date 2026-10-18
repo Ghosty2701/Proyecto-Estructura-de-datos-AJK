@@ -62,6 +62,28 @@ def leer_sala(ruta, id_sala):
         return _leer_bloque(archivo, offset, longitud)
 
 
+def leer_guardado(ruta):
+    """Lee todos los bloques con una sola apertura, conservando el indice propio."""
+    with open(ruta, "rb") as archivo:
+        cantidad, offset_indice = _leer_cabecera(archivo)
+        globales = _leer_bloque(archivo, TAM_CABECERA)
+        archivo.seek(offset_indice)
+        entradas = []
+        anterior = None
+        for _ in range(cantidad):
+            datos = archivo.read(TAM_ENTRADA)
+            if len(datos) != TAM_ENTRADA:
+                raise ErrorGuardado("archivo truncado: indice incompleto")
+            id_sala, offset, longitud = struct.unpack(FORMATO_ENTRADA, datos)
+            if anterior is not None and id_sala <= anterior:
+                raise ErrorGuardado("indice de salas fuera de orden o con duplicados")
+            anterior = id_sala
+            entradas.append((id_sala, offset, longitud))
+        salas = [(id_sala, _leer_bloque(archivo, offset, longitud))
+                 for id_sala, offset, longitud in entradas]
+        return globales, salas
+
+
 def _escribir_bloque(archivo, datos):
     archivo.write(struct.pack(FORMATO_PREFIJO, len(datos)))
     archivo.write(datos)

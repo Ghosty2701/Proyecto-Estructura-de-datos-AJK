@@ -137,3 +137,113 @@ def test_contenido_que_no_llega_se_reporta(tmp_path):
     with pytest.raises(ErrorCripta) as error:
         servicio.sala_resuelta(2)
     assert "sala 2" in str(error.value)
+
+
+class FuenteDosCriptas(FuenteFalsa):
+    def datos_cripta(self, cripta_id):
+        if cripta_id == "cripta-x":
+            return super().datos_cripta(cripta_id)
+        return {"id": cripta_id, "version": "v2", "paginas": 1}
+
+    def pagina_esqueleto(self, cripta_id, pagina):
+        if cripta_id == "cripta-x":
+            return super().pagina_esqueleto(cripta_id, pagina)
+        return {"salas": [{"id": 1, "nombre": "Entrada Y", "salidas": {}}]}
+
+    def contenido(self, cripta_id, salas):
+        if cripta_id == "cripta-x":
+            return super().contenido(cripta_id, salas)
+        self.pedidos_contenido.append(list(salas))
+        return {"contenido": [{"sala": 1, "enemigos": [], "objetos": ["itm_daga"], "trampas": []}]}
+
+
+def test_cambiar_de_cripta_no_mezcla_salas_ni_contenido(tmp_path):
+    servicio, fuente = crear_servicio(tmp_path, FuenteDosCriptas())
+    servicio.sala_resuelta(1)
+    servicio.cargar("cripta-y")
+    sala = servicio.sala_resuelta(1)
+    assert servicio.cripta_id == "cripta-y"
+    assert servicio.esqueleto.cantidad == 1
+    assert servicio.esqueleto.buscar(2) is None
+    assert sala["nombre"] == "Entrada Y"
+    assert sala["objetos"][0]["id"] == "itm_daga"
+    assert fuente.pedidos_contenido == [[1, 2], [1]]
+
+
+def test_recargar_misma_cripta_invalida_contenido_anterior(tmp_path):
+    fuente = FuenteFalsa(contenidos=dict(CONTENIDOS))
+    servicio, _ = crear_servicio(tmp_path, fuente)
+    servicio.sala_resuelta(1)
+    fuente.contenidos[1] = {"sala": 1, "enemigos": [], "objetos": [], "trampas": []}
+    servicio.cargar("cripta-x")
+    assert servicio.sala_resuelta(1)["objetos"] == []
+
+
+def test_carga_fallida_conserva_la_cripta_anterior(tmp_path, monkeypatch):
+    servicio, fuente = crear_servicio(tmp_path)
+    sala = servicio.sala_resuelta(1)
+    esqueleto, contenido = servicio.esqueleto, servicio.contenido
+
+    def pagina_fallida(cripta_id, pagina):
+        if pagina == 2:
+            raise ErrorCripta("fallo de pagina")
+        return PAGINAS[1]
+
+    monkeypatch.setattr(fuente, "pagina_esqueleto", pagina_fallida)
+    with pytest.raises(ErrorCripta, match="fallo de pagina"):
+        servicio.cargar("cripta-y")
+    assert servicio.cripta_id == "cripta-x"
+    assert servicio.esqueleto is esqueleto
+    assert servicio.contenido is contenido
+    assert servicio.sala_resuelta(1) == sala
+
+
+def test_anticipa_fichas_y_objetos_sueltos_de_la_vecina(tmp_path):
+    servicio, fuente = crear_servicio(tmp_path)
+    servicio.sala_resuelta(1)
+    ids = [clave for pedido in fuente.pedidos_catalogo for clave in pedido]
+    assert ids == ["itm_antorcha", "ent_rata", "itm_daga", "trp_dardos", "itm_pocion"]
+    assert all(len(pedido) <= 10 for pedido in fuente.pedidos_catalogo)
+    anteriores = len(fuente.pedidos_catalogo)
+    sala = servicio.sala_resuelta(2)
+    assert len(fuente.pedidos_catalogo) == anteriores
+    assert sala["enemigos"][0]["suelta"][0]["id"] == "itm_pocion"
+
+
+def test_precarga_con_cache_pequena_recupera_de_disco_sin_repedir(tmp_path):
+    fuente = FuenteFalsa()
+    cache = CacheCatalogo(fuente, carpeta=str(tmp_path), tope=1)
+    servicio = ServicioCripta(fuente, cache)
+    servicio.cargar("cripta-x")
+    servicio.sala_resuelta(1)
+    anteriores = len(fuente.pedidos_catalogo)
+    sala = servicio.sala_resuelta(2)
+    assert len(fuente.pedidos_catalogo) == anteriores
+    assert cache.lecturas_disco > 0
+    assert cache.lista.cantidad == cache.arbol.cantidad == 1
+    assert sala["objetos"][0]["id"] == "itm_daga"
+
+
+def test_precarga_respeta_la_proteccion_existente_de_fichas_en_uso(tmp_path):
+    fuente = FuenteFalsa()
+    cache = CacheCatalogo(fuente, carpeta=str(tmp_path), tope=2,
+                          esta_en_uso=lambda clave: clave == "itm_antorcha")
+    ficha = cache.obtener("itm_antorcha")
+    servicio = ServicioCripta(fuente, cache)
+    servicio.cargar("cripta-x")
+    servicio.sala_resuelta(2)
+    assert cache.arbol.buscar("itm_antorcha").ficha is ficha
+    assert cache.lista.cantidad == cache.arbol.cantidad == 2
+
+
+def test_salas_vacias_no_consultan_el_catalogo(tmp_path):
+    class FuenteVacia(FuenteFalsa):
+        def version_catalogo(self):
+            raise AssertionError("no hay fichas que resolver")
+
+    contenidos = {numero: {"sala": numero, "enemigos": [], "objetos": [], "trampas": []}
+                  for numero in range(1, 5)}
+    fuente = FuenteVacia(contenidos)
+    servicio, _ = crear_servicio(tmp_path, fuente)
+    assert servicio.sala_resuelta(1)["enemigos"] == []
+    assert fuente.pedidos_catalogo == []

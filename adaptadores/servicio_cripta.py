@@ -15,12 +15,17 @@ class ServicioCripta:
         self.contenido = ArbolAVL()
 
     def cargar(self, cripta_id):
-        self.cripta_id = cripta_id
         datos = self.fuente.datos_cripta(cripta_id)
+        # Publicar la nueva cripta solo cuando todas sus paginas esten completas.
+        # Se mantiene la estructura AVL; los datos de otra carga no se reutilizan.
+        esqueleto = ArbolAVL()
         for pagina in range(1, datos["paginas"] + 1):
             respuesta = self.fuente.pagina_esqueleto(cripta_id, pagina)
             for sala in respuesta["salas"]:
-                self.esqueleto.insertar(sala["id"], sala)
+                esqueleto.insertar(sala["id"], sala)
+        self.cripta_id = cripta_id
+        self.esqueleto = esqueleto
+        self.contenido = ArbolAVL()
         return datos
 
     def asegurar_contenido(self, sala_id):
@@ -42,8 +47,43 @@ class ServicioCripta:
         if self.contenido.buscar(sala_id) is None:
             raise ErrorCripta(f"el contenido de la sala {sala_id} no vino en la respuesta")
 
-    def sala_resuelta(self, sala_id):
+    def precargar_catalogo(self, sala_id):
+        """Resuelve tambien las fichas de la vecindad ya usada por el prefetch.
+
+        La cache conserva su AVL, su LRU y la persistencia existentes. Si una ficha
+        anticipada sale de memoria, la siguiente entrada la recupera del disco.
+        """
         self.asegurar_contenido(sala_id)
+        sala = self.esqueleto.buscar(sala_id)
+        tipos = []
+        for id_vecina in [sala_id] + vecinas(sala):
+            contenido = self.contenido.buscar(id_vecina)
+            if contenido is None:
+                continue
+            for enemigo in contenido["enemigos"]:
+                if enemigo["tipo"] not in tipos:
+                    tipos.append(enemigo["tipo"])
+            for objeto in contenido["objetos"]:
+                if objeto not in tipos:
+                    tipos.append(objeto)
+            for trampa in contenido["trampas"]:
+                if trampa["tipo"] not in tipos:
+                    tipos.append(trampa["tipo"])
+
+        if not tipos:
+            return
+        fichas = self.cache.obtener_varias(tipos)
+        soltados = []
+        for ficha in fichas:
+            if ficha["clase"] == "enemigo":
+                for objeto in ficha.get("suelta", []):
+                    if objeto not in soltados:
+                        soltados.append(objeto)
+        if soltados:
+            self.cache.obtener_varias(soltados)
+
+    def sala_resuelta(self, sala_id):
+        self.precargar_catalogo(sala_id)
         sala = self.esqueleto.buscar(sala_id)
         contenido = self.contenido.buscar(sala_id)
 
@@ -54,7 +94,7 @@ class ServicioCripta:
             tipos.append(objeto)
         for trampa in contenido["trampas"]:
             tipos.append(trampa["tipo"])
-        fichas = self.cache.obtener_varias(tipos)
+        fichas = self.cache.obtener_varias(tipos) if tipos else []
 
         posicion = 0
         enemigos = []
@@ -73,7 +113,7 @@ class ServicioCripta:
         soltados = []
         for enemigo in enemigos:
             soltados += enemigo["ficha"].get("suelta", [])
-        fichas_soltadas = self.cache.obtener_varias(soltados)
+        fichas_soltadas = self.cache.obtener_varias(soltados) if soltados else []
 
         posicion = 0
         for enemigo in enemigos:

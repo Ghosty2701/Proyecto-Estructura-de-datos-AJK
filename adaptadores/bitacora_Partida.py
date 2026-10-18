@@ -11,7 +11,7 @@ class EncabezadoLog:
 class EscritorBitacora:
     def __init__(self, ruta, id_cripta, version_cripta, version_catalogo, semilla):
         try:
-            self.archivo = open(ruta, "x")
+            self.archivo = open(ruta, "x", encoding="utf-8")
         except FileExistsError as error:
             raise ErrorBitacora(f"la bitacora {ruta} ya existe") from error
 
@@ -24,13 +24,19 @@ class EscritorBitacora:
         self.archivo.flush()
 
     def registrar_accion(self, accion):
-        if "\n" in accion:
+        if "\n" in accion or "\r" in accion:
             raise ErrorBitacora("una accion no puede contener saltos de linea")
         self.archivo.write(accion + "\n")
         self.archivo.flush()
 
     def cerrar(self):
         self.archivo.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.cerrar()
 
 # ------------------------------------------------------------------------------------------------------------
 
@@ -44,7 +50,7 @@ def _leer_valor(archivo, clave_esperada):
 
 def leer_bitacora(ruta):
     try:
-        with open(ruta) as archivo:
+        with open(ruta, encoding="utf-8") as archivo:
             if archivo.readline().rstrip("\n") != "CRIPTA-LOG 1":
                 raise ErrorBitacora(f"{ruta} no es una bitacora de Cripta")
 
@@ -61,6 +67,8 @@ def leer_bitacora(ruta):
                 acciones.append(linea.rstrip("\n"))
     except FileNotFoundError as error:
         raise ErrorBitacora(f"no existe la bitacora {ruta}") from error
+    except UnicodeError as error:
+        raise ErrorBitacora(f"{ruta}: la bitacora no es UTF-8 valido") from error
 
     try:
         semilla = int(semilla_texto)
@@ -68,6 +76,37 @@ def leer_bitacora(ruta):
         raise ErrorBitacora(f"la semilla '{semilla_texto}' no es un numero entero") from error
 
     return EncabezadoLog(id_cripta, version_cripta, version_catalogo, semilla), acciones
+
+
+def reproducir_bitacora(
+    ruta, *, id_cripta_actual, version_cripta_actual, version_catalogo_actual,
+    crear_partida, ejecutar_accion,
+):
+    """Ejecuta el log sin vista y sin elegir el formato de guardado del modelo.
+
+    crear_partida(encabezado) construye una partida nueva con la semilla del log.
+    ejecutar_accion(partida, texto) procesa exactamente una accion registrada;
+    debe lanzar una excepcion o devolver False si la accion no se puede ejecutar.
+    Los callbacks conectan el contrato del modelo sin importar HTTP ni la vista.
+    La compatibilidad se comprueba antes de construir o modificar una partida.
+    """
+    encabezado, acciones = leer_bitacora(ruta)
+    verificar_compatibilidad(
+        encabezado, id_cripta_actual, version_cripta_actual, version_catalogo_actual
+    )
+    partida = crear_partida(encabezado)
+    for numero, accion in enumerate(acciones, 1):
+        if not accion.strip():
+            raise ErrorBitacora(f"replay: accion {numero} vacia")
+        try:
+            resultado = ejecutar_accion(partida, accion)
+            if resultado is False:
+                raise ValueError("accion rechazada")
+        except Exception as error:
+            raise ErrorBitacora(
+                f"replay: fallo en accion {numero} ({accion!r}): {error}"
+            ) from error
+    return partida
 
 
 def verificar_compatibilidad(encabezado, id_cripta_actual, version_cripta_actual, version_catalogo_actual):

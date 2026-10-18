@@ -1,0 +1,37 @@
+{
+  "fecha_local": "2026-10-18T07:38:13.725490-06:00",
+  "python": "3.14.6",
+  "plataforma": "Windows-11-10.0.26300-SP0",
+  "maquina": "AMD64",
+  "procesador": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+  "commit_base": "6372fd760e4d0587f57f0507117b3c78e37e74d8",
+  "sha256_archivos_python": "389adbef5fa385cbfa4624c5608981de00073e23bd798bd768f89dd32378f579",
+  "nota": "SHA256 de rutas relativas POSIX + NUL + bytes + NUL, ordenadas; main.py y Python de modelo, controlador, vista, adaptadores, comun y Pruebas. Excluye documentacion y temporales.",
+  "ejecuciones": [
+    {
+      "archivo": "pruebas.txt",
+      "argumentos": [
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "--basetemp",
+        "D:\\proyrecto edd\\proyecto-edd\\.cache_cripta\\verificacion_correcciones\\pytest_final"
+      ],
+      "codigo": 0,
+      "duracion_segundos": 9.078
+    },
+    {
+      "archivo": "bench_subsistemas.txt",
+      "argumentos": [
+        "main.py",
+        "--bench",
+        "--repeticiones",
+        "5"
+      ],
+      "codigo": 0,
+      "duracion_segundos": 9.917
+    }
+  ]
+}

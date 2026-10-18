@@ -209,6 +209,8 @@ class ArbolAVL:
 
 class CacheCatalogo:
     def __init__(self, fuente, carpeta="cache_catalogo", tope=25, esta_en_uso=None):
+        if type(tope) is not int or tope < 1:
+            raise ValueError("El tope de fichas debe ser un entero positivo")
         self.fuente = fuente
         self.carpeta = carpeta
         self.tope = tope
@@ -287,6 +289,23 @@ class CacheCatalogo:
 
     # --- Memoria ---
 
+    def verificar_capacidad(self, ids):
+        """Comprueba el conjunto protegido antes de preparar una accion."""
+        protegidas = ArbolAVL()
+        nodo = self.lista.frente
+        while nodo is not None:
+            if self._en_uso(nodo.id_ficha):
+                protegidas.insertar(nodo.id_ficha, True)
+            nodo = nodo.siguiente
+        for identificador in ids:
+            protegidas.insertar(identificador, True)
+        if protegidas.cantidad > self.tope:
+            raise ErrorCatalogo(
+                f"Capacidad insuficiente: se necesitan {protegidas.cantidad} fichas "
+                f"protegidas y el tope es {self.tope}. "
+                f"Reanuda con --cache-size {protegidas.cantidad} o mayor."
+            )
+
     def _buscar_en_memoria(self, id_ficha):
         nodo = self.arbol.buscar(id_ficha)
         if nodo is None:
@@ -305,12 +324,14 @@ class CacheCatalogo:
             if referencia is not None:
                 referencia.datos = ficha
             return
-        # Se libera hasta que quede espacio. Si todas las fichas estan en uso no hay a quien
-        # liberar y se supera el tope temporalmente: el enunciado prohibe liberar fichas en uso.
+        # Las fichas de precarga pueden quedar solo en disco si todas las residentes
+        # estan protegidas. Una ficha necesaria exige capacidad antes de avanzar.
         while self.lista.cantidad >= self.tope:
             candidato = self._buscar_candidato()
             if candidato is None:
-                break
+                if self._en_uso(id_ficha):
+                    self.verificar_capacidad([id_ficha])
+                return
             self.arbol.quitar(candidato.id_ficha)
             self.lista.quitar(candidato)
             referencia = self.referencias.buscar(candidato.id_ficha)
@@ -379,6 +400,8 @@ class CacheCatalogo:
             respuesta = self.fuente.catalogo(lote)
             for ficha in respuesta["entidades"]:
                 self._guardar_en_disco(ficha)
+            # Persistir el lote completo incluso si despues falta capacidad.
+            for ficha in respuesta["entidades"]:
                 self._insertar_en_memoria(ficha["id"], ficha)
                 recibidas.append(ficha)
         return recibidas

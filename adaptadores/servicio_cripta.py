@@ -66,7 +66,8 @@ class ServicioCripta:
             self.salas_al_ampliar = self.contenido.cantidad
             self.motivo_agrupacion = (
                 f"Se amplia la agrupacion: se estiman {estimadas} consultas "
-                f"pendientes y quedan {disponibles} normales; la reserva se mantiene."
+                f"pendientes y quedan {max(0, disponibles)} antes del margen "
+                "preventivo; las consultas necesarias pueden usar ese margen."
             )
 
     def asegurar_contenido(self, sala_id):

@@ -75,11 +75,14 @@ class MotorEventos(MotorEfectos):
         self.historial.registrar_azar(self.azar)
 
     def _cambiar(self, objeto, nombre, valor):
-        if getattr(objeto, nombre) is valor:
+        anterior = getattr(objeto, nombre)
+        if anterior is valor:
             return
 
         if self.historial.acciones:
-            self.historial.registrar_atributo(objeto, nombre)
+            # Es la ruta mas frecuente del ciclo: reutilizar el valor ya leido
+            # conserva el mismo delta sin repetir consultas y llamadas por enlace.
+            self.historial.acciones[-1].cambios.append(("atributo", objeto, (nombre, anterior)))
 
         setattr(objeto, nombre, valor)
 

@@ -37,11 +37,12 @@ class ContadorOperaciones:
         return f"ContadorOperaciones(comparaciones={self.comparaciones}, movimientos={self.movimientos})"
 
 
-def insertion_sort(datos, clave=_clave_identidad, contador=None):
+def insertion_sort(datos, clave=_clave_identidad, contador=None, *, _limite=None):
     # Estable. Adaptativo: O(n) si los datos ya vienen casi ordenados, O(n^2) en el
     # peor caso (orden inverso). Barato de arrancar: sin recursion ni arreglos auxiliares.
     resultado = list(datos)
     n = len(resultado)
+    movimientos = 0
 
     for i in range(1, n):
         actual = resultado[i]
@@ -52,7 +53,10 @@ def insertion_sort(datos, clave=_clave_identidad, contador=None):
             if contador is not None:
                 contador.comparar()
             if clave(resultado[j]) > clave_actual:
+                if _limite is not None and movimientos >= _limite:
+                    return None
                 resultado[j + 1] = resultado[j]
+                movimientos += 1
                 if contador is not None:
                     contador.mover()
                 j -= 1
@@ -130,7 +134,11 @@ def ordenar(datos, clave=_clave_identidad, comparacion_costosa=False, contador=N
     if not comparacion_costosa:
         descensos = _contar_descensos(datos, clave)
         if descensos <= n * UMBRAL_PROPORCION_DESORDEN:
-            return insertion_sort(datos, clave, contador), "insertion_sort"
+            # Pocos descensos pueden esconder muchas inversiones (dos bloques
+            # ordenados en posicion inversa). Limitar el intento evita O(n^2).
+            resultado = insertion_sort(datos, clave, contador, _limite=n * n.bit_length())
+            if resultado is not None:
+                return resultado, "insertion_sort"
 
     return merge_sort(datos, clave, contador), "merge_sort"
 

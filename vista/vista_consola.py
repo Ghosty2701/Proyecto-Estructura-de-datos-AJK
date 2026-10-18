@@ -56,8 +56,8 @@ class VistaConsola:
         if presupuesto is not None:
             s(f"Solicitudes de red: {estado.solicitudes_usadas}/{presupuesto}")
             if getattr(estado, "reserva", 0):
-                s(f"Normales: {estado.solicitudes_normales}/{estado.limite_normal}; "
-                  f"reserva inicial: {estado.reserva}; reintentos usados: {estado.reintentos}")
+                s(f"Consultas normales: {estado.solicitudes_normales}; "
+                  f"margen preventivo: {estado.reserva}; reintentos usados: {estado.reintentos}")
         if estado.efectos:
             s("Efectos: " + ", ".join(estado.efectos))
 

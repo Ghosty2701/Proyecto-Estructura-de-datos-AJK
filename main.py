@@ -9,7 +9,7 @@ from adaptadores.cliente_http import ClienteHTTP, ErrorHTTP, PresupuestoAgotado
 from adaptadores.modo_offline import ModoOffline, ErrorOffline
 from adaptadores.guardado_binario import ErrorGuardado
 from adaptadores.servicio_cripta import ErrorCripta, ServicioCripta
-from adaptadores.puntajes import ErrorPuntajes, registrar_resultado
+from adaptadores.puntajes import ErrorPuntajes, consultar_puntajes, registrar_resultado
 from adaptadores.bitacora_partida import (
     ErrorBitacora, EscritorBitacora, leer_bitacora, reproducir_bitacora,
 )
@@ -25,10 +25,20 @@ def _entero_positivo(texto):
     return valor
 
 
+def _resumen_red(fuente, cache):
+    presupuesto = fuente.presupuesto_solicitudes
+    print(f"Solicitudes: {fuente.solicitudes_realizadas}/{presupuesto}; "
+          f"cache: {cache.aciertos} aciertos, {cache.fallos} fallos, "
+          f"{cache.lecturas_disco} lecturas de disco.")
+
+
 def main(argumentos=None):
     parser = argparse.ArgumentParser(description="Cripta: primera partida de consola con datos oficiales.")
     seleccion = parser.add_mutually_exclusive_group()
     seleccion.add_argument("--listar", action="store_true", help="mostrar las criptas oficiales disponibles")
+    seleccion.add_argument("--ver-puntajes", action="store_true", help="consultar resultados locales ordenados")
+    parser.add_argument("--orden-puntajes", choices=("tiempo", "acciones", "enemigos", "nombre"),
+                        default="tiempo", help="criterio para --ver-puntajes")
     parser.add_argument("--bench", action="store_true", help="medir subsistemas y, con --cripta, ciclos reales")
     parser.add_argument("--repeticiones", type=_entero_positivo, default=5, help="repeticiones del benchmark")
     seleccion.add_argument("--cripta", help="ID de la cripta que se jugara")
@@ -45,9 +55,9 @@ def main(argumentos=None):
     parser.add_argument("--offline", nargs="?", const="datos_offline", metavar="CARPETA",
                         help="leer el paquete local sin HTTP; carpeta predeterminada: datos_offline")
     opciones = parser.parse_args(argumentos)
-    if not (opciones.listar or opciones.cripta or opciones.cargar or opciones.replay or opciones.bench):
-        parser.error("indica --listar, --cripta, --cargar, --replay o --bench")
-    if opciones.bench and (opciones.listar or opciones.cargar or opciones.replay or opciones.bitacora):
+    if not (opciones.listar or opciones.cripta or opciones.cargar or opciones.replay or opciones.bench or opciones.ver_puntajes):
+        parser.error("indica --listar, --cripta, --cargar, --replay, --bench o --ver-puntajes")
+    if opciones.bench and (opciones.listar or opciones.cargar or opciones.replay or opciones.bitacora or opciones.ver_puntajes):
         parser.error("--bench solo se combina con --cripta para medir ciclos")
     if opciones.bitacora and not opciones.cripta:
         parser.error("--bitacora requiere --cripta")
@@ -55,6 +65,19 @@ def main(argumentos=None):
         parser.error("--sin-interfaz requiere --replay")
     if opciones.nombre is not None and not opciones.nombre.strip():
         parser.error("el nombre del jugador no puede estar vacio")
+    if opciones.ver_puntajes:
+        try:
+            registros = consultar_puntajes(opciones.puntajes, opciones.orden_puntajes)
+        except (OSError, ErrorPuntajes) as error:
+            print(f"No se pudo consultar los puntajes: {error}", file=sys.stderr)
+            return 1
+        if not registros:
+            print("No hay resultados registrados.")
+        for fila in registros:
+            print(f"{fila['id_cripta']} ({fila['version_cripta']}) | {fila['nombre_jugador']} | "
+                  f"{fila['resultado']} | tiempo {fila['tiempo_final']} | "
+                  f"acciones {fila['acciones_jugador']} | enemigos {fila['enemigos_derrotados']}")
+        return 0
     if opciones.bench:
         from modelo.bench_modelo import ejecutar_bench_completo
         ejecutar_bench_completo(opciones.repeticiones, opciones.semilla, opciones.cache_size)
@@ -77,6 +100,7 @@ def main(argumentos=None):
             except RuntimeError as error:
                 print(f"No se pudo medir el ciclo completo: {error}", file=sys.stderr)
                 return 1
+            _resumen_red(fuente, cache)
             return 0 if resultado["excedidos"] == 0 else 1
         if opciones.replay:
             encabezado, _ = leer_bitacora(opciones.replay)
@@ -89,6 +113,7 @@ def main(argumentos=None):
             print(f"Replay completado: sala {partida.jugador.sala_actual.sala_id}, "
                   f"vida {partida.jugador.vida}, reloj {partida.motor.reloj}, "
                   f"acciones {partida.acciones_ejecutadas}; resultado: {partida.estado().resultado or 'en curso'}.")
+            _resumen_red(fuente, cache)
             return 0
         if opciones.cargar:
             partida = cargador.reanudar(opciones.cargar)

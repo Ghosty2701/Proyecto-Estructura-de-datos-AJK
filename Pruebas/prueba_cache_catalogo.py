@@ -1,4 +1,5 @@
 import tempfile
+import pytest
 
 from adaptadores.cache_catalogo import NodoLRU, ListaLRU, ArbolAVL, CacheCatalogo, ErrorCatalogo
 
@@ -20,6 +21,28 @@ def test_desalojo_vacia_referencia_compartida_y_recupera_desde_disco(tmp_path):
     cache.obtener("a")
     assert cache.referencia("a") is referencia
     assert referencia["nombre"] == "a" and cache.lecturas_disco == 1
+
+
+def test_precarga_con_todas_protegidas_queda_en_disco(tmp_path):
+    from types import SimpleNamespace
+
+    lotes = []
+    def catalogo(ids):
+        lotes.append(list(ids))
+        return {"entidades": [{"id": i} for i in ids]}
+    fuente = SimpleNamespace(version_catalogo=lambda: {"version": "v1"}, catalogo=catalogo)
+    protegida = ["a"]
+    cache = CacheCatalogo(fuente, carpeta=str(tmp_path), tope=1,
+                          esta_en_uso=lambda i: i in protegida)
+    cache.obtener("a")
+    referencia = cache.referencia("a")
+    assert cache.obtener("b")["id"] == "b"
+    assert cache.lista.cantidad == cache.arbol.cantidad == 1 and referencia.datos is not None
+    assert cache.arbol.buscar("b") is None
+    protegida.clear()
+    cache.obtener("b")
+    assert lotes == [["a"], ["b"]] and cache.lecturas_disco == 1
+    assert referencia.datos is None
 
 
 def comprobar(descripcion, condicion):
@@ -224,8 +247,10 @@ def test_lista_avl_y_cache_persistente():
         fuente = FuenteFalsa()
         en_uso = ["todas"]
         cache = CacheCatalogo(fuente, carpeta, tope=2, esta_en_uso=lambda id_ficha: bool(en_uso))
-        cache.obtener_varias(nombres(4))
-        comprobar("todas en uso: se supera el tope temporalmente (4 con tope 2)", cache.lista.cantidad == 4 and cache.arbol.cantidad == 4)
+        with pytest.raises(ErrorCatalogo, match="Capacidad insuficiente"):
+            cache.obtener_varias(nombres(4))
+        comprobar("todas en uso: el tope sigue siendo 2", cache.lista.cantidad == 2 and cache.arbol.cantidad == 2)
+        comprobar("el lote completo quedo en disco", all(cache._leer_de_disco(i) is not None for i in nombres(4)))
 
         en_uso.clear()
         cache.obtener("itm_nueva")

@@ -922,10 +922,103 @@ def test_cargador_comparte_fichas_y_salidas_pero_no_instancias(paquete_oficial_d
     assert cargador.ficha_en_uso("daga")
 
 
+def test_cache_insuficiente_rechaza_movimiento_sin_cambiar_partida(paquete_oficial_de_prueba, tmp_path):
+    cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path)
+    cache = cargador.servicio.cache
+    cache.tope = 1
+    partida = cargador.crear("prueba", 2026)
+    origen = partida.jugador.sala_actual
+    ficha = origen.objetos_suelo[0].ficha
+    azar = partida.motor.azar.getstate()
+    with pytest.raises(AccionInvalida, match="cache-size 3"):
+        partida.mover("N")
+    assert partida.jugador.sala_actual is origen and partida.motor.reloj == 0
+    assert partida.motor.azar.getstate() == azar
+    assert partida.motor.historial.acciones == [] and partida.acciones_ejecutadas == 0
+    assert not cargador.salas.buscar(2).contenido_cargado and not partida.enemigos
+    assert ficha.datos is not None and cache.lista.cantidad == cache.arbol.cantidad == 1
+    cache.tope = 3
+    partida.mover("N")
+    assert partida.jugador.sala_actual.sala_id == 2 and cache.lista.cantidad <= 3
+
+
+def test_retroceso_sin_capacidad_conserva_pergamino_e_historial(paquete_oficial_de_prueba, tmp_path, monkeypatch):
+    from adaptadores.cache_catalogo import ErrorCatalogo
+    cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path)
+    partida = cargador.crear("prueba", 2026)
+    pergamino = SimpleNamespace(id="perg", nombre="Pergamino", clase="pergamino_retroceso")
+    partida.inventario.recoger(pergamino)
+    partida.mover("N")
+    antes = (partida.motor.reloj, partida.jugador.vida, partida.jugador.sala_actual,
+             partida.motor.azar.getstate(), partida.motor.historial.acciones[-1])
+    def sin_capacidad(ids):
+        raise ErrorCatalogo("Capacidad insuficiente")
+    monkeypatch.setattr(cargador.servicio.cache, "verificar_capacidad", sin_capacidad)
+    with pytest.raises(AccionInvalida, match="Capacidad insuficiente"):
+        partida.retroceder()
+    assert partida.inventario.actual() is pergamino
+    assert antes == (partida.motor.reloj, partida.jugador.vida, partida.jugador.sala_actual,
+                     partida.motor.azar.getstate(), partida.motor.historial.acciones[-1])
+
+
+def test_cargar_sin_capacidad_conserva_sesion_actual(paquete_oficial_de_prueba, tmp_path, monkeypatch):
+    from adaptadores.cache_catalogo import ErrorCatalogo
+    cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path)
+    partida = cargador.crear("prueba", 2026)
+    partida.ruta_guardado = str(tmp_path / "sesion.bin")
+    partida.guardar()
+    partida.mover("N")
+    motor = partida.motor
+    jugador = partida.jugador
+    antes = (motor.reloj, jugador.vida, jugador.sala_actual, motor.azar.getstate())
+    def sin_capacidad(ids):
+        raise ErrorCatalogo("Capacidad insuficiente")
+    monkeypatch.setattr(cargador.servicio.cache, "verificar_capacidad", sin_capacidad)
+    with pytest.raises(AccionInvalida, match="No se pudo cargar: Capacidad insuficiente"):
+        partida.cargar()
+    assert partida.motor is motor and partida.jugador is jugador
+    assert antes == (motor.reloj, jugador.vida, jugador.sala_actual, motor.azar.getstate())
+
+
+def test_presupuesto_seis_permite_iniciar_con_cinco_solicitudes(paquete_oficial_de_prueba, tmp_path, monkeypatch):
+    from adaptadores.cliente_http import ClienteHTTP
+    from adaptadores.cache_catalogo import CacheCatalogo
+    from adaptadores.modo_offline import ModoOffline
+    from adaptadores.servicio_cripta import ServicioCripta
+    from controlador.cargar_partida import CargadorPartida
+
+    paquete = ModoOffline(paquete_oficial_de_prueba)
+    llamadas = []
+
+    def get(url, *, headers, params, timeout):
+        llamadas.append((url, dict(headers)))
+        if url.endswith("/catalogo/version"):
+            datos = paquete.version_catalogo()
+        elif url.endswith("/catalogo"):
+            datos = paquete.catalogo(params["ids"].split(","))
+        elif url.endswith("/salas"):
+            datos = paquete.pagina_esqueleto("prueba", params["pagina"])
+        elif url.endswith("/contenido"):
+            datos = paquete.contenido("prueba", [int(i) for i in params["salas"].split(",")])
+        else:
+            datos = paquete.datos_cripta("prueba")
+            datos["presupuesto_solicitudes"] = 6
+        return SimpleNamespace(status_code=200, json=lambda: datos)
+
+    monkeypatch.setattr("adaptadores.cliente_http.requests.get", get)
+    fuente = ClienteHTTP(reservar_imprevistos=True)
+    cache = CacheCatalogo(fuente, carpeta=str(tmp_path / "cache_http"))
+    partida = CargadorPartida(ServicioCripta(fuente, cache)).crear("prueba", 2026)
+    assert partida.jugador.sala_actual.sala_id == 1
+    assert fuente.solicitudes_realizadas == len(llamadas) == 5
+    assert fuente.presupuesto_solicitudes == 6
+    assert all(cabecera == llamadas[0][1] for _, cabecera in llamadas)
+
+
 def test_fichas_desalojadas_se_recuperan_al_cargar_y_retroceder(paquete_oficial_de_prueba, tmp_path, monkeypatch):
     cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path / "original")
     cache = cargador.servicio.cache
-    cache.tope = 1
+    cache.tope = 3  # Daga, guardian y trampa pueden necesitarse simultaneamente.
     partida = cargador.crear("prueba", 2026)
     entrada = cargador.salas.buscar(1)
     referencia = entrada.objetos_suelo[0].ficha
@@ -948,7 +1041,7 @@ def test_fichas_desalojadas_se_recuperan_al_cargar_y_retroceder(paquete_oficial_
     cargador.guardar_sesion(partida, ruta)
 
     otro = crear_cargador(paquete_oficial_de_prueba, tmp_path / "nueva")
-    otro.servicio.cache.tope = 1
+    otro.servicio.cache.tope = 3
     restaurada = otro.reanudar(ruta)
     referencia = otro.salas.buscar(1).objetos_suelo[0].ficha
     assert referencia is restaurada.enemigos[0].suelta[0].ficha
@@ -973,7 +1066,7 @@ def test_retroceso_recupera_ficha_del_enemigo_muerto(paquete_oficial_de_prueba, 
     partida.atacar(1)
     enemigo = partida.enemigos[0]
     cache = cargador.servicio.cache
-    cache.tope = 1
+    cache.tope = 3
     cache._insertar_en_memoria("extra", {"id": "extra"})
     assert enemigo.ficha.datos is None
     partida.retroceder()

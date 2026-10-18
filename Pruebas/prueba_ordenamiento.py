@@ -154,6 +154,17 @@ def test_ordenar_usa_merge_sort_en_arreglos_grandes_y_desordenados():
     assert resultado == list(range(500))
 
 
+def test_un_descenso_no_permite_trabajo_cuadratico_en_dos_bloques():
+    n = 1024
+    datos = list(range(n // 2, n)) + list(range(n // 2))
+    antes = list(datos)
+    contador = ContadorOperaciones()
+    resultado, algoritmo = ordenar(datos, contador=contador)
+    assert resultado == list(range(n)) and datos == antes
+    assert algoritmo == "merge_sort"
+    assert contador.comparaciones < 3 * n * n.bit_length()
+
+
 def test_ordenar_con_comparacion_costosa_prefiere_merge_sort_aunque_sea_mediano():
     # Sin marcar como costosa, un arreglo de este tamano (> UMBRAL_TAMANO_PEQUENO)
     # y desordenado ya elegiria merge sort de todas formas; lo interesante aca es

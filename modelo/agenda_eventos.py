@@ -16,55 +16,54 @@ class AgendaEventos:
             evento.secuencia = self.siguiente_secuencia
             self.siguiente_secuencia += 1
             
-        self.heap.append(evento)
-        i = len(self.heap) - 1
-            # Sube el evento hasta que su padre tenga prioridad igual o mayor.
+        heap = self.heap
+        heap.append(evento)
+        i = len(heap) - 1
+        # Subir por huecos evita intercambios y tuplas temporales en cada nivel.
         while i > 0:
             padre = (i - 1) // 2
-            if (self.heap[i].tiempo, self.heap[i].secuencia) < \
-                (self.heap[padre].tiempo, self.heap[padre].secuencia):
-                temporal = self.heap[padre]
-                self.heap[padre] = self.heap[i]
-                self.heap[i] = temporal
+            anterior = heap[padre]
+            if (evento.tiempo < anterior.tiempo or
+                    (evento.tiempo == anterior.tiempo and evento.secuencia < anterior.secuencia)):
+                heap[i] = anterior
                 i = padre
             else:
                 break
+        heap[i] = evento
         
             
     def _extraer_raiz(self):
         # Retira el primer evento, aunque este cancelado.
-        if not self.heap:
+        heap = self.heap
+        if not heap:
             return None
 
-        minimo = self.heap[0]
-        ultimo = self.heap.pop()
+        minimo = heap[0]
+        ultimo = heap.pop()
 
-        if not self.heap:
+        cantidad = len(heap)
+        if not cantidad:
             return minimo
 
-        # Coloca el ultimo evento en la raiz y lo baja hasta ordenar el heap.
-        self.heap[0] = ultimo
+        # Bajar el hueco por el menor hijo y colocar el ultimo una sola vez.
         i = 0
-        
-        while True:
-            menor = i
-            izquierdo = 2 * i + 1
-            derecho = 2 * i + 2
-
-            # Elige el evento mas proximo entre el padre y sus hijos.
-            if izquierdo < len(self.heap) and (self.heap[izquierdo].tiempo, self.heap[izquierdo].secuencia ) < (self.heap[menor].tiempo, self.heap[menor].secuencia):
-                menor = izquierdo
-
-            if derecho < len(self.heap) and (self.heap[derecho].tiempo, self.heap[derecho].secuencia) < (self.heap[menor].tiempo, self.heap[menor].secuencia):
-                menor = derecho
-
-            if menor == i:
-                break   
-            
-            temporal = self.heap[i]
-            self.heap[i] = self.heap[menor]
-            self.heap[menor] = temporal
-            i = menor
+        hijo = 1
+        while hijo < cantidad:
+            menor = heap[hijo]
+            derecho = hijo + 1
+            if derecho < cantidad:
+                otro = heap[derecho]
+                if (otro.tiempo < menor.tiempo or
+                        (otro.tiempo == menor.tiempo and otro.secuencia < menor.secuencia)):
+                    hijo = derecho
+                    menor = otro
+            if (ultimo.tiempo < menor.tiempo or
+                    (ultimo.tiempo == menor.tiempo and ultimo.secuencia <= menor.secuencia)):
+                break
+            heap[i] = menor
+            i = hijo
+            hijo = 2 * i + 1
+        heap[i] = ultimo
               
         return minimo
     

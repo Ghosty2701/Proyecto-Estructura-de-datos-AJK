@@ -231,7 +231,10 @@ class CargadorPartida:
             if existente is not None and existente is not referencia:
                 raise ErrorGuardado("Referencias de ficha duplicadas en el guardado.")
             referencias.insertar(referencia.id_ficha, referencia)
-        self._recuperar_fichas(self._entidades_activas(nueva))
+        try:
+            self._recuperar_fichas(self._entidades_activas(nueva))
+        except AccionInvalida as error:
+            raise ErrorGuardado(str(error)) from error
         for referencia in cargada.referencias_fichas:
             nodo = self.servicio.cache.arbol.buscar(referencia.id_ficha)
             referencia.datos = nodo.ficha if nodo is not None else None
@@ -295,6 +298,7 @@ class CargadorPartida:
         try:
             self.servicio.asegurar_contenido(sala.sala_id)
             self._ids_preparando = self.servicio._tipos_en_salas([sala.sala_id])
+            self.servicio.cache.verificar_capacidad(self._ids_preparando)
             datos = self.servicio.sala_resuelta(sala.sala_id)
             cache = self.servicio.cache
             enemigos = [_crear_enemigo(e, sala, cache) for e in datos["enemigos"]]
@@ -346,6 +350,7 @@ class CargadorPartida:
         anteriores = self._ids_preparando
         self._ids_preparando = anteriores + ids
         try:
+            self.servicio.cache.verificar_capacidad(ids)
             # Estas fichas ya fueron descargadas y persistidas. No se consulta
             # la red para restaurarlas ni se cargan otras salas por anticipacion.
             for identificador in ids:
@@ -355,6 +360,8 @@ class CargadorPartida:
                     if datos is None:
                         raise AccionInvalida(f"No se puede recuperar la ficha {identificador} del disco.")
                     cache._insertar_en_memoria(identificador, datos)
+        except ErrorCatalogo as error:
+            raise AccionInvalida(str(error)) from error
         finally:
             self._ids_preparando = anteriores
 

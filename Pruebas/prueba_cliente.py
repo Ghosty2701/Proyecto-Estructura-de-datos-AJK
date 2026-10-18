@@ -56,11 +56,12 @@ def test_reserva_redondea_hacia_arriba_el_veinte_por_ciento(presupuesto, reserva
     assert cliente.limite_normal == normal
 
 
-def test_reserva_bloquea_nuevas_consultas_pero_permite_reintento_429(preparar):
+def test_reserva_no_bloquea_consultas_necesarias_y_reintentos_cuentan(preparar):
     llamadas, _ = preparar(
         [RespuestaFalsa(200, {"presupuesto_solicitudes": 9})]
         + [RespuestaFalsa(200, {})] * 5
         + [RespuestaFalsa(429, {"reintentar_en": 0}), RespuestaFalsa(200, {"version": "ok"})]
+        + [RespuestaFalsa(200, {"version": "ultima"})]
     )
     cliente = ClienteHTTP(reservar_imprevistos=True)
     cliente.datos_cripta("c1")
@@ -69,9 +70,10 @@ def test_reserva_bloquea_nuevas_consultas_pero_permite_reintento_429(preparar):
     assert cliente.version_catalogo() == {"version": "ok"}
     assert cliente.solicitudes_normales == 7 and cliente.solicitudes_reintentos == 1
     assert cliente.solicitudes_realizadas == len(llamadas) == 8
-    with pytest.raises(PresupuestoAgotado, match="se reservan 2"):
+    assert cliente.version_catalogo() == {"version": "ultima"}
+    with pytest.raises(PresupuestoAgotado, match="presupuesto agotado"):
         cliente.version_catalogo()
-    assert len(llamadas) == 8
+    assert cliente.solicitudes_realizadas == len(llamadas) == 9
 
 
 def test_reintentos_no_pueden_superar_el_presupuesto_total_con_reserva(preparar):

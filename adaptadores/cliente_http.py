@@ -58,6 +58,7 @@ class ClienteHTTP:
 
     @property
     def limite_normal(self):
+        # Umbral de planificacion de la precarga, no un segundo presupuesto.
         if self.presupuesto_solicitudes is None:
             return None
         return self.presupuesto_solicitudes - self.reserva_solicitudes
@@ -69,12 +70,6 @@ class ClienteHTTP:
             raise PresupuestoAgotado(
                 f"{operacion}: presupuesto agotado "
                 f"({self.solicitudes_realizadas} de {self.presupuesto_solicitudes})")
-        if (not es_reintento and self.limite_normal is not None
-                and self.solicitudes_normales >= self.limite_normal):
-            raise PresupuestoAgotado(
-                f"{operacion}: limite de solicitudes normales alcanzado "
-                f"({self.solicitudes_normales}/{self.limite_normal}); "
-                f"se reservan {self.reserva_solicitudes} para reintentos")
 
     def _get(self, operacion, ruta, parametros=None):
         reintentos = 0

@@ -1,6 +1,8 @@
 import time
 import random
 
+from cache_catalogo import ArbolAVL
+
 SEMILLA_BENCH = 2042
 
 class NodoSimple:

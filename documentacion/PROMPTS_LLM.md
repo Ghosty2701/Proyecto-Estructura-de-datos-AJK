@@ -1,10 +1,8 @@
 ## 🔵 Andrey
 
-1. No se si puedas revisar lo que ya llevemos hecho y conectarte con el chat anterior de codex que teniamos para este proyecto
+1. revisa lo que ya llevemos hecho y conectarte con el chat anterior de codex que teniamos para este proyecto
 
-2. no tienes acceso al del web que se llama conffgurar pporyecto edd
-
-3. Te voy a dar contexto de lo que estabamos hacien con este texto, tambien te voy a adjuntar unos archivos que tienen que ver con el proyecto
+2. Te voy a dar contexto de lo que estabamos haciendo con este texto, tambien te voy a adjuntar unos archivos que tienen que ver con el proyecto
 
     1er promt utilizado
 
@@ -187,7 +185,6 @@
 
     Después guíame con código y pruebas, una etapa a la vez.
 
-4. una duda estamos creando un motor desde 0?
 
 5. a todo esto, explicame un poco mas el por que de lo que agregamos esto ultimo con random
 
@@ -197,7 +194,7 @@
 
 8. para esa etapa veo que es todo un poco mas de lo mismo, entonces pasame todo el codigo de esta fase para implementarlo de una sola vez
 
-9. lla siguiente fase de efectos temporales
+9. la siguiente fase de efectos temporales
 
 10. recuerda que no hay que modificar nada de lo que hace juan ni kendall
 
@@ -257,41 +254,42 @@
 
 6. basandote en las dos recientes adiciones, dime que desiciones de diseño (respecto a estructuras de dato, has escogio para ciertas cosas, para documentarlas)
 
-7. el trabajo ha sido completado desde otra sesion de claude, ocupo que me ayudes a documentar ciertas partes, asi que te avisaré lo que ocupo
 
-8. Hola soy kendall, ocupo proseguir con mi parte dejandome escoger las desiciones importantes de diseño que incluyan estructuras de datos, pero cuando me las enseñes, quiero que me menciones sus pros y contras
+7. Hola soy kendall, ocupo proseguir con mi parte dejandome escoger las desiciones importantes de diseño que incluyan estructuras de datos, pero cuando me las enseñes, quiero que me menciones sus pros y contras
 
-9. Añadir enlaces auxiliares para el orden de los objetos reversibles: separa ese orden del de los pergaminos, pero agrega campos a los nodos y más mantenimiento de enlaces.
+8. Añadir enlaces auxiliares para el orden de los objetos reversibles: separa ese orden del de los pergaminos, pero agrega campos a los nodos y más mantenimiento de enlaces.
 
-10. Que falta para que el juego se pueda probar
+9. Que falta para que el juego se pueda probar
 
-11. Prosigue con eso, si tienes alguna desicion importante que tomar consultame primero, recuerda, que sea codigo legible sin complejidad innecesaria
+10. Prosigue con la siguiente parte, si tienes alguna desicion importante que tomar consultame primero, recuerda, que sea codigo legible sin complejidad innecesaria
 
-12. Reutilizar el AVL existente para localizar salas por ID (recomendado).
+11. Reutilizar el AVL existente para localizar salas por ID.
 
-    Cripta oficial: usa datos reales, pero requiere conexión y validar el contrato HTTP completo.
+12. ==================================================
 
-13. PS D:\proyrecto edd\proyecto-edd> python main.py --cripta cripta-01 --semilla 2026
-
-    ==================================================
     Entrada derruida (sala 1)   reloj: 0
     Vida 30/30  Ataque 6  Defensa 2
     Salidas: N->2
     En el suelo:
       1. Antorcha
-    --------------------------------------------------
+
+    ==================================================
+
       Cripta cripta-01; semilla 2026.
       Prueba inicial: moverse (n/s/e/o), atacar [n], esperar, inv, ayuda y salir.
       Inventario, puertas, retroceso, guardado y victoria aun pendientes de integracion.
     > e   
 
     ==================================================
+
     Entrada derruida (sala 1)   reloj: 0
     Vida 30/30  Ataque 6  Defensa 2
     Salidas: N->2
     En el suelo:
       1. Antorcha
-    --------------------------------------------------
+
+    ==================================================
+
       Cripta cripta-01; semilla 2026.
       Prueba inicial: moverse (n/s/e/o), atacar [n], esperar, inv, ayuda y salir.
       Inventario, puertas, retroceso, guardado y victoria aun pendientes de integracion.
@@ -299,6 +297,7 @@
     > n
 
     ==================================================
+
     Pasillo de las urnas (sala 2)   reloj: 100
     Vida 18/30  Ataque 6  Defensa 2
     Salidas: N->3  S->1  E->5 (cerrada)
@@ -307,7 +306,9 @@
       2. Rata gigante #e-202  vida 12/12
     En el suelo:
       1. Daga oxidada
-    --------------------------------------------------
+
+    ==================================================
+
       Cripta cripta-01; semilla 2026.
       Prueba inicial: moverse (n/s/e/o), atacar [n], esperar, inv, ayuda y salir.
       Inventario, puertas, retroceso, guardado y victoria aun pendientes de integracion.
@@ -316,20 +317,23 @@
       Rata gigante #e-201: pierdes 3 de vida.
       Rata gigante #e-202: pierdes 5 de vida.
     > n
+
+    ==================================================
+
     No se pudo continuar la partida: catalogo ids ent_guardian_oseo,itm_llave_negra: presupuesto agotado (9 de 9)
     PS D:\proyrecto edd\proyecto-edd> 
 
-    No se me indican a que salas puedo ir, el presupuesto se agoto demasiado rapido, hay poca informacion de que esta pasando, analiza por quye sucede eso, y luego indicame como proceder para solucionarlos\
+    No se me indican a que salas puedo ir, el presupuesto se agoto demasiado rapido, hay poca informacion de que esta pasando, analiza por quye sucede eso, y luego indicame como proceder para solucionarlos
 
-14. Completa por lotes de hasta 10 salas y continua con todos los demas arreglos
+13. Completa por lotes de hasta 10 salas y continua con todos los demas arreglos
 
-15. De donde viene el limite de 9 solicitudes
+14. De donde viene el limite de 9 solicitudes
 
-16. Ejecuta una prueba de todas las criptas, necesito que todas las criptas se pueda explorar completas con el presupuesto impuesto por la cripta, si no estariamos limitando al usuario
+15. Ejecuta una prueba de todas las criptas, necesito que todas las criptas se pueda explorar completas con el presupuesto impuesto por la cripta, si no estariamos limitando al usuario
 
-17. Hay que optimizar el uso de presupuesto para no cargar demasiadas cosas a la vez y volver lento el juego, pero tambien tener al menos un 20% del presupuesto libre para http 429, o otros imprevistos.
+16. Hay que optimizar el uso de presupuesto para no cargar demasiadas cosas a la vez y volver lento el juego, pero tambien tener al menos un 20% del presupuesto libre para http 429, o otros imprevistos.
 
-    Como podriamos optimizar eso
+17. Como podriamos optimizar eso
 
 18. La precarga adaptativa
 
@@ -356,6 +360,7 @@
 27. Moverse y atacar usan la misma tecla, mejor asignale wasd al movimiento, ademas limita el tamanio del historial visible por el usuario para que en partidas largas no se complique ver la informacion que se encuentra arriba.
 
 28. ==================================================
+
     Osario profundo (sala 4)   reloj: 300
     Vida 4/30  Ataque 6  Defensa 2
     Solicitudes de red: 5/9
@@ -371,7 +376,9 @@
     En el suelo:
       1. Llave negra
       2. Poción menor
-    --------------------------------------------------
+
+    ==================================================
+
       [t=198] Rata gigante #e-201: pierdes 7 de vida.
       [t=198] Rata gigante #e-202: pierdes 7 de vida.
       [t=200] Entras en Osario profundo.
@@ -385,9 +392,9 @@
 
 30. Cualquier desicion importante indicamela antes de implementar
 
-31. Integrar recogida con deltas e inventario existente (recomendado)
+31. Integrar recogida con deltas e inventario existente 
 
-32. Que son los deltasx
+32. Que son los deltas
 
 33. Se pueden equipar cosas?
 
@@ -399,13 +406,13 @@
 
 37. Como porcentaje sobre la velocidad base: +50 significa un 50 % más; requiere fijar redondeo
 
-38. Hacia abajo: 112,5 → 112 (recomendado)
+38. Hacia abajo: 112,5 → 112 
 
 39. Implementemos ahora victoria y puntuacion
 
 40. No pùedo añadir CSV es muy avanzado, utiliza JSON o algo mas simple
 
-    Finalizar al entrar a la salida (recomendado)
+    Finalizar al entrar a la salida 
 
 41. Implementa erl soltar objetos
 
@@ -478,9 +485,6 @@
 
 71. El bench mide las alternativas descartadas como exige el enunciado?
 
-72. Hola soy kendall, ocupo que agarres el contexto de los chats "revisar el prefetc" y "revisar avances y chat anterior"
-
-    ocupo proseguir con mi parte dejandome escoger las desiciones importantes de diseño que incluyan estructuras de datos, pero cuando me las enseñes,, quiero que me menciones sus pros y contras
 
 ## 🟢 Juan
 

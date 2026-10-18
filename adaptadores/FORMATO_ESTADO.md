@@ -6,8 +6,11 @@ resoluci√≥n mediante el AVL existente y binario propio por campos. El codec est√
 `adaptadores/estado_binario.py`; el contenedor indexado sigue en
 `adaptadores/guardado_binario.py`. El modelo, inventario, heap y retroceso no cambian.
 
-El esquema actual es la version 2: incluye inventario reversible, deltas de suelo,
-marcas de pergaminos, apertura con llave y estado de la sesion. Rechaza la version 1.
+El esquema actual es la version 3: incluye inventario reversible, deltas de suelo,
+marcas de pergaminos, apertura con llave, estado de la sesion y referencias compartidas
+a fichas por ID. Al desalojarlas se vacian sus datos; se recuperan desde disco cuando
+hacen falta. El guardado incluye las fichas para reanudar con otra carpeta de cache.
+Rechaza versiones anteriores del esquema.
 
 Uso desde la capa que ya dispone del modelo y las versiones:
 

@@ -255,6 +255,8 @@ class Partida:
         if type(indice) is not int or not 1 <= indice <= len(presentes):
             raise AccionInvalida("No hay un enemigo con ese numero en esta sala.")
         objetivo = presentes[indice - 1]
+        if self.gestor_guardado is not None:
+            self.gestor_guardado.preparar_botin(objetivo)
         nombre = self._nombre_enemigo(objetivo)
         self._iniciar_mensajes(f"Atacas a {nombre}.")
         self._ataque_pendiente = objetivo, objetivo.vida
@@ -403,6 +405,8 @@ class Partida:
         if not self.motor.historial.cabe_inventario_al_deshacer(self.inventario, espacios_liberados=1):
             raise AccionInvalida("No hay espacio para restaurar el inventario; conservas el pergamino.")
         tiempo_anterior = self.motor.reloj
+        if self.gestor_guardado is not None:
+            self.gestor_guardado.preparar_retroceso(self)
         self.motor.usar_pergamino(self.jugador, coincide)
         self._mensajes = []
         self._inicio_pendiente = False

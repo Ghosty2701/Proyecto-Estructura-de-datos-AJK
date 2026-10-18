@@ -32,13 +32,9 @@ class VistaConsola:
         self._salida = salida
         self.bitacora = BitacoraPantalla(capacidad_bitacora)
         self._inventario_visible = False
-        self.modo_replay = False
         self.permitir_cargar = True
 
     def mostrar_comandos(self):
-        if self.modo_replay:
-            self._salida("Replay: Enter = siguiente bloque | T + Enter = completar todo")
-            return
         cargar = " | cargar" if self.permitir_cargar else ""
         self._salida("Comandos: w/a/s/d | atacar [numero] | recoger [numero] | abrir <n/s/e/o> | "
                      f"esperar | inv | retroceder | guardar{cargar} | ayuda | salir")

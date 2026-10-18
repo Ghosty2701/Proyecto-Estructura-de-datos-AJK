@@ -4,7 +4,7 @@ Usa ServicioCripta y su estrategia de precarga sin modificar los adaptadores.
 Los IDs de salas se resuelven con el AVL existente, elegido por Kendall.
 """
 
-from adaptadores.cache_catalogo import ArbolAVL, ErrorCatalogo
+from adaptadores.cache_catalogo import ArbolAVL, ErrorCatalogo, ReferenciaFicha
 from adaptadores.cliente_http import ErrorHTTP, PresupuestoAgotado
 from adaptadores.modo_offline import ErrorOffline
 from adaptadores.servicio_cripta import ErrorCripta
@@ -16,7 +16,7 @@ from adaptadores.bitacora_partida import verificar_compatibilidad
 from controlador.partida import Partida
 from controlador.controlador import AccionInvalida
 from modelo.efectos import Trampa
-from modelo.inventario_reversible import InventarioReversible
+from modelo.inventario_reversible import InventarioReversible, CambioInventario
 from modelo.motor_eventos import ActorTurnos, MotorEventos
 from modelo.rastro import Puerta, SalaRastro, SalidaRastro
 
@@ -32,16 +32,16 @@ def _recorrer_arbol(nodo):
         yield from _recorrer_arbol(nodo.derecho)
 
 
-def _crear_objeto(ficha):
+def _crear_objeto(ficha, cache):
     return ObjetoPartida(
         id=ficha["id"], clase=ficha["clase"], nombre=ficha["nombre"],
         peso=ficha.get("peso", 0), valor=ficha.get("valor", 0),
         ataque_bonus=ficha.get("ataque_bonus", 0),
-        defensa_bonus=ficha.get("defensa_bonus", 0), ficha=ficha,
+        defensa_bonus=ficha.get("defensa_bonus", 0), ficha=cache.referencia(ficha["id"]),
     )
 
 
-def _crear_enemigo(entrada, sala):
+def _crear_enemigo(entrada, sala, cache):
     ficha = entrada["ficha"]
     comportamiento = ficha["comportamiento"]
     if comportamiento == "guardián":
@@ -55,13 +55,13 @@ def _crear_enemigo(entrada, sala):
         comportamiento=comportamiento, regeneracion=ficha.get("regeneracion", 0),
     )
     enemigo.nombre = ficha["nombre"]
-    enemigo.ficha = ficha
+    enemigo.ficha = cache.referencia(ficha["id"])
     enemigo.sala_actual = sala
-    enemigo.suelta = [_crear_objeto(f) for f in entrada["suelta"]]
+    enemigo.suelta = [_crear_objeto(f, cache) for f in entrada["suelta"]]
     return enemigo
 
 
-def _crear_trampa(entrada):
+def _crear_trampa(entrada, cache):
     ficha = entrada["ficha"]
     rearme = ficha.get("rearme")
     if rearme is None:
@@ -71,7 +71,7 @@ def _crear_trampa(entrada):
         entrada["instancia"], "dano", ficha["daño"],
         rearme=rearme,
     )
-    trampa.ficha = ficha
+    trampa.ficha = cache.referencia(ficha["id"])
     return trampa
 
 
@@ -81,6 +81,8 @@ class CargadorPartida:
         self.salas = ArbolAVL()
         self.enemigos = []
         self.jugador = None
+        self._ids_preparando = []
+        self.servicio.cache.esta_en_uso = self.ficha_en_uso
 
     def crear(self, cripta_id, semilla, *, encabezado_log=None):
         if self.jugador is not None:
@@ -135,6 +137,15 @@ class CargadorPartida:
         for nodo in _recorrer_arbol(self.servicio.cache.arbol.raiz):
             ficha = nodo.ficha
             fichas.insertar(ficha["id"], ficha)
+        # Las fichas desalojadas se leen solo para escribir el archivo completo;
+        # no se reincorporan a la cache ni quedan retenidas por las entidades.
+        for referencia in _recorrer_arbol(self.servicio.cache.referencias.raiz):
+            ficha = referencia.datos
+            if ficha is None:
+                ficha = self.servicio.cache._leer_de_disco(referencia.id_ficha)
+            if ficha is None:
+                raise ErrorGuardado(f"Falta la ficha {referencia.id_ficha} en disco.")
+            fichas.insertar(referencia.id_ficha, ficha)
         for sala in salas:
             entidades = list(sala.objetos_suelo) + list(sala.trampas)
             for enemigo in sala.enemigos:
@@ -142,10 +153,14 @@ class CargadorPartida:
                 entidades.extend(enemigo.suelta)
             for entidad in entidades:
                 ficha = getattr(entidad, "ficha", None)
+                if isinstance(ficha, ReferenciaFicha):
+                    ficha = ficha.datos
                 if ficha is not None:
                     fichas.insertar(ficha["id"], ficha)
         for objeto in partida.inventario.listar():
             ficha = getattr(objeto, "ficha", None)
+            if isinstance(ficha, ReferenciaFicha):
+                ficha = ficha.datos
             if ficha is not None:
                 fichas.insertar(ficha["id"], ficha)
         guardar_partida(
@@ -210,6 +225,18 @@ class CargadorPartida:
                 self.servicio.contenido.insertar(datos["sala"], datos)
         for ficha in cargada.datos_extra["fichas"]:
             self.servicio.cache._guardar_en_disco(ficha)
+        referencias = ArbolAVL()
+        for referencia in cargada.referencias_fichas:
+            existente = referencias.buscar(referencia.id_ficha)
+            if existente is not None and existente is not referencia:
+                raise ErrorGuardado("Referencias de ficha duplicadas en el guardado.")
+            referencias.insertar(referencia.id_ficha, referencia)
+        self._recuperar_fichas(self._entidades_activas(nueva))
+        for referencia in cargada.referencias_fichas:
+            nodo = self.servicio.cache.arbol.buscar(referencia.id_ficha)
+            referencia.datos = nodo.ficha if nodo is not None else None
+        self.servicio.cache.referencias = referencias
+        cargada.datos_extra["fichas"].clear()
         for campo in (
             "motor", "jugador", "enemigos", "sala_salida", "llave_salida", "id_cripta",
             "version_cripta", "nombre_jugador", "acciones_ejecutadas", "victoria",
@@ -263,14 +290,20 @@ class CargadorPartida:
 
     def preparar_sala(self, sala):
         if sala.contenido_cargado:
+            self._recuperar_fichas(sala.objetos_suelo + sala.trampas)
             return
         try:
+            self.servicio.asegurar_contenido(sala.sala_id)
+            self._ids_preparando = self.servicio._tipos_en_salas([sala.sala_id])
             datos = self.servicio.sala_resuelta(sala.sala_id)
-            enemigos = [_crear_enemigo(e, sala) for e in datos["enemigos"]]
-            objetos = [_crear_objeto(o["ficha"]) for o in datos["objetos"]]
-            trampas = [_crear_trampa(t) for t in datos["trampas"]]
+            cache = self.servicio.cache
+            enemigos = [_crear_enemigo(e, sala, cache) for e in datos["enemigos"]]
+            objetos = [_crear_objeto(o["ficha"], cache) for o in datos["objetos"]]
+            trampas = [_crear_trampa(t, cache) for t in datos["trampas"]]
         except (KeyError, TypeError, ValueError) as error:
             raise ErrorDatosPartida(f"Sala {sala.sala_id}: datos incompatibles ({error}).") from error
+        finally:
+            self._ids_preparando = []
         # Publicar solo despues de convertir todo el contenido. Cargar no activa.
         sala.enemigos = enemigos
         sala.objetos_suelo = objetos
@@ -279,6 +312,8 @@ class CargadorPartida:
         sala.contenido_cargado = True
 
     def ficha_en_uso(self, id_ficha):
+        if id_ficha in self._ids_preparando:
+            return True
         for enemigo in self.enemigos:
             if enemigo.vida > 0 and enemigo.ficha["id"] == id_ficha:
                 return True
@@ -295,3 +330,59 @@ class CargadorPartida:
             if trampa.ficha["id"] == id_ficha:
                 return True
         return False
+
+    @staticmethod
+    def _entidades_activas(partida):
+        sala = partida.jugador.sala_actual
+        return (list(partida.inventario.listar()) + sala.objetos_suelo + sala.trampas
+                + [enemigo for enemigo in partida.enemigos if enemigo.vida > 0])
+
+    def _recuperar_fichas(self, entidades):
+        ids = []
+        for entidad in entidades:
+            ficha = getattr(entidad, "ficha", None)
+            if isinstance(ficha, ReferenciaFicha) and ficha.id_ficha not in ids:
+                ids.append(ficha.id_ficha)
+        anteriores = self._ids_preparando
+        self._ids_preparando = anteriores + ids
+        try:
+            # Estas fichas ya fueron descargadas y persistidas. No se consulta
+            # la red para restaurarlas ni se cargan otras salas por anticipacion.
+            for identificador in ids:
+                cache = self.servicio.cache
+                if cache._buscar_en_memoria(identificador) is None:
+                    datos = cache._leer_de_disco(identificador)
+                    if datos is None:
+                        raise AccionInvalida(f"No se puede recuperar la ficha {identificador} del disco.")
+                    cache._insertar_en_memoria(identificador, datos)
+        finally:
+            self._ids_preparando = anteriores
+
+    def preparar_botin(self, enemigo):
+        self._recuperar_fichas(enemigo.suelta)
+
+    def preparar_retroceso(self, partida):
+        entidades = []
+
+        def incluir(valor):
+            if isinstance(valor, SalaRastro):
+                entidades.extend(valor.objetos_suelo + valor.trampas)
+            elif isinstance(valor, CambioInventario):
+                entidades.append(valor.nodo.objeto)
+            elif isinstance(valor, (tuple, list)):
+                for elemento in valor:
+                    incluir(elemento)
+            elif hasattr(valor, "ficha"):
+                entidades.append(valor)
+
+        # Solo se inspecciona el intervalo que se va a deshacer, antes de
+        # consumir el pergamino. El historial conserva referencias ligeras.
+        for tipo, objeto, anterior in partida.motor.historial.acciones[-1].cambios:
+            if tipo == "vida":
+                incluir(objeto)
+            elif tipo == "atributo":
+                incluir(objeto)
+                incluir(anterior[1])
+            elif tipo in ("inventario", "recogida", "objeto_soltado"):
+                incluir(anterior)
+        self._recuperar_fichas(entidades)

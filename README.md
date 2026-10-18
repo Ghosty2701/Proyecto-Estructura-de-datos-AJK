@@ -37,7 +37,6 @@ Para registrar y reproducir los comandos con la misma semilla y versiones:
 ```powershell
 python main.py --cripta cripta-01 --semilla 2026 --bitacora partida.log
 python main.py --replay partida.log
-python main.py --replay partida.log --sin-interfaz
 ```
 
 Durante la partida, `guardar` y `cargar` usan `partida.bin` sin consumir tiempo.
@@ -45,8 +44,8 @@ Puedes elegir la ruta con `--archivo-guardado mi_partida.bin` y reanudar despues
 `python main.py --cargar mi_partida.bin`. Se permite guardar mientras se registra
 una bitacora; cargar requiere otra ejecucion sin grabacion activa.
 
-La bitacora no sobrescribe archivos existentes. Replay muestra cada accion por
-defecto; `--sin-interfaz` muestra solo el resumen. No registra otro puntaje y
+La bitacora no sobrescribe archivos existentes. Replay no crea una vista ni pide
+entrada; muestra solo el resumen final. No registra otro puntaje y
 requiere acceso a los datos de las versiones originales.
 
 Escoge un ID de la lista del servicio. `cripta-01` estuvo disponible durante la
@@ -98,7 +97,7 @@ El inventario empieza vacio y permite recoger objetos y consultar sus vistas.
 La victoria ocurre al entrar por la puerta de salida abierta con su llave.
 Al ganar o morir se registra el resultado en `puntajes.json`; puedes indicar
 `--nombre Kendall` y `--puntajes otra_ruta.json`. Salir voluntariamente no registra resultado.
-El guardado usa el esquema binario 2, con inventario reversible, contadores y efectos.
+El guardado usa el esquema binario 3, con inventario reversible, contadores, efectos y referencias compartidas a fichas.
 Los archivos del esquema anterior se rechazan. No se presenta esta prueba como el
 proyecto completo ni como evidencia del limite de 20 ms.
 

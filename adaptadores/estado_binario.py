@@ -9,11 +9,11 @@ import os
 import random
 import struct
 import tempfile
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from types import SimpleNamespace
 
-from adaptadores.cache_catalogo import ArbolAVL
+from adaptadores.cache_catalogo import ArbolAVL, ReferenciaFicha
 from adaptadores.guardado_binario import (
     ErrorGuardado, escribir_guardado, leer_globales, leer_guardado, leer_sala,
 )
@@ -28,7 +28,7 @@ from modelo.motor_eventos import ActorTurnos, EventoActor, EventoEntorno, MotorE
 from modelo.rastro import Puerta, SalaRastro, SalidaRastro
 from modelo.retroceso import CambiosAccion, HistorialRetroceso
 
-VERSION_MODELO = 2
+VERSION_MODELO = 3
 MAGIC_MODELO = b"MDLO"
 MAGIC_SALA = b"SALA"
 
@@ -60,6 +60,7 @@ class PartidaCargada:
     salas: list
     identidad: IdentidadGuardado
     datos_extra: object = None
+    referencias_fichas: list = field(default_factory=list)
 
 
 @dataclass
@@ -143,6 +144,7 @@ _ESQUEMAS = (
         "motor", "jugador", "enemigos", "sala_salida", "llave_salida", "id_cripta",
         "version_cripta", "nombre_jugador", "acciones_ejecutadas", "victoria",
     ), ()),
+    (25, ReferenciaFicha, ("id_ficha", "datos"), ()),
 )
 
 _PARTIDA_NO_PERSISTENTES = (
@@ -591,7 +593,8 @@ def cargar_partida(ruta, *, id_cripta=None, version_cripta=None, version_catalog
                 "ID de sala inconsistente con su entidad")
     extra = None if raices[2] == 0 else _resolver(_Referencia(raices[2]), objetos)
     _validar_modelo(motor, jugador, salas, [objeto for objeto, _, _ in registros])
-    return PartidaCargada(motor, jugador, salas, identidad, extra)
+    referencias = [objeto for objeto, _, _ in registros if type(objeto) is ReferenciaFicha]
+    return PartidaCargada(motor, jugador, salas, identidad, extra, referencias)
 
 
 def _exigir(condicion, mensaje):
@@ -739,7 +742,12 @@ def _validar_modelo(motor, jugador, salas, objetos):
     _exigir(salas_validas.buscar(id(jugador.sala_actual)) is not None,
             "jugador fuera de las salas guardadas")
     for objeto in objetos:
-        if type(objeto) in (Inventario, InventarioReversible):
+        if type(objeto) is ReferenciaFicha:
+            _exigir(type(objeto.id_ficha) is str, "ID de ficha invalido")
+            _exigir(objeto.datos is None or (
+                type(objeto.datos) is dict and objeto.datos.get("id") == objeto.id_ficha
+            ), "datos de referencia de ficha invalidos")
+        elif type(objeto) in (Inventario, InventarioReversible):
             _validar_inventario(objeto)
         elif type(objeto) is ActorTurnos:
             _exigir(type(objeto.vida) is int and type(objeto.vida_max) is int and

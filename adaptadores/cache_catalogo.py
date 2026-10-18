@@ -6,6 +6,28 @@ class ErrorCatalogo(Exception):
     # Una ficha pedida no llego en la respuesta del catalogo.
     pass
 
+
+class ReferenciaFicha:
+    """Identidad compartida; los datos solo existen mientras la ficha esta residente."""
+
+    def __init__(self, id_ficha, datos=None):
+        self.id_ficha = id_ficha
+        self.datos = datos
+
+    def _datos(self):
+        if self.datos is None:
+            raise ErrorCatalogo(f"La ficha {self.id_ficha} no esta en memoria; debe recuperarse desde el adaptador")
+        return self.datos
+
+    def __getitem__(self, clave):
+        return self.id_ficha if clave == "id" else self._datos()[clave]
+
+    def get(self, clave, defecto=None):
+        return self.id_ficha if clave == "id" else self._datos().get(clave, defecto)
+
+    def __contains__(self, clave):
+        return clave == "id" or clave in self._datos()
+
 class NodoLRU:
     # Un nodo guarda una ficha y sus dos vecinos en la lista.
     def __init__(self, id_ficha, ficha):
@@ -192,6 +214,7 @@ class CacheCatalogo:
         self.tope = tope
         self.esta_en_uso = esta_en_uso
         self.arbol = ArbolAVL()     # id -> NodoLRU
+        self.referencias = ArbolAVL()  # id -> referencia ligera, incluso sin datos residentes
         self.lista = ListaLRU()
         self.version = None         # version del catalogo; se lee la primera vez que hace falta
         self.aciertos = 0           # la ficha estaba en memoria
@@ -199,6 +222,15 @@ class CacheCatalogo:
         self.lecturas_disco = 0     # fallos resueltos leyendo el disco
 
     # --- Consulta ---
+
+    def referencia(self, id_ficha):
+        referencia = self.referencias.buscar(id_ficha)
+        if referencia is None:
+            referencia = ReferenciaFicha(id_ficha)
+            self.referencias.insertar(id_ficha, referencia)
+        nodo = self.arbol.buscar(id_ficha)
+        referencia.datos = nodo.ficha if nodo is not None else None
+        return referencia
 
     def faltantes(self, ids):
         """IDs sin ficha valida en memoria ni disco; no descarga fichas.
@@ -265,6 +297,14 @@ class CacheCatalogo:
         return nodo.ficha
 
     def _insertar_en_memoria(self, id_ficha, ficha):
+        existente = self.arbol.buscar(id_ficha)
+        if existente is not None:
+            existente.ficha = ficha
+            self.lista.mover_al_frente(existente)
+            referencia = self.referencias.buscar(id_ficha)
+            if referencia is not None:
+                referencia.datos = ficha
+            return
         # Se libera hasta que quede espacio. Si todas las fichas estan en uso no hay a quien
         # liberar y se supera el tope temporalmente: el enunciado prohibe liberar fichas en uso.
         while self.lista.cantidad >= self.tope:
@@ -273,10 +313,17 @@ class CacheCatalogo:
                 break
             self.arbol.quitar(candidato.id_ficha)
             self.lista.quitar(candidato)
+            referencia = self.referencias.buscar(candidato.id_ficha)
+            if referencia is not None:
+                referencia.datos = None
+            candidato.ficha = None
 
         nodo = NodoLRU(id_ficha, ficha)
         self.arbol.insertar(id_ficha, nodo)
         self.lista.agregar_al_frente(nodo)
+        referencia = self.referencias.buscar(id_ficha)
+        if referencia is not None:
+            referencia.datos = ficha
 
     def _buscar_candidato(self):
         # Recorre desde la ficha menos reciente hacia la mas reciente y devuelve el

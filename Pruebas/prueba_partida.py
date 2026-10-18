@@ -375,7 +375,7 @@ def test_retroceso_se_limita_a_cinco_intervalos():
     partida = preparar_partida()
     partida.inventario.capacidad = 6
     for _ in range(6):
-        partida.inventario.recoger(SimpleNamespace(nombre="Pergamino", clase="pergamino_retroceso"))
+        partida.inventario.recoger(SimpleNamespace(id="perg", nombre="Pergamino", clase="pergamino_retroceso"))
         partida.esperar()
     for _ in range(5):
         partida.retroceder()
@@ -728,8 +728,7 @@ def test_main_registra_y_reproduce_sin_vista_ni_puntaje_adicional(paquete_oficia
     assert not puntajes.exists()
 
 
-@pytest.mark.parametrize("pasos", [("", ""), ("t",)])
-def test_replay_avanza_con_enter_o_completa_con_t(paquete_oficial_de_prueba, tmp_path, monkeypatch, pasos):
+def test_replay_por_defecto_no_crea_vista_ni_pide_entrada(paquete_oficial_de_prueba, tmp_path, monkeypatch, capsys):
     import main as aplicacion
     from adaptadores.bitacora_partida import EscritorBitacora
     from adaptadores.modo_offline import ModoOffline
@@ -739,25 +738,10 @@ def test_replay_avanza_con_enter_o_completa_con_t(paquete_oficial_de_prueba, tmp
         for accion in ("recoger 1", "esperar"):
             escritor.registrar_accion(accion)
     monkeypatch.setattr(aplicacion, "ClienteHTTP", lambda **opciones: ModoOffline(str(paquete_oficial_de_prueba)))
-    lineas = []
-    entradas = iter(pasos)
-    consultas = []
-
-    def entrada(mensaje):
-        consultas.append(mensaje)
-        return next(entradas)
-
-    monkeypatch.setattr(aplicacion, "VistaConsola", lambda: VistaConsola(
-        entrada=entrada, salida=lineas.append,
-    ))
+    monkeypatch.setattr(aplicacion, "VistaConsola", lambda: pytest.fail("Replay no debe crear una vista"))
+    monkeypatch.setattr("builtins.input", lambda *args: pytest.fail("Replay no debe solicitar entrada"))
     assert aplicacion.main(["--replay", str(ruta), "--cache-dir", str(tmp_path / "cache")]) == 0
-    estados = [linea for linea in lineas if "Entrada (sala 1)" in linea]
-    assert len(estados) == 3
-    assert "reloj: 0" in estados[0] and "reloj: 25" in estados[1] and "reloj: 125" in estados[2]
-    assert any("Replay > recoger 1" in linea for linea in lineas)
-    assert any("Recoges Daga" in linea for linea in lineas)
-    assert any("Replay > esperar" in linea for linea in lineas)
-    assert len(consultas) == len(pasos)
+    assert "Replay completado: sala 1, vida 30, reloj 125" in capsys.readouterr().out
 
 
 def test_replay_rechaza_version_incompatible_antes_de_construir_entidades(paquete_oficial_de_prueba, tmp_path):
@@ -936,6 +920,64 @@ def test_cargador_comparte_fichas_y_salidas_pero_no_instancias(paquete_oficial_d
     assert partida.motor.reloj == 0
     assert cargador.servicio.fuente.solicitudes_realizadas == 0
     assert cargador.ficha_en_uso("daga")
+
+
+def test_fichas_desalojadas_se_recuperan_al_cargar_y_retroceder(paquete_oficial_de_prueba, tmp_path, monkeypatch):
+    cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path / "original")
+    cache = cargador.servicio.cache
+    cache.tope = 1
+    partida = cargador.crear("prueba", 2026)
+    entrada = cargador.salas.buscar(1)
+    referencia = entrada.objetos_suelo[0].ficha
+    partida.inventario.recoger(SimpleNamespace(id="perg", nombre="Pergamino", clase="pergamino_retroceso"))
+    partida.mover("N")
+    # La ficha del suelo anterior tambien es la del futuro botin enemigo.
+    assert partida.enemigos[0].suelta[0].ficha is referencia
+    cache.obtener("guardian")
+    cache._insertar_en_memoria("extra", {"id": "extra"})
+    assert referencia.datos is None
+    assert partida.enemigos[0].ficha.datos is not None  # Enemigo vivo protegido.
+    lecturas = cache.lecturas_disco
+    partida.mover("S")
+    assert entrada.objetos_suelo[0].ficha is referencia
+    assert referencia["nombre"] == "Daga" and cache.lecturas_disco > lecturas
+    partida.mover("N")
+    cache._insertar_en_memoria("extra", {"id": "extra"})
+    assert referencia.datos is None
+    ruta = tmp_path / "partida.bin"
+    cargador.guardar_sesion(partida, ruta)
+
+    otro = crear_cargador(paquete_oficial_de_prueba, tmp_path / "nueva")
+    otro.servicio.cache.tope = 1
+    restaurada = otro.reanudar(ruta)
+    referencia = otro.salas.buscar(1).objetos_suelo[0].ficha
+    assert referencia is restaurada.enemigos[0].suelta[0].ficha
+    assert referencia is otro.servicio.cache.referencia("daga")
+    assert referencia.datos is None
+    monkeypatch.setattr(otro.servicio.fuente, "catalogo", lambda ids: pytest.fail("Debe leer el disco"))
+    lecturas = otro.servicio.cache.lecturas_disco
+    restaurada.retroceder()
+    assert restaurada.jugador.sala_actual.sala_id == 1
+    assert referencia["nombre"] == "Daga"
+    assert otro.servicio.cache.lecturas_disco > lecturas
+    restaurada.mover("N")
+    restaurada.atacar(1)
+    assert restaurada.jugador.sala_actual.objetos_suelo[0].ficha is referencia
+
+
+def test_retroceso_recupera_ficha_del_enemigo_muerto(paquete_oficial_de_prueba, tmp_path):
+    cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path)
+    partida = cargador.crear("prueba", 2026)
+    partida.inventario.recoger(SimpleNamespace(id="perg", nombre="Pergamino", clase="pergamino_retroceso"))
+    partida.mover("N")
+    partida.atacar(1)
+    enemigo = partida.enemigos[0]
+    cache = cargador.servicio.cache
+    cache.tope = 1
+    cache._insertar_en_memoria("extra", {"id": "extra"})
+    assert enemigo.ficha.datos is None
+    partida.retroceder()
+    assert enemigo.vida == 12 and enemigo.ficha["nombre"] == "Guardian"
 
 
 def test_cargador_precargar_no_activa_ni_duplica_enemigos(paquete_oficial_de_prueba, tmp_path):
@@ -1205,3 +1247,4 @@ def test_fallo_de_carga_no_cierra_consola_ni_modifica_simulacion(
     Controlador(partida, vista).ejecutar()
     assert partida.motor.reloj == 100
     assert partida.jugador.sala_actual.sala_id == 1
+

@@ -149,15 +149,6 @@ def test_comandos_del_inventario_se_muestran_solo_al_abrir_su_panel():
     assert "Inventario: sig" not in "\n".join(salidas)
 
 
-def test_replay_muestra_solo_sus_controles():
-    ctl, _, vista, salidas = armar()
-    vista.modo_replay = True
-    vista.mostrar_estado(ctl.partida.estado())
-    texto = "\n".join(salidas)
-    assert "Enter = siguiente bloque" in texto and "T + Enter" in texto
-    assert "Comandos: w/a/s/d" not in texto
-
-
 def test_bitacora_de_la_vista_muestra_y_conserva_veinte():
     ctl, _, vista, salidas = armar()
     for _ in range(30):

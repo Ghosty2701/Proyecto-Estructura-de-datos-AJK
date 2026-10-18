@@ -101,5 +101,4 @@ callbacks con `MotorEventos`, salas, un enemigo e inventario reales. Comprueba r
 vida, posición, agenda, estado del azar e inventario tras reproducir acciones con
 veneno y pergamino. La aplicacion conecta la partida real mediante `--bitacora ruta.log`
 y `--replay ruta.log`, incluyendo la seleccion del inventario y el uso de pergaminos.
-El replay muestra la secuencia por defecto; `--sin-interfaz` evita crear una vista.
-Ninguno de los dos modos registra otro puntaje.
+El replay no crea una vista, no solicita entrada y no registra otro puntaje.

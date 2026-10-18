@@ -15,7 +15,6 @@ from adaptadores.bitacora_partida import (
 )
 from controlador.cargar_partida import CargadorPartida, ErrorDatosPartida
 from controlador.controlador import Controlador, ejecutar_accion_replay
-from controlador.comandos import parsear
 from vista.vista_consola import VistaConsola
 
 
@@ -35,8 +34,8 @@ def main(argumentos=None):
     seleccion.add_argument("--cripta", help="ID de la cripta que se jugara")
     seleccion.add_argument("--cargar", metavar="ARCHIVO", help="reanudar una partida binaria sin grabar bitacora")
     parser.add_argument("--archivo-guardado", help="ruta usada por los comandos guardar y cargar")
-    seleccion.add_argument("--replay", help="mostrar la secuencia de una bitacora")
-    parser.add_argument("--sin-interfaz", action="store_true", help="replay con solo resumen final")
+    seleccion.add_argument("--replay", help="reproducir una bitacora sin interfaz ni interaccion")
+    parser.add_argument("--sin-interfaz", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--bitacora", help="ruta de una nueva bitacora; no sobrescribe archivos existentes")
     parser.add_argument("--semilla", type=int, default=2026)
     parser.add_argument("--nombre", help="nombre para la tabla de puntajes")
@@ -82,46 +81,11 @@ def main(argumentos=None):
         if opciones.replay:
             encabezado, _ = leer_bitacora(opciones.replay)
             partida = cargador.crear(encabezado.id_cripta, encabezado.semilla, encabezado_log=encabezado)
-            vista_replay = None if opciones.sin_interfaz else VistaConsola()
-            if vista_replay is not None:
-                vista_replay.modo_replay = True
-                vista_replay.mostrar_estado(partida.estado())
-            completar_replay = False
-
-            def ejecutar_replay(partida, texto):
-                nonlocal completar_replay
-                if vista_replay is not None and not completar_replay:
-                    while True:
-                        opcion = vista_replay.leer_comando(
-                            "Replay: Enter = siguiente; T + Enter = completar todo > "
-                        ).strip().lower()
-                        if opcion == "":
-                            break
-                        if opcion == "t":
-                            completar_replay = True
-                            break
-                        if opcion == "salir":
-                            raise ErrorBitacora("Replay interrumpido antes de completar la secuencia.")
-                mensajes = ejecutar_accion_replay(partida, texto)
-                if vista_replay is not None:
-                    vista_replay.agregar_mensajes([f"Replay > {texto}"])
-                    vista_replay.agregar_mensajes(mensajes)
-                    vista_replay.mostrar_estado(partida.estado())
-                    if parsear(texto).nombre in ("siguiente", "anterior"):
-                        inv = partida.inventario
-                        vista_replay.mostrar_inventario(
-                            inv.listar(), actual=inv.actual(),
-                            arma=inv.arma_equipada, armadura=inv.armadura_equipada,
-                        )
-                return mensajes
-
             partida = reproducir_bitacora(
                 opciones.replay, id_cripta_actual=partida.id_cripta,
                 version_cripta_actual=partida.version_cripta, version_catalogo_actual=cache.version,
-                crear_partida=lambda encabezado: partida, ejecutar_accion=ejecutar_replay,
+                crear_partida=lambda encabezado: partida, ejecutar_accion=ejecutar_accion_replay,
             )
-            if vista_replay is not None and partida.estado().terminada:
-                vista_replay.mostrar_fin(partida.estado())
             print(f"Replay completado: sala {partida.jugador.sala_actual.sala_id}, "
                   f"vida {partida.jugador.vida}, reloj {partida.motor.reloj}, "
                   f"acciones {partida.acciones_ejecutadas}; resultado: {partida.estado().resultado or 'en curso'}.")

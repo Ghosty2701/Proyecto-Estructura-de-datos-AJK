@@ -3,6 +3,25 @@ import tempfile
 from adaptadores.cache_catalogo import NodoLRU, ListaLRU, ArbolAVL, CacheCatalogo, ErrorCatalogo
 
 
+def test_desalojo_vacia_referencia_compartida_y_recupera_desde_disco(tmp_path):
+    from types import SimpleNamespace
+
+    fuente = SimpleNamespace(
+        version_catalogo=lambda: {"version": "v1"},
+        catalogo=lambda ids: {"entidades": [{"id": identificador, "nombre": identificador} for identificador in ids]},
+    )
+    cache = CacheCatalogo(fuente, carpeta=str(tmp_path), tope=1)
+    cache.obtener("a")
+    referencia = cache.referencia("a")
+    assert cache.referencia("a") is referencia
+    cache.obtener("b")
+    assert referencia.datos is None and cache.arbol.buscar("a") is None
+    fuente.catalogo = lambda ids: (_ for _ in ()).throw(AssertionError("No debe consultar la red"))
+    cache.obtener("a")
+    assert cache.referencia("a") is referencia
+    assert referencia["nombre"] == "a" and cache.lecturas_disco == 1
+
+
 def comprobar(descripcion, condicion):
     print(("OK    " if condicion else "FALLO ") + descripcion)
     assert condicion, descripcion

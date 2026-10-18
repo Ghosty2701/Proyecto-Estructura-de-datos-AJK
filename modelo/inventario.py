@@ -55,7 +55,7 @@ class Inventario:
         if self.esta_lleno():
             return False
 
-        nodo = NodoInventario(objeto)
+        nodo = self._crear_nodo(objeto)
         nodo.anterior = self.final
         if self.final is not None:
             self.final.siguiente = nodo
@@ -68,6 +68,9 @@ class Inventario:
             self.cursor = nodo
 
         return True
+
+    def _crear_nodo(self, objeto):
+        return NodoInventario(objeto)
 
     def soltar_actual(self):
         # Suelta el objeto que el cursor esta viendo, sin importar la posicion: el

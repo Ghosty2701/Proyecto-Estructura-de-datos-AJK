@@ -48,6 +48,48 @@ def test_encabezado_timeout_y_conteo(preparar):
     assert cliente.solicitudes_realizadas == 2
 
 
+@pytest.mark.parametrize("presupuesto,reserva,normal", [(9, 2, 7), (23, 5, 18), (42, 9, 33), (52, 11, 41)])
+def test_reserva_redondea_hacia_arriba_el_veinte_por_ciento(presupuesto, reserva, normal):
+    cliente = ClienteHTTP(reservar_imprevistos=True)
+    cliente.presupuesto_solicitudes = presupuesto
+    assert cliente.reserva_solicitudes == reserva
+    assert cliente.limite_normal == normal
+
+
+def test_reserva_bloquea_nuevas_consultas_pero_permite_reintento_429(preparar):
+    llamadas, _ = preparar(
+        [RespuestaFalsa(200, {"presupuesto_solicitudes": 9})]
+        + [RespuestaFalsa(200, {})] * 5
+        + [RespuestaFalsa(429, {"reintentar_en": 0}), RespuestaFalsa(200, {"version": "ok"})]
+    )
+    cliente = ClienteHTTP(reservar_imprevistos=True)
+    cliente.datos_cripta("c1")
+    for _ in range(5):
+        cliente.version_catalogo()
+    assert cliente.version_catalogo() == {"version": "ok"}
+    assert cliente.solicitudes_normales == 7 and cliente.solicitudes_reintentos == 1
+    assert cliente.solicitudes_realizadas == len(llamadas) == 8
+    with pytest.raises(PresupuestoAgotado, match="se reservan 2"):
+        cliente.version_catalogo()
+    assert len(llamadas) == 8
+
+
+def test_reintentos_no_pueden_superar_el_presupuesto_total_con_reserva(preparar):
+    llamadas, _ = preparar(
+        [RespuestaFalsa(200, {"presupuesto_solicitudes": 9})]
+        + [RespuestaFalsa(200, {})] * 5
+        + [RespuestaFalsa(429, {"reintentar_en": 0})] * 3
+    )
+    cliente = ClienteHTTP(reservar_imprevistos=True)
+    cliente.datos_cripta("c1")
+    for _ in range(5):
+        cliente.version_catalogo()
+    with pytest.raises(PresupuestoAgotado, match="presupuesto agotado"):
+        cliente.version_catalogo()
+    assert cliente.solicitudes_realizadas == len(llamadas) == 9
+    assert cliente.solicitudes_normales == 7 and cliente.solicitudes_reintentos == 2
+
+
 def test_presupuesto_viene_de_datos_y_no_se_excede(preparar):
     llamadas, _ = preparar([
         RespuestaFalsa(200, {"presupuesto_solicitudes": 2}), RespuestaFalsa(200, {}),

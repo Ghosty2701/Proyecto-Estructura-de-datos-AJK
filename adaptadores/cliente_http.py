@@ -13,12 +13,15 @@ class PresupuestoAgotado(Exception):
     pass
 
 class ClienteHTTP:
-    def __init__(self, timeout=10, max_reintentos_429=3):
+    def __init__(self, timeout=10, max_reintentos_429=3, *, reservar_imprevistos=False):
         # El id se genera una sola vez por ejecucion y se reutiliza en todas las solicitudes.
         self.headers = {"X-Cripta-Client-Id": str(uuid.uuid4())}
         self.timeout = timeout
         self.max_reintentos_429 = max_reintentos_429
         self.solicitudes_realizadas = 0
+        self.solicitudes_normales = 0
+        self.solicitudes_reintentos = 0
+        self.reservar_imprevistos = reservar_imprevistos
         # Se conoce hasta leer los datos generales de la cripta.
         self.presupuesto_solicitudes = None
 
@@ -47,21 +50,43 @@ class ClienteHTTP:
     def version_catalogo(self):
         return self._get("version del catalogo", "/catalogo/version")
 
-    def _verificar_presupuesto(self, operacion):
+    @property
+    def reserva_solicitudes(self):
+        if not self.reservar_imprevistos or self.presupuesto_solicitudes is None:
+            return 0
+        return (self.presupuesto_solicitudes + 4) // 5
+
+    @property
+    def limite_normal(self):
+        if self.presupuesto_solicitudes is None:
+            return None
+        return self.presupuesto_solicitudes - self.reserva_solicitudes
+
+    def _verificar_presupuesto(self, operacion, es_reintento=False):
         # Con presupuesto conocido, la solicitud presupuesto++ no se realiza.
         if (self.presupuesto_solicitudes is not None
                 and self.solicitudes_realizadas >= self.presupuesto_solicitudes):
             raise PresupuestoAgotado(
                 f"{operacion}: presupuesto agotado "
                 f"({self.solicitudes_realizadas} de {self.presupuesto_solicitudes})")
+        if (not es_reintento and self.limite_normal is not None
+                and self.solicitudes_normales >= self.limite_normal):
+            raise PresupuestoAgotado(
+                f"{operacion}: limite de solicitudes normales alcanzado "
+                f"({self.solicitudes_normales}/{self.limite_normal}); "
+                f"se reservan {self.reserva_solicitudes} para reintentos")
 
     def _get(self, operacion, ruta, parametros=None):
         reintentos = 0
 
         while True:
-            self._verificar_presupuesto(operacion)
+            self._verificar_presupuesto(operacion, es_reintento=reintentos > 0)
             # Cada intento cuenta, tambien los reintentos por 429.
             self.solicitudes_realizadas += 1
+            if reintentos:
+                self.solicitudes_reintentos += 1
+            else:
+                self.solicitudes_normales += 1
 
             try:
                 respuesta = requests.get(URL_BASE + ruta, headers=self.headers, params=parametros, timeout=self.timeout)

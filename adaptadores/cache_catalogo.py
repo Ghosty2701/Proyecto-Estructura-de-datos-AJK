@@ -200,6 +200,26 @@ class CacheCatalogo:
 
     # --- Consulta ---
 
+    def faltantes(self, ids):
+        """IDs sin ficha valida en memoria ni disco; no descarga fichas.
+
+        La primera consulta valida la version del catalogo con el contrato
+        existente. Las recuperaciones de disco se incorporan a la misma LRU.
+        """
+        if not ids:
+            return []
+        self._asegurar_version()
+        resultado = []
+        for id_ficha in ids:
+            if self.arbol.buscar(id_ficha) is not None:
+                continue
+            ficha = self._leer_de_disco(id_ficha)
+            if ficha is not None:
+                self._insertar_en_memoria(id_ficha, ficha)
+            elif id_ficha not in resultado:
+                resultado.append(id_ficha)
+        return resultado
+
     def obtener(self, id_ficha):
         return self.obtener_varias([id_ficha])[0]
 

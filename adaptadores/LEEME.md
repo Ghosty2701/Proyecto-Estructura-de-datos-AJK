@@ -58,12 +58,36 @@ Está implementado en `adaptadores/estado_binario.py`. Conserva el estado actual
 cinco intervalos de deltas existentes, sin cambiar el heap ni el mecanismo de
 retroceso. `adaptadores/FORMATO_ESTADO.md` documenta el formato, API y límites.
 
-`ServicioCripta.precargar_catalogo` anticipa las fichas de la sala actual y sus
-vecinas, incluyendo los objetos declarados en `suelta`. Reutiliza el AVL, la LRU y
+`ServicioCripta.asegurar_contenido` anticipa por defecto solo la sala necesaria y
+sus vecinas abiertas inmediatas. Si la estimacion no cabe en las solicitudes
+normales restantes, activa una excepcion y completa lotes de hasta diez pendientes.
+Si la sala actual ya esta disponible no solicita mas contenido solo para ampliar
+su vecindad. No vuelve a pedir contenido que ya este en su AVL.
+El catalogo usa por defecto precarga adaptativa: fichas necesarias
+de la sala actual y vecinas abiertas que quepan en esas consultas, sin agregar
+consultas solo por anticipacion. El botin se resuelve al incorporar sus enemigos.
+Solo con la excepcion activa se anticipan otras fichas conocidas dentro de las
+consultas necesarias, sin aumentar el numero de lotes de catalogo de esa operacion.
+`precarga_adaptativa=False` conserva la politica anterior de resolver todo el
+lote, utilizada como referencia de comparacion. Reutiliza el AVL, la LRU y
 los archivos de la caché existente. Una ficha anticipada que salga de memoria se
 recupera del disco sin repetir la solicitud de catálogo. La protección de fichas en
 uso sigue dependiendo del callback `esta_en_uso` que entregue la capa de partida.
 La precarga actual es síncrona.
+
+`CacheCatalogo.faltantes(ids)` consulta memoria y disco para planificar sin
+descargar fichas; la primera consulta valida la version del catalogo, igual que
+las consultas existentes. Las fichas validas recuperadas se incorporan a la LRU.
+No se crea un segundo indice ni se modifica su politica de desalojo.
+
+`ClienteHTTP(reservar_imprevistos=True)` limita las solicitudes normales a
+presupuesto menos `ceil(presupuesto / 5)`. Cuenta reintentos por separado y les
+permite usar el margen reservado, siempre dentro del limite total. La aplicacion activa esta opcion. Por compatibilidad, el constructor sin la
+opcion conserva el limite total anterior. El limite se comprueba antes de cada
+intento; el botin desconocido y tipos futuros no pueden predecirse.
+La excepcion preventiva de agrupacion usa el rendimiento observado del contenido,
+fichas pendientes y una estimacion para tipos y botin desconocidos. No aumenta
+los limites ni gasta la reserva en solicitudes normales.
 
 `adaptadores.bitacora_partida.reproducir_bitacora` ejecuta la bitácora sin vista.
 Primero verifica las versiones; después llama a `crear_partida(encabezado)` y a

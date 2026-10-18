@@ -27,18 +27,22 @@ class Controlador:
     def __init__(self, partida, vista):
         self.partida = partida
         self.vista = vista
+        self._solo_consulta = False
 
     def ejecutar(self):
         # Bucle principal. Termina al salir o cuando la partida acaba.
+        self.vista.mostrar_estado(self.partida.estado())
         while not self.partida.estado().terminada:
-            self.vista.mostrar_estado(self.partida.estado())
             if not self.procesar(self.vista.leer_comando()):
                 return
-        self.vista.mostrar_estado(self.partida.estado())
+            # Las consultas quedan debajo de la sala hasta la proxima accion.
+            if not self._solo_consulta:
+                self.vista.mostrar_estado(self.partida.estado())
         self.vista.mostrar_fin(self.partida.estado())
 
     def procesar(self, texto):
         # Devuelve False cuando el jugador pide salir, True en cualquier otro caso.
+        self._solo_consulta = False
         comando = parsear(texto)
         if comando is None:
             self.vista.agregar_mensajes(["Comando no reconocido. Escribe 'ayuda'."])
@@ -48,9 +52,11 @@ class Controlador:
         if nombre == "salir":
             return False
         if nombre == "ayuda":
+            self._solo_consulta = True
             self.vista.mostrar_ayuda()
             return True
         if nombre in ("inventario", "siguiente", "anterior", "orden"):
+            self._solo_consulta = True
             self._navegar_inventario(comando)
             return True
 

@@ -312,6 +312,119 @@ class MotorEventos(MotorEfectos):
 
         return None   
     
+    def usar_objeto_jugador(self, jugador, ejecutar_evento, *, cantidad=None, duracion=None, velocidad=None):
+        if jugador.vida <= 0 or jugador.sala_actual is None:
+            raise ValueError("El jugador debe estar vivo y tener una sala actual")
+        inventario = jugador.inventario
+        objeto = inventario.actual() if inventario is not None else None
+        if objeto is None:
+            raise ValueError("No hay un objeto seleccionado en el inventario")
+        tipo = getattr(objeto, "clase", None)
+        if tipo not in ("pocion", "antidoto", "antorcha"):
+            raise ValueError("Este objeto no es un consumible disponible")
+        if tipo == "pocion":
+            if velocidad is not None:
+                if type(velocidad) is not int or velocidad <= 0:
+                    raise ValueError("La velocidad debe ser un entero positivo")
+            elif type(cantidad) is not int or cantidad <= 0:
+                raise ValueError("La cantidad de curacion debe ser un entero positivo")
+        if (tipo == "antorcha" or velocidad is not None) and (type(duracion) is not int or duracion <= 0):
+            raise ValueError("La duracion debe ser un entero positivo")
+        turno = self.consultar_siguiente_evento()
+        if (
+            turno is None or turno is not jugador.proxima_accion
+            or turno.actor is not jugador or turno.tipo != "accion"
+            or turno.tiempo != self.reloj
+        ):
+            raise ValueError("Primero debes llegar a la decision del jugador")
+
+        self.iniciar_accion()
+        self.siguiente_evento()
+        _, cambio = inventario.soltar_actual_reversible()
+        self.historial.registrar_inventario(inventario, cambio)
+        self.refrescar_rastro_jugador(jugador)
+        if tipo == "pocion":
+            if velocidad is not None:
+                self.aplicar_velocidad(jugador, velocidad, duracion)
+            else:
+                self.curar(jugador, cantidad)
+        elif tipo == "antidoto":
+            self.aplicar_antidoto(jugador)
+        else:
+            self.encender_antorcha(jugador, duracion)
+        self.programar_accion(jugador, 50)
+        return self.avanzar_hasta_jugador(jugador, ejecutar_evento)
+
+    def equipar_jugador(self, jugador, ejecutar_evento):
+        if jugador.vida <= 0 or jugador.sala_actual is None:
+            raise ValueError("El jugador debe estar vivo y tener una sala actual")
+        inventario = jugador.inventario
+        objeto = inventario.actual() if inventario is not None else None
+        if objeto is None:
+            raise ValueError("No hay un objeto seleccionado en el inventario")
+        tipo = getattr(objeto, "clase", None)
+        if tipo not in ("arma", "armadura"):
+            raise ValueError("Solo puedes equipar armas y armaduras")
+        anterior = inventario.arma_equipada if tipo == "arma" else inventario.armadura_equipada
+        if anterior is objeto:
+            raise ValueError("Ese objeto ya esta equipado")
+        turno = self.consultar_siguiente_evento()
+        if (
+            turno is None or turno is not jugador.proxima_accion
+            or turno.actor is not jugador or turno.tipo != "accion"
+            or turno.tiempo != self.reloj
+        ):
+            raise ValueError("Primero debes llegar a la decision del jugador")
+
+        self.iniciar_accion()
+        self.siguiente_evento()
+        _, cambio = inventario.equipar_actual_reversible(tipo)
+        self.historial.registrar_inventario(inventario, cambio)
+        self._cambiar(jugador, "ataque", jugador.ataque
+                      - getattr(anterior, "ataque_bonus", 0)
+                      + getattr(objeto, "ataque_bonus", 0))
+        self._cambiar(jugador, "defensa", jugador.defensa
+                      - getattr(anterior, "defensa_bonus", 0)
+                      + getattr(objeto, "defensa_bonus", 0))
+        self.refrescar_rastro_jugador(jugador)
+        self.programar_accion(jugador, 50)
+        return self.avanzar_hasta_jugador(jugador, ejecutar_evento)
+
+    def recoger_jugador(self, jugador, indice, ejecutar_evento):
+        if jugador.vida <= 0 or jugador.sala_actual is None:
+            raise ValueError("El jugador debe estar vivo y tener una sala actual")
+        suelo = jugador.sala_actual.objetos_suelo
+        if type(indice) is not int or not 1 <= indice <= len(suelo):
+            raise ValueError("No hay un objeto con ese numero en el suelo")
+        inventario = jugador.inventario
+        if inventario is None or inventario.esta_lleno():
+            raise ValueError("No hay espacio en el inventario")
+        turno = self.consultar_siguiente_evento()
+        if (
+            turno is None or turno is not jugador.proxima_accion
+            or turno.actor is not jugador or turno.tipo != "accion"
+            or turno.tiempo != self.reloj
+        ):
+            raise ValueError("Primero debes llegar a la decision del jugador")
+
+        objeto = suelo[indice - 1]
+        siguiente = None
+        for posicion in range(indice, len(suelo)):
+            elemento = suelo[posicion]
+            if getattr(elemento, "clase", None) != "pergamino_retroceso":
+                siguiente = elemento
+                break
+        self.iniciar_accion()
+        self.siguiente_evento()
+        _, cambio = inventario.recoger_reversible(objeto)
+        suelo.pop(indice - 1)
+        self.historial.registrar_recogida(
+            inventario, cambio, suelo, siguiente,
+        )
+        self.refrescar_rastro_jugador(jugador)
+        self.programar_accion(jugador, 25)
+        return self.avanzar_hasta_jugador(jugador, ejecutar_evento)
+
     def esperar_jugador(self, jugador, ejecutar_evento):
         if jugador.vida <= 0:
             raise ValueError("El jugador está muerto")

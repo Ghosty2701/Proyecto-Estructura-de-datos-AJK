@@ -14,6 +14,14 @@ class CambiosAccion:
     def registrar_vida(self, actor):
         self.cambios.append(("vida", actor, actor.vida))
 
+    def registrar_recogida(self, inventario, cambio, suelo, siguiente):
+        if cambio is not None:
+            self.cambios.append(("recogida", inventario, (cambio, suelo, siguiente)))
+
+    def registrar_inventario(self, inventario, cambio):
+        if cambio is not None:
+            self.cambios.append(("inventario", inventario, cambio))
+
     def programar_evento(self, agenda, evento):
         secuencia_anterior = agenda.siguiente_secuencia
         agenda.insertar(evento)
@@ -60,6 +68,20 @@ class CambiosAccion:
             elif tipo == "vida":
                 objeto.vida = anterior
 
+            elif tipo == "inventario":
+                objeto.deshacer_cambio(anterior)
+
+            elif tipo == "recogida":
+                cambio, suelo, siguiente = anterior
+                objeto.deshacer_cambio(cambio)
+                # Busca por identidad: dos objetos pueden compartir la misma ficha.
+                posicion = len(suelo)
+                for indice, elemento in enumerate(suelo):
+                    if elemento is siguiente:
+                        posicion = indice
+                        break
+                suelo.insert(posicion, cambio.nodo.objeto)
+
             elif tipo == "evento_cancelado":
                 objeto.cancelado = anterior
 
@@ -105,6 +127,12 @@ class HistorialRetroceso:
         if not self.acciones:
             raise RuntimeError("No hay una acción activa")
         return self.acciones[-1]
+
+    def registrar_recogida(self, inventario, cambio, suelo, siguiente):
+        self._accion_actual().registrar_recogida(inventario, cambio, suelo, siguiente)
+
+    def registrar_inventario(self, inventario, cambio):
+        self._accion_actual().registrar_inventario(inventario, cambio)
 
     def iniciar_accion(self, reloj_actual):
         self.acciones.append(CambiosAccion(reloj_actual))

@@ -7,9 +7,12 @@ def _t(texto):
 
 
 def test_direcciones_directas_y_con_ir():
-    assert _t("n") == ("mover", "N")
-    assert _t("O") == ("mover", "O")
+    assert _t("w") == ("mover", "N")
+    assert _t("A") == ("mover", "O")
     assert _t("ir e") == ("mover", "E")
+    assert _t("n") is None
+    assert _t("e") is None
+    assert _t("o") is None
 
 
 def test_abrir_requiere_direccion_valida():
@@ -22,6 +25,7 @@ def test_atacar_y_recoger_con_indice_por_defecto_1():
     assert _t("atacar") == ("atacar", 1)
     assert _t("atacar 3") == ("atacar", 3)
     assert _t("recoger 2") == ("recoger", 2)
+    assert _t("recoger") == ("recoger", 1)
 
 
 def test_indices_invalidos_se_rechazan():

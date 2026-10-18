@@ -29,8 +29,16 @@ def parsear(texto):
     palabra, argumentos = partes[0], partes[1:]
     arg = argumentos[0] if argumentos else None
 
-    if palabra.upper() in DIRECCIONES and not argumentos:
-        return Comando("mover", palabra.upper())
+    if not argumentos:
+        if palabra == "w":
+            return Comando("mover", "N")
+        if palabra == "a":
+            return Comando("mover", "O")
+        if palabra == "d":
+            return Comando("mover", "E")
+        if palabra == "s":
+            return Comando("mover", "S")
+
     if palabra == "ir" and arg is not None and arg.upper() in DIRECCIONES:
         return Comando("mover", arg.upper())
     if palabra == "abrir" and arg is not None and arg.upper() in DIRECCIONES:

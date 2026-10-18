@@ -52,7 +52,7 @@ def armar(entradas=()):
 
 def test_los_comandos_llegan_a_la_partida_con_sus_argumentos():
     ctl, partida, _, _ = armar()
-    for texto in ["n", "atacar 2", "recoger", "esperar", "retroceder"]:
+    for texto in ["w", "atacar 2", "recoger", "esperar", "retroceder"]:
         assert ctl.procesar(texto) is True
     assert partida.llamadas == [
         ("mover", "N"), ("atacar", 2), ("recoger", 1), ("esperar",), ("retroceder",)]
@@ -128,9 +128,28 @@ def test_bucle_termina_solo_al_acabar_la_partida():
     assert any("Victoria" in linea for linea in salidas)
 
 
-def test_bitacora_de_la_vista_solo_muestra_los_ultimos_20():
+def test_consultas_quedan_debajo_de_la_sala_sin_reimprimirla_despues():
+    ctl, _, _, salidas = armar(entradas=["inv", "ayuda", "salir"])
+    ctl.ejecutar()
+    texto = "\n".join(salidas)
+    assert texto.count("Entrada (sala 1)") == 1
+    assert texto.index("Entrada (sala 1)") < texto.index("--- Inventario") < texto.index("Comandos:")
+
+
+def test_bitacora_de_la_vista_muestra_diez_y_conserva_veinte():
     ctl, _, vista, salidas = armar()
     for _ in range(30):
         ctl.procesar("esperar")
     vista.mostrar_estado(ctl.partida.estado())
-    assert sum(1 for linea in salidas if linea == "  hecho esperar") == 20
+    assert sum(1 for linea in salidas if linea == "  hecho esperar") == 10
+    assert len(vista.bitacora) == 20
+
+
+def test_wasd_mueve_y_atacar_se_mantiene_separado():
+    ctl, partida, _, _ = armar()
+    for texto in ("w", "a", "s", "d", "atacar"):
+        ctl.procesar(texto)
+    assert partida.llamadas == [
+        ("mover", "N"), ("mover", "O"), ("mover", "S"),
+        ("mover", "E"), ("atacar", 1),
+    ]

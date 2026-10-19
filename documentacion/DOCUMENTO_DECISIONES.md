@@ -1,6 +1,6 @@
 # Documento de Decisiones de Diseño
 
-Andrey: motor, agenda, retroceso y rastro. Juan: red, precarga de salas, resolución del catálogo, caché persistente, guardado binario y bitácora/replay (decisiones 2, 3, 4, 10 y 11). Kendall: inventario, consola y ordenamiento. Las integraciones conectan las tres partes mediante el controlador; el motor no depende de la vista ni de HTTP.
+Andrey: motor, agenda, retroceso y rastro. Juan: red, precarga de salas, resolución del catálogo, caché persistente y bitácora/replay (decisiones 2, 3, 4 y 11). Juan y Andrey: guardado binario (decisión 10 compartida). Kendall: inventario, consola y ordenamiento. Las integraciones conectan las tres partes mediante el controlador; el motor no depende de la vista ni de HTTP.
 
 Las secciones corresponden a §4.1–§4.11 del enunciado. Las cifras proceden de los [benchmarks actualizados](evidencia/bench_subsistemas.txt) y las [comparaciones adicionales](evidencia/mediciones.json), con Python 3.14.6 en Windows. El JSON distingue las comparaciones sintéticas previas de la verificación oficial actual y conserva sus huellas de código. Los benchmarks de estructuras informan mínimos de cinco repeticiones; el ciclo completo informa su máximo. Las frecuencias indicadas corresponden a cada carga experimental.
 
@@ -37,7 +37,7 @@ Secciones: **Agenda de eventos**, **Retroceso** y **Rastro del jugador**.
 
 # Documento de Decisiones de Diseño — (JUAN)
 
-Secciones: **Precarga de salas**, **Resolución del catálogo**, **Caché persistente**, **Guardado binario** y **Bitácora y replay**.
+Secciones: **Precarga de salas**, **Resolución del catálogo**, **Caché persistente** y **Bitácora y replay**.
 
 ## 2. Precarga de salas
 
@@ -69,16 +69,6 @@ Secciones: **Precarga de salas**, **Resolución del catálogo**, **Caché persis
 - **Evidencia:** acierto 0.673 µs; recuperar desde disco, reinsertar y desalojar 169.558 µs. Se midieron 500 recuperaciones sin HTTP.
 - **Límite:** si las fichas protegidas necesarias superan `--cache-size`, la acción se rechaza sin avanzar ni consumir pergaminos. Se informa el mínimo para reanudar con más capacidad: conservar todas y respetar un tope menor es imposible. El tope mide fichas residentes, no todos los bytes del proceso.
 
-## 10. Guardado binario
-
-- **Responsable de la decisión:** Juan.
-- **Problema:** recuperar una sala sin cargar todo el archivo y restaurar las referencias compartidas del modelo; se miden guardado completo, restauración completa y lectura de una sala en un modelo de 200 salas con dos acciones de historial.
-- **Alternativas:** JSON completo o formato binario indexado por bloques. Se descarta JSON como guardado principal porque recuperar una sala exige leer el documento completo; permanece como referencia de tamaño y tiempos.
-- **Decisión:** contenedor `CRPT` versión 1, índice de ID/offset/longitud y esquema explícito de entidades versión 3. El AVL resuelve referencias al cargar. La lectura selectiva devuelve una vista de sala, no un motor parcialmente reconstruido.
-- **Complejidad:** sala selectiva O(log S + B_s); captura/carga aproximada O(B + (N + E) log N), más ordenamiento de salas al guardar.
-- **Evidencia:** modelo de 200 salas: binario 56789 bytes, JSON equivalente 132292. Restauración completa 22.893 ms; vista selectiva 0.17967 ms. JSON fue más rápido al decodificar a registros.
-- **Límite:** offsets de 32 bits, rechazo de esquemas anteriores y ausencia de garantía ante corte eléctrico. Una restauración completa no es un ciclo normal de juego.
-
 ## 11. Bitácora y replay
 
 - **Responsable de la decisión:** Juan.
@@ -88,6 +78,18 @@ Secciones: **Precarga de salas**, **Resolución del catálogo**, **Caché persis
 - **Complejidad:** escribir O(L) por comando; leer O(B) y reproducir según el costo acumulado de las acciones. El lector mantiene las acciones en memoria.
 - **Evidencia:** 100 acciones, log de 923 bytes y replay de 5.2759 ms, con igualdad de estado y azar.
 - **Límite:** requiere datos compatibles. Se puede guardar mientras se graba, pero no cargar; el log no representa ese salto de historia.
+
+# Decisión compartida — (JUAN Y ANDREY)
+
+## 10. Guardado binario
+
+- **Responsables de la decisión:** Juan y Andrey.
+- **Problema:** recuperar una sala sin cargar todo el archivo y restaurar las referencias compartidas del modelo; se miden guardado completo, restauración completa y lectura de una sala en un modelo de 200 salas con dos acciones de historial.
+- **Alternativas:** JSON completo o formato binario indexado por bloques. Se descarta JSON como guardado principal porque recuperar una sala exige leer el documento completo; permanece como referencia de tamaño y tiempos.
+- **Decisión:** contenedor `CRPT` versión 1, índice de ID/offset/longitud y esquema explícito de entidades versión 3. El AVL resuelve referencias al cargar. La lectura selectiva devuelve una vista de sala, no un motor parcialmente reconstruido.
+- **Complejidad:** sala selectiva O(log S + B_s); captura/carga aproximada O(B + (N + E) log N), más ordenamiento de salas al guardar.
+- **Evidencia:** modelo de 200 salas: binario 56789 bytes, JSON equivalente 132292. Restauración completa 22.893 ms; vista selectiva 0.17967 ms. JSON fue más rápido al decodificar a registros.
+- **Límite:** offsets de 32 bits, rechazo de esquemas anteriores y ausencia de garantía ante corte eléctrico. Una restauración completa no es un ciclo normal de juego.
 
 # Documento de Decisiones de Diseño — (KENDALL PALACIOS AZOFEIFA)
 

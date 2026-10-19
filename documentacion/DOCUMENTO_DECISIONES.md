@@ -1,6 +1,6 @@
-# Documento de Decisiones de Diseño — (ANDREY CHACÓN SÁNCHEZ)
+# Documento de Decisiones de Diseño
 
- motor, agenda, retroceso y rastro. Juan: red, catálogo, caché y persistencia. Kendall: inventario, consola y ordenamiento. Las integraciones conectan las tres partes mediante el controlador; el motor no depende de la vista ni de HTTP.
+Andrey: motor, agenda, retroceso y rastro. Juan: red, precarga de salas, resolución del catálogo, caché persistente, guardado binario y bitácora/replay (decisiones 2, 3, 4, 10 y 11). Kendall: inventario, consola y ordenamiento. Las integraciones conectan las tres partes mediante el controlador; el motor no depende de la vista ni de HTTP.
 
 Las secciones corresponden a §4.1–§4.11 del enunciado. Las cifras proceden de los [benchmarks actualizados](evidencia/bench_subsistemas.txt) y las [comparaciones adicionales](evidencia/mediciones.json), con Python 3.14.6 en Windows. El JSON distingue las comparaciones sintéticas previas de la verificación oficial actual y conserva sus huellas de código. Los benchmarks de estructuras informan mínimos de cinco repeticiones; el ciclo completo informa su máximo. Las frecuencias indicadas corresponden a cada carga experimental.
 
@@ -15,6 +15,7 @@ Las secciones corresponden a §4.1–§4.11 del enunciado. Las cifras proceden d
 
 ## 2. Precarga de salas
 
+- **Responsable de la decisión:** Juan.
 - **Problema:** preparar destinos sin gastar solicitudes ni memoria innecesarias; se miden recorridos de tres y 200 salas para comparar consultas y anticipaciones.
 - **Alternativas:** cargar al entrar, anticipar vecinas o completar lotes amplios. Cargar solo al entrar desaprovecha lotes; ampliar siempre descarga salas que quizá no se visiten.
 - **Decisión:** vecindad abierta por defecto y agrupación hasta diez cuando la estimación de presupuesto lo requiere. El margen preventivo del 20 % redondeado hacia arriba orienta la precarga; las consultas necesarias pueden consumirlo sin superar el presupuesto total, incluidos reintentos.
@@ -24,6 +25,7 @@ Las secciones corresponden a §4.1–§4.11 del enunciado. Las cifras proceden d
 
 ## 3. Resolución del catálogo
 
+- **Responsable de la decisión:** Juan.
 - **Problema:** convertir IDs de tipos y botín en fichas compartidas, conservando estados independientes por instancia; se miden consultas por ficha en índices de 25, 100 y 1000 IDs.
 - **Alternativas:** búsqueda lineal, árbol simple o AVL propio. Se descartan las dos primeras por su peor caso O(T) al resolver repetidamente tipos, especialmente con IDs ordenados.
 - **Decisión:** AVL para localizar fichas y referencias ligeras compartidas por ID.
@@ -33,6 +35,7 @@ Las secciones corresponden a §4.1–§4.11 del enunciado. Las cifras proceden d
 
 ## 4. Caché persistente
 
+- **Responsable de la decisión:** Juan.
 - **Problema:** reutilizar fichas y recuperar las liberadas sin repetir red; se miden accesos residentes y 500 recuperaciones desde disco.
 - **Alternativas:** FIFO o LRU; memoria solamente o persistencia por versión. FIFO ignora los accesos recientes; sin disco, una ficha desalojada requiere otra solicitud.
 - **Decisión:** AVL, lista doble LRU y JSON por ficha y versión. Desalojar vacía los datos de la referencia compartida; no elimina su identidad. El tope es estricto: la precarga opcional puede quedarse solo en disco; se comprueba la capacidad antes de preparar una acción.
@@ -87,6 +90,7 @@ Las secciones corresponden a §4.1–§4.11 del enunciado. Las cifras proceden d
 
 ## 10. Guardado binario
 
+- **Responsable de la decisión:** Juan.
 - **Problema:** recuperar una sala sin cargar todo el archivo y restaurar las referencias compartidas del modelo; se miden guardado completo, restauración completa y lectura de una sala en un modelo de 200 salas con dos acciones de historial.
 - **Alternativas:** JSON completo o formato binario indexado por bloques. Se descarta JSON como guardado principal porque recuperar una sala exige leer el documento completo; permanece como referencia de tamaño y tiempos.
 - **Decisión:** contenedor `CRPT` versión 1, índice de ID/offset/longitud y esquema explícito de entidades versión 3. El AVL resuelve referencias al cargar. La lectura selectiva devuelve una vista de sala, no un motor parcialmente reconstruido.
@@ -96,6 +100,7 @@ Las secciones corresponden a §4.1–§4.11 del enunciado. Las cifras proceden d
 
 ## 11. Bitácora y replay
 
+- **Responsable de la decisión:** Juan.
 - **Problema:** repetir acciones con la misma semilla y versiones, sin interacción; la comparación adicional registra y reproduce 100 acciones.
 - **Alternativas:** comandos solos o comandos con encabezado de identidad y versiones. Se descartan comandos solos porque no permiten rechazar un catálogo o una cripta incompatibles ni reproducir el azar.
 - **Decisión:** log de texto nuevo, encabezado `CRIPTA-LOG 1` y comandos añadidos tras acciones exitosas. Replay comparte el ejecutor del controlador sin crear vista.

@@ -2,11 +2,7 @@
 
 1. No se si puedas revisar lo que ya llevemos hecho y conectarte con el chat anterior de codex que teniamos para este proyecto
 
-    *Fecha: 2026-10-15*
-
 2. no tienes acceso al del web que se llama conffgurar pporyecto edd
-
-    *Fecha: 2026-10-15*
 
 3. Te voy a dar contexto de lo que estabamos hacien con este texto, tambien te voy a adjuntar unos archivos que tienen que ver con el proyecto
 
@@ -191,11 +187,7 @@
 
     Después guíame con código y pruebas, una etapa a la vez.
 
-    *Fecha: 2026-10-15*
-
 4. una duda estamos creando un motor desde 0?
-
-    *Fecha: 2026-10-15*
 
 5. a todo esto, explicame un poco mas el por que de lo que agregamos esto ultimo con random
 
@@ -214,8 +206,6 @@
     *Fecha: 2026-10-15*
 
 9. lla siguiente fase de efectos temporales
-
-    *Fecha: 2026-10-15*
 
 10. recuerda que no hay que modificar nada de lo que hace juan ni kendall
 
@@ -303,51 +293,43 @@
 
 7. el trabajo ha sido completado desde otra sesion de claude, ocupo que me ayudes a documentar ciertas partes, asi que te avisaré lo que ocupo
 
-    *Fecha: ≈ 17 oct 2026 (declarada, sin confirmar)*
-
 8. Hola soy kendall, ocupo proseguir con mi parte dejandome escoger las desiciones importantes de diseño que incluyan estructuras de datos, pero cuando me las enseñes, quiero que me menciones sus pros y contras
-
-    *Fecha: 2026-10-17*
 
 9. Añadir enlaces auxiliares para el orden de los objetos reversibles: separa ese orden del de los pergaminos, pero agrega campos a los nodos y más mantenimiento de enlaces.
 
-    *Fecha: 2026-10-17*
-
 10. Que falta para que el juego se pueda probar
-
-    *Fecha: 2026-10-17*
 
 11. Prosigue con eso, si tienes alguna desicion importante que tomar consultame primero, recuerda, que sea codigo legible sin complejidad innecesaria
 
-    *Fecha: 2026-10-17*
-
-12. Reutilizar el AVL existente para localizar salas por ID (recomendado).
+11. Reutilizar el AVL existente para localizar salas por ID.
 
     Cripta oficial: usa datos reales, pero requiere conexión y validar el contrato HTTP completo.
 
-    *Fecha: 2026-10-17*
-
 13. PS D:\proyrecto edd\proyecto-edd> python main.py --cripta cripta-01 --semilla 2026
 
-    ==================================================
     Entrada derruida (sala 1)   reloj: 0
     Vida 30/30  Ataque 6  Defensa 2
     Salidas: N->2
     En el suelo:
       1. Antorcha
-    --------------------------------------------------
+
+    ==================================================
+
       Cripta cripta-01; semilla 2026.
       Prueba inicial: moverse (n/s/e/o), atacar [n], esperar, inv, ayuda y salir.
       Inventario, puertas, retroceso, guardado y victoria aun pendientes de integracion.
     > e   
 
     ==================================================
+
     Entrada derruida (sala 1)   reloj: 0
     Vida 30/30  Ataque 6  Defensa 2
     Salidas: N->2
     En el suelo:
       1. Antorcha
-    --------------------------------------------------
+
+    ==================================================
+
       Cripta cripta-01; semilla 2026.
       Prueba inicial: moverse (n/s/e/o), atacar [n], esperar, inv, ayuda y salir.
       Inventario, puertas, retroceso, guardado y victoria aun pendientes de integracion.
@@ -355,6 +337,7 @@
     > n
 
     ==================================================
+
     Pasillo de las urnas (sala 2)   reloj: 100
     Vida 18/30  Ataque 6  Defensa 2
     Salidas: N->3  S->1  E->5 (cerrada)
@@ -363,7 +346,9 @@
       2. Rata gigante #e-202  vida 12/12
     En el suelo:
       1. Daga oxidada
-    --------------------------------------------------
+
+    ==================================================
+
       Cripta cripta-01; semilla 2026.
       Prueba inicial: moverse (n/s/e/o), atacar [n], esperar, inv, ayuda y salir.
       Inventario, puertas, retroceso, guardado y victoria aun pendientes de integracion.
@@ -372,28 +357,23 @@
       Rata gigante #e-201: pierdes 3 de vida.
       Rata gigante #e-202: pierdes 5 de vida.
     > n
+
+    ==================================================
+
     No se pudo continuar la partida: catalogo ids ent_guardian_oseo,itm_llave_negra: presupuesto agotado (9 de 9)
     PS D:\proyrecto edd\proyecto-edd> 
 
-    No se me indican a que salas puedo ir, el presupuesto se agoto demasiado rapido, hay poca informacion de que esta pasando, analiza por quye sucede eso, y luego indicame como proceder para solucionarlos\
-
-    *Fecha: 2026-10-17*
+    No se me indican a que salas puedo ir, el presupuesto se agoto demasiado rapido, hay poca informacion de que esta pasando, analiza por quye sucede eso, y luego indicame como proceder para solucionarlos
 
 14. Completa por lotes de hasta 10 salas y continua con todos los demas arreglos
 
-    *Fecha: 2026-10-17*
-
 15. De donde viene el limite de 9 solicitudes
-
-    *Fecha: 2026-10-17*
 
 16. Ejecuta una prueba de todas las criptas, necesito que todas las criptas se pueda explorar completas con el presupuesto impuesto por la cripta, si no estariamos limitando al usuario
 
-    *Fecha: 2026-10-17*
+16. Hay que optimizar el uso de presupuesto para no cargar demasiadas cosas a la vez y volver lento el juego, pero tambien tener al menos un 20% del presupuesto libre para http 429, o otros imprevistos.
 
-17. Hay que optimizar el uso de presupuesto para no cargar demasiadas cosas a la vez y volver lento el juego, pero tambien tener al menos un 20% del presupuesto libre para http 429, o otros imprevistos.
-
-    Como podriamos optimizar eso
+17. Como podriamos optimizar eso
 
     *Fecha: 2026-10-17*
 
@@ -442,6 +422,7 @@
     *Fecha: 2026-10-17*
 
 28. ==================================================
+
     Osario profundo (sala 4)   reloj: 300
     Vida 4/30  Ataque 6  Defensa 2
     Solicitudes de red: 5/9
@@ -457,7 +438,9 @@
     En el suelo:
       1. Llave negra
       2. Poción menor
-    --------------------------------------------------
+
+    ==================================================
+
       [t=198] Rata gigante #e-201: pierdes 7 de vida.
       [t=198] Rata gigante #e-202: pierdes 7 de vida.
       [t=200] Entras en Osario profundo.
@@ -479,11 +462,7 @@
 
 31. Integrar recogida con deltas e inventario existente (recomendado)
 
-    *Fecha: 2026-10-17*
-
 32. Que son los deltasx
-
-    *Fecha: 2026-10-17*
 
 33. Se pueden equipar cosas?
 
@@ -507,15 +486,13 @@
 
 38. Hacia abajo: 112,5 → 112 (recomendado)
 
-    *Fecha: 2026-10-17*
-
 39. Implementemos ahora victoria y puntuacion
 
     *Fecha: 2026-10-17*
 
 40. No pùedo añadir CSV es muy avanzado, utiliza JSON o algo mas simple
 
-    Finalizar al entrar a la salida (recomendado)
+    Finalizar al entrar a la salida 
 
     *Fecha: 2026-10-17*
 
@@ -652,9 +629,6 @@
 
     *Fecha: 2026-10-18*
 
-72. Hola soy kendall, ocupo que agarres el contexto de los chats "revisar el prefetc" y "revisar avances y chat anterior"
-
-    ocupo proseguir con mi parte dejandome escoger las desiciones importantes de diseño que incluyan estructuras de datos, pero cuando me las enseñes,, quiero que me menciones sus pros y contras
 
     *Fecha: 2026-10-17*
 

@@ -235,6 +235,276 @@
 
     *Fecha: 2026-10-17*
 
+17. $speckit-constitution
+
+    Estamos desarrollando la segunda parte del proyecto Cripta. Lee el archivo “Cripta - Parte II.pdf” de este repositorio, especialmente las secciones 2.3 y 6.2. Revisa también el README y la documentación existente de la primera parte.
+
+    Crea la constitución del proyecto en español, basada en el enunciado, incluyendo:
+
+    1. Implementación manual de las estructuras de datos evaluadas y cumplimiento de las restricciones sobre dict, set, heapq, bisect, collections y bibliotecas de grafos.
+    2. Determinismo: misma cripta, semilla y acciones producen la misma partida.
+    3. Separación MVC; los modos --replay, --bench y --verificar no instancian la vista.
+    4. Ningún dato de una cripta concreta escrito en el código.
+    5. Respeto de presupuesto_solicitudes y validación de versiones.
+    6. Decisiones de rendimiento justificadas con --bench.
+    7. Especificaciones anteriores a la implementación, con evidencia en Git.
+    8. Trazabilidad entre requisitos, escenarios, tareas, código y pruebas.
+    9. Registro de los prompts utilizados en PROMPTS_LLM.md.
+
+    Respeta las reglas de la primera parte que sigan vigentes. No agregues obligaciones que no estén respaldadas por los documentos.
+
+    En esta etapa, crea únicamente la constitución y sincroniza las plantillas que requiera la habilidad. Registra este prompt siguiendo el formato existente de PROMPTS_LLM.md; si no existe, revisa la documentación para establecerlo.
+
+    No implementes funcionalidades ni generes todavía las especificaciones de las cuatro capacidades. Al terminar, explica los archivos modificados y cualquier información que falte.
+
+    *Fecha: 2026-11-07*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+18. Continuemos
+
+    *Fecha: 2026-11-07*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto de la invocación: tras la constitución de Parte II, se aplica
+    `$speckit-specify` a terreno y cazadores, primera capacidad de P2 §2.2,
+    incluidas las decisiones de persecución ante cambios de puertas de §§5.1–5.2.
+    El usuario no escribió un comando ni una descripción adicional; este alcance
+    se deriva del flujo acordado y del enunciado. Se generan únicamente la
+    especificación y su revisión de calidad, sin implementar funcionalidades.*
+
+19. Recuerda, que todas las decisiones con respecto a las estructuras de datos las tengo que tomar yo, acepto que me des recomendaciones, pero no tomes una decision con respecto a eso antes que yo , ahora si continua
+
+    *Fecha: 2026-11-07*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto de la invocación: se aplica `$speckit-clarify` a la especificación
+    `specs/001-terreno-cazadores/spec.md`. La revisión no detectó ambigüedades
+    funcionales críticas que requieran preguntas; no se formularon preguntas ni
+    se inventaron respuestas. La lista de calidad conserva 16/16 criterios.
+    La elección de estructuras se reserva al usuario para la planificación.
+    Sus preferencias de decisión y comunicación del avance quedan en `AGENTS.md`.*
+
+20. Continuemos con el progreso
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto de la invocación: inicio de `$speckit-plan` para terreno y cazadores.
+    Se revisan las estructuras y puntos de integración existentes, se prepara
+    `plan.md` como borrador y `research.md` con alternativas no aprobadas.
+    La investigación incluye una revisión de solo lectura delegada conforme a la
+    habilidad. Todas las decisiones de estructuras siguen reservadas al usuario;
+    primero se presenta D-TC-01 y se espera su elección. No se completa el diseño
+    de fase 1, no se generan tareas y no se implementan funcionalidades.*
+
+21. La opcion que concorde con mi equipo fue la A
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto de la invocación: continuación de `$speckit-plan`. El usuario confirma
+    el acuerdo del equipo sobre D-TC-01, opción A: Dijkstra limitado por rango con
+    heap binario propio de rutas separado de la agenda. Se registra en plan.md y
+    research.md; las demás elecciones siguen pendientes. Se prepara la comparación
+    de D-TC-02, registro de distancias, sin elegir estructura por el usuario ni
+    implementar funcionalidades.*
+
+22. La Tabla hash es la mas interesante de todas
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: se explica la tabla hash propia como alternativa para distancias.
+    El interés expresado todavía no se registra como decisión aprobada.*
+
+23. Las colisiones de igual manera hay metodos para solucionarlas entonces no me preocupan, y por el resto de las condiciones yo creo que por tema de rapides y que puede llegarnos a funcionar estaria bastante bien, pero aqui viene mi pregunta, esto nos va a dejar a ajustar bien todos los tiempos los cuales el profe nos habia asignado que teniamos que cumplir correcto?
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: se aclara que O(1) esperado no garantiza el límite del ciclo completo;
+    colisiones, ampliaciones y trabajo de los cazadores requieren medición con --bench.*
+
+24. Ok demosle con eso entonces
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se registra D-TC-02, tabla hash propia
+    para distancias, como elección aprobada. El método de colisiones queda pendiente
+    de elección del usuario. Se actualizan plan.md y research.md; no se implementa
+    código ni se declaran mediciones realizadas.*
+
+25. Double hashing suen bastante bien
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: el usuario expresa interés por doble hashing. Se explica el salto
+    de sondeo y la necesidad de que permita recorrer toda la tabla, y se solicita
+    confirmar la elección antes de registrarla como aprobada.*
+
+26. Confirmo
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se aprueba D-TC-02a, doble hashing
+    para resolver colisiones de la tabla propia de distancias. Se actualizan
+    plan.md y research.md; se prepara D-TC-03, manejo de mejoras de distancia en
+    el heap. No se elige esa variante por el usuario ni se implementa código.*
+
+27. B
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. El usuario elige D-TC-03, opción B:
+    heap indexado con actualización de la prioridad existente, sin duplicados por
+    mejoras de distancia. Se registra en plan.md y research.md. D-TC-03a, ubicación
+    del registro de posiciones, queda pendiente de elección. No se implementa código.*
+
+28. A
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se aprueba D-TC-03a, guardar la
+    posición del heap junto a la distancia en el registro hash de cada sala.
+    Se actualizan plan.md y research.md y se preparan las alternativas de D-TC-04:
+    búsqueda individual, compartida o combinada. Esa estrategia sigue pendiente de
+    elección; no se implementa código ni se declaran mediciones realizadas.*
+
+29. A
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se aprueba D-TC-04, búsqueda
+    individual desde cada cazador limitada por rango. Se mantiene la comparación
+    con cálculo compartido exigida por P2 para --bench. Se actualizan plan.md y
+    research.md y se prepara D-TC-05, vigencia y reutilización de resultados.
+    No se implementa código ni se declaran mediciones realizadas.*
+
+30. B
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se aprueba D-TC-05, reutilización
+    conservadora de resultados con recálculo cuando cambien las condiciones de
+    validez. Se actualizan plan.md y research.md y se presenta D-TC-06, representación
+    del mapa. No se eligen estructuras auxiliares de reutilización ni se implementa código.*
+
+31. C
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se registra la elección de matriz
+    de adyacencia en D-TC-06. Se detecta que escanear filas completas incumpliría
+    PR-TC-002; se propone conservar las listas existentes para enumerar vecinos
+    sin elegir esa combinación por el usuario. D-TC-06a queda pendiente. Se actualizan
+    plan.md y research.md; no se implementa código ni se declaran benchmarks realizados.*
+
+32. no habria una manera de evitar ese O(n^2)
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: se explica la diferencia entre matriz convencional, representación
+    dispersa y listas de adyacencia; no se cambia la elección sin respuesta del usuario.*
+
+33. hagamoslo con las listas existentes
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se sustituye la matriz de D-TC-06
+    por las listas existentes, se resuelve D-TC-06a y se conservan las alternativas
+    y el motivo del cambio. Se prepara D-TC-07, almacenamiento de resultados
+    reutilizables, pendiente del usuario. No se implementa código.*
+
+34. A
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se aprueba D-TC-07, conservar
+    únicamente el último resultado de búsqueda de cada cazador y sus condiciones
+    de validez. Se actualizan plan.md y research.md. Se presenta D-TC-08 como
+    conjunto de parámetros de capacidad, salto y crecimiento de la tabla propia;
+    su elección queda pendiente. No se implementa código ni se ejecutan benchmarks.*
+
+35. A entonces
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: cierre de `$speckit-plan`. Se aprueba D-TC-08, tabla con capacidad
+    inicial 32, duplicación, salto impar y ampliación antes de superar 70 %.
+    Se completan plan.md, research.md, data-model.md, contracts/terreno-cazadores.md
+    y quickstart.md. La revisión técnica delegada prevista por la habilidad comprueba
+    riesgos de empate, puertas, referencias y datos derivados, sin elegir estructuras
+    nuevas. Se valida la documentación; no se generan tareas ni se implementa código,
+    y no se presentan pruebas del juego o benchmarks como ejecutados.*
+
+36. Continuemos
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: se aplica `$speckit-tasks` a terreno y cazadores con el plan aprobado.
+    Se generan 38 tareas pendientes por fases e historias, dependencias y trazabilidad
+    de los 19 escenarios. Se sincronizan referencias de plan.md y research.md.
+    La revisión comprueba formato, dependencias y cobertura documental; no ejecuta
+    tareas ni cambia estructuras, código o pruebas. Sigue `$speckit-analyze`.*
+
+37. Esto se esta cumpliendo?
+
+    [Adjunto: captura de P2 §2.4, separación de contenido entre spec.md, plan.md
+    y tasks.md, y relación del plan con el Documento de Decisiones.]
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: revisión editorial de los tres artefactos. Se comprueban ausencia
+    de nombres de implementación en spec.md, contenido técnico del plan y referencias
+    de requisitos de las 38 tareas. La revisión no ejecuta tareas ni sustituye el
+    análisis integral de consistencia de `$speckit-analyze`.*
+
+38. Muestrame donde se esta cumpliendo la instruccion 2.5 de la trazabilidad
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: se muestran las ubicaciones de requisitos, escenarios y tareas,
+    usando FR-TC-009 → AC-TC-010 → T014 como ejemplo. Se distingue la cobertura
+    documental prevista de terreno y cazadores de la evidencia de código y pruebas
+    aún no implementada y de los casos de las otras capacidades todavía pendientes.*
+
 ## 🟣 Kendall
 
 1. Actúa como un arquitecto de software y líder técnico experto en Python y Estructuras de Datos.

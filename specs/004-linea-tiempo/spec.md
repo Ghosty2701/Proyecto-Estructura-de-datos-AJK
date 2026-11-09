@@ -2,7 +2,7 @@
 
 **Rama Git**: `main` (actual; no se crea otra rama).
 **Creación**: 2026-11-09.
-**Estado**: Borrador; preparada para aclaración antes del plan.
+**Estado**: Aclarada; preparada para el plan.
 **Entrada del usuario**: «Línea de tiempo de Cripta Parte II (P2 §3.6, §5.5, §6.1,
 §6.3, §7.3 y apéndice B, casos de línea de tiempo). Consultar sin modificar la
 partida el estado en cualquier instante desde el inicio: comandos historia <t> e
@@ -32,12 +32,12 @@ programa.
   menor o igual que t; si a t le corresponde una decisión del jugador, el estado
   justo antes de tomarla (§3.6).
 - **Acción número k**: la k-ésima acción del jugador de la historia vigente,
-  contada desde 1. Las consultas no son acciones.
+  contada desde 1. Las consultas y el uso del pergamino no son acciones numeradas.
 - **Historia vigente**: la partida tal como quedó tras los pergaminos usados; las
   acciones revertidas no forman parte de ella.
 - **Resumen histórico**: reloj, sala del jugador, vida y estadísticas,
-  inventario, efectos activos, enemigos de esa sala con su vida y mapa conocido
-  en ese momento (§3.6).
+  inventario, efectos activos, enemigos vivos de esa sala con su vida y mapa
+  conocido en ese momento (§3.6).
 
 ### Historia 1 — Consultar un instante pasado durante la partida (Prioridad: P1)
 
@@ -122,7 +122,8 @@ las consultas sobre los mismos instantes y números de acción.
 2. **AC-LT-012** — **Dado** un pergamino seguido de nuevas acciones distintas,
    **cuando** se consultan instantes y números de acción posteriores al punto
    restaurado, **entonces** se muestran los estados de las acciones nuevas y la
-   numeración k continúa desde las acciones vigentes. Requisitos: FR-LT-004/008.
+   numeración k continúa desde las acciones vigentes; el uso del pergamino no
+   ocupa un número k. Requisitos: FR-LT-004/008.
 3. **AC-LT-013** — **Dado** el uso de un pergamino en una partida larga,
    **cuando** se recorta la línea de tiempo, **entonces** el trabajo no depende de
    la longitud total de la historia anterior al punto restaurado.
@@ -200,7 +201,8 @@ comparar consultas históricas antes y después; intentar cargar archivos antigu
    registrando historia. Requisitos: FR-LT-015.
 2. **AC-LT-024** — **Dado** un archivo de partida de la primera parte o de una
    versión anterior de formato, **cuando** se intenta cargar, **entonces** se
-   informa la incompatibilidad y no se carga en silencio. Requisitos: FR-LT-016.
+   informa la incompatibilidad de formato y no se carga; no se migra.
+   Requisitos: FR-LT-016.
    Apéndice B, línea de tiempo, caso 6.
 3. **AC-LT-025** — **Dada** una partida guardada con un K, **cuando** se carga con
    `--checkpoint-cada` distinto, **entonces** la historia guardada conserva sus
@@ -236,12 +238,16 @@ comparar consultas históricas antes y después; intentar cargar archivos antigu
   reloj actual. Escenarios: AC-LT-001/002/014.
 - **FR-LT-002**: Mostrar como mínimo el resumen histórico: reloj, sala del jugador,
   vida y estadísticas, inventario, efectos activos, enemigos de esa sala con su
-  vida y mapa conocido en ese momento. Escenarios: AC-LT-001/002/003/006/015.
+  vida y mapa conocido en ese momento. Se muestran todos los enemigos vivos de la
+  sala en ese instante, activos o dormidos, con vida actual y máxima, indicando
+  los dormidos y distinguiendo a los cazadores como en la vista normal.
+  Escenarios: AC-LT-001/002/003/006/015.
 - **FR-LT-003**: El estado en t es el resultado de todos los eventos con tiempo
   menor o igual que t; si a t le corresponde una decisión del jugador, es el
   estado justo antes de tomarla. Escenarios: AC-LT-001/003/004/005.
 - **FR-LT-004**: `historia #k` muestra el estado justo antes de la acción número k
-  de la historia vigente; k = N + 1 equivale al estado actual.
+  de la historia vigente; k = N + 1 equivale al estado actual. El uso del
+  pergamino no es una acción numerada: k cuenta solo las acciones vigentes.
   Escenarios: AC-LT-002/012.
 - **FR-LT-005**: El mapa conocido histórico se deriva solo del conocimiento del
   jugador en ese instante, con estados de salas y memoria de puertas de entonces.
@@ -277,8 +283,8 @@ comparar consultas históricas antes y después; intentar cargar archivos antigu
   `--checkpoint-cada` distinto al cargar rige desde la carga sin alterar los
   puntos de control previos. Escenarios: AC-LT-023/025.
 - **FR-LT-016**: Un archivo de partida de la primera parte o de un formato
-  anterior se informa como incompatible o se migra explícitamente; nunca se carga
-  en silencio. Escenario: AC-LT-024.
+  anterior se rechaza informando la incompatibilidad de formato; no se migra ni
+  se carga en silencio. Escenario: AC-LT-024.
 
 ### Requisitos de rendimiento
 
@@ -335,13 +341,11 @@ comparar consultas históricas antes y después; intentar cargar archivos antigu
 
 - Toda acción del jugador avanza el reloj al menos una unidad, por lo que cada
   instante tiene a lo sumo una decisión del jugador.
-- El uso del pergamino no es una acción numerada de la historia vigente; la
-  numeración k cuenta solo las acciones que permanecen.
 - `--hasta` acepta solo instantes; la forma `#k` es exclusiva de la orden en partida.
+- Al ganar o morir la sesión interactiva termina, como ya ocurre; el estado final
+  se consulta con `--replay … --hasta`.
 - El resumen reutiliza la presentación existente del estado y de `ver mapa`; el
   formato exacto se precisará en el plan sin cambiar su contenido mínimo.
-- Se conserva la convención existente de rechazar explícitamente formatos
-  binarios anteriores; la migración no es necesaria.
 - El valor por defecto de K y la dirección de reconstrucción son decisiones de
   diseño que el usuario tomará en el plan con evidencia.
 - Las consultas no exigen solicitudes de red y no afectan `presupuesto_solicitudes`.
@@ -358,3 +362,15 @@ comparar consultas históricas antes y después; intentar cargar archivos antigu
   control y el nuevo K rige desde la carga; cada tramo cumple el límite con su
   propio K. Sin la opción se conserva el K guardado. Aplicado a AC-LT-025 y
   FR-LT-015.
+
+### Sesión del 2026-11-09 (aclaración)
+
+- **P**: ¿Usar un pergamino cuenta como acción numerada para `historia #k`? →
+  **R**: A, no cuenta; k numera solo las acciones vigentes. Aplicado al
+  vocabulario, FR-LT-004 y AC-LT-012.
+- **P**: ¿Qué pasa al cargar un archivo de la primera parte o de un formato
+  anterior? → **R**: A, se rechaza explicando la incompatibilidad; no se migra.
+  Aplicado a FR-LT-016 y AC-LT-024.
+- **P**: ¿Qué enemigos de la sala muestra el resumen de `historia`? → **R**: A,
+  todos los vivos, activos o dormidos, con vida y estado, marcando cazadores.
+  Aplicado al vocabulario y FR-LT-002.

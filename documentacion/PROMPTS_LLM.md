@@ -637,6 +637,182 @@
     estructuras ni se ejecutan pruebas o mediciones nuevas del juego. Sigue
     `$speckit-plan`, con decisiones de estructuras reservadas al usuario.*
 
+50. Continuemos
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: inicio de `$speckit-plan` para niebla e «ir a». Se ejecuta setup-plan,
+    se revisan constitución, especificación y código de integración. La habilidad
+    requiere investigación mediante agentes: se delega una revisión de solo lectura
+    de alternativas del índice de conocimiento. Se crean plan.md y research.md como
+    borradores de fase 0. D-NV-01 compara tabla hash propia, AVL propio y arreglo
+    por posiciones compactas; tras contrastar la revisión delegada se recomienda
+    C por actualización directa sin ampliaciones, sin elegir por el usuario. No se
+    generan tareas ni se implementa código ni se declaran pruebas o benchmarks nuevos.*
+
+51. C
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-01: arreglo de
+    conocimiento con posiciones compactas del esqueleto. Se actualizan plan.md
+    y research.md sin extender esta aprobación a otras estructuras. D-NV-02
+    compara resolver IDs con el AVL existente, búsqueda binaria manual en arreglo
+    ordenado o tabla hash propia; se recomienda A y se espera elección explícita.
+    No se implementa código ni se ejecutan pruebas o mediciones nuevas.*
+
+52. C
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-02: tabla hash
+    propia ID → posición compacta, conservando el arreglo elegido en D-NV-01.
+    Se actualizan plan.md y research.md; D-NV-02a presenta doble hashing, sondeo
+    lineal y encadenamiento separado con listas propias. Se recomienda doble
+    hashing sin darlo por elegido ni heredar parámetros de terreno. No se
+    implementa código ni se ejecutan pruebas o mediciones nuevas.*
+
+53. A
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-02a, doble
+    hashing para ID → posición. Se actualizan plan.md y research.md. D-NV-02b
+    propone reserva inicial al 70 %, reserva al 50 % o crecimiento desde 32 al
+    70 %, con capacidad potencia de dos, salto impar y sondeo acotado. Se
+    recomienda reserva inicial al 70 % sin elegir por el usuario. No hay código,
+    pruebas ni mediciones nuevas; otras estructuras permanecen pendientes.*
+
+54. A
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-02b: reservar
+    desde el inicio con máximo 70 %, capacidad potencia de dos, salto impar,
+    mezclas deterministas y sondeo acotado. Se actualizan plan.md y research.md.
+    D-NV-03 compara listas de salidas con recuerdo compartido, listas con copias
+    por sentido y matriz; se recomienda la primera sin elegir por el usuario.
+    Sin implementación, tareas, pruebas ni mediciones nuevas.*
+
+55. A
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-03: listas de
+    salidas conocidas por sala y un recuerdo de puerta compartido por ambos
+    sentidos, separado del estado físico. Se actualizan plan.md y research.md.
+    D-NV-04 compara núcleo Dijkstra compartido con acceso separado a cada mapa
+    frente a búsqueda independiente; se recomienda compartir sin decidir por el
+    usuario. Los auxiliares siguen pendientes. Sin código, tareas, pruebas ni
+    mediciones nuevas.*
+
+56. A
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-04: compartir
+    núcleo Dijkstra con acceso separado al mapa real y al conocimiento. Se
+    actualizan plan.md y research.md. D-NV-04a compara arreglo de registros más
+    heap indexado propio, tabla hash de distancias más heap propio y arreglo con
+    selección lineal; se recomienda la primera sin darla por aprobada. La limpieza
+    entre consultas queda pendiente. No hay implementación, pruebas ni mediciones
+    nuevas y no se modifican las estructuras aprobadas para cazadores.*
+
+57. A
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-04a: arreglo de
+    registros por posición compacta y heap indexado propio existente para el viaje.
+    Se actualizan plan.md y research.md. D-NV-04b compara marcas de generación,
+    lista de posiciones tocadas y reinicio completo; se recomienda generación
+    sin darla por elegida. La preparación medida incluirá liberar candidatos
+    pendientes del heap. Sin implementación, tareas, pruebas ni mediciones nuevas.*
+
+58. A
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-04b, marcas de
+    generación para registros de búsqueda del viaje. Se actualizan plan.md y
+    research.md. D-NV-05 compara deltas de atributos/referencias en la lista de
+    cambios existente frente a grupo especializado de cambios de conocimiento;
+    se recomienda la primera sin elegir por el usuario. No se implementa código,
+    ni se ejecutan pruebas o mediciones nuevas.*
+
+59. A , pero todo esto como se va a hacer con spec kit, para que sirve spec kit, y como funciona_
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-05: usar la
+    lista de cambios existente para deltas de atributos y referencias del
+    conocimiento. Se actualizan plan.md y research.md. Se explica el propósito
+    de spec-kit, sus fases, los artefactos existentes, las decisiones pendientes
+    y la trazabilidad que se completará con tareas, código y pruebas. No se
+    implementa código ni se ejecutan pruebas o mediciones nuevas.*
+
+60. Continuemos
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se presenta D-NV-06 para resolver
+    destinos por nombre: recorrer el arreglo existente al recibir la orden, AVL
+    por nombre o tabla hash de nombres explorados. Se recomienda el recorrido
+    sin otro índice y sin repetirlo por paso; el usuario aún no lo elige. Se
+    actualizan plan.md y research.md. Sin implementación, tareas, pruebas ni
+    mediciones nuevas.*
+
+61. A
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-06: recorrer
+    el arreglo existente al recibir destino por nombre, usando solo exploradas.
+    Se actualizan plan.md y research.md. D-NV-07 compara referencia directa de
+    puerta a recuerdo reservado al iniciar, arreglo de recuerdos por posición de
+    puerta e índice hash de puertas; se recomienda la primera sin aprobarla por
+    el usuario. Sin implementación, tareas, pruebas ni mediciones nuevas.*
+
+62. A
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: cierre de `$speckit-plan`. Se aprueba D-NV-07: referencia directa
+    puerta → recuerdo compartido reservado inicialmente sin observar. Se revisan
+    plan.md y research.md y se generan data-model.md, contracts/niebla-viaje.md y
+    quickstart.md con las elecciones explícitas previas. La revisión delegada de
+    solo lectura comprueba integración y riesgos; se precisan observación dentro
+    de acciones, enemigos al entrar, daño aunque haya cura, guardado de referencias
+    y deltas, interrupción sin confirmación por paso y replay sin vista. Los
+    artefactos se validan documentalmente; no se generan tareas ni se implementa
+    código ni se ejecutan pruebas o mediciones nuevas de niebla.*
+
 ## 🟣 Kendall
 
 1. Actúa como un arquitecto de software y líder técnico experto en Python y Estructuras de Datos.

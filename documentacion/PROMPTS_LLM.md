@@ -837,6 +837,21 @@
     resolubilidad y línea de tiempo siguen pendientes. Teclado físico no probado
     manualmente; interrupción verificada con callbacks.*
 
+64. Continuemos
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: `$speckit-specify` para verificación de resolubilidad, después de
+    confirmar esta capacidad como siguiente. Se revisan P2 §§3.5,4.2–4.3,5.4,
+    6.1–6.3,7.3 y apéndice B, constitución y flujo actual. Se crean spec.md y
+    checklist en specs/003-verificar-resolubilidad, con 15 FR,3 PR,5 SC y20 AC;
+    se actualiza la capacidad activa local. Se distingue resolubilidad abstracta
+    de supervivencia y se cubren los cuatro casos obligatorios. No se eligen
+    estructuras ni se implementa código ni se ejecutan pruebas o mediciones nuevas.
+    Sigue `$speckit-clarify` antes de planificar.*
+
 ## 🟣 Kendall
 
 1. Actúa como un arquitecto de software y líder técnico experto en Python y Estructuras de Datos.

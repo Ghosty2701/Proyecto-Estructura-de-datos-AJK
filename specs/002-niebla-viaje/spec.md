@@ -2,7 +2,7 @@
 
 **Rama**: `main` (actual; sin rama nueva).
 **Creación**: 2026-11-09.
-**Estado**: Aclaración completada; preparada para planificación.
+**Estado**: Implementada y verificada el 2026-11-09; evidencia en tasks.md.
 **Entrada**: «Continemos con la niebla».
 
 **Fuentes**: [Enunciado P2](../../Cripta%20-%20Parte%20II.pdf), §§2.2–2.6,
@@ -269,8 +269,8 @@ observaciones de puertas y pasos de viaje.
 ### Resultados medibles
 
 - **SC-NV-001**: Los 22 escenarios tienen prueba o registro reproducible asociado
-  a requisitos, incluidos los seis casos de niebla del apéndice B. Hoy son
-  escenarios especificados; la evidencia de ejecución sigue pendiente.
+  a requisitos, incluidos los seis casos de niebla del apéndice B. La evidencia
+  de ejecución y sus referencias se conservan en tasks.md.
 - **SC-NV-002**: Los escenarios de ocultación y memoria revelan cero información
   adicional por precarga o cambios remotos sin observar.
 - **SC-NV-003**: Los viajes producen los mismos movimientos, tiempos y estado

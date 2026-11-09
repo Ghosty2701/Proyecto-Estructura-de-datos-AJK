@@ -115,14 +115,13 @@ class Partida:
             ataque=jugador.ataque,
             defensa=jugador.defensa,
             efectos=efectos,
-            salidas=[(s.direccion, s.destino.sala_id, not s.abierta) for s in sala.salidas],
+            salidas=[(s.direccion, s.sala_id, s.cerrada) for s in self._rutas_conocidas(sala)],
             enemigos=[(self._nombre_enemigo(e), e.vida, e.vida_max) for e in self._enemigos_presentes()],
             objetos_suelo=[o.nombre for o in sala.objetos_suelo],
             terminada=derrota or self.victoria,
             resultado="victoria" if self.victoria else ("derrota" if derrota else None),
             resumen=self.resultado_final(),
-            rutas=[RutaSalida(s.direccion, s.destino.sala_id, s.destino.nombre,
-                              not s.abierta, s.puerta.llave, s.costo) for s in sala.salidas],
+            rutas=self._rutas_conocidas(sala),
             solicitudes_usadas=getattr(self.fuente, "solicitudes_realizadas", None),
             presupuesto=getattr(self.fuente, "presupuesto_solicitudes", None),
             solicitudes_normales=getattr(self.fuente, "solicitudes_normales", None),
@@ -142,6 +141,68 @@ class Partida:
             if salida.direccion == direccion.upper():
                 return salida
         raise AccionInvalida(f"No hay una salida hacia {direccion.upper()}.")
+
+    def mapa(self):
+        return self.motor.conocimiento.proyeccion() if self.motor.conocimiento is not None else []
+
+    def resolver_viaje(self, texto):
+        self._comprobar_activa()
+        if self.motor.conocimiento is None:
+            raise AccionInvalida('El conocimiento del mapa no esta disponible.')
+        try:
+            return self.motor.conocimiento.resolver(texto)
+        except ValueError as error:
+            raise AccionInvalida(str(error)) from error
+
+    def viajar(self, texto, *, registrar=None, comentar=None, interrumpir=None,
+               mostrar_paso=None):
+        destino = self.resolver_viaje(texto)
+        if destino.sala is self.jugador.sala_actual:
+            return ['Ya estás en esa sala.']
+        if comentar is not None:
+            comentar(f'# ir a {texto}')
+        mensajes = []
+        while True:
+            if interrumpir is not None and interrumpir():
+                mensajes.append('Viaje interrumpido por el jugador.')
+                break
+            ruta = self.motor.conocimiento.ruta(self.jugador.sala_actual, destino)
+            if not ruta.encontrada:
+                mensajes.append('Viaje detenido: no hay ruta conocida abierta.')
+                break
+            direccion = ruta.primer_paso.direccion
+            mensajes.extend(self.mover(direccion))
+            if registrar is not None:
+                registrar(f'ir {direccion}')
+            if mostrar_paso is not None:
+                mostrar_paso()
+            if self.motor.enemigos_entrada:
+                mensajes.append('Viaje detenido: enemigos en la sala de entrada.')
+                break
+            if self.motor.hubo_dano:
+                mensajes.append('Viaje detenido: recibiste daño.')
+                break
+            if self.jugador.sala_actual is destino.sala:
+                mensajes.append('Viaje completado: llegaste al destino.')
+                break
+            if self.victoria or self.jugador.vida <= 0:
+                break
+        return mensajes
+
+    def _nombre_sala(self, sala):
+        if self.motor.conocimiento is None:
+            return sala.nombre
+        conocida = self.motor.conocimiento.de_sala(sala)
+        return conocida.nombre if conocida.estado == 2 else 'Sala avistada'
+
+    def _rutas_conocidas(self, sala):
+        if self.motor.conocimiento is None:
+            return [RutaSalida(s.direccion, s.destino.sala_id, s.destino.nombre,
+                               not s.abierta, s.puerta.llave, s.costo) for s in sala.salidas]
+        conocida = self.motor.conocimiento.de_sala(sala)
+        return [RutaSalida(s.direccion, s.destino.sala_id,
+                           s.destino.nombre if s.destino.estado == 2 else 'Sala avistada',
+                           not s.puerta.abierta, None, s.costo) for s in conocida.salidas]
 
     def _mensaje(self, texto, tiempo=None):
         if tiempo is None:
@@ -202,8 +263,8 @@ class Partida:
             if actor.sala_actual is not sala_anterior:
                 if sala_anterior is self.jugador.sala_actual or actor.sala_actual is self.jugador.sala_actual:
                     self._mensaje(
-                        f"{self._nombre_enemigo(actor)} se mueve de {sala_anterior.nombre} "
-                        f"a {actor.sala_actual.nombre}."
+                        f"{self._nombre_enemigo(actor)} se mueve de {self._nombre_sala(sala_anterior)} "
+                        f"a {self._nombre_sala(actor.sala_actual)}."
                     )
             if actor.vida > vida_actor and actor.sala_actual is self.jugador.sala_actual:
                 self._mensaje(f"{self._nombre_enemigo(actor)} recupera {actor.vida - vida_actor} de vida.")
@@ -218,7 +279,7 @@ class Partida:
         if evento.tipo == "cierre_puerta":
             for salida in self.jugador.sala_actual.salidas:
                 if salida.puerta is evento.objetivo:
-                    self._mensaje(f"Se cierra la puerta hacia {salida.destino.nombre} ({salida.direccion}).")
+                    self._mensaje(f"Se cierra la puerta hacia {self._nombre_sala(salida.destino)} ({salida.direccion}).")
 
     def mover(self, direccion):
         self._comprobar_activa()
@@ -226,6 +287,7 @@ class Partida:
         if not salida.abierta:
             raise AccionInvalida("La puerta esta cerrada; primero debes abrirla.")
         self.preparar_sala(salida.destino)
+        self.motor.hubo_dano = self.motor.enemigos_entrada = False
         self._iniciar_mensajes(f"Entras en {salida.destino.nombre}.")
         es_salida = (
             self.sala_salida is not None
@@ -286,7 +348,7 @@ class Partida:
         ):
             raise AccionInvalida(f"No tienes la llave correcta: {requerida}.")
         self._iniciar_mensajes(
-            f"Abres la puerta hacia {salida.destino.nombre} ({salida.direccion})."
+            f"Abres la puerta hacia {self._nombre_sala(salida.destino)} ({salida.direccion})."
         )
         self.motor.abrir_puerta_jugador(self.jugador, salida, self._ejecutar_evento)
         if not hasattr(salida.puerta, "abierta_con_llave"):

@@ -826,6 +826,17 @@
     No se cambian las estructuras elegidas por el usuario. Resultados reales se
     registrarán en tareas, documentación y evidencia de ejecución.*
 
+    *Resultado de ejecución: diseño y tareas previos en a1c83c2 y cb7ae25.
+    T001–T030 verificadas; 492 pruebas aprobadas. Se implementan las estructuras
+    elegidas, observaciones reversibles, antorcha, viaje, interrupción, persistencia
+    de modelo 5 y replay por pasos sin vista. Referencia oficial cripta-06: 3 000
+    consultas conocidas, máximo 2,1130 ms; 225 ciclos con 32 cazadores preparados,
+    máximo 18,6757 ms; 39/63 solicitudes. Se conserva una primera corrida sin rutas
+    y el incumplimiento sintético de un ciclo ≥20 ms (21,7271 ms). No se altera una
+    elección del usuario por las mediciones. Se registra evidencia y trazabilidad;
+    resolubilidad y línea de tiempo siguen pendientes. Teclado físico no probado
+    manualmente; interrupción verificada con callbacks.*
+
 ## 🟣 Kendall
 
 1. Actúa como un arquitecto de software y líder técnico experto en Python y Estructuras de Datos.

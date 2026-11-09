@@ -300,7 +300,10 @@ def ejecutar_bench_completo(repeticiones=5, semilla=2026, tope_cache=25):
     medir_ordenamientos((16, 256), repeticiones, semilla)
     ejecutar_bench(rondas=repeticiones, semilla=semilla, tope=tope_cache)
     from modelo.bench_rutas import medir_terreno_cazadores
-    return medir_terreno_cazadores(repeticiones=repeticiones, semilla=semilla)
+    resultado = medir_terreno_cazadores(repeticiones=repeticiones, semilla=semilla)
+    from modelo.bench_conocimiento import medir_conocimiento
+    resultado['niebla'] = medir_conocimiento(repeticiones=repeticiones, semilla=semilla)
+    return resultado
 
 
 def _accion_para_medir(partida, sala_anterior):
@@ -391,6 +394,13 @@ def medir_cripta_cargada(cargador, partida, repeticiones=5, ciclos=100, cazadore
         ruta = Path(carpeta) / "inicio_bench.bin"
         # Un guardado inicial repite la carga experimental; no se usa para retroceso.
         cargador.guardar_sesion(partida, ruta)
+        from modelo.bench_conocimiento import medir_rutas_mapa
+        solicitudes_antes = getattr(partida.fuente, 'solicitudes_realizadas', 0)
+        rutas_conocidas = medir_rutas_mapa(partida.motor.conocimiento, repeticiones)
+        comprobar(getattr(partida.fuente, 'solicitudes_realizadas', 0) == solicitudes_antes,
+                  'Se realizo HTTP al calcular rutas conocidas')
+        # La carga experimental completa de conocimiento no se usa en los ciclos:
+        # se restaura el guardado inicial antes de cada repetición.
         for _ in range(repeticiones):
             estado = cargador.leer_sesion(ruta, partida.id_cripta, partida.version_cripta)
             cargador.aplicar_sesion(partida, estado)
@@ -414,7 +424,7 @@ def medir_cripta_cargada(cargador, partida, repeticiones=5, ciclos=100, cazadore
     print(f"Limite de 20 ms en los ciclos medidos: {'CUMPLE' if excedidos == 0 else 'NO CUMPLE'}")
     return {"ciclos": len(tiempos), "maximo_ms": maximo, "excedidos": excedidos,
             "cazadores_totales": len(cazadores), "cazadores_activos_inicio": activos,
-            "version_cripta": partida.version_cripta,
+            "version_cripta": partida.version_cripta, "niebla": rutas_conocidas,
             "solicitudes": getattr(partida.fuente, "solicitudes_realizadas", 0),
             "presupuesto": getattr(partida.fuente, "presupuesto_solicitudes", None)}
 

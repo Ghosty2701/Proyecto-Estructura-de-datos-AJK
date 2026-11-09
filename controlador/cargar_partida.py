@@ -19,6 +19,7 @@ from modelo.efectos import Trampa
 from modelo.inventario_reversible import InventarioReversible, CambioInventario
 from modelo.motor_eventos import ActorTurnos, MotorEventos
 from modelo.rastro import Puerta, SalaRastro, SalidaRastro
+from modelo.conocimiento import ConocimientoMapa
 
 
 class ErrorDatosPartida(Exception):
@@ -108,6 +109,7 @@ class CargadorPartida:
             )
             jugador.inventario = InventarioReversible(datos["inventario_max"])
             motor = MotorEventos(semilla)
+            motor.conocimiento = ConocimientoMapa(list(_recorrer_arbol(self.salas.raiz)))
             motor.iniciar_partida(jugador, inicial)
         except (KeyError, TypeError, ValueError) as error:
             raise ErrorDatosPartida(f"Datos incompatibles de {cripta_id}: {error}") from error

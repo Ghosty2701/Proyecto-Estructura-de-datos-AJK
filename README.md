@@ -4,12 +4,14 @@ Proyecto de Estructuras de Datos II de Andrey, Juan y Kendall. Juego de consola 
 
 La primera capacidad de Parte II ya incluye terreno ponderado y cazadores: los movimientos
 usan el costo de la salida y los cazadores persiguen por costo mínimo dentro de su rango.
-La consola muestra los costos y distingue a los cazadores. Niebla de guerra, viaje «ir a»,
-resolubilidad y línea de tiempo todavía corresponden a capacidades pendientes.
+La segunda capacidad incluye niebla de guerra, memoria de puertas, antorcha y viaje
+«ir a» por el mapa conocido, con retroceso, guardado y replay. Resolubilidad y línea
+de tiempo siguen pendientes.
 
 Proceso SDD: **spec-kit 1.3.2**, agente **Codex**, configuración compartida en `.specify/`
 y habilidades en `.agents/skills/`. Los artefactos de la primera capacidad están en
-[specs/001-terreno-cazadores](specs/001-terreno-cazadores/plan.md).
+[specs/001-terreno-cazadores](specs/001-terreno-cazadores/plan.md); la segunda está en
+[specs/002-niebla-viaje](specs/002-niebla-viaje/plan.md).
 
 ## Instalación
 
@@ -35,6 +37,8 @@ Elige un ID devuelto por `--listar`; `cripta-01` es un ejemplo cuya disponibilid
 | Comando | Acción |
 | --- | --- |
 | `w`, `a`, `s`, `d` | Moverse al norte, oeste, sur y este. |
+| `ver mapa` | Ver únicamente salas exploradas, avistadas y puertas recordadas. |
+| `ir a <ID o nombre>` | Viajar por exploradas y salidas recordadas abiertas. Nombre completo sensible a mayúsculas; repetidos requieren ID. |
 | `atacar 1`, `recoger 1` | Actuar sobre el enemigo u objeto indicado. |
 | `inv`, `sig`, `ant` | Consultar el inventario y seleccionar objetos. |
 | `orden peso`, `orden valor`, `orden nombre` | Mostrar una vista ordenada. |
@@ -45,6 +49,19 @@ Elige un ID devuelto por `--listar`; `cripta-01` es un ejemplo cuya disponibilid
 | `ayuda`, `salir` | Mostrar comandos o terminar la sesión. |
 
 Las consultas no consumen tiempo virtual. Al ganar o morir se registra un resultado; salir no guarda automáticamente. La vista conserva los últimos 20 mensajes.
+
+Cada paso del viaje es un movimiento ordinario y recalcula la ruta. Se detiene
+al llegar, entrar con enemigos, recibir daño o perder la ruta conocida; no abre
+puertas. En consola Windows, empezar a escribir interrumpe entre pasos y permite
+dar otro comando, incluido `retroceder`: revierte solo el último paso y no reanuda
+el viaje. No hay confirmaciones obligatorias por paso. La detección de teclado
+se prueba mediante entrada inyectada; no se ha verificado manualmente una sesión
+de teclado físico durante esta ejecución.
+
+La antorcha revela vecinas al entrar incluso tras puertas cerradas, sin contenido
+ni activación remota. Según la interpretación elegida por el equipo, registra
+también el estado de sus puertas reveladas. Un cierre remoto posterior no cambia
+el recuerdo hasta una nueva observación. El conocimiento se revierte con pergamino.
 
 ## Guardado y replay
 
@@ -78,20 +95,29 @@ python main.py --bench
 python main.py --bench --cripta cripta-01 --repeticiones 5
 ```
 
-Se verificaron **469 pruebas** el 2026-11-09. El benchmark sin cripta usa cargas locales;
+Se verificaron **492 pruebas** el 2026-11-09. El benchmark sin cripta usa cargas locales;
 con cripta mide ciclos completos después de precargar datos, sin red ni renderizado
-dentro del cronómetro. Devuelve código 1 si un ciclo alcanza 20 ms o la medición falla.
+dentro del cronómetro. Con cripta devuelve código 1 si un ciclo alcanza 20 ms,
+un cálculo de «ir a» alcanza 5 ms o la medición falla.
 Cuando el mapa contiene cazadores, prepara hasta 32 de ellos activos antes de medir,
 con sus posiciones y estadísticas originales; esa activación anticipada es una carga
 experimental, no una regla nueva del juego.
 
 En `cripta-06`, versión `f9ed9afa683d`, con 32 cazadores activos al inicio, semilla 2026
-y cinco repeticiones, se midieron **225 ciclos**, máximo **15,1171 ms**, sin ciclos de
-20 ms o más y usando **38/63 solicitudes**. Son resultados de esa carga y equipo,
+y cinco repeticiones, la corrida final midió **225 ciclos**, máximo **18,6757 ms**,
+sin ciclos de 20 ms o más y usando **39/63 solicitudes**. Son resultados de esa carga y equipo,
 no una garantía para cualquier recorrido. El benchmark también compara búsqueda
 individual/compartida y reutilización/recálculo con puertas estables e inestables.
 La estrategia del juego conserva las elecciones del equipo: Dijkstra individual,
 heap indexado propio y tabla hash propia con doble hashing.
+
+Niebla añade **3 000 cálculos** sobre el mapa conocido completo (300 salas):
+máximo **2,1130 ms**, ninguno ≥5 ms. Se distinguen puertas observadas y una carga
+de estrés con recuerdos abiertos y puertas físicas intactas; la primera no tenía
+rutas entre los destinos ensayados y por eso se añadió la segunda. La revelación
+local produjo ocho actualizaciones tanto con 80 como con 8 000 salas. En otra
+corrida sintética de 500 ciclos de cazadores hubo un máximo **21,7271 ms**, con un
+ciclo ≥20 ms; se conserva como límite observado, sin ocultarlo tras la referencia.
 
 Pruebas de aceptación de terreno y cazadores:
 
@@ -99,9 +125,20 @@ Pruebas de aceptación de terreno y cazadores:
 python -m pytest -q Pruebas/prueba_terreno.py Pruebas/prueba_rutas.py Pruebas/prueba_tabla_hash.py Pruebas/prueba_heap_rutas.py Pruebas/prueba_partida.py Pruebas/prueba_estado_binario.py Pruebas/prueba_bitacora_partida.py Pruebas/prueba_bench_adaptadores.py
 ```
 
-El esquema binario del modelo pasa de versión 3 a **4**; los guardados anteriores
-se rechazan explícitamente. Los costos y rangos se conservan; los resultados de búsqueda
-derivados se descartan al cargar. Evidencia actual:
+Aceptación de niebla y viaje:
+
+```powershell
+python -m pytest -q Pruebas/prueba_conocimiento.py Pruebas/prueba_rutas_conocidas.py Pruebas/prueba_niebla_partida.py Pruebas/prueba_bitacora_partida.py Pruebas/prueba_estado_binario.py Pruebas/prueba_bench_adaptadores.py
+```
+
+El esquema binario del modelo ahora es **5**; los guardados anteriores se rechazan
+explícitamente. Conserva conocimiento, memoria de puertas y deltas; los índices y
+auxiliares de búsqueda se reconstruyen al cargar. El log registra `# ir a ...`
+como comentario y cada paso como movimiento; replay ignora el comentario.
+Evidencia actual de niebla: [pruebas](documentacion/evidencia/pruebas_niebla.txt),
+[mediciones](documentacion/evidencia/mediciones_niebla.json) y
+[salidas de bench](documentacion/evidencia/bench_niebla.txt).
+Evidencia histórica de terreno, antes de niebla:
 [pruebas](documentacion/evidencia/pruebas_terreno_cazadores.txt),
 [comparaciones sintéticas](documentacion/evidencia/mediciones_terreno_cazadores.json) y
 [referencia oficial](documentacion/evidencia/referencia_terreno_cazadores.json).

@@ -27,8 +27,9 @@ from controlador.partida import Partida
 from modelo.motor_eventos import ActorTurnos, EventoActor, EventoEntorno, MotorEventos
 from modelo.rastro import Puerta, SalaRastro, SalidaRastro
 from modelo.retroceso import CambiosAccion, HistorialRetroceso
+from modelo.conocimiento import ConocimientoMapa, SalaConocida, SalidaConocida, RecuerdoPuerta
 
-VERSION_MODELO = 4
+VERSION_MODELO = 5
 MAGIC_MODELO = b"MDLO"
 MAGIC_SALA = b"SALA"
 
@@ -90,7 +91,7 @@ _ITEM_OPCIONALES = (
     "ficha", "cantidad", "curacion", "duracion", "modificador_velocidad", "recogido_fuera_historial",
 )
 _ESQUEMAS = (
-    (1, MotorEventos, ("reloj", "agenda", "historial", "semilla", "azar"), ()),
+    (1, MotorEventos, ("reloj", "agenda", "historial", "semilla", "azar", "conocimiento"), ()),
     (2, AgendaEventos, ("heap", "siguiente_secuencia"), ()),
     (3, HistorialRetroceso, ("acciones",), ()),
     (4, CambiosAccion, ("reloj_anterior", "cambios"), ()),
@@ -102,8 +103,8 @@ _ESQUEMAS = (
     ), ("tipo", "nombre", "ficha", "suelta")),
     (6, SalaRastro, (
         "sala_id", "ultimo_rastro", "salidas", "enemigos", "trampas", "contenido_cargado",
-    ), ("nombre", "objetos_suelo")),
-    (7, Puerta, ("abierta", "llave", "cierre_automatico"), ("abierta_con_llave",)),
+    ), ("nombre", "objetos_suelo", "posicion_conocimiento")),
+    (7, Puerta, ("abierta", "llave", "cierre_automatico", "recuerdo"), ("abierta_con_llave",)),
     (8, SalidaRastro, ("destino", "puerta", "costo"), ("direccion",)),
     (9, Evento, ("tiempo", "tipo", "actor_id", "secuencia", "cancelado"), ()),
     (10, EventoActor, (
@@ -146,6 +147,10 @@ _ESQUEMAS = (
         "version_cripta", "nombre_jugador", "acciones_ejecutadas", "victoria",
     ), ()),
     (25, ReferenciaFicha, ("id_ficha", "datos"), ()),
+    (26, ConocimientoMapa, ("salas", "jugador"), ()),
+    (27, SalaConocida, ("sala", "sala_id", "posicion", "estado", "nombre", "salidas"), ()),
+    (28, SalidaConocida, ("destino", "puerta", "costo", "direccion"), ()),
+    (29, RecuerdoPuerta, ("observada",), ()),
 )
 
 _PARTIDA_NO_PERSISTENTES = (
@@ -337,7 +342,11 @@ class _Registro:
             for nombre in vars(objeto):
                 if type(objeto) is ActorTurnos and nombre == "ultima_ruta":
                     continue
-                if type(objeto) is MotorEventos and nombre == "revision_conexiones":
+                if type(objeto) is MotorEventos and nombre in (
+                        "revision_conexiones", "hubo_dano", "enemigos_entrada"):
+                    continue
+                if type(objeto) is ConocimientoMapa and nombre in (
+                        "indice", "registros", "actualizaciones"):
                     continue
                 if type(objeto) is Partida and nombre in _PARTIDA_NO_PERSISTENTES:
                     continue
@@ -599,6 +608,9 @@ def cargar_partida(ruta, *, id_cripta=None, version_cripta=None, version_catalog
     extra = None if raices[2] == 0 else _resolver(_Referencia(raices[2]), objetos)
     _validar_modelo(motor, jugador, salas, [objeto for objeto, _, _ in registros])
     motor.revision_conexiones = 0
+    motor.hubo_dano = motor.enemigos_entrada = False
+    if motor.conocimiento is not None:
+        motor.conocimiento.reconstruir()
     for objeto, _, _ in registros:
         if type(objeto) is ActorTurnos:
             objeto.ultima_ruta = None
@@ -691,6 +703,20 @@ def _validar_modelo(motor, jugador, salas, objetos):
                 _exigir(type(anterior) is tuple and len(anterior) == 2, "delta de atributo invalido")
                 esquema = _esquema(type(objeto))
                 _exigir(anterior[0] in esquema[2] + esquema[3], "atributo del delta fuera del esquema")
+                nombre, valor = anterior
+                if type(objeto) is SalaConocida:
+                    if nombre == 'estado':
+                        _exigir(type(valor) is int and 0 <= valor <= 2, 'estado anterior de conocimiento invalido')
+                    elif nombre == 'nombre':
+                        _exigir(valor is None or type(valor) is str, 'nombre anterior invalido')
+                    elif nombre == 'salidas':
+                        _exigir(type(valor) is list and all(type(s) is SalidaConocida for s in valor),
+                                'salidas anteriores invalidas')
+                    else:
+                        raise ErrorGuardado('campo fijo del conocimiento en delta')
+                elif type(objeto) is RecuerdoPuerta:
+                    _exigir(nombre == 'observada' and (valor is None or type(valor) is bool),
+                            'recuerdo anterior invalido')
             elif tipo == "rastro":
                 _exigir(type(objeto) is SalaRastro and (anterior is None or type(anterior) is int),
                         "delta de rastro invalido")
@@ -750,8 +776,52 @@ def _validar_modelo(motor, jugador, salas, objetos):
         salas_validas.insertar(id(sala), True)
     _exigir(salas_validas.buscar(id(jugador.sala_actual)) is not None,
             "jugador fuera de las salas guardadas")
+    conocimiento = motor.conocimiento
+    _exigir(conocimiento is None or type(conocimiento) is ConocimientoMapa,
+            'conocimiento de raiz invalido')
+    if conocimiento is not None:
+        _exigir(type(conocimiento.salas) is list and len(conocimiento.salas) == len(salas)
+                and conocimiento.jugador is jugador, 'raices del conocimiento inconsistentes')
+        for posicion, conocida in enumerate(conocimiento.salas):
+            _exigir(type(conocida) is SalaConocida and type(conocida.sala) is SalaRastro
+                    and salas_validas.buscar(id(conocida.sala)) is not None,
+                    'sala conocida fuera del modelo')
+            _exigir(type(conocida.posicion) is int and conocida.posicion == posicion
+                    and conocida.sala.posicion_conocimiento == posicion
+                    and conocida.sala_id == conocida.sala.sala_id,
+                    'posicion de conocimiento inconsistente')
+            _exigir(type(conocida.estado) is int and 0 <= conocida.estado <= 2,
+                    'estado de conocimiento invalido')
+            _exigir(type(conocida.salidas) is list, 'salidas conocidas invalidas')
+            if conocida.estado < 2:
+                _exigir(conocida.nombre is None and not conocida.salidas,
+                        'informacion oculta en sala no explorada')
+            else:
+                _exigir(type(conocida.nombre) is str
+                        and len(conocida.salidas) == len(conocida.sala.salidas),
+                        'sala explorada incompleta')
+                for recordada, fisica in zip(conocida.salidas, conocida.sala.salidas):
+                    _exigir(type(recordada) is SalidaConocida and type(recordada.destino) is SalaConocida
+                            and recordada.destino.sala is fisica.destino
+                            and recordada.puerta is fisica.puerta.recuerdo
+                            and recordada.direccion == fisica.direccion,
+                            'referencias de salida conocida inconsistentes')
     for objeto in objetos:
-        if type(objeto) is ReferenciaFicha:
+        if type(objeto) is ConocimientoMapa:
+            _exigir(objeto is conocimiento, 'conocimiento ajeno a la partida')
+        elif type(objeto) is SalaConocida:
+            _exigir(conocimiento is not None and type(objeto.posicion) is int
+                    and 0 <= objeto.posicion < len(conocimiento.salas)
+                    and conocimiento.salas[objeto.posicion] is objeto,
+                    'referencia de sala conocida invalida')
+        elif type(objeto) is SalidaConocida:
+            _exigir(type(objeto.destino) is SalaConocida and type(objeto.puerta) is RecuerdoPuerta
+                    and type(objeto.costo) is int and objeto.costo >= 1
+                    and objeto.direccion in ('N', 'S', 'E', 'O'), 'salida conocida invalida')
+        elif type(objeto) is RecuerdoPuerta:
+            _exigir(objeto.observada is None or type(objeto.observada) is bool,
+                    'valor de recuerdo invalido')
+        elif type(objeto) is ReferenciaFicha:
             _exigir(type(objeto.id_ficha) is str, "ID de ficha invalido")
             _exigir(objeto.datos is None or (
                 type(objeto.datos) is dict and objeto.datos.get("id") == objeto.id_ficha
@@ -792,6 +862,8 @@ def _validar_modelo(motor, jugador, salas, objetos):
             if hasattr(objeto, "objetos_suelo"):
                 _exigir(type(objeto.objetos_suelo) is list, "lista de objetos del suelo invalida")
         elif type(objeto) is Puerta:
+            _exigir(objeto.recuerdo is None or type(objeto.recuerdo) is RecuerdoPuerta,
+                    'referencia de recuerdo invalida')
             _exigir(type(getattr(objeto, "abierta_con_llave", False)) is bool, "marca de apertura invalida")
             _exigir(type(objeto.abierta) is bool and (objeto.cierre_automatico is None or
                     (type(objeto.cierre_automatico) is int and objeto.cierre_automatico > 0)),

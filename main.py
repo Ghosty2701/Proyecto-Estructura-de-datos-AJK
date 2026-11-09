@@ -101,7 +101,7 @@ def main(argumentos=None):
                 print(f"No se pudo medir el ciclo completo: {error}", file=sys.stderr)
                 return 1
             _resumen_red(fuente, cache)
-            return 0 if resultado["excedidos"] == 0 else 1
+            return 0 if resultado["excedidos"] == 0 and resultado['niebla']['excedidos_5ms'] == 0 else 1
         if opciones.replay:
             encabezado, _ = leer_bitacora(opciones.replay)
             partida = cargador.crear(encabezado.id_cripta, encabezado.semilla, encabezado_log=encabezado)

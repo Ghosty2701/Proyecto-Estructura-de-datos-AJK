@@ -1,7 +1,7 @@
-# Guía de validación prevista: Niebla y viaje
+# Guía de validación: Niebla y viaje
 
-**Fecha**: 2026-11-09. Esta guía describe verificaciones por implementar.
-No afirma que los comandos nuevos, pruebas o benchmarks ya funcionen.
+**Fecha**: 2026-11-09. Comandos y escenarios implementados; resultados y límites
+al final de esta guía. Los datos concretos del servicio pueden cambiar por versión.
 
 ## Preparación
 
@@ -17,12 +17,14 @@ El comando existente para regresiones es:
 python -m pytest -q
 ```
 
-La evidencia histórica más reciente es 469 pruebas aprobadas para el estado
-previo a niebla; no se han vuelto a ejecutar en esta planificación. Tras la
-implementación se ejecutarán las pruebas nuevas y las regresiones completas.
-Las rutas concretas de pruebas se asignarán en tasks.md, aún no generado.
+La línea base fue de 469 pruebas; el cierre tiene 492 aprobadas. Las referencias
+por escenario están en [tasks.md](tasks.md). Para aceptación de esta capacidad:
 
-## Recorridos de aceptación después de implementar
+```powershell
+python -m pytest -q Pruebas/prueba_conocimiento.py Pruebas/prueba_rutas_conocidas.py Pruebas/prueba_niebla_partida.py Pruebas/prueba_bitacora_partida.py Pruebas/prueba_estado_binario.py Pruebas/prueba_bench_adaptadores.py
+```
+
+## Recorridos de aceptación
 
 1. Iniciar una partida con el comando existente, por ejemplo
    `python main.py --cripta <ID> --semilla 2026`. En t=0, usar `ver mapa`:
@@ -54,9 +56,9 @@ Las rutas concretas de pruebas se asignarán en tasks.md, aún no generado.
 Estos recorridos requieren escenarios sintéticos controlados y evidencia
 automática o log para AC-NV-001 a AC-NV-022; no basta jugar manualmente una vez.
 
-## Mediciones después de implementar
+## Mediciones
 
-El comando de bench existente, a ampliar por esta capacidad, es:
+El comando de bench ampliado por esta capacidad es:
 
 ```powershell
 python main.py --bench --cripta <ID-referencia> --semilla 2026 --repeticiones 5
@@ -77,6 +79,18 @@ simulación del intervalo. Exigir máximo <5 ms, reportar repeticiones y fallos.
 Medir deltas/memoria de cambios e inversión; no confundirlo con memoria total.
 Conservar semilla, tamaños, versiones, huellas de código y límites conocidos.
 
-Después de aprobar esas comprobaciones actualizar Documento de Decisiones,
-README y trazabilidad con evidencia real. Sigue speckit-tasks y speckit-analyze
-antes de implementar, no ejecutar esta guía como si la capacidad estuviera hecha.
+## Resultados de cierre
+
+492 pruebas aprobadas. Referencia oficial: 300 salas, 3 000 consultas (1 500
+sin ruta con puertas observadas y 1 500 con ruta en estrés de recuerdos abiertos),
+máximo 2,1130 ms, cero ≥5 ms. Los recuerdos de estrés no abren puertas físicas.
+225 ciclos con 32 cazadores preparados: máximo 18,6757 ms, cero ≥20 ms; 39/63
+solicitudes, sin HTTP ni vista medidos. Carga sintética separada: un ciclo de
+500 superó 20 ms, máximo 21,7271 ms; conservar ese límite observado.
+
+[Pruebas](../../documentacion/evidencia/pruebas_niebla.txt),
+[mediciones finales](../../documentacion/evidencia/mediciones_niebla.json),
+[primera corrida sin rutas](../../documentacion/evidencia/mediciones_niebla_inicial.json),
+[salidas completas](../../documentacion/evidencia/bench_niebla.txt).
+Interrupción verificada mediante callbacks; no se ensayó teclado físico manualmente.
+Los presupuestos se verifican para estas cargas/equipo, no para cualquier ejecución.

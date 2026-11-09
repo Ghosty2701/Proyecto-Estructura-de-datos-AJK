@@ -1,12 +1,12 @@
 # Modelo de datos: Niebla y viaje
 
-**Fecha**: 2026-11-09. Diseño previsto; sin implementación.
+**Fecha**: 2026-11-09. Diseño implementado y verificado; evidencia en tasks.md.
 **Referencias**: [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md).
-Nombres de entidades y campos propuestos; no son código existente.
+Las entidades implementadas están en modelo/conocimiento.py.
 
 ## ConocimientoMapa
 
-Pertenece al modelo de una partida y contiene el arreglo de ConocimientoSala de
+Pertenece al modelo de una partida y contiene el arreglo de SalaConocida de
 longitud S aprobado en D-NV-01 y el índice estático ID → posición de D-NV-02.
 Las posiciones se asignan una vez a las salas del esqueleto y se conservan durante
 la partida. Guardar el orden ID/posición y validarlo al cargar: cada ID aparece
@@ -19,9 +19,10 @@ Construirlo con los IDs ya recibidos; rechazar duplicados/inconsistencias.
 No insertar ni quitar IDs por exploración, retroceso o búsqueda.
 Los parámetros aprobados no son evidencia de cumplimiento de 5 ms.
 
-## ConocimientoSala
+## SalaConocida (registro de conocimiento de sala)
 
-Campos: sala_id, posicion, estado, nombre_revelado y salidas_conocidas.
+Campos: sala, sala_id, posicion, estado, nombre y salidas. Los dos últimos
+contienen exclusivamente información revelada; sala es referencia interna física.
 Estado: DESCONOCIDA, AVISTADA o EXPLORADA. Una desconocida no contiene nombre
 revelado ni salidas publicadas; una avistada solo permite mostrar su existencia.
 La inicial comienza explorada en t=0 sin crear una acción ni un delta reversible.
@@ -39,13 +40,13 @@ al RecuerdoPuerta de esa conexión. Se crea/publica al revelar la sala. La lista
 publicada no se modifica después: un cambio de referencia puede guardar la lista
 previa mediante los deltas existentes, sin copiar el mapa completo.
 
-RecuerdoPuerta tiene estado_observado: inicialmente None (sin observar), luego
+RecuerdoPuerta tiene observada: inicialmente None (sin observar), luego
 abierto o cerrado. Cada Puerta física tiene referencia a un recuerdo reservado
 al construir la partida (D-NV-07). Ambos sentidos conocidos enlazan el mismo
 recuerdo. Reservarlo no lee/publica su estado real. Los registros de partidas
 independientes no se comparten.
 
-Observar copia el valor real a estado_observado únicamente en una observación
+Observar copia el valor real a observada únicamente en una observación
 autorizada: desde un extremo donde está el jugador o al revelar con antorcha,
 según la interpretación explícita del equipo. Un cambio físico remoto no
 actualiza el recuerdo. Una puerta sin observación no se trata como abierta.

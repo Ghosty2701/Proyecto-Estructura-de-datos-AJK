@@ -60,7 +60,8 @@ class Controlador:
 
     def _registrar(self, texto):
         if self.registrar_accion is not None:
-            self.registrar_accion(" ".join(texto.strip().lower().split()))
+            self.registrar_accion(texto if texto.startswith('#') else
+                                  " ".join(texto.strip().lower().split()))
 
     def ejecutar(self):
         # Bucle principal. Termina al salir o cuando la partida acaba.
@@ -82,6 +83,10 @@ class Controlador:
             return True
 
         nombre = comando.nombre
+        if nombre == 'mapa':
+            self._solo_consulta = True
+            self.vista.mostrar_mapa(self.partida.mapa())
+            return True
         if nombre == "salir":
             return False
         if nombre == "ayuda":
@@ -95,14 +100,24 @@ class Controlador:
             return True
 
         try:
-            mensajes = ejecutar_comando_partida(self.partida, comando)
+            if nombre == 'viajar':
+                mensajes = self.partida.viajar(
+                    comando.argumento, registrar=self._registrar, comentar=self._registrar,
+                    interrumpir=self.vista.hay_interrupcion,
+                    mostrar_paso=lambda: self.vista.mostrar_estado(self.partida.estado()),
+                )
+            else:
+                mensajes = ejecutar_comando_partida(self.partida, comando)
         except AccionInvalida as error:
             mensajes = [str(error)]
         else:
             # Guardar no cambia la simulacion; cargar solo se permite sin bitacora.
-            if nombre not in ("guardar", "cargar"):
+            if nombre not in ("guardar", "cargar", "viajar"):
                 self._registrar(texto)
         self.vista.agregar_mensajes(mensajes)
+        if nombre == 'viajar' and self.vista.interrupcion_detectada:
+            self.vista.interrupcion_detectada = False
+            return self.procesar(self.vista.leer_comando())
         return True
 
     def _navegar_inventario(self, comando):

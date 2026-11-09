@@ -96,6 +96,8 @@ def reproducir_bitacora(
     )
     partida = crear_partida(encabezado)
     for numero, accion in enumerate(acciones, 1):
+        if accion.lstrip().startswith('#'):
+            continue
         if not accion.strip():
             raise ErrorBitacora(f"replay: accion {numero} vacia")
         try:

@@ -22,6 +22,11 @@ def _entero_o_defecto(texto, defecto):
 
 def parsear(texto):
     # Devuelve un Comando, o None si el texto no se reconoce o su argumento es invalido.
+    original = texto.strip().split(maxsplit=2)
+    if len(original) == 2 and [s.lower() for s in original] == ['ver', 'mapa']:
+        return Comando('mapa')
+    if len(original) == 3 and original[0].lower() == 'ir' and original[1].lower() == 'a':
+        return Comando('viajar', original[2])
     partes = texto.strip().lower().split()
     if not partes:
         return None

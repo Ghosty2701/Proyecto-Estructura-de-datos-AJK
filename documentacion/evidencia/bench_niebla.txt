@@ -1,0 +1,160 @@
+
+bench_niebla_sintetico.txt
+Python 3.14.6; plataforma win32; semilla 2026
+Repeticiones: 5; menor tiempo observado, sin garantia de rendimiento.
+
+AGENDA: 2000 inserciones, 500 cancelaciones
+Eventos activos extraidos: 1500
+Heap propio: 4.032 ms
+Lista ordenada: 147.415 ms
+
+RETROCESO: 2000 deltas de vida y rastro
+Deshacer un intervalo: 0.184 ms
+Contenedores del registro (estimacion parcial): 160528 bytes
+
+RASTRO: mapa de 4000 salas; 4 salidas abiertas por rastreador
+1 rastreadores; 100 decisiones: 0.104 ms
+Promedio de esta carga: 1.043 us/decision
+100 rastreadores; 10000 decisiones: 9.896 ms
+Promedio de esta carga: 0.990 us/decision
+
+INVENTARIO: 1000 inserciones, recorrido al centro, equipar y 1000 retiros
+Carga completa: 1.020 ms
+
+ORDENAMIENTOS: milisegundos por lista; clave costosa sintetica de 20 sumas
+  n=16; mezclados
+    insertion_sort: 0.008 ms
+    merge_sort: 0.014 ms
+    Seleccion automatica (insertion_sort): 0.008 ms
+  n=16; casi ordenados
+    insertion_sort: 0.002 ms
+    merge_sort: 0.012 ms
+    Seleccion automatica (insertion_sort): 0.002 ms
+  n=16; clave costosa
+    insertion_sort: 0.046 ms
+    merge_sort: 0.055 ms
+    Seleccion automatica (merge_sort): 0.056 ms
+  n=256; mezclados
+    insertion_sort: 1.652 ms
+    merge_sort: 0.369 ms
+    Seleccion automatica (merge_sort): 0.392 ms
+  n=256; casi ordenados
+    insertion_sort: 0.030 ms
+    merge_sort: 0.271 ms
+    Seleccion automatica (insertion_sort): 0.049 ms
+  n=256; clave costosa
+    insertion_sort: 9.761 ms
+    merge_sort: 2.161 ms
+    Seleccion automatica (merge_sort): 2.112 ms
+Python 3.14.6 | Windows | semilla 2026
+Tiempo reportado: menor promedio de 5 rondas; validaciones fuera del cronometro.
+Cargas sinteticas locales; no validan una partida completa ni el limite de 20 ms.
+
+Indice: AVL vs arbol simple (tiempos en us/ficha)
+  n      orden       altura AVL/simple   buscar AVL/simple      construir AVL/simple
+  25     ordenados   5 / 25              0.256 / 0.771          1.904 / 1.095
+  25     mezclados   6 / 10              0.254 / 0.303          1.687 / 0.540
+  100    ordenados   7 / 100             0.348 / 2.747          2.599 / 3.722
+  100    mezclados   8 / 12              0.368 / 0.440          2.324 / 0.698
+  1000   ordenados   10 / 1000           0.522 / 26.322         3.788 / 38.042
+  1000   mezclados   12 / 22             0.571 / 0.728          3.491 / 1.077
+
+CacheCatalogo real: capacidad 25, fuente local sin HTTP
+  Acierto en memoria, incluye AVL y LRU                   0.618 us/operacion
+  Ficha liberada: leer JSON, reinsertar y desalojar      186.996 us/operacion
+  Recuperaciones cronometradas: 500; solicitudes HTTP: 0
+  Disco con cache del sistema operativo; no se fuerza una lectura fisica fria.
+
+Guardado/carga: 200 salas sinteticas
+  Mismos datos: contenedor binario existente con bloques JSON UTF-8 vs JSON compacto.
+  Comparacion del contenedor original; el codec por campos se mide despues.
+  Guardar completo, binario                            1345.850 us/operacion
+  Guardar completo, JSON                                635.100 us/operacion
+  Cargar completo, binario (una apertura)               879.500 us/operacion
+  Cargar completo, JSON                                 449.700 us/operacion
+  Recuperar una sala, binario con indice                162.260 us/operacion
+  Recuperar una sala, JSON completo y recorrido         449.400 us/operacion
+  Tamano binario: 35843 bytes; JSON: 32848 bytes
+  Incluye codificacion/decodificacion. Carga completa con una apertura del archivo.
+  Escrituras con cierre de archivo, sin fsync; lecturas con cache del sistema operativo.
+
+Modelo real: esquema explicito binario, 200 salas e historial de dos acciones
+  Guardar modelo completo (captura, valida y publica)    16194.400 us/operacion
+  Restaurar modelo completo y sus referencias         18390.300 us/operacion
+  Comparacion de escritura con ambas representaciones ya preparadas:
+  Escribir bloques binarios preparados                  641.450 us/operacion
+  Escribir JSON completo preparado                      356.550 us/operacion
+  Lectura/decodificacion al mismo esquema de datos; sin reconstruir entidades:
+  Binario por campos -> registros comparables         13495.150 us/operacion
+  JSON equivalente -> registros comparables            1978.850 us/operacion
+  Vista de una sala sin cargar el modelo                189.570 us/operacion
+  Tamano modelo binario: 58208 bytes; JSON equivalente: 140200 bytes
+  JSON es la alternativa de medicion: incluye entidades, IDs, eventos, azar e historial.
+  Restaurar entidades es una medicion adicional, distinta de leer/decodificar registros.
+
+Comprobaciones funcionales: OK
+
+TERRENO Y CAZADORES: 16 cargas sinteticas, alternativas verificadas
+Individual / compartida / reutilizacion, ms por lote (minimos):
+  salas=80, cazadores=1, rango=100, inestables=False: 0.0181 / 0.0227 / 0.0004
+  salas=80, cazadores=1, rango=100, inestables=True: 0.0165 / 0.0218 / 0.0167
+  salas=80, cazadores=1, rango=2000, inestables=False: 0.2271 / 0.4858 / 0.0004
+  salas=80, cazadores=1, rango=2000, inestables=True: 0.1509 / 0.3507 / 0.1526
+  salas=80, cazadores=32, rango=100, inestables=False: 0.6870 / 0.0597 / 0.0045
+  salas=80, cazadores=32, rango=100, inestables=True: 0.6583 / 0.0604 / 0.6709
+  salas=80, cazadores=32, rango=2000, inestables=False: 6.5255 / 0.6086 / 0.0048
+  salas=80, cazadores=32, rango=2000, inestables=True: 4.3501 / 0.4079 / 4.3853
+  salas=800, cazadores=1, rango=100, inestables=False: 0.0172 / 0.0218 / 0.0003
+  salas=800, cazadores=1, rango=100, inestables=True: 0.0162 / 0.0221 / 0.0173
+  salas=800, cazadores=1, rango=2000, inestables=False: 0.2253 / 0.6756 / 0.0005
+  salas=800, cazadores=1, rango=2000, inestables=True: 0.1515 / 0.4286 / 0.1536
+  salas=800, cazadores=32, rango=100, inestables=False: 0.6799 / 0.0596 / 0.0044
+  salas=800, cazadores=32, rango=100, inestables=True: 0.6819 / 0.0600 / 0.6667
+  salas=800, cazadores=32, rango=2000, inestables=False: 6.4615 / 0.7878 / 0.0048
+  salas=800, cazadores=32, rango=2000, inestables=True: 4.4239 / 0.5027 / 4.4104
+Ciclo completo sintetico, 32 cazadores: 500 ciclos; maximo 21.7271 ms; >=20 ms: 1
+Sin HTTP ni vista. Referencia oficial pendiente; no certifica su limite.
+IR A: 400 calculos sobre 80 salas conocidas; maximo 0.1777 ms; >=5 ms: 0
+NIEBLA: consultas, revelacion e inversion; sin vista ni HTTP.
+  salas=80; trabajo=8; revelacion maxima=0.0142 ms
+  salas=8000; trabajo=8; revelacion maxima=0.0113 ms
+  reserva70; salas=80; capacidad=128; construccion maxima=0.1087 ms; ampliaciones=0
+  reserva50; salas=80; capacidad=256; construccion maxima=0.1009 ms; ampliaciones=0
+  gradual70; salas=80; capacidad=128; construccion maxima=0.1908 ms; ampliaciones=2
+  reserva70; salas=8000; capacidad=16384; construccion maxima=11.9236 ms; ampliaciones=0
+  reserva50; salas=8000; capacidad=16384; construccion maxima=12.2372 ms; ampliaciones=0
+  gradual70; salas=8000; capacidad=16384; construccion maxima=27.0228 ms; ampliaciones=9
+
+bench_niebla_referencia.txt
+IR A: 1500 calculos sobre 300 salas conocidas; maximo 0.4742 ms; >=5 ms: 0
+
+CICLO COMPLETO: cripta cripta-06; version f9ed9afa683d; semilla 2026
+Datos precargados; sin HTTP ni renderizado; 5 repeticiones desde el mismo estado.
+Cazadores del mapa: 36; activos al inicio preparado: 32.
+Preparacion experimental: activacion anticipada; posiciones y estadisticas originales.
+Recorrido automatico: combate, recogida, uso/equipo, puertas con llave y movimiento.
+Ciclos entre decisiones: 225; intervalos terminales separados: 5
+Minimo: 0.050 ms; promedio: 5.808 ms; maximo: 19.844 ms
+Maximo del intervalo de victoria/derrota: 13.070 ms
+Ciclos con tiempo >= 20 ms: 0/225
+Limite de 20 ms en los ciclos medidos: CUMPLE
+EVIDENCIA documentacion\evidencia\mediciones_niebla.json
+RUTA_MAX 0.4742 CICLO_MAX 19.8444
+RED 39 63
+
+bench_niebla_referencia_ampliada.txt
+IR A: 3000 calculos sobre 300 salas conocidas; maximo 2.1130 ms; >=5 ms: 0
+
+CICLO COMPLETO: cripta cripta-06; version f9ed9afa683d; semilla 2026
+Datos precargados; sin HTTP ni renderizado; 5 repeticiones desde el mismo estado.
+Cazadores del mapa: 36; activos al inicio preparado: 32.
+Preparacion experimental: activacion anticipada; posiciones y estadisticas originales.
+Recorrido automatico: combate, recogida, uso/equipo, puertas con llave y movimiento.
+Ciclos entre decisiones: 225; intervalos terminales separados: 5
+Minimo: 0.051 ms; promedio: 5.329 ms; maximo: 18.676 ms
+Maximo del intervalo de victoria/derrota: 8.786 ms
+Ciclos con tiempo >= 20 ms: 0/225
+Limite de 20 ms en los ciclos medidos: CUMPLE
+EVIDENCIA documentacion\evidencia\mediciones_niebla.json
+RUTA_MAX 2.113 CICLO_MAX 18.6757
+RED 39 63

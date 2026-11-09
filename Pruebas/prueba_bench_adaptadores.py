@@ -49,3 +49,14 @@ def test_bench_terreno_compara_resultados_y_excluye_la_vista():
     for fila in resultado['rutas']:
         assert fila['equivalentes']
         assert fila['individual_ms'] >= 0 and fila['compartida_ms'] >= 0
+
+
+def test_bench_niebla_verifica_regiones_e_indices():
+    # PR-NV-001/002/003: validación funcional sin umbral dependiente del equipo.
+    from modelo.bench_conocimiento import medir_conocimiento
+    resultado = medir_conocimiento(repeticiones=1, tamanos=(40, 400), informar=False)
+    assert len(resultado['regiones']) == 2
+    assert resultado['regiones'][0]['trabajo_revelacion'] == resultado['regiones'][1]['trabajo_revelacion']
+    assert all(f['equivalentes'] for f in resultado['indices'])
+    assert resultado['rutas_sinteticas']['consultas'] == 80
+    assert resultado['rutas_sinteticas']['encontradas'] == 80

@@ -274,6 +274,7 @@ def test_ac017_replay_terreno_cazador_sin_instanciar_vista(paquete_terreno, tmp_
     directa = crear_cargador(paquete_terreno, tmp_path / "directa").crear("prueba", 2026)
     ruta = tmp_path / "terreno.log"
     with EscritorBitacora(ruta, "prueba", "v1", "cat-prueba", 2026) as log:
+        log.registrar_accion('# ir a Pasillo')  # FR-NV-014: comentario no ejecutable.
         for comando in ("w", "s", "esperar"):
             # Se conserva la gramatica existente de comandos de partida.
             assert ejecutar_accion_replay(directa, comando) is not False
@@ -291,3 +292,27 @@ def test_ac017_replay_terreno_cazador_sin_instanciar_vista(paquete_terreno, tmp_
     monkeypatch.setattr(aplicacion, "VistaConsola", prohibida)
     assert aplicacion.main(["--replay", str(ruta), "--offline", str(paquete_terreno),
                            "--cache-dir", str(tmp_path / "cli-cache")]) == 0
+
+
+def test_ac018_022_viaje_registrado_equivale_a_movimientos_y_replay(tmp_path):
+    # FR-NV-014/015/017: cada paso individual, comentario conserva nombre original.
+    from prueba_niebla_partida import partida_niebla, explorar_todo
+    from adaptadores.bitacora_partida import EscritorBitacora, reproducir_bitacora
+    from controlador.controlador import ejecutar_accion_replay
+    def nueva():
+        p, salas = partida_niebla()
+        explorar_todo(p, salas)
+        return p
+    p, manual = nueva(), nueva()
+    ruta = tmp_path / 'viaje.log'
+    with EscritorBitacora(ruta, 'sintetica', 'v1', 'c1', 2026) as log:
+        p.viajar('Sala 4', registrar=log.registrar_accion, comentar=log.registrar_accion)
+    for _ in range(4):
+        manual.mover('N')
+    q = reproducir_bitacora(ruta, id_cripta_actual='sintetica', version_cripta_actual='v1',
+                            version_catalogo_actual='c1', crear_partida=lambda h: nueva(),
+                            ejecutar_accion=ejecutar_accion_replay)
+    assert p.estado() == manual.estado() == q.estado()
+    assert p.mapa() == manual.mapa() == q.mapa()
+    assert p.motor.azar.getstate() == q.motor.azar.getstate()
+    assert ruta.read_text(encoding='utf-8').splitlines()[-5:] == ['# ir a Sala 4'] + ['ir N'] * 4

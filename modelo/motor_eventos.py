@@ -76,6 +76,9 @@ class MotorEventos(MotorEfectos):
         self.semilla = semilla
         self.azar = random.Random(semilla)
         self.revision_conexiones = 0
+        self.conocimiento = None
+        self.hubo_dano = False
+        self.enemigos_entrada = False
 
     def iniciar_accion(self):
         self.historial.iniciar_accion(self.reloj)
@@ -92,9 +95,18 @@ class MotorEventos(MotorEfectos):
             self.historial.acciones[-1].cambios.append(("atributo", objeto, (nombre, anterior)))
 
         setattr(objeto, nombre, valor)
+        conocimiento = self.conocimiento
+        if conocimiento is not None and objeto is conocimiento.jugador:
+            if nombre == 'vida' and valor < anterior:
+                self.hubo_dano = True
         if ((isinstance(objeto, Puerta) and nombre == "abierta") or
                 (isinstance(objeto, SalidaRastro) and nombre == "costo")):
             self.revision_conexiones += 1
+            if conocimiento is not None and isinstance(objeto, Puerta):
+                jugador = conocimiento.jugador
+                if jugador is not None and jugador.sala_actual is not None:
+                    if any(s.puerta is objeto for s in jugador.sala_actual.salidas):
+                        self._cambiar(objeto.recuerdo, 'observada', valor)
 
     def _enlazar(self, evento):
         actor = evento.actor
@@ -179,6 +191,9 @@ class MotorEventos(MotorEfectos):
 
         jugador.sala_actual = sala
         sala.ultimo_rastro = 0
+        if self.conocimiento is not None:
+            self.conocimiento.jugador = jugador
+            self.conocimiento.entrar(sala, False, self._cambiar)
 
     def refrescar_rastro_jugador(self, jugador):
         if not self.historial.acciones:
@@ -202,6 +217,10 @@ class MotorEventos(MotorEfectos):
 
         self._cambiar(jugador, "sala_actual", destino)
         self.refrescar_rastro_jugador(jugador)
+        self.enemigos_entrada = any(e.vida > 0 and e.sala_actual is destino
+                                    for e in destino.enemigos)
+        if self.conocimiento is not None:
+            self.conocimiento.entrar(destino, jugador.antorcha is not None, self._cambiar)
         
     def programar_primera_accion_jugador(self, actor):
         if self.reloj != 0:

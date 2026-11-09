@@ -1351,18 +1351,18 @@ def test_estado_y_vista_muestran_destinos_abiertos_cerrados_y_presupuesto(paquet
     fuente.solicitudes_realizadas = 5
     fuente.presupuesto_solicitudes = 9
     salida = partida.jugador.sala_actual.salidas[0]
-    salida.abierta = False
+    partida.motor._cambiar(salida.puerta, 'abierta', False)
     salida.puerta.llave = "llave-prueba"
     lineas = []
     vista = VistaConsola(salida=lineas.append)
     vista.mostrar_estado(partida.estado())
     assert "Solicitudes de red: 5/9" in lineas
     assert any("Ninguna salida abierta" in linea for linea in lineas)
-    assert any("N - Pasillo, sala 2; requiere llave-prueba" in linea for linea in lineas)
-    salida.abierta = True
+    assert any("N - Sala avistada, sala 2" in linea for linea in lineas)
+    partida.motor._cambiar(salida.puerta, 'abierta', True)
     lineas.clear()
     vista.mostrar_estado(partida.estado())
-    assert any("N - Pasillo, sala 2 (escribe w)" in linea for linea in lineas)
+    assert any("N - Sala avistada, sala 2 (escribe w)" in linea for linea in lineas)
     assert not any("Puertas cerradas" in linea for linea in lineas)
 
 

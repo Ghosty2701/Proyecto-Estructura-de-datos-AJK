@@ -1,0 +1,38 @@
+Cripta Parte II - niebla y viaje. 2026-11-09, America/Guatemala.
+Diseno previo: a1c83c2. Tareas previas: cb7ae25.
+Analisis de solo lectura: 17 FR, 3 PR y 22 AC con cobertura prevista;
+30 tareas con requisito, cero conflictos constitucionales o bloqueos detectados.
+Lista de calidad 16/16, no modificada. Sin extensions.yml ni hooks registrados.
+T001: pytest completo, 469 passed in 6.26s.
+T002: ignorados Python/temporales existentes; Python 3.14.6, pytest 9.1.1.
+T003: fallo esperado de coleccion, modulo conocimiento aun inexistente.
+T004: cinco pruebas de conocimiento aprobadas; regresiones 474 passed in 4.54s.
+Las mediciones y aceptacion completa de niebla siguen pendientes.
+
+T005-T010: fallo esperado por nombre de destino oculto aun visible; corregida proyeccion.
+T011: dos fallos esperados por buscar_ruta_conocida inexistente.
+T012-T013: 98 pruebas aprobadas, incluidas regresiones de cazadores.
+T014-T017: tres fallos esperados por viaje inexistente; luego 28 pruebas aprobadas.
+T019-T023: tres fallos esperados de guardado corrupto aceptado; validador completado.
+T018-T023: suite completa intermedia: 490 passed in 4.78s.
+
+T024: fallo esperado por bench_conocimiento ausente; luego 85 pruebas aprobadas.
+T025: comando completo --bench sintetico, cinco repeticiones.
+500 ciclos de cazadores: maximo21.7271ms, uno >=20ms; se conserva el incumplimiento sintetico.
+T026: primera referencia,1500 consultas sin ruta maximo0.4742ms; guardada sin ocultarla.
+Al detectar cero rutas encontradas, se amplio la medicion con recuerdos abiertos.
+Referencia ampliada:3000 consultas,1500 con ruta y1500 sin ruta; maximo2.1130ms, cero >=5ms.
+225 ciclos oficiales32cazadores: maximo18.6757ms, cero >=20ms;39/63solicitudes.
+Revelacion:8actualizaciones tanto80como8000salas; sin HTTP/vista en cronometro.
+T027: python -m pytest -q -p no:cacheprovider --basetemp=.test_tmp/nv_cierre --tb=short
+492 passed in 4.72s.
+T028-T030: documentacion y trazabilidad actualizadas; auditoria AST sin indices
+dict/set ni heapq/bisect/collections/networkx en los algoritmos nuevos.
+El teclado fisico no se probo manualmente; interrupcion probada con callbacks.
+Los tiempos corresponden a estas cargas/equipo, no garantizan cualquier partida.
+
+Verificacion final tras reforzar que el viaje no abre puertas aun teniendo llave:
+python -m pytest -q -p no:cacheprovider --basetemp=.test_tmp/nv_verificado --tb=short
+492 passed in 4.90s.
+Validacion final:30 tareas completas,22 escenarios con referencias a funciones
+existentes, enlaces locales validos y huellas SHA256 de medicion final vigentes.

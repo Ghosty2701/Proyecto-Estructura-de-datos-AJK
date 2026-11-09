@@ -5,6 +5,8 @@
 from vista.bitacora_pantalla import BitacoraPantalla
 
 AYUDA = """Comandos:
+  ver mapa              consultar el mapa conocido, sin pasar tiempo
+  ir a <ID o nombre>    viajar por salas exploradas; escribir interrumpe entre pasos
   w a s d               moverse (norte, oeste, sur, este)
   ir <n/s/e/o>           moverse por direccion cardinal
   abrir <dir>            abrir una puerta con llave
@@ -27,16 +29,33 @@ def _nombre(objeto):
 
 
 class VistaConsola:
-    def __init__(self, entrada=input, salida=print, capacidad_bitacora=20):
+    def __init__(self, entrada=input, salida=print, capacidad_bitacora=20, *, interrupcion=None):
         self._entrada = entrada
         self._salida = salida
         self.bitacora = BitacoraPantalla(capacidad_bitacora)
         self._inventario_visible = False
         self.permitir_cargar = True
+        self._interrupcion = interrupcion
+        self.interrupcion_detectada = False
+
+    def hay_interrupcion(self):
+        if self._interrupcion is not None:
+            pendiente = self._interrupcion()
+        elif self._entrada is input:
+            import sys
+            if sys.platform == 'win32' and sys.stdin.isatty():
+                import msvcrt
+                pendiente = msvcrt.kbhit()  # No consume la primera tecla.
+            else:
+                pendiente = False
+        else:
+            pendiente = False
+        self.interrupcion_detectada = bool(pendiente)
+        return self.interrupcion_detectada
 
     def mostrar_comandos(self):
         cargar = " | cargar" if self.permitir_cargar else ""
-        self._salida("Comandos: w/a/s/d | atacar [numero] | recoger [numero] | abrir <n/s/e/o> | "
+        self._salida("Comandos: ver mapa | ir a <ID o nombre> | w/a/s/d | atacar [numero] | recoger [numero] | abrir <n/s/e/o> | "
                      f"esperar | inv | retroceder | guardar{cargar} | ayuda | salir")
         if self._inventario_visible:
             self._salida("Inventario: sig | ant | orden peso/valor/nombre | usar | equipar | soltar")
@@ -44,6 +63,19 @@ class VistaConsola:
     def agregar_mensajes(self, mensajes):
         for mensaje in mensajes:
             self.bitacora.agregar(mensaje)
+
+    def mostrar_mapa(self, salas):
+        self._salida('Mapa conocido:')
+        for identificador, estado, nombre, salidas in salas:
+            if estado == 1:
+                self._salida(f'  Sala {identificador}: avistada')
+                continue
+            self._salida(f'  Sala {identificador}: {nombre} (explorada)')
+            for direccion, destino, nombre_destino, costo, abierta in salidas:
+                estado_puerta = 'sin observar' if abierta is None else ('abierta' if abierta else 'cerrada')
+                self._salida(f'    {direccion}: {nombre_destino or "sala avistada"} '
+                             f'#{destino}; costo {costo}; {estado_puerta}')
+        self.mostrar_comandos()
 
     def mostrar_estado(self, estado):
         self._inventario_visible = False

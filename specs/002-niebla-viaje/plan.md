@@ -2,10 +2,11 @@
 
 **Rama Git real**: `main` | **Fecha**: 2026-11-09 | **Especificación**: [spec.md](spec.md).
 **Entrada**: `specs/002-niebla-viaje/spec.md`.
-**Estado**: Diseño completado el 2026-11-09 con las elecciones del usuario;
-pendiente de tareas, análisis e implementación.
+**Estado**: Diseño aprobado e implementación verificada el 2026-11-09.
+Las 30 tareas de [tasks.md](tasks.md) se cerraron con evidencia de ejecución.
 El script devuelve `002-niebla-viaje` como identificador de capacidad; no es
-una rama Git nueva. No está autorizado aún ejecutar tareas de implementación.
+una rama Git nueva. La implementación fue autorizada por el usuario después del
+cierre del diseño y precedida por tareas y análisis.
 
 ## Summary
 
@@ -47,8 +48,8 @@ en [quickstart.md](quickstart.md).
 **Storage**: ampliar el formato binario explícito de modelo 4 a 5, conservando
 conocimiento y deltas reversibles. Rechazar versiones anteriores con diagnóstico
 claro. Reconstruir índices y auxiliares derivados al cargar.
-**Testing**: pytest existente. Las 469 pruebas anteriores corresponden al estado
-previo; no verifican niebla. Planificar evidencia para AC-NV-001 a AC-NV-022.
+**Testing**: pytest. Línea base de 469 pruebas; cierre de 492 aprobadas, con
+evidencia de AC-NV-001 a AC-NV-022 en tasks.md.
 **Target Platform**: consola en Windows/PowerShell; modelo y replay sin vista.
 **Project Type**: aplicación MVC con adaptadores de datos externos.
 **Performance Goals**: PR-NV-001, paso de «ir a» <5 ms con conocimiento completo
@@ -169,11 +170,11 @@ revelada al crecer el resto del mapa; registro/inversión de cambios; cálculo d
 cada paso con puertas recordadas y reales divergentes. Separar construcción
 inicial, cambios, consultas y memoria para no ocultar costes.
 
-La referencia local anterior es cripta-06; volver a comprobar identidad y versión
-al medir esta capacidad. No reutilizar los tiempos de cazadores como evidencia
+La referencia se identificó nuevamente en el servicio como cripta-06 y se
+verificaron versiones al medir esta capacidad. No reutilizar los tiempos de cazadores como evidencia
 del límite de «ir a». Conservar versiones, semilla, tamaño y condiciones de cada
 medición, reportar máximos y límites y llevar resultados finales al Documento de
-Decisiones. No se han ejecutado benchmarks ni pruebas nuevas en esta fase.
+Decisiones. El diseño inicial precedió las pruebas y mediciones descritas abajo.
 
 ## Complexity Tracking
 
@@ -204,3 +205,18 @@ Revisión documental final: decisiones, enlaces, entidades y cobertura prevista
 de 22 AC y 17 FR comprobados, incluida revisión delegada de solo lectura exigida
 por la habilidad. Sin elecciones adicionales ni bloqueos de diseño encontrados.
 Esto no sustituye el análisis de consistencia con tasks.md ni evidencia empírica.
+
+## Ejecución y evidencia final
+
+Tareas confirmadas antes del código en cb7ae25; análisis sin bloqueos, 17 FR y
+3 PR cubiertos y checklist 16/16. Las 30 tareas se verificaron con 492 pruebas.
+La implementación conserva las estructuras; se adelantó el esquema básico a
+fundamentos por su validación estricta, como prevé T004. Formato final 5.
+
+Referencia: 3 000 cálculos, máximo 2,1130 ms; 225 ciclos oficiales con 32 cazadores,
+máximo 18,6757 ms; 39/63 solicitudes. El ensayo original no encontró rutas entre
+sus destinos y se conservó antes de añadir estrés de recuerdos abiertos.
+En una corrida sintética hubo un ciclo ≥20 ms (21,7271 ms de máximo); no se
+presenta cumplimiento universal. Ver documentacion/evidencia/mediciones_niebla.json
+y DOCUMENTO_DECISIONES.md para resultados y límites. Teclado físico no probado
+manualmente; interrupción automática verificada con entrada inyectada.

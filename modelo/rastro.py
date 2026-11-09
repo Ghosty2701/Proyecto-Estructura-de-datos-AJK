@@ -6,6 +6,7 @@ class SalaRastro:
         self.enemigos = []
         self.trampas = []
         self.contenido_cargado = False
+        self.posicion_conocimiento = -1
 
 class Puerta:
     def __init__(
@@ -26,6 +27,7 @@ class Puerta:
         self.abierta = abierta
         self.llave = llave
         self.cierre_automatico = cierre_automatico
+        self.recuerdo = None
 
 class SalidaRastro:
     def __init__(

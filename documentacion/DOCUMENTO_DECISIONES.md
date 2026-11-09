@@ -1,5 +1,116 @@
 # Documento de Decisiones de Diseño
 
+## Parte II — Niebla de guerra y viaje «ir a» (2026-11-09)
+
+Fuentes: [especificación](../specs/002-niebla-viaje/spec.md),
+[plan](../specs/002-niebla-viaje/plan.md),
+[alternativas y elecciones](../specs/002-niebla-viaje/research.md) y
+[trazabilidad ejecutada](../specs/002-niebla-viaje/tasks.md).
+Andrey eligió explícitamente D-NV-01 a D-NV-07 y sus variantes; no se sustituyeron
+estructuras por decisiones del agente. Diseño confirmado en a1c83c2 y tareas en
+cb7ae25 antes del código. La interpretación de antorcha y puertas fue elegida
+por el usuario y figura expresamente en la especificación.
+
+### Problema
+
+Separar conocimiento del mapa de la infraestructura completa: distinguir salas,
+recordar puertas aunque cambien lejos, revelar vecinas sin contenido, viajar por
+costo mínimo conocido y revertir/persistir los cambios sin copiar el mapa por acción.
+
+### Alternativas consideradas
+
+Se compararon arreglos, AVL y hash para conocimiento e identificación; doble
+hashing, sondeo lineal y encadenamiento; reserva 70 %, 50 % y crecimiento gradual;
+listas con recuerdo compartido o duplicado y matriz; núcleo compartido o búsqueda
+separada; distancias por arreglo o hash y selección lineal; generaciones, lista
+de posiciones tocadas y limpieza completa; deltas existentes o grupo especializado;
+índices de nombres frente a recorrido y tres asociaciones de puertas/recuerdos.
+research.md conserva ventajas, riesgos y cada aprobación.
+
+### Decisión
+
+Conocimiento en arreglo compacto; tabla hash estática propia ID → posición,
+doble hashing, potencia de dos y salto impar, reserva para máximo 70 % sin crecer
+al explorar. Listas de salidas conocidas con un recuerdo compartido por puerta,
+referenciado desde la puerta física pero con valor observado independiente.
+Estado inicial sin observar; los desconocidos no contienen nombres ni salidas.
+
+Núcleo Dijkstra compartido con acceso separado: cazador sobre mundo físico y
+rango; viaje sobre exploradas y recuerdos abiertos. El viaje usa arreglo de
+registros con generaciones y HeapRutas; cazadores conservan su tabla dispersa.
+Cada paso recalcula y ejecuta movimiento ordinario. Daño y enemigos al entrar
+se capturan como sucesos; no se infieren solo del estado al acabar el intervalo.
+
+Retroceso con deltas de atributos/referencias en la lista existente. Nombres
+exactos se resuelven mediante recorrido al iniciar la orden, sin otro índice.
+La consulta y la vista no producen observaciones. Se filtran paneles y mensajes.
+La entrada opcional entre pasos cancela el viaje; no hay confirmación obligatoria.
+
+### Complejidad
+
+Para S salas, E salidas y P puertas, arreglos y conocimiento completo ocupan
+O(S + E + P). El hash da consulta esperada O(1), peor O(S); la posición directa
+es O(1). Revelar/observar atiende a salas y salidas reveladas, sin recorrido global.
+Inicialización O(S + E), más el costo esperado del hash. Su redondeo puede dejar
+ocupación real muy inferior a 70 %, que es un máximo y no un objetivo exacto.
+
+La búsqueda de V salas y E_V salidas con heap cuesta O((V + E_V) log(V + 1)),
+además de liberar candidatos pendientes O(H). Generaciones evitan limpiar S
+registros por paso. El arreglo auxiliar ocupa O(S). Resolver nombre cuesta
+O(S + M·L) para M exploradas y longitud comparada L, solo al iniciar la orden.
+Registrar/invertir D cambios cuesta O(D), más listas de salidas recién reveladas;
+no se almacena un estado completo por cada acción.
+
+### Evidencia empírica
+
+[492 pruebas](evidencia/pruebas_niebla.txt) aprobadas; aceptación, regresiones de
+cazadores, entradas, memoria local/remota, antorcha, nombres, generaciones,
+paradas, interrupción, pergamino, persistencia y replay sin vista.
+[Medición final](evidencia/mediciones_niebla.json), Python 3.14.6, Windows,
+semilla 2026, cinco repeticiones, con versiones y huellas de código:
+
+- Referencia oficial cripta-06, 300 salas, versión f9ed9afa683d y catálogo
+  4b9e75a42be5: 3 000 consultas; máximo **2,1130 ms**, cero consultas ≥5 ms.
+  En puertas observadas: 1 500 consultas sin ruta, máximo 0,3926 ms. En estrés
+  de recuerdos abiertos: 1 500 con ruta, máximo 2,1130 ms. El estrés no abre
+  puertas físicas y se descarta antes de medir ciclos desde el guardado inicial.
+- Revelación con igual región afectada: ocho actualizaciones con 80 y con
+  8 000 salas; máximos 0,0106 y 0,0115 ms. Inversión: 0,0182 y 0,0158 ms.
+  Memoria parcial de contenedores de deltas: 976 bytes en ambas; no es memoria
+  total del estado ni incluye todos los objetos referenciados.
+- Hash, 8 000 IDs: reserva 70 % y 50 % redondearon a capacidad 16 384;
+  construcción máxima 11,2628 y 11,0715 ms. Gradual: 27,9589 ms y nueve ampliaciones.
+  Con 80 IDs, reservar 50 % usa capacidad 256 frente a 128 al 70 % y reduce
+  sondeos de las consultas ensayadas (212 frente a 328). Se conserva la elección
+  del usuario; no se afirma que 70 % sea siempre más rápido.
+- Regresión de carga oficial con 32 cazadores preparados: 225 ciclos,
+  máximo **18,6757 ms**, cero ≥20 ms; **39/63 solicitudes**. Activación anticipada
+  experimental con posiciones/estadísticas originales; sin HTTP ni vista medidos.
+- La [salida completa](evidencia/bench_niebla.txt) conserva una corrida sintética
+  de 500 ciclos con máximo **21,7271 ms**, uno ≥20 ms. No se borra ese resultado
+  por haber cumplido el ensayo de referencia. La agenda propia repetida dio
+  4,032 ms frente a lista 147,415 ms; inversión de 2 000 deltas, 0,184 ms
+  (mínimos de cargas acumuladas, no máximos de ciclo).
+
+La [primera medición oficial](evidencia/mediciones_niebla_inicial.json) se conserva:
+1 500 consultas sin ruta, máximo 0,4742 ms; ciclos máximo 19,8444 ms. Se amplió
+porque no verificaba rutas encontradas, no para reemplazar un incumplimiento.
+
+### Correspondencia con plan y límites
+
+Se conservaron las estructuras aprobadas. La validación binaria básica se integró
+en fundamentos porque el esquema estricto rechaza campos nuevos; las validaciones
+de conocimiento y la reanudación se cerraron después. Formato de modelo 5 conserva
+conocimiento y deltas y rechaza 4/anteriores; reconstruye índices/generaciones.
+La repetición de mediciones añadió el escenario de recuerdos abiertos y conserva
+la primera corrida; no modificó reglas ni estructuras del juego.
+
+Los tiempos corresponden a esas cargas/equipo y no garantizan cualquier recorrido.
+El benchmark de referencia utiliza preparaciones explícitas, no exploración automática
+normal. Se verificó interrupción mediante callbacks, no una sesión manual de teclado
+físico en Windows. El original de P1 sigue ausente. Resolubilidad y línea de tiempo
+siguen pendientes; no se declara la segunda parte completa.
+
 ## Parte II — Terreno y cazadores (2026-11-09)
 
 Fuentes: [especificación](../specs/001-terreno-cazadores/spec.md),

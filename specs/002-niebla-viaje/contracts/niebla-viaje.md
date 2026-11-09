@@ -1,6 +1,6 @@
 # Contratos: Niebla y viaje
 
-**Fecha**: 2026-11-09. Contratos previstos; no comandos implementados.
+**Fecha**: 2026-11-09. Contratos implementados y verificados; véase tasks.md.
 **Referencias**: [especificación](../spec.md), [modelo de datos](../data-model.md).
 
 ## Consola
@@ -68,8 +68,8 @@ sin cargarlas silenciosamente. No alterar presupuesto o versiones de datos.
 
 ## Trazabilidad prevista para tareas y evidencia
 
-Cada grupo enumera los escenarios; las futuras pruebas deben citar FR además
-del AC. No hay tareas, código de niebla o pruebas ejecutadas todavía.
+Cada grupo enumera los escenarios; las pruebas citan FR además del AC.
+La cadena ejecutada y los nombres de pruebas se conservan en tasks.md.
 
 | FR | AC | Integración prevista | Evidencia por crear |
 | --- | --- | --- | --- |

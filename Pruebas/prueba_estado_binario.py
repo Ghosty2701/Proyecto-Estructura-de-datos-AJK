@@ -330,8 +330,8 @@ def test_guardado_de_modelo_anterior_se_rechaza(tmp_path, monkeypatch):
     # FR-TC-014: nunca interpretar silenciosamente una version incompatible.
     motor, jugador, salas = crear_partida()
     ruta = tmp_path / "anterior.bin"
-    monkeypatch.setattr(codec, "VERSION_MODELO", 3)
-    guardar(ruta, motor, jugador, salas)
     monkeypatch.setattr(codec, "VERSION_MODELO", 4)
+    guardar(ruta, motor, jugador, salas)
+    monkeypatch.setattr(codec, "VERSION_MODELO", 5)
     with pytest.raises(ErrorGuardado, match="version de modelo incompatible"):
         cargar_partida(ruta)

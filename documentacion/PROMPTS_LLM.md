@@ -542,6 +542,29 @@
     en el esquema binario por su dependencia estricta. No se cambian las elecciones
     del usuario ni se implementan las otras tres capacidades.*
 
+42. Continemos con la niebla
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: `$speckit-specify` para niebla de guerra e «ir a», una capacidad
+    según P2 §2.2. Se revisan enunciado, constitución y documentación heredada.
+    Se crean especificación y lista de calidad y se actualiza la capacidad activa.
+    No se implementa código ni se eligen estructuras. Las pruebas y mediciones de
+    terreno no se presentan como evidencia de niebla. Sigue `$speckit-clarify`.*
+
+43. Registrar su estado al revelarlas con la antorcha, como interpretación del equipo.
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: respuesta a la pregunta sobre puertas de vecinas reveladas con
+    antorcha que no conectan con la sala actual. Se registra como interpretación
+    explícita en spec.md, AC-NV-006 y FR-NV-003/006. No implica actualizar puertas
+    remotas posteriormente ni elegir estructuras.*
+
 ## 🟣 Kendall
 
 1. Actúa como un arquitecto de software y líder técnico experto en Python y Estructuras de Datos.

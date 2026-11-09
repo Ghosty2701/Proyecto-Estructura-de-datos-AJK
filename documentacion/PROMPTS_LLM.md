@@ -1080,7 +1080,7 @@ pruebas o benchmarks ni se implementó código de la capacidad.
 
     *Fecha: 2026-10-17*
 
-### Entradas 72–82: Auditoría P2, integraciones y especificación de línea de tiempo
+### Entradas 72–88: Auditoría P2, integraciones, especificación y plan de línea de tiempo
 
 *Fecha original de las intervenciones: 2026-11-09*
 
@@ -1098,14 +1098,22 @@ original y resume su resultado, sin convertir recomendaciones en decisiones.
 | 76 | haz el commit | Commit de las integraciones. |
 | 77 | continue with timeline development | speckit-specify de línea de tiempo (`specs/004-linea-tiempo`); sin estructuras elegidas ni código. |
 | 78 | Nuevo K desde ahí (Recomendado) | Al cargar con otro `--checkpoint-cada`, la historia guardada conserva sus puntos de control y el nuevo K rige desde la carga. Aplicado a AC-LT-025 y FR-LT-015. |
-
 | 79 | yes, commit and continue | Commit de la especificación e inicio de speckit-clarify. |
 | 80 | No cuenta (Recomendado) | El pergamino no es una acción numerada para `historia #k`. FR-LT-004. |
 | 81 | Rechazar explicando (Recomendado) | Guardados anteriores se rechazan explicando la incompatibilidad; sin migración. FR-LT-016. |
 | 82 | Vivos, con estado (Recomendado) | El resumen muestra enemigos vivos, activos o dormidos, marcando cazadores. FR-LT-002. |
+| 83 | Hacia adelante (Recomendado) | speckit-plan. D-LT-01: reconstrucción hacia adelante, re-simulando desde el punto de control anterior. |
+| 84 | Arreglo + búsqueda binaria (Recomendado) | D-LT-02: puntos de control en un arreglo creciente con búsqueda binaria propia. |
+| 85 | Arreglo indexado por k (Recomendado) | D-LT-03: acciones vigentes en un arreglo por k; t → k por búsqueda binaria. |
+| 86 | Copiador de grafo propio (Recomendado) | D-LT-04, tras medir: serializador binario 43–74 ms, copia en memoria 4–6 ms. Copiador iterativo con tabla de identidades propia. |
+| 87 | Sí, dos arreglos (Recomendado) | D-LT-05: órdenes ejecutadas (solo crece, incluye revertidas) y acciones vigentes; punto cada K acciones ejecutadas. |
+| 88 | Guardar todos los puntos (Recomendado) | D-LT-06: el formato 6 persiste órdenes, acciones, tramos de K y todos los puntos. |
 
-Detalle en [especificación de línea de tiempo](../specs/004-linea-tiempo/spec.md).
-No se ejecutaron benchmarks ni se implementó código de la capacidad.
+Detalle en [especificación](../specs/004-linea-tiempo/spec.md) e
+[investigación de la línea de tiempo](../specs/004-linea-tiempo/research.md).
+Se ejecutaron mediciones exploratorias desechables (copia del estado, re-simulación
+y deshacer) registradas en research.md; no se implementó código de la capacidad.
+El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
 
 ## 🟢 Juan
 

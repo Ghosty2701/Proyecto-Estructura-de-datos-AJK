@@ -9,8 +9,10 @@ La segunda capacidad incluye niebla de guerra, memoria de puertas, antorcha y vi
 verifica resolubilidad antes de iniciar, con consulta sin vista e informes de
 bloqueos/ciclos. La línea de tiempo sigue pendiente.
 
-Proceso SDD: **spec-kit 1.3.2**, agente **Codex**, configuración compartida en `.specify/`
-y habilidades en `.agents/skills/`. Los artefactos de la primera capacidad están en
+Proceso SDD: **spec-kit 1.3.2** con dos integraciones instaladas sobre la misma
+configuración compartida en `.specify/`: **Codex** (habilidades en `.agents/skills/`) y
+**Claude Code** (habilidades en `.claude/skills/`). Ambos agentes leen la misma constitución,
+plantillas y scripts; cada integrante usa el suyo. Los artefactos de la primera capacidad están en
 [specs/001-terreno-cazadores](specs/001-terreno-cazadores/plan.md); la segunda está en
 [specs/002-niebla-viaje](specs/002-niebla-viaje/plan.md).
 La especificación de resolubilidad está en

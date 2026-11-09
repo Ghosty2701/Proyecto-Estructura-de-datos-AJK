@@ -260,3 +260,34 @@ def test_replay_con_motor_real_reproduce_azar_efectos_y_retroceso(tmp_path):
     assert len(ma.historial.acciones) == len(mb.historial.acciones)
     assert ja.inventario.cantidad == jb.inventario.cantidad == 0
     assert jb.proxima_accion.actor is jb
+
+
+# Reutiliza solo la fabrica de datos sinteticos; no importa pruebas de otro modulo.
+from Pruebas.prueba_partida import paquete_oficial_de_prueba, paquete_terreno, crear_cargador
+
+
+def test_ac017_replay_terreno_cazador_sin_instanciar_vista(paquete_terreno, tmp_path, monkeypatch):
+    # FR-TC-013: acciones identicas, azar y reloj; CLI de replay sin interfaz.
+    import main as aplicacion
+    from adaptadores.bitacora_partida import EscritorBitacora, reproducir_bitacora
+    from controlador.controlador import ejecutar_accion_replay
+    directa = crear_cargador(paquete_terreno, tmp_path / "directa").crear("prueba", 2026)
+    ruta = tmp_path / "terreno.log"
+    with EscritorBitacora(ruta, "prueba", "v1", "cat-prueba", 2026) as log:
+        for comando in ("w", "s", "esperar"):
+            # Se conserva la gramatica existente de comandos de partida.
+            assert ejecutar_accion_replay(directa, comando) is not False
+            log.registrar_accion(comando)
+    cargador = crear_cargador(paquete_terreno, tmp_path / "replay")
+    repetida = reproducir_bitacora(
+        ruta, id_cripta_actual="prueba", version_cripta_actual="v1",
+        version_catalogo_actual="cat-prueba",
+        crear_partida=lambda h: cargador.crear(h.id_cripta, h.semilla),
+        ejecutar_accion=ejecutar_accion_replay)
+    assert directa.estado() == repetida.estado()
+    assert directa.motor.azar.getstate() == repetida.motor.azar.getstate()
+    def prohibida(*args, **kwargs):
+        raise AssertionError("Replay no debe instanciar la vista")
+    monkeypatch.setattr(aplicacion, "VistaConsola", prohibida)
+    assert aplicacion.main(["--replay", str(ruta), "--offline", str(paquete_terreno),
+                           "--cache-dir", str(tmp_path / "cli-cache")]) == 0

@@ -1,13 +1,13 @@
-﻿# Implementation Plan: Terreno y cazadores
+# Implementation Plan: Terreno y cazadores
 
 **Branch**: `main` | **Date**: 2026-11-08 | **Spec**: [spec.md](spec.md)
 
 **Input**: `specs/001-terreno-cazadores/spec.md`
 
-**Estado**: planificación terminada; fases 0 y 1 documentadas. Las decisiones D-TC-01
-hasta D-TC-08 y sus variantes fueron elegidas por el usuario. No se implementó código
-ni se ejecutaron pruebas del juego o benchmarks de P2. La fase siguiente ya generó
-[tasks.md](tasks.md); esas tareas siguen pendientes de análisis y ejecución.
+**Estado**: diseño aprobado y ejecución completada el 2026-11-09. Las decisiones D-TC-01
+hasta D-TC-08 y sus variantes fueron elegidas por el usuario. Las 38 tareas de
+[tasks.md](tasks.md) tienen evidencia de código, pruebas y mediciones. Los resultados
+finales y sus límites se incorporaron a documentacion/DOCUMENTO_DECISIONES.md.
 El identificador de capacidad es `001-terreno-cazadores`; la rama Git real es `main`.
 
 ## Summary
@@ -75,15 +75,15 @@ Cambiar la estructura o su política acordada exige volver a consultar al usuari
 | MVC y modos sin vista | Exigidos | Estructuras en modelo/; adaptadores cargan datos; replay y bench sin vista |
 | Datos externos | Exigidos | Costos y rango se cargan de datos versionados, sin casos por cripta |
 | Presupuesto y versiones | Exigidos | Búsqueda sobre esqueleto vivo; no descarga contenido para calcular la ruta |
-| Evidencia de rendimiento | Pendiente | Protocolo definido; mediciones y aceptación pendientes de implementación |
+| Evidencia de rendimiento | Pendiente al diseñar | 225 ciclos oficiales preparados con 32 cazadores, máximo 15,1171 ms; resultados conservados |
 | Búsqueda local por rango | Exigida | Tabla pequeña por búsqueda, adyacencia local y corte por rango; sin escaneo global |
-| Especificación antes del código en Git | Pendiente | Obligación anterior a implementar; esta fase solo crea documentos |
-| Trazabilidad | Spec y escenarios presentes | Tareas generadas y vinculadas; implementación y pruebas pendientes |
+| Especificación antes del código en Git | Exigida | 290f173 y aclaración 1071237 preceden al código de la capacidad |
+| Trazabilidad | Spec y escenarios presentes | Tareas ejecutadas; pruebas y ubicaciones reales en tasks.md |
 | Prompts | Registro existente | Prompt de aprobación añadido a documentacion/PROMPTS_LLM.md |
 | Elección del usuario | Decisiones abiertas | D-TC-01 a D-TC-08 resueltas, con historia en research.md |
 
-**Resultado**: diseño sin excepciones a la constitución. Puede pasar a generación de tareas
-y análisis de consistencia. No equivale a evidencia de funcionamiento o rendimiento.
+**Resultado**: diseño sin excepciones a la constitución, implementado y verificado con
+469 pruebas y mediciones identificadas. No garantiza otras versiones, cargas o equipos.
 El commit de la especificación debe anteceder al commit del código que la implemente.
 
 ## Project Structure
@@ -99,9 +99,10 @@ specs/001-terreno-cazadores/
     quickstart.md
     contracts/terreno-cazadores.md
     checklists/requirements.md
+    tasks.md
 ```
 
-tasks.md corresponde a la siguiente fase y no se genera con este plan.
+tasks.md registra la ejecución posterior al diseño y sus referencias de evidencia.
 
 ### Source Code (repository root)
 
@@ -119,6 +120,7 @@ Ubicaciones previstas para la implementación; no son archivos nuevos ya creados
 | adaptadores/estado_binario.py | Esquema, validaciones y vista selectiva con costo/rango | FR-TC-014 |
 | adaptadores/bitacora_partida.py y main.py | Verificar replay por el mismo ejecutor sin vista | FR-TC-013 |
 | modelo/bench_modelo.py y adaptadores/bench_adaptadores.py | Nuevas cargas y comparaciones requeridas | PR-TC-001 a PR-TC-003 |
+| modelo/bench_rutas.py | Separa las cargas nuevas del benchmark; conserva las estructuras y modalidades aprobadas | PR-TC-001 a PR-TC-003 |
 | Pruebas/ | Casos de aceptación, estructuras y regresiones de P1 | Todos los FR-TC |
 
 **Structure Decision**: ampliar MVC existente. Las nuevas estructuras de búsqueda viven
@@ -144,6 +146,10 @@ estructuras de P1 en sus usos actuales; no se las sustituye para resolver esta c
    resultados finales en el Documento de Decisiones, enlazando spec y plan.
 
 Esta secuencia orienta la futura descomposición en tareas; no reemplaza tasks.md.
+
+La integración adelantó la persistencia del campo costo a US1 porque el serializador
+existente rechaza atributos sin esquema. T029 completó después rango, validaciones y
+lectura selectiva. Fue una corrección de dependencia, sin cambiar estructuras o reglas.
 
 ## Mediciones previstas
 

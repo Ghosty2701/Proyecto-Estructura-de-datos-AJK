@@ -53,6 +53,7 @@ def _crear_enemigo(entrada, sala, cache):
         entrada["instancia"], vida, ficha["velocidad"],
         vida_max=ficha["vida_max"], ataque=ficha["ataque"], defensa=ficha["defensa"],
         comportamiento=comportamiento, regeneracion=ficha.get("regeneracion", 0),
+        rango=ficha.get("rango"),
     )
     enemigo.nombre = ficha["nombre"]
     enemigo.ficha = cache.referencia(ficha["id"])
@@ -287,9 +288,23 @@ class CargadorPartida:
                     abierta=not conexion.get("cerrada", False), llave=conexion.get("llave"),
                     cierre_automatico=conexion.get("cierre_automatico"),
                 )
-                salida = SalidaRastro(destino, puerta=puerta)
+                salida = SalidaRastro(destino, puerta=puerta, costo=conexion.get("costo", 100))
                 salida.direccion = direccion
                 sala.salidas.append(salida)
+
+        # Una puerta fisica comparte estado en ambos sentidos, tambien al deshacer.
+        # Cada sala tiene pocas salidas: no se recorre el mapa por cada conexion.
+        for sala in _recorrer_arbol(self.salas.raiz):
+            for salida in sala.salidas:
+                for inversa in salida.destino.salidas:
+                    if inversa.destino is sala:
+                        if inversa.costo != salida.costo:
+                            raise ErrorDatosPartida("Costos distintos en los sentidos de una salida.")
+                        if (inversa.abierta != salida.abierta or
+                                inversa.puerta.llave != salida.puerta.llave or
+                                inversa.puerta.cierre_automatico != salida.puerta.cierre_automatico):
+                            raise ErrorDatosPartida("Puerta incoherente en sus dos sentidos.")
+                        inversa.puerta = salida.puerta
 
     def preparar_sala(self, sala):
         if sala.contenido_cargado:

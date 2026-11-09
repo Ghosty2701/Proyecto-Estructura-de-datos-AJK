@@ -1,0 +1,147 @@
+{
+  "ciclos": 225,
+  "maximo_ms": 15.1171,
+  "excedidos": 0,
+  "cazadores_totales": 36,
+  "cazadores_activos_inicio": 32,
+  "version_cripta": "f9ed9afa683d",
+  "solicitudes": 38,
+  "presupuesto": 63,
+  "id_cripta": "cripta-06",
+  "version_catalogo": "4b9e75a42be5",
+  "semilla": 2026,
+  "repeticiones": 5,
+  "preparacion": "Activar hasta 32 cazadores existentes antes del cronometro, sin alterar posiciones ni estadisticas.",
+  "fecha_local": "2026-11-09",
+  "python": "3.14.6",
+  "plataforma": "Windows-11-10.0.26300-SP0",
+  "referencia_oficial_verificada": true,
+  "sin_http_en_cronometro": true,
+  "sin_vista": true,
+  "huellas_codigo": [
+    {
+      "archivo": "modelo/agenda_eventos.py",
+      "sha256": "23796d375360940b28bf2a2d0b9f30ef67ac92d7787f8cbf98bbf52b1df63ba1"
+    },
+    {
+      "archivo": "modelo/bench_modelo.py",
+      "sha256": "d16c15bf5eec51560c8ebda6f7dd598537fab1232a56f9a3786d7781baf63af4"
+    },
+    {
+      "archivo": "modelo/bench_rutas.py",
+      "sha256": "348134e162cb0433b266013832b2cb4c8feb4908f9487150e8d0700ed3db55b4"
+    },
+    {
+      "archivo": "modelo/efectos.py",
+      "sha256": "9b4257cb4724abcc5ad11dd1fc6b923d7ada709fa0407b237e481b4a0e4e8fca"
+    },
+    {
+      "archivo": "modelo/evento.py",
+      "sha256": "5a06b14358d929ae465a069b920349a66772b25bb0c2dd71f79158fe72cda9df"
+    },
+    {
+      "archivo": "modelo/heap_rutas.py",
+      "sha256": "89d75a748db012be2ee5802538c56014c9eafeb2d3c3b7a3c9912d7577b82abf"
+    },
+    {
+      "archivo": "modelo/inventario.py",
+      "sha256": "d90261d16ea533149d83f1d35a5458f2b7eaefbd378e71013d5ce9cc1a6cbd77"
+    },
+    {
+      "archivo": "modelo/inventario_reversible.py",
+      "sha256": "c96975073a7e25b342405cf86cc105397142cb7f56ebcaa1062e4e9a0b56eeb3"
+    },
+    {
+      "archivo": "modelo/motor_eventos.py",
+      "sha256": "5e1cb87d1abda229e52f5ae9f339110b5cb4b72411e9d34a1e03e0ef28618e44"
+    },
+    {
+      "archivo": "modelo/rastro.py",
+      "sha256": "b58da25bcbca55387cb6b065df8f3a8ab7a1264c6c3080697376956d79ba479a"
+    },
+    {
+      "archivo": "modelo/retroceso.py",
+      "sha256": "c7cc44b1ffd6d65861883ab372043f6136791bb3f29ae077016a1b31c25f671b"
+    },
+    {
+      "archivo": "modelo/rutas.py",
+      "sha256": "5e0f1f88e52dd34980bf2be17ec2f105931efff3388af443cc22ceb089e990c8"
+    },
+    {
+      "archivo": "modelo/tabla_hash.py",
+      "sha256": "c7243a98a407cd0e8ab586f45ba7bbb100806cb6a9fb8ca0b4e9aa362d8ae20a"
+    },
+    {
+      "archivo": "controlador/cargar_partida.py",
+      "sha256": "42b46adb1ae85577d899f80864dd022ddb4615a6a77fba45e67b0f1dda08e95f"
+    },
+    {
+      "archivo": "controlador/comandos.py",
+      "sha256": "2a4cc557c91c781e208f01acab75e2254c8b0203a255c8bb6625276f898c4e2f"
+    },
+    {
+      "archivo": "controlador/controlador.py",
+      "sha256": "9e1e44561ce734c7eb242c889543e25712603f6fcee6555fb5390755e9b955d0"
+    },
+    {
+      "archivo": "controlador/partida.py",
+      "sha256": "03a42bcaf82cb2a9eaedfb706d0555e1ff289cfd446bbc3f933d12dd211037e7"
+    },
+    {
+      "archivo": "adaptadores/bench_adaptadores.py",
+      "sha256": "0ea51a785d700ad585edd70142b275dd150e2b08c322d99eb3d5686520c7a096"
+    },
+    {
+      "archivo": "adaptadores/bitacora_partida.py",
+      "sha256": "8d9629a23bbb4a80e9b40024ee850705a20fe7bb3354c10793fc52cea3b260fa"
+    },
+    {
+      "archivo": "adaptadores/cache_catalogo.py",
+      "sha256": "1155cff29b9a7c70bc2a398c5d2906e984aa4d34c72ee52120f0b3374694e947"
+    },
+    {
+      "archivo": "adaptadores/cliente_http.py",
+      "sha256": "bf243aaffa21974f0589082444588006fcf971bd070a0a8b2e4296b8c470ff68"
+    },
+    {
+      "archivo": "adaptadores/estado_binario.py",
+      "sha256": "66936bcf9f0b60a2379d49c90f4c66fece9577660fee37a9174a0b1b8a857ad6"
+    },
+    {
+      "archivo": "adaptadores/fuente_datos.py",
+      "sha256": "0a77eab133cab6b167e9666b445d0d3bdcc792a7aa3e883365273e6c7fed296c"
+    },
+    {
+      "archivo": "adaptadores/guardado_binario.py",
+      "sha256": "1a6f33d6201dc49626befae735332ce3eebb59bfd01c70583c4b51fd8dd8d5a5"
+    },
+    {
+      "archivo": "adaptadores/modo_offline.py",
+      "sha256": "3c0916ce760030419f8160c26729667434f8aeb314faa7a347b38287402c646b"
+    },
+    {
+      "archivo": "adaptadores/prefetch.py",
+      "sha256": "245f4618de52cf977a4597a532fcc40cc1a322af4074a23e2459da6052bcd656"
+    },
+    {
+      "archivo": "adaptadores/puntajes.py",
+      "sha256": "e81fdfb80a84c8a5cecc9c5ace1e2b64e2645ed73981adf1522edcbe22017826"
+    },
+    {
+      "archivo": "adaptadores/servicio_cripta.py",
+      "sha256": "0e67d21bf9cd88659e1f69994c0ce107e129f5fd9f31f3d23dcc9d4cf743f044"
+    },
+    {
+      "archivo": "vista/bitacora_pantalla.py",
+      "sha256": "70d7344fcaa13e14dc1981025762c3ddd70d0b433af147e0da0d43de5053102f"
+    },
+    {
+      "archivo": "vista/vista_consola.py",
+      "sha256": "50b380d326022628e18042b9211f219b702ad83f44a21d3ae335a468f16f1796"
+    },
+    {
+      "archivo": "comun/ordenamiento.py",
+      "sha256": "eeb3aca3adae99f8a39e41d2b38f82b33cf2b0bd07e22efda64607040ac90c08"
+    }
+  ]
+}

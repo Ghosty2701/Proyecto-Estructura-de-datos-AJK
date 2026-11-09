@@ -1,5 +1,103 @@
 # Documento de Decisiones de Diseño
 
+## Parte II — Terreno y cazadores (2026-11-09)
+
+Fuentes: [especificación](../specs/001-terreno-cazadores/spec.md),
+[plan](../specs/001-terreno-cazadores/plan.md),
+[decisiones y alternativas](../specs/001-terreno-cazadores/research.md) y
+[trazabilidad de tareas](../specs/001-terreno-cazadores/tasks.md).
+Todas las estructuras de esta capacidad fueron elegidas por Andrey, con el acuerdo
+del equipo comunicado para la opción inicial; Codex no sustituyó sus elecciones.
+
+### Problema y alternativas
+
+Las salidas tienen costos distintos y el cazador debe elegir el primer paso de una ruta
+mínima dentro de su rango, con desempate por menor ID. La decisión cambia con puertas
+y posiciones y no debe depender del contenido descargado ni recorrer toda la cripta
+cuando solo una región pequeña queda dentro del rango.
+
+Se consideraron fronteras de lista ordenada, lista sin ordenar y heap; registros por
+AVL, arreglos y hash; colisiones por sondeo lineal, encadenamiento o doble hashing;
+duplicados obsoletos o actualización indexada; cálculo individual, compartido o mixto;
+recálculo, invalidación conservadora o selectiva; listas, matriz y representación dispersa.
+La matriz se descartó después de la discusión de memoria y enumeración de vecinos.
+
+### Decisión y complejidad
+
+Se implementa Dijkstra individual limitado por rango, heap binario indexado y tabla hash
+propios con doble hashing. El registro de sala guarda distancia, primer salto y posición
+del heap; el orden lexicográfico conserva el desempate aun cuando mejora el primer salto
+sin disminuir distancia. La tabla empieza con 32 posiciones, duplica antes de superar
+70 % y usa un salto impar. No usa dict/set como índices ni bibliotecas de rutas.
+
+El mapa conserva listas de salidas con costos y puertas coherentes en ambos sentidos,
+O(S + E) de memoria. Cada búsqueda crea solo los registros alcanzados. Para R salas y
+E_R salidas examinadas, el costo esperado amortizado es O((R + E_R) log(R + 1)), con
+espacio O(R); las colisiones pueden degradarlo. Insertar/extraer/mejorar el heap es
+O(log R); acceso hash esperado O(1), sin garantía de peor caso constante.
+
+Se conserva únicamente el último resultado por cazador y sus condiciones de consulta.
+Una revisión monotónica invalida ante cambios de puertas/costos y después de deshacer;
+cambiar origen, objetivo o rango también impide reutilizarlo. Comprobación O(1) y
+O(C) resultados retenidos para C cazadores. No se persisten heap, hash ni caché derivada.
+
+### Evidencia empírica y comparación
+
+Python 3.14.6, Windows, semilla 2026 y cinco repeticiones. Datos detallados en
+[mediciones sintéticas](evidencia/mediciones_terreno_cazadores.json) y
+[referencia oficial](evidencia/referencia_terreno_cazadores.json), con huellas del código.
+Se ejecutaron [469 pruebas](evidencia/pruebas_terreno_cazadores.txt).
+
+| Carga sintética estable, 80 salas | Individual | Compartida | Reutilización |
+| --- | --- | --- | --- |
+| 1 cazador, rango 100 | 0,0168 ms | 0,0229 ms | 0,0004 ms |
+| 32 cazadores, rango 2000 | 6,3691 ms | 0,5978 ms | 0,0049 ms |
+
+Son mínimos por lote, no tiempos máximos de ciclo. El cálculo compartido resultó mejor
+para muchos cazadores en estas cargas, pero no se adoptó como estrategia del juego:
+el usuario eligió individual. Con puertas inestables, la reutilización vuelve a pagar
+búsquedas; para 32 cazadores/rango 2000 se midieron 4,3273 ms de recálculo y 4,3450 ms de
+reutilización. No se afirma que la caché siempre sea más rápida.
+
+Las 16 cargas verifican igualdad de decisiones entre alternativas. Al extender el mapa
+de 80 a 800 salas fuera de la región consultada, se conservan los contadores locales
+en el caso de rango pequeño. La tabla/heap se liberan dentro de la búsqueda medida.
+Dos ejecuciones sintéticas de 500 ciclos cada una, con 32 cazadores, dieron máximos
+19,4260 ms y 17,4352 ms, respectivamente, sin ciclos de 20 ms o más.
+
+En la cripta oficial de referencia `cripta-06` (300 salas, versión `f9ed9afa683d`,
+catálogo `4b9e75a42be5`), se prepararon 32 de sus 36 cazadores activos antes del cronómetro,
+sin moverlos ni alterar estadísticas. Cinco repeticiones produjeron 225 ciclos y cinco
+intervalos terminales separados: máximo de ciclo **15,1171 ms**, cero ciclos ≥20 ms,
+y **38/63 solicitudes**. La activación anticipada es una preparación experimental
+para la carga solicitada, no modifica las reglas normales de activación del juego.
+
+### Antes/después y correspondencia con el plan
+
+P1 usaba costo100 para movimiento y no tenía cazador. P2 mantiene la agenda propia y
+los deltas, usa costos de salida y amplía el esquema de modelo de versión3 a versión4.
+La lectura selectiva incluye costo/rango y el cargador rechaza guardados incompatibles.
+El benchmark completo repite agenda/retroceso: heap 2000 inserciones/1500 extracciones
+activas, mínimo4,123 ms frente a lista145,199 ms; retroceso de 2000 deltas0,188 ms.
+Son cargas históricas repetidas; el ciclo de referencia y el retroceso sintético con
+cazadores añaden la carga nueva. La [salida completa](evidencia/bench_terreno_cazadores.txt)
+conserva también los límites de cada medición de P1.
+
+La implementación conserva las estructuras del plan. La persistencia de costo se
+adelantó a la integración de terreno porque el codec existente rechaza campos sin esquema.
+Las cargas nuevas se separaron en modelo/bench_rutas.py para mantener legible el archivo
+de benchmark anterior, sin introducir estructuras nuevas.
+
+### Límites conocidos
+
+Los resultados corresponden a ese equipo, versiones y recorridos. El margen sintético
+es pequeño y no garantiza todos los mapas ni equipos. La búsqueda individual puede
+repetir trabajo; cambiarla exige autorización del usuario y nuevas mediciones. El rango
+no autoriza inicializar todo el mapa por consulta. La versión4 no implementa todavía
+la línea de tiempo de la capacidad futura; niebla, viaje y resolubilidad siguen pendientes.
+
+---
+
 Andrey: motor, agenda, retroceso y rastro. Juan: red, precarga de salas, resolución del catálogo, caché persistente y bitácora/replay (decisiones 2, 3, 4 y 11). Juan y Andrey: guardado binario (decisión 10 compartida). Kendall: inventario, consola y ordenamiento. Las integraciones conectan las tres partes mediante el controlador; el motor no depende de la vista ni de HTTP.
 
 Las secciones corresponden a §4.1–§4.11 del enunciado. Las cifras proceden de los [benchmarks actualizados](evidencia/bench_subsistemas.txt) y las [comparaciones adicionales](evidencia/mediciones.json), con Python 3.14.6 en Windows. El JSON distingue las comparaciones sintéticas previas de la verificación oficial actual y conserva sus huellas de código. Los benchmarks de estructuras informan mínimos de cinco repeticiones; el ciclo completo informa su máximo. Las frecuencias indicadas corresponden a cada carga experimental.

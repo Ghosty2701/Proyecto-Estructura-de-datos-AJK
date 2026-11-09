@@ -2,6 +2,15 @@
 
 Proyecto de Estructuras de Datos II de Andrey, Juan y Kendall. Juego de consola con reloj virtual, eventos, inventario, efectos, retroceso, guardado y replay. Los datos de las criptas proceden del servicio o de un paquete offline compatible.
 
+La primera capacidad de Parte II ya incluye terreno ponderado y cazadores: los movimientos
+usan el costo de la salida y los cazadores persiguen por costo mínimo dentro de su rango.
+La consola muestra los costos y distingue a los cazadores. Niebla de guerra, viaje «ir a»,
+resolubilidad y línea de tiempo todavía corresponden a capacidades pendientes.
+
+Proceso SDD: **spec-kit 1.3.2**, agente **Codex**, configuración compartida en `.specify/`
+y habilidades en `.agents/skills/`. Los artefactos de la primera capacidad están en
+[specs/001-terreno-cazadores](specs/001-terreno-cazadores/plan.md).
+
 ## Instalación
 
 Python 3.11 o superior; probado con **Python 3.14.6**. Desde la raíz, en PowerShell:
@@ -69,7 +78,34 @@ python main.py --bench
 python main.py --bench --cripta cripta-01 --repeticiones 5
 ```
 
-Se verificaron **437 pruebas**. El benchmark sin cripta usa cargas locales; con cripta mide ciclos completos después de precargar datos, sin red ni renderizado dentro del cronómetro. Devuelve código 1 si un ciclo alcanza 20 ms o la medición falla. Con las cuatro criptas oficiales, caché vacía y reutilizada, se midieron **800 ciclos**, máximo **3,6073 ms**, sin exceder presupuestos. Son resultados de esas cargas y versiones, no una garantía para cualquier recorrido o equipo.
+Se verificaron **469 pruebas** el 2026-11-09. El benchmark sin cripta usa cargas locales;
+con cripta mide ciclos completos después de precargar datos, sin red ni renderizado
+dentro del cronómetro. Devuelve código 1 si un ciclo alcanza 20 ms o la medición falla.
+Cuando el mapa contiene cazadores, prepara hasta 32 de ellos activos antes de medir,
+con sus posiciones y estadísticas originales; esa activación anticipada es una carga
+experimental, no una regla nueva del juego.
+
+En `cripta-06`, versión `f9ed9afa683d`, con 32 cazadores activos al inicio, semilla 2026
+y cinco repeticiones, se midieron **225 ciclos**, máximo **15,1171 ms**, sin ciclos de
+20 ms o más y usando **38/63 solicitudes**. Son resultados de esa carga y equipo,
+no una garantía para cualquier recorrido. El benchmark también compara búsqueda
+individual/compartida y reutilización/recálculo con puertas estables e inestables.
+La estrategia del juego conserva las elecciones del equipo: Dijkstra individual,
+heap indexado propio y tabla hash propia con doble hashing.
+
+Pruebas de aceptación de terreno y cazadores:
+
+```powershell
+python -m pytest -q Pruebas/prueba_terreno.py Pruebas/prueba_rutas.py Pruebas/prueba_tabla_hash.py Pruebas/prueba_heap_rutas.py Pruebas/prueba_partida.py Pruebas/prueba_estado_binario.py Pruebas/prueba_bitacora_partida.py Pruebas/prueba_bench_adaptadores.py
+```
+
+El esquema binario del modelo pasa de versión 3 a **4**; los guardados anteriores
+se rechazan explícitamente. Los costos y rangos se conservan; los resultados de búsqueda
+derivados se descartan al cargar. Evidencia actual:
+[pruebas](documentacion/evidencia/pruebas_terreno_cazadores.txt),
+[comparaciones sintéticas](documentacion/evidencia/mediciones_terreno_cazadores.json) y
+[referencia oficial](documentacion/evidencia/referencia_terreno_cazadores.json).
+Las mediciones anteriores de P1 permanecen en su documentación histórica.
 
 ## Documentación
 

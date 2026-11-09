@@ -1,4 +1,4 @@
-﻿# Investigación preliminar — Terreno y cazadores
+# Investigación preliminar — Terreno y cazadores
 
 **Fecha**: 2026-11-08
 **Estado**: fase 0 completa; D-TC-01 y tabla hash propia de D-TC-02 aprobadas;
@@ -361,5 +361,6 @@ No quedan elecciones de estructuras pendientes para esta capacidad. El diseño d
 está en [data-model.md](data-model.md), los contratos en
 [contracts/terreno-cazadores.md](contracts/terreno-cazadores.md) y la validación prevista
 en [quickstart.md](quickstart.md). La especificación deberá confirmarse en Git antes del
-código. Las tareas ya se generaron en [tasks.md](tasks.md); sigue el análisis de
-consistencia antes de implementar.
+código: se cumplió con 290f173 y 1071237. El análisis se completó el 2026-11-09 y la
+ejecución se registra en [tasks.md](tasks.md). Los resultados finales se incorporaron a
+documentacion/DOCUMENTO_DECISIONES.md, sin sustituir las decisiones del usuario.

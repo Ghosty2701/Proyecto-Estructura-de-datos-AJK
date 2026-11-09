@@ -1,6 +1,6 @@
 # Guía de validación — Terreno y cazadores
 
-**Fecha**: 2026-11-08. Protocolo para la implementación futura; no hay resultados nuevos.
+**Fecha de diseño**: 2026-11-08. **Verificación**: 2026-11-09, 469 pruebas aprobadas.
 Referencias: [spec.md](spec.md), [plan.md](plan.md), [contratos](contracts/terreno-cazadores.md).
 
 ## Preparación
@@ -14,20 +14,21 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-La suite actual sirve de base de regresión, no demuestra la capacidad nueva antes de
-añadir sus pruebas. No se ejecuta desde el botón que abre directamente un archivo de prueba.
-La evidencia histórica de 437 pruebas corresponde a P1; no se presenta como ejecución actual.
+La suite contiene las pruebas nuevas y las regresiones de P1. No se ejecuta desde el botón
+que abre directamente un archivo de prueba. Las 437 pruebas históricas de P1 permanecen
+identificadas como antecedentes; el resultado actual está en la evidencia de esta capacidad.
 
-Antes del código, confirmar la especificación en Git. Generar tasks.md, ejecutar el
-análisis de consistencia y después implementar las tareas. Ningún comando de esta guía
-ya fue ejecutado como prueba de P2 durante la planificación.
+La especificación se confirmó antes del código, se generaron tareas y se realizó el
+análisis de consistencia. La ejecución posterior está registrada en tasks.md y en
+documentacion/evidencia/pruebas_terreno_cazadores.txt. Esta guía se escribió durante el
+diseño y se actualiza ahora con lo efectivamente verificado.
 
 La especificación y sus artefactos iniciales quedaron confirmados en `290f173`
 (2026-11-08), antes de la implementación. El análisis del 2026-11-09 comprobó cobertura
 documental y dependencias; su aclaración del límite establece tiempo estrictamente
 menor que 20 ms, conforme al benchmark heredado que rechaza tiempos mayores o iguales.
 
-## Comprobaciones automatizadas previstas
+## Comprobaciones automatizadas ejecutadas
 
 | Grupo | Ejecución de aceptación después de implementar | Resultado esperado |
 | --- | --- | --- |
@@ -38,10 +39,12 @@ menor que 20 ms, conforme al benchmark heredado que rechaza tiempos mayores o ig
 | Hash y heap | Colisiones deliberadas, mejoras de clave, crecimiento y extracción | Referencias estables, sondeo acotado, orden correcto y posiciones sincronizadas |
 | Reutilización | Consultas iguales, origen distinto, puerta lejana, carga y retroceso | Solo el último resultado compatible se reutiliza; ningún resultado obsoleto cambia la decisión |
 
-Las futuras tareas deben identificar los archivos de prueba concretos y enlazar FR-TC
-en sus casos. No se incluyen comandos hacia pruebas que todavía no existen.
+Los archivos de prueba concretos y los FR-TC están enlazados en la sección
+«Trazabilidad verificada» de tasks.md. La suite completa se ejecutó con
+`python -m pytest -q -p no:cacheprovider --basetemp=.test_tmp/cierre --tb=short`:
+469 aprobadas en 4.69 s, usando el Python 3.14.6 instalado y creando previamente .test_tmp.
 
-## Ejecución manual prevista tras implementar
+## Ejecución de la capacidad
 
 Usar una cripta publicada compatible que contenga costos variables y cazadores; elegir
 el ID obtenido del servicio, no asumir que una cripta histórica los incorpora.
@@ -54,19 +57,20 @@ el ID obtenido del servicio, no asumir que una cripta histórica los incorpora.
 
 Sustituir `<ID>` antes de ejecutar y usar una ruta nueva para el log. El resultado esperado
 es ver costos en la sala, distinguir al cazador y reproducir las acciones sin vista.
-No ejecutar estas órdenes ahora como si la capacidad ya estuviese implementada.
+Los comandos están implementados; el replay sin vista también se verificó con datos
+offline sintéticos de costos variables y cazadores.
 
 Para un paquete offline compatible, añadir `--offline <CARPETA>` conforme al README.
 La caché de catálogo no sustituye el paquete ni garantiza que existan esos datos offline.
 
-## Medición prevista
+## Medición ejecutada y reproducible
 
 ```powershell
 .\.venv\Scripts\python.exe main.py --bench
 .\.venv\Scripts\python.exe main.py --bench --cripta <ID> --semilla 2026 --repeticiones 5
 ```
 
-Después de extender los benchmarks, comprobar las comparaciones de PR-TC-003: uno/muchos,
+Los benchmarks comprueban las comparaciones de PR-TC-003: uno/muchos,
 rangos pequeños/grandes, individual/compartido y reutilización/recálculo con puertas
 estables/inestables. La alternativa compartida es de medición; el juego sigue individual.
 
@@ -74,10 +78,16 @@ Variar el tamaño de regiones no visitadas y contar operaciones de búsqueda. In
 picos de crecimiento de la hash, preparación y liberación del espacio de trabajo. Repetir
 agenda y retroceso bajo carga nueva; excluir HTTP y renderizado del cronómetro.
 
-Registrar equipo, versión de código/datos, semilla, carga y máximo de ciclo. El cumplimiento
-oficial exige identificar la cripta de referencia y decenas de cazadores activos y cumplir
-el límite de 20 ms. Sin esos datos, reportar la medición como sintética y dejar pendiente
-la aceptación oficial, sin sustituirla por tiempos históricos de P1.
+La referencia publicada identificada es cripta-06, versión f9ed9afa683d, con 300 salas y
+36 cazadores. El benchmark prepara hasta 32 activos con posiciones/estadísticas originales,
+antes del cronómetro. Cinco repeticiones, semilla 2026:225 ciclos, máximo15.1171ms, ninguno
+de 20 ms o más, usando 38/63 solicitudes. Es una carga experimental, no una nueva regla del
+juego. Para repetir, sustituir <ID> por el ID actual de la referencia obtenida de --listar.
+Las mediciones pueden variar con equipo, versión, recorrido y estado de caché.
+
+Detalles: [referencia](../../documentacion/evidencia/referencia_terreno_cazadores.json),
+[comparaciones](../../documentacion/evidencia/mediciones_terreno_cazadores.json) y
+[salida completa](../../documentacion/evidencia/bench_terreno_cazadores.txt).
 
 ## Criterio de cierre
 

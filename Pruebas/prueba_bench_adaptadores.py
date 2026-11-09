@@ -37,3 +37,15 @@ def test_bench_inventario_y_ordenamientos_validan_cargas_comunes(capsys):
     assert "INVENTARIO:" in salida and "ORDENAMIENTOS:" in salida
     assert "insertion_sort" in salida and "merge_sort" in salida
     assert "casi ordenados" in salida and "clave costosa" in salida
+
+def test_bench_terreno_compara_resultados_y_excluye_la_vista():
+    # PR-TC-001/002/003: medicion sintetica y equivalencia de alternativas.
+    from modelo.bench_rutas import medir_terreno_cazadores
+    resultado = medir_terreno_cazadores(repeticiones=1, ciclos=3, informar=False)
+    assert len(resultado['rutas']) == 16
+    assert resultado['ciclos']['cantidad'] == 3
+    assert resultado['ciclos']['cazadores'] == 32
+    assert resultado['referencia_oficial_verificada'] is False
+    for fila in resultado['rutas']:
+        assert fila['equivalentes']
+        assert fila['individual_ms'] >= 0 and fila['compartida_ms'] >= 0

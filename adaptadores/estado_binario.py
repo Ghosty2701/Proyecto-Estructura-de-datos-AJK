@@ -28,7 +28,7 @@ from modelo.motor_eventos import ActorTurnos, EventoActor, EventoEntorno, MotorE
 from modelo.rastro import Puerta, SalaRastro, SalidaRastro
 from modelo.retroceso import CambiosAccion, HistorialRetroceso
 
-VERSION_MODELO = 3
+VERSION_MODELO = 4
 MAGIC_MODELO = b"MDLO"
 MAGIC_SALA = b"SALA"
 
@@ -67,8 +67,9 @@ class PartidaCargada:
 class SalaGuardada:
     """Vista de disco autocontenida, no una sala del motor con enlaces incompletos.
 
-    salidas: (direccion, destino_id, abierta, llave, cierre_automatico).
-    actores: (actor_id, es_jugador, vida, vida_max, ataque, defensa, velocidad).
+    salidas: (direccion, destino_id, abierta, llave, cierre_automatico, costo).
+    actores: (actor_id, es_jugador, vida, vida_max, ataque, defensa, velocidad,
+              comportamiento, rango).
     objetos: (id, clase, nombre). trampas: (id, tipo, cantidad, duracion,
     rearme, armada, tiempo_rearme). Los registros completos estan en el bloque.
     """
@@ -97,13 +98,13 @@ _ESQUEMAS = (
         "actor_id", "vida", "vida_max", "velocidad", "ataque", "defensa",
         "comportamiento", "activo", "proxima_accion", "primer_evento", "sala_actual",
         "inventario", "veneno", "efecto_velocidad", "antorcha", "regeneracion",
-        "regeneracion_cantidad",
+        "regeneracion_cantidad", "rango",
     ), ("tipo", "nombre", "ficha", "suelta")),
     (6, SalaRastro, (
         "sala_id", "ultimo_rastro", "salidas", "enemigos", "trampas", "contenido_cargado",
     ), ("nombre", "objetos_suelo")),
     (7, Puerta, ("abierta", "llave", "cierre_automatico"), ("abierta_con_llave",)),
-    (8, SalidaRastro, ("destino", "puerta"), ("direccion",)),
+    (8, SalidaRastro, ("destino", "puerta", "costo"), ("direccion",)),
     (9, Evento, ("tiempo", "tipo", "actor_id", "secuencia", "cancelado"), ()),
     (10, EventoActor, (
         "tiempo", "tipo", "actor_id", "secuencia", "cancelado", "actor", "anterior",
@@ -291,10 +292,10 @@ def _campo(objeto, nombre, defecto=None):
 
 def _resumen_sala(sala, actores, jugador):
     salidas = tuple((getattr(salida, "direccion", None), salida.destino.sala_id,
-                     salida.abierta, salida.puerta.llave, salida.puerta.cierre_automatico)
+                     salida.abierta, salida.puerta.llave, salida.puerta.cierre_automatico, salida.costo)
                     for salida in sala.salidas)
     ocupantes = tuple((actor.actor_id, actor is jugador, actor.vida, actor.vida_max,
-                       actor.ataque, actor.defensa, actor.velocidad)
+                       actor.ataque, actor.defensa, actor.velocidad, actor.comportamiento, actor.rango)
                       for actor in actores if actor.sala_actual is sala)
     objetos = tuple((_campo(objeto, "id"), _campo(objeto, "clase"), _campo(objeto, "nombre"))
                     for objeto in getattr(sala, "objetos_suelo", ()))
@@ -334,6 +335,10 @@ class _Registro:
             raise ErrorGuardado(f"la sala referenciada {propietario} no fue incluida")
         if esquema[1] not in (list, dict, random.Random):
             for nombre in vars(objeto):
+                if type(objeto) is ActorTurnos and nombre == "ultima_ruta":
+                    continue
+                if type(objeto) is MotorEventos and nombre == "revision_conexiones":
+                    continue
                 if type(objeto) is Partida and nombre in _PARTIDA_NO_PERSISTENTES:
                     continue
                 if nombre not in esquema[2] and nombre not in esquema[3]:
@@ -593,6 +598,10 @@ def cargar_partida(ruta, *, id_cripta=None, version_cripta=None, version_catalog
                 "ID de sala inconsistente con su entidad")
     extra = None if raices[2] == 0 else _resolver(_Referencia(raices[2]), objetos)
     _validar_modelo(motor, jugador, salas, [objeto for objeto, _, _ in registros])
+    motor.revision_conexiones = 0
+    for objeto, _, _ in registros:
+        if type(objeto) is ActorTurnos:
+            objeto.ultima_ruta = None
     referencias = [objeto for objeto, _, _ in registros if type(objeto) is ReferenciaFicha]
     return PartidaCargada(motor, jugador, salas, identidad, extra, referencias)
 
@@ -756,8 +765,10 @@ def _validar_modelo(motor, jugador, salas, objetos):
             _exigir(type(objeto.velocidad) is int and objeto.velocidad > 0, "velocidad de actor invalida")
             _exigir(type(objeto.activo) is bool and type(objeto.ataque) is int and objeto.ataque >= 0 and
                     type(objeto.defensa) is int and objeto.defensa >= 0, "atributos de actor invalidos")
-            _exigir(objeto.comportamiento in (None, "guardian", "errante", "rastreador"),
+            _exigir(objeto.comportamiento in (None, "guardian", "errante", "rastreador", "cazador"),
                     "comportamiento de actor invalido")
+            _exigir(objeto.comportamiento != "cazador" or type(objeto.rango) is int,
+                    "rango de cazador invalido")
             _exigir(objeto.inventario is None or type(objeto.inventario) in (Inventario, InventarioReversible),
                     "referencia de inventario invalida")
             _exigir(objeto.sala_actual is None or salas_validas.buscar(id(objeto.sala_actual)) is not None,
@@ -786,6 +797,8 @@ def _validar_modelo(motor, jugador, salas, objetos):
                     (type(objeto.cierre_automatico) is int and objeto.cierre_automatico > 0)),
                     "estado de puerta invalido")
         elif type(objeto) is SalidaRastro:
+            _exigir(type(objeto.costo) is int and objeto.costo >= 1,
+                    "costo de salida invalido")
             _exigir(type(objeto.destino) is SalaRastro and type(objeto.puerta) is Puerta,
                     "referencias de salida invalidas")
             _exigir(salas_validas.buscar(id(objeto.destino)) is not None,

@@ -7,20 +7,24 @@ from modelo.agenda_eventos import (
 from modelo.evento import Evento
 from modelo.retroceso import HistorialRetroceso
 from modelo.rastro import elegir_destino_rastreador
+from modelo.rastro import Puerta, SalidaRastro
+from modelo.rutas import buscar_ruta
 from comun.ordenamiento import vista_ordenada
 import random
 
 class ActorTurnos:
     def __init__(
         self, actor_id, vida, velocidad, *, ataque=0, defensa=0,
-        comportamiento=None, vida_max=None, regeneracion=0,
+        comportamiento=None, vida_max=None, regeneracion=0, rango=None,
     ):
         if vida <= 0 or velocidad <= 0:
             raise ValueError("Vida y velocidad deben ser positivas")
         if ataque < 0 or defensa < 0:
             raise ValueError("Ataque y defensa deben ser no negativos")
-        if comportamiento not in (None, "guardian", "rastreador", "errante"):
+        if comportamiento not in (None, "guardian", "rastreador", "errante", "cazador"):
             raise ValueError("Comportamiento desconocido")
+        if comportamiento == "cazador" and type(rango) is not int:
+            raise ValueError("El cazador requiere rango entero del catalogo")
         if vida_max is None:
             vida_max = vida
         if type(vida_max) is not int or vida_max < vida:
@@ -34,6 +38,8 @@ class ActorTurnos:
         self.ataque = ataque
         self.defensa = defensa
         self.comportamiento = comportamiento
+        self.rango = rango
+        self.ultima_ruta = None
         self.activo = False
         self.proxima_accion = None
         self.primer_evento = None
@@ -69,6 +75,7 @@ class MotorEventos(MotorEfectos):
         self.historial = HistorialRetroceso()
         self.semilla = semilla
         self.azar = random.Random(semilla)
+        self.revision_conexiones = 0
 
     def iniciar_accion(self):
         self.historial.iniciar_accion(self.reloj)
@@ -85,6 +92,9 @@ class MotorEventos(MotorEfectos):
             self.historial.acciones[-1].cambios.append(("atributo", objeto, (nombre, anterior)))
 
         setattr(objeto, nombre, valor)
+        if ((isinstance(objeto, Puerta) and nombre == "abierta") or
+                (isinstance(objeto, SalidaRastro) and nombre == "costo")):
+            self.revision_conexiones += 1
 
     def _enlazar(self, evento):
         actor = evento.actor
@@ -263,6 +273,8 @@ class MotorEventos(MotorEfectos):
             return False
 
         self.reloj = reloj_anterior
+        # Es derivada y monotonica: no revalida resultados de la historia deshecha.
+        self.revision_conexiones += 1
         return True
     
     def usar_pergamino(self, jugador, es_pergamino):
@@ -601,6 +613,7 @@ class MotorEventos(MotorEfectos):
                 "Ambos actores deben tener una sala asignada"
             )
 
+        costo = 100
         if enemigo.sala_actual is jugador.sala_actual:
             self.resolver_ataque(enemigo, jugador)
         else:
@@ -617,9 +630,10 @@ class MotorEventos(MotorEfectos):
                         self._cambiar(
                             enemigo, "sala_actual", salida.destino
                         )
+                        costo = salida.costo
                         break
 
-        self.programar_accion(enemigo, 100)
+        self.programar_accion(enemigo, costo)
         
     def ejecutar_errante(self, evento, jugador):
         if evento.tipo != "accion" or evento.actor is jugador:
@@ -640,6 +654,7 @@ class MotorEventos(MotorEfectos):
                 "Ambos actores deben tener una sala asignada"
             )
 
+        costo = 100
         if enemigo.sala_actual is jugador.sala_actual:
             self.resolver_ataque(enemigo, jugador)
         else:
@@ -656,9 +671,39 @@ class MotorEventos(MotorEfectos):
                     "sala_actual",
                     salidas[indice].destino,
                 )
+                costo = salidas[indice].costo
 
-        self.programar_accion(enemigo, 100)
+        self.programar_accion(enemigo, costo)
         
+    def ruta_cazador(self, cazador, jugador):
+        previa = cazador.ultima_ruta
+        if (previa is not None and previa.origen is cazador.sala_actual
+                and previa.objetivo is jugador.sala_actual
+                and previa.rango == cazador.rango
+                and previa.revision_conexiones == self.revision_conexiones):
+            return previa
+        nueva = buscar_ruta(cazador.sala_actual, jugador.sala_actual, cazador.rango)
+        nueva.revision_conexiones = self.revision_conexiones
+        cazador.ultima_ruta = nueva
+        return nueva
+
+    def ejecutar_cazador(self, evento, jugador):
+        enemigo = evento.actor
+        if enemigo.vida <= 0 or jugador.vida <= 0:
+            return
+        if enemigo.sala_actual is None or jugador.sala_actual is None:
+            raise ValueError("Ambos actores deben tener una sala asignada")
+        costo = 100
+        if enemigo.sala_actual is jugador.sala_actual:
+            self.resolver_ataque(enemigo, jugador)
+        else:
+            ruta = self.ruta_cazador(enemigo, jugador)
+            if ruta.encontrada:
+                salida = ruta.primer_paso
+                self._cambiar(enemigo, "sala_actual", salida.destino)
+                costo = salida.costo
+        self.programar_accion(enemigo, costo)
+
     def ejecutar_enemigo(self, evento, jugador):
         if evento.tipo != "accion" or evento.actor is jugador:
             raise ValueError(
@@ -673,6 +718,8 @@ class MotorEventos(MotorEfectos):
             self.ejecutar_rastreador(evento, jugador)
         elif comportamiento == "errante":
             self.ejecutar_errante(evento, jugador)
+        elif comportamiento == "cazador":
+            self.ejecutar_cazador(evento, jugador)
         else:
             raise ValueError(
                 "El enemigo no tiene un comportamiento válido"
@@ -700,7 +747,7 @@ class MotorEventos(MotorEfectos):
         # Validamos el lote antes de programar sus acciones.
         for enemigo in ordenados:
             if enemigo.comportamiento not in (
-                "guardian", "rastreador", "errante"
+                "guardian", "rastreador", "errante", "cazador"
             ):
                 raise ValueError(
                     "El enemigo debe tener un comportamiento válido"
@@ -756,7 +803,7 @@ class MotorEventos(MotorEfectos):
                 continue
 
             if enemigo.comportamiento not in (
-                "guardian", "rastreador", "errante"
+                "guardian", "rastreador", "errante", "cazador"
             ):
                 raise ValueError(
                     "El enemigo debe tener un comportamiento válido"
@@ -822,7 +869,7 @@ class MotorEventos(MotorEfectos):
                 continue
 
             if enemigo.comportamiento not in (
-                "guardian", "rastreador", "errante"
+                "guardian", "rastreador", "errante", "cazador"
             ):
                 raise ValueError(
                     "El enemigo debe tener un comportamiento válido"
@@ -840,7 +887,7 @@ class MotorEventos(MotorEfectos):
         self.completar_movimiento_jugador(jugador, destino)
         if finalizar_al_entrar:
             return True
-        self.programar_accion(jugador, 100)
+        self.programar_accion(jugador, salida.costo)
         self.activar_enemigos(jugador, destino.enemigos)
         self.activar_trampas(jugador)
 

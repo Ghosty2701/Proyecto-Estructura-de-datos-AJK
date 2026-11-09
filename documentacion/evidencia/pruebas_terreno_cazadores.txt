@@ -1,0 +1,48 @@
+Cripta Parte II - terreno y cazadores
+Fecha: 2026-11-09, America/Guatemala
+Python 3.14.6, pytest 9.1.1, Windows; dependencias existentes.
+Especificacion inicial: 290f173. Aclaracion previa al codigo: 1071237.
+
+Linea base T002:
+python -m pytest -q -p no:cacheprovider --basetemp=.test_tmp/base --tb=short
+Primer intento: 317 passed, 120 errores de preparacion: carpeta padre .test_tmp ausente.
+Se creo la carpeta padre y se repitio: 437 passed in 4.78s.
+
+T003/T004: pruebas primero, 2 errores de coleccion esperados por modulos nuevos ausentes.
+T005/T006/T007: tabla propia y heap indexado implementados conforme a las elecciones.
+python -m pytest -q -p no:cacheprovider Pruebas/prueba_tabla_hash.py Pruebas/prueba_heap_rutas.py --tb=short
+6 passed in 0.11s.
+Verifica colisiones, mejoras de clave, crecimiento, referencias e indices del heap.
+Estas son pruebas de estructuras; no certifican todavia la partida de P2 ni los 20 ms.
+
+T008: 6 failed, 1 passed antes de incorporar costo (fallos esperados del campo nuevo).
+T009-T012: 171 passed in 2.18s (terreno, motor, azar y partida).
+Se adelanto el campo costo del esquema binario a US1 por la validacion estricta existente.
+T013: fallo esperado de coleccion por modelo.rutas aun ausente.
+T014-T019: 7 pruebas nuevas de rutas aprobadas; suite completa intermedia 457 passed in 4.29s.
+T020-T024: 23 passed in 0.46s (rutas, terreno, retroceso y cargador).
+T025-T031: fallos esperados de presentacion/proyeccion antes de integrarlas;
+139 passed in 2.91s tras completar presentacion, esquema version4 y replay.
+Se corrigio en la prueba el comando de replay a la gramatica existente w/s, sin cambiarla.
+T032-T033: fallo esperado por modulo bench_rutas ausente; despues 7 passed in 0.53s.
+Tras instrumentar carga real de cazadores: 11 passed, 72 deselected in 1.03s.
+T035 cierre:
+python -m pytest -q -p no:cacheprovider --basetemp=.test_tmp/cierre --tb=short
+469 passed in 4.69s.
+
+T034, mediciones sinteticas: 16 cargas; individual/compartida/reutilizacion equivalentes.
+Primera corrida: 500 ciclos con 32 cazadores, maximo 19.4260 ms, cero >=20ms.
+Corrida del comando completo: 500 ciclos, maximo 17.4352 ms, cero >=20ms.
+No son una garantia general: el maximo y la diferencia entre corridas dependen del equipo.
+Referencia oficial identificada por consulta al servicio el 2026-11-09:
+cripta-06, Cripta de referencia, 300 salas, version f9ed9afa683d; catalogo 4b9e75a42be5.
+Medicion oficial preparada con hasta32 cazadores activos, posiciones/estadisticas originales,
+semilla2026, cinco repeticiones: 225 ciclos; maximo15.1171 ms; cero >=20ms; 38/63 solicitudes.
+El inicio de hasta32 cazadores es preparacion experimental, no una regla nueva de activacion.
+Las lecturas HTTP ocurren al precargar; el cronometro comprueba ausencia de solicitudes.
+Detalle: referencia_terreno_cazadores.json; salida completa de primera corrida:
+bench_terreno_cazadores.txt. Se ejecutaron clientes reales, no se simulo la referencia.
+
+T036-T038: documentacion final y trazabilidad revisadas; los escenarios se vinculan a
+prueba_terreno, prueba_rutas, prueba_partida, prueba_estado_binario y prueba_bitacora_partida.
+La evidencia es del codigo identificado por las huellas, no solo del commit documental previo.

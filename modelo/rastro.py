@@ -29,8 +29,11 @@ class Puerta:
 
 class SalidaRastro:
     def __init__(
-        self, destino, abierta=True, *, llave=None, puerta=None
+        self, destino, abierta=True, *, llave=None, puerta=None, costo=100
     ):
+        if type(costo) is not int or costo < 1:
+            raise ValueError("El costo debe ser un entero mayor o igual que 1")
+        self.costo = costo
         self.destino = destino
         self.puerta = (
             puerta

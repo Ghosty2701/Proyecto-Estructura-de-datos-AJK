@@ -13,6 +13,7 @@ class RutaSalida:
     nombre: str
     cerrada: bool
     llave: str | None
+    costo: int = 100
 
 
 @dataclass
@@ -91,7 +92,8 @@ class Partida:
 
     @staticmethod
     def _nombre_enemigo(enemigo):
-        return f"{enemigo.nombre} #{enemigo.actor_id}"
+        tipo = " [cazador]" if enemigo.comportamiento == "cazador" else ""
+        return f"{enemigo.nombre}{tipo} #{enemigo.actor_id}"
 
     def estado(self):
         jugador = self.jugador
@@ -120,7 +122,7 @@ class Partida:
             resultado="victoria" if self.victoria else ("derrota" if derrota else None),
             resumen=self.resultado_final(),
             rutas=[RutaSalida(s.direccion, s.destino.sala_id, s.destino.nombre,
-                              not s.abierta, s.puerta.llave) for s in sala.salidas],
+                              not s.abierta, s.puerta.llave, s.costo) for s in sala.salidas],
             solicitudes_usadas=getattr(self.fuente, "solicitudes_realizadas", None),
             presupuesto=getattr(self.fuente, "presupuesto_solicitudes", None),
             solicitudes_normales=getattr(self.fuente, "solicitudes_normales", None),

@@ -177,7 +177,7 @@ def test_vista_de_sala_refleja_puerta_y_actores_sin_enlaces_incompletos(tmp_path
     guardar(ruta, motor, jugador, salas)
     vista = leer_sala_guardada(ruta, 1)
     assert vista.nombre == "Entrada ñ"
-    assert vista.salidas == (("N", 2, False, "llave", 180),)
+    assert vista.salidas == (("N", 2, False, "llave", 180, 100),)
     assert vista.actores[0][0:2] == ("jugador", True)
     assert vista.objetos == (("arma", "arma", "Espada"),)
     assert leer_identidad_guardada(ruta).version_catalogo == "cat-1"
@@ -293,4 +293,45 @@ def test_referencia_a_entidad_inexistente_se_rechaza(tmp_path):
     struct.pack_into("<I", datos, posicion, 2**32 - 1)
     contenedor.escribir_guardado(ruta, bytes(datos), salas)
     with pytest.raises(ErrorGuardado, match="objeto inexistente"):
+        cargar_partida(ruta)
+
+
+def test_ac018_019_costo_rango_y_cache_derivada_tras_cargar(tmp_path):
+    # FR-TC-011/014: guardado completo, lectura selectiva y continuacion.
+    motor, jugador, salas = crear_partida()
+    enemigo = salas[0].enemigos[0]
+    enemigo.comportamiento, enemigo.rango = "cazador", 600
+    for sala in salas:
+        sala.salidas[0].costo = 250
+    motor.ruta_cazador(enemigo, jugador)
+    ruta = tmp_path / "terreno.bin"
+    guardar(ruta, motor, jugador, salas)
+    cargada = cargar_partida(ruta)
+    nuevo = cargada.salas[0].enemigos[0]
+    assert nuevo.rango == 600 and nuevo.comportamiento == "cazador"
+    assert nuevo.ultima_ruta is None
+    assert cargada.salas[0].salidas[0].costo == 250
+    vista = leer_sala_guardada(ruta, 1)
+    assert vista.salidas[0][-1] == 250
+    assert any(a[-2:] == ("cazador", 600) for a in vista.actores)
+    ejecutar = lambda e: motor.ejecutar_evento(e, jugador)
+    ejecutar_cargada = lambda e: cargada.motor.ejecutar_evento(e, cargada.jugador)
+    motor.esperar_jugador(jugador, ejecutar)
+    cargada.motor.esperar_jugador(cargada.jugador, ejecutar_cargada)
+    assert motor.reloj == cargada.motor.reloj
+    assert jugador.vida == cargada.jugador.vida
+    assert motor.azar.getstate() == cargada.motor.azar.getstate()
+    assert motor.deshacer_ultima_accion() == cargada.motor.deshacer_ultima_accion()
+    assert motor.reloj == cargada.motor.reloj
+    assert jugador.vida == cargada.jugador.vida
+
+
+def test_guardado_de_modelo_anterior_se_rechaza(tmp_path, monkeypatch):
+    # FR-TC-014: nunca interpretar silenciosamente una version incompatible.
+    motor, jugador, salas = crear_partida()
+    ruta = tmp_path / "anterior.bin"
+    monkeypatch.setattr(codec, "VERSION_MODELO", 3)
+    guardar(ruta, motor, jugador, salas)
+    monkeypatch.setattr(codec, "VERSION_MODELO", 4)
+    with pytest.raises(ErrorGuardado, match="version de modelo incompatible"):
         cargar_partida(ruta)

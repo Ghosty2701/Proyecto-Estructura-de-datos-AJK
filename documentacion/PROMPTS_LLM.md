@@ -533,6 +533,15 @@
     AGENTS.md con el formato de avance solicitado. Los resultados de ejecución se
     registran en la evidencia y las tareas solo se marcan al verificarse.*
 
+    *Resultado de la ejecución del 2026-11-09: T001–T038 verificadas. Suite completa:
+    469 pruebas aprobadas. Comparaciones sintéticas con estructuras propias y decisiones
+    equivalentes; referencia cripta-06, versión f9ed9afa683d, con 32 cazadores activados
+    anticipadamente como preparación experimental: 225 ciclos, máximo15.1171ms,
+    cero ciclos≥20ms y 38/63 solicitudes. Se conservan estadísticas/posiciones originales.
+    Se documentan resultados, limitaciones, trazabilidad y el adelanto del campo costo
+    en el esquema binario por su dependencia estricta. No se cambian las elecciones
+    del usuario ni se implementan las otras tres capacidades.*
+
 ## 🟣 Kendall
 
 1. Actúa como un arquitecto de software y líder técnico experto en Python y Estructuras de Datos.

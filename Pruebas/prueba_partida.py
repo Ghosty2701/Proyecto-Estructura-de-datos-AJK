@@ -664,6 +664,59 @@ def crear_cargador(carpeta, tmp_path):
     return CargadorPartida(ServicioCripta(fuente, cache))
 
 
+@pytest.fixture
+def paquete_terreno(paquete_oficial_de_prueba):
+    """Datos sinteticos versionados para AC-TC-002/016/017/018."""
+    import json
+    carpeta = paquete_oficial_de_prueba
+    archivo = carpeta / 'criptas/prueba/salas_1.json'
+    datos = json.loads(archivo.read_text(encoding='utf-8'))
+    for sala in datos['salas']:
+        for salida in sala['salidas'].values():
+            salida['costo'] = 250
+    archivo.write_text(json.dumps(datos), encoding='utf-8')
+    archivo = carpeta / 'catalogo/guardian.json'
+    ficha = json.loads(archivo.read_text(encoding='utf-8'))
+    ficha.update(comportamiento='cazador', rango=600)
+    archivo.write_text(json.dumps(ficha), encoding='utf-8')
+    return carpeta
+
+
+def test_ac002_016_cazador_cargado_y_costos_visibles(paquete_terreno, tmp_path):
+    # FR-TC-001/002/007/010/012: cargador, turno y presentacion reales.
+    partida = crear_cargador(paquete_terreno, tmp_path).crear('prueba', 2026)
+    partida.mover('N')
+    assert partida.motor.reloj == 250
+    enemigo = partida.enemigos[0]
+    assert enemigo.comportamiento == 'cazador' and enemigo.rango == 600
+    salida = []
+    vista = VistaConsola(salida=salida.append)
+    vista.mostrar_estado(partida.estado())
+    texto = '\n'.join(salida)
+    assert 'costo 250' in texto and 'cazador' in texto.lower()
+
+
+def test_ac019_pergamino_deshace_terreno_y_turnos_de_cazador(paquete_terreno, tmp_path):
+    # FR-TC-011/014: pergamino real, dano/trampa y agenda de cazador reversibles.
+    import json
+    archivo = paquete_terreno / 'criptas/prueba/contenido/1.json'
+    contenido = json.loads(archivo.read_text(encoding='utf-8'))
+    contenido['objetos'] = ['pergamino']
+    archivo.write_text(json.dumps(contenido), encoding='utf-8')
+    (paquete_terreno / 'catalogo/pergamino.json').write_text(json.dumps({
+        'id': 'pergamino', 'nombre': 'Pergamino', 'clase': 'pergamino_retroceso'}), encoding='utf-8')
+    partida = crear_cargador(paquete_terreno, tmp_path).crear('prueba', 2026)
+    partida.recoger(1)
+    reloj, vida = partida.motor.reloj, partida.jugador.vida
+    partida.mover('N')
+    assert partida.motor.reloj == reloj + 250
+    assert partida.jugador.vida < vida
+    partida.retroceder()
+    assert (partida.jugador.sala_actual.sala_id, partida.motor.reloj, partida.jugador.vida) == (1, reloj, vida)
+    assert partida.inventario.listar() == []
+    assert not partida.enemigos[0].activo
+
+
 def test_bitacora_y_replay_reproducen_seleccion_equipo_combate_y_pergamino(paquete_oficial_de_prueba, tmp_path):
     import json
     from adaptadores.bitacora_partida import EscritorBitacora, leer_bitacora, reproducir_bitacora

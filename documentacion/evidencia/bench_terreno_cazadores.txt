@@ -1,0 +1,124 @@
+Python 3.14.6; plataforma win32; semilla 2026
+Repeticiones: 5; menor tiempo observado, sin garantia de rendimiento.
+
+AGENDA: 2000 inserciones, 500 cancelaciones
+Eventos activos extraidos: 1500
+Heap propio: 4.123 ms
+Lista ordenada: 145.199 ms
+
+RETROCESO: 2000 deltas de vida y rastro
+Deshacer un intervalo: 0.188 ms
+Contenedores del registro (estimacion parcial): 160528 bytes
+
+RASTRO: mapa de 4000 salas; 4 salidas abiertas por rastreador
+1 rastreadores; 100 decisiones: 0.103 ms
+Promedio de esta carga: 1.027 us/decision
+100 rastreadores; 10000 decisiones: 10.057 ms
+Promedio de esta carga: 1.006 us/decision
+
+INVENTARIO: 1000 inserciones, recorrido al centro, equipar y 1000 retiros
+Carga completa: 1.084 ms
+
+ORDENAMIENTOS: milisegundos por lista; clave costosa sintetica de 20 sumas
+  n=16; mezclados
+    insertion_sort: 0.013 ms
+    merge_sort: 0.025 ms
+    Seleccion automatica (insertion_sort): 0.014 ms
+  n=16; casi ordenados
+    insertion_sort: 0.004 ms
+    merge_sort: 0.021 ms
+    Seleccion automatica (insertion_sort): 0.004 ms
+  n=16; clave costosa
+    insertion_sort: 0.072 ms
+    merge_sort: 0.094 ms
+    Seleccion automatica (merge_sort): 0.094 ms
+  n=256; mezclados
+    insertion_sort: 1.709 ms
+    merge_sort: 0.370 ms
+    Seleccion automatica (merge_sort): 0.396 ms
+  n=256; casi ordenados
+    insertion_sort: 0.030 ms
+    merge_sort: 0.269 ms
+    Seleccion automatica (insertion_sort): 0.049 ms
+  n=256; clave costosa
+    insertion_sort: 9.757 ms
+    merge_sort: 2.133 ms
+    Seleccion automatica (merge_sort): 2.108 ms
+Python 3.14.6 | Windows | semilla 2026
+Tiempo reportado: menor promedio de 5 rondas; validaciones fuera del cronometro.
+Cargas sinteticas locales; no validan una partida completa ni el limite de 20 ms.
+
+Indice: AVL vs arbol simple (tiempos en us/ficha)
+  n      orden       altura AVL/simple   buscar AVL/simple      construir AVL/simple
+  25     ordenados   5 / 25              0.243 / 0.735          1.899 / 1.077
+  25     mezclados   6 / 10              0.247 / 0.311          1.686 / 0.544
+  100    ordenados   7 / 100             0.359 / 2.668          2.596 / 3.720
+  100    mezclados   8 / 12              0.356 / 0.444          2.452 / 0.685
+  1000   ordenados   10 / 1000           0.538 / 26.090         3.867 / 37.486
+  1000   mezclados   12 / 22             0.570 / 0.698          3.640 / 1.048
+
+CacheCatalogo real: capacidad 25, fuente local sin HTTP
+  Acierto en memoria, incluye AVL y LRU                   0.611 us/operacion
+  Ficha liberada: leer JSON, reinsertar y desalojar      189.392 us/operacion
+  Recuperaciones cronometradas: 500; solicitudes HTTP: 0
+  Disco con cache del sistema operativo; no se fuerza una lectura fisica fria.
+
+Guardado/carga: 200 salas sinteticas
+  Mismos datos: contenedor binario existente con bloques JSON UTF-8 vs JSON compacto.
+  Comparacion del contenedor original; el codec por campos se mide despues.
+  Guardar completo, binario                            1357.400 us/operacion
+  Guardar completo, JSON                                634.000 us/operacion
+  Cargar completo, binario (una apertura)               847.550 us/operacion
+  Cargar completo, JSON                                 434.150 us/operacion
+  Recuperar una sala, binario con indice                153.150 us/operacion
+  Recuperar una sala, JSON completo y recorrido         436.030 us/operacion
+  Tamano binario: 35843 bytes; JSON: 32848 bytes
+  Incluye codificacion/decodificacion. Carga completa con una apertura del archivo.
+  Escrituras con cierre de archivo, sin fsync; lecturas con cache del sistema operativo.
+
+Modelo real: esquema explicito binario, 200 salas e historial de dos acciones
+  Guardar modelo completo (captura, valida y publica)    16069.600 us/operacion
+  Restaurar modelo completo y sus referencias         18273.100 us/operacion
+  Comparacion de escritura con ambas representaciones ya preparadas:
+  Escribir bloques binarios preparados                  654.750 us/operacion
+  Escribir JSON completo preparado                      352.400 us/operacion
+  Lectura/decodificacion al mismo esquema de datos; sin reconstruir entidades:
+  Binario por campos -> registros comparables         13491.050 us/operacion
+  JSON equivalente -> registros comparables            1906.100 us/operacion
+  Vista de una sala sin cargar el modelo                180.920 us/operacion
+  Tamano modelo binario: 56807 bytes; JSON equivalente: 132368 bytes
+  JSON es la alternativa de medicion: incluye entidades, IDs, eventos, azar e historial.
+  Restaurar entidades es una medicion adicional, distinta de leer/decodificar registros.
+
+Comprobaciones funcionales: OK
+
+TERRENO Y CAZADORES: 16 cargas sinteticas, alternativas verificadas
+Individual / compartida / reutilizacion, ms por lote (minimos):
+  salas=80, cazadores=1, rango=100, inestables=False: 0.0161 / 0.0217 / 0.0004
+  salas=80, cazadores=1, rango=100, inestables=True: 0.0156 / 0.0219 / 0.0160
+  salas=80, cazadores=1, rango=2000, inestables=False: 0.2204 / 0.4868 / 0.0005
+  salas=80, cazadores=1, rango=2000, inestables=True: 0.1491 / 0.3439 / 0.1476
+  salas=80, cazadores=32, rango=100, inestables=False: 0.6705 / 0.0592 / 0.0045
+  salas=80, cazadores=32, rango=100, inestables=True: 0.6320 / 0.0593 / 0.6440
+  salas=80, cazadores=32, rango=2000, inestables=False: 6.3234 / 0.6022 / 0.0052
+  salas=80, cazadores=32, rango=2000, inestables=True: 4.2883 / 0.4061 / 4.3117
+  salas=800, cazadores=1, rango=100, inestables=False: 0.0161 / 0.0217 / 0.0004
+  salas=800, cazadores=1, rango=100, inestables=True: 0.0154 / 0.0215 / 0.0156
+  salas=800, cazadores=1, rango=2000, inestables=False: 0.2209 / 0.6698 / 0.0005
+  salas=800, cazadores=1, rango=2000, inestables=True: 0.1488 / 0.4247 / 0.1492
+  salas=800, cazadores=32, rango=100, inestables=False: 0.6673 / 0.0590 / 0.0046
+  salas=800, cazadores=32, rango=100, inestables=True: 0.6335 / 0.0582 / 0.6433
+  salas=800, cazadores=32, rango=2000, inestables=False: 6.3685 / 0.7933 / 0.0058
+  salas=800, cazadores=32, rango=2000, inestables=True: 4.3078 / 0.4983 / 4.3460
+Ciclo completo sintetico, 32 cazadores: 500 ciclos; maximo 17.4352 ms; >=20 ms: 0
+Sin HTTP ni vista. Referencia oficial pendiente; no certifica su limite.
+
+CICLO COMPLETO: cripta cripta-06; version f9ed9afa683d; semilla 2026
+Datos precargados; sin HTTP ni renderizado; 5 repeticiones desde el mismo estado.
+Recorrido automatico: combate, recogida, uso/equipo, puertas con llave y movimiento.
+Ciclos entre decisiones: 220; intervalos terminales separados: 5
+Minimo: 0.034 ms; promedio: 0.135 ms; maximo: 0.307 ms
+Maximo del intervalo de victoria/derrota: 0.338 ms
+Ciclos con tiempo >= 20 ms: 0/220
+Limite de 20 ms en los ciclos medidos: CUMPLE
+Solicitudes: 46/63; cache: 407 aciertos, 16 fallos, 0 lecturas de disco.

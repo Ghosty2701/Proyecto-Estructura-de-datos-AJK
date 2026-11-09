@@ -76,13 +76,13 @@ class VistaConsola:
                     tecla = "d"
                 else:
                     tecla = "s"
-                s(f"  {ruta.direccion} - {ruta.nombre}, sala {ruta.sala_id} (escribe {tecla})")
+                s(f"  {ruta.direccion} - {ruta.nombre}, sala {ruta.sala_id} (escribe {tecla}); costo {getattr(ruta, 'costo', 100)}")
             cerradas = [ruta for ruta in rutas if ruta.cerrada]
             if cerradas:
                 s("Puertas cerradas:")
                 for ruta in cerradas:
                     llave = f"; requiere {ruta.llave}" if ruta.llave else ""
-                    s(f"  {ruta.direccion} - {ruta.nombre}, sala {ruta.sala_id}{llave} (abrir {ruta.direccion.lower()})")
+                    s(f"  {ruta.direccion} - {ruta.nombre}, sala {ruta.sala_id}{llave} (abrir {ruta.direccion.lower()}); costo {getattr(ruta, 'costo', 100)}")
         elif estado.salidas:
             partes = []
             for direccion, destino, cerrada in estado.salidas:

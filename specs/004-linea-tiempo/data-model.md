@@ -9,7 +9,7 @@ Los nombres describen registros previstos; no amplían reglas de [spec.md](spec.
 | --- | --- | --- |
 | Orden ejecutada | texto normalizado como en `partida.log`; tipo (acción, pergamino, navegación); instante de decisión al ejecutarla | Solo órdenes aceptadas y reproducibles. El arreglo solo crece; su posición es estable. |
 | Acción vigente | instante de decisión; posición de su orden | La posición k − 1 es la acción k. Instantes estrictamente crecientes. El pergamino trunca el final. |
-| Punto de control | posición de orden (la siguiente por re-ejecutar); número de acciones vigentes; instante; copia completa del estado; K del tramo | Arreglo creciente en posición, acción e instante. El punto 0 está en la posición 0, en el instante 0. Dos puntos consecutivos están separados por exactamente K acciones ejecutadas del tramo. Nunca se borra. |
+| Punto de control | posición de orden (la siguiente por re-ejecutar); número de acciones vigentes; instante; copia completa del estado; K del tramo | Arreglo creciente en posición, acción e instante. El punto 0 está en la posición 0, en el instante 0. Dos puntos consecutivos están separados por exactamente K acciones ejecutadas del tramo (incluidas las revertidas después; el pergamino no cuenta). Nunca se borra. |
 | Tramo de K | K vigente; posición donde empieza | Un tramo nuevo empieza solo al cargar con un `--checkpoint-cada` distinto. |
 | Línea de tiempo | arreglo de órdenes, arreglo de acciones, arreglo de puntos, tramos, acciones del tramo en curso, instante pendiente | Pertenece a la partida y se persiste con ella. No usa `dict`/`set` como índice. |
 | Objetivo de consulta | posición final; límite de tiempo opcional | Lo calculan `#k` o t; nunca está más allá de la última orden. |
@@ -32,7 +32,7 @@ Los nombres describen registros previstos; no amplían reglas de [spec.md](spec.
 | --- | --- |
 | Inicio de partida nueva | Punto 0, tramo con K de la ejecución, instante pendiente 0. |
 | Acción aceptada | Orden más acción vigente; tramo + 1; punto si el tramo llega a K. |
-| Pergamino aceptado | Orden; acciones vigentes truncadas al contador restaurado; tramo + 1; instante pendiente igual al reloj restaurado. |
+| Pergamino aceptado | Orden; acciones vigentes truncadas al contador restaurado; el tramo no cambia (el pergamino no es una acción); instante pendiente igual al reloj restaurado. |
 | Navegación de inventario | Solo orden. |
 | Orden rechazada, consulta, guardar | Sin cambios. |
 | Guardar | Se persiste la línea completa (formato 6). |

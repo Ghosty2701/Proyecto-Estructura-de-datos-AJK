@@ -274,7 +274,9 @@ comparar consultas históricas antes y después; intentar cargar archivos antigu
   del jugador; fuera de ellas solo se almacena lo necesario para reconstruir
   cambios. Ninguna consulta aplica o deshace cambios de más de K acciones.
   Si la reconstrucción re-simula, la copia incluye el estado del generador de
-  azar. Escenarios: AC-LT-019/020.
+  azar. Para estos límites, «acciones del jugador» son las acciones ejecutadas,
+  incluidas las que luego revierte un pergamino; el uso del pergamino no cuenta
+  como acción. Escenarios: AC-LT-019/020.
 - **FR-LT-014**: Los resúmenes no dependen de K, de haber cargado la partida ni de
   reconstruir desde log: misma cripta, semilla y acciones dan el mismo resultado.
   Escenarios: AC-LT-021/023.
@@ -374,3 +376,7 @@ comparar consultas históricas antes y después; intentar cargar archivos antigu
 - **P**: ¿Qué enemigos de la sala muestra el resumen de `historia`? → **R**: A,
   todos los vivos, activos o dormidos, con vida y estado, marcando cazadores.
   Aplicado al vocabulario y FR-LT-002.
+- **P**: ¿Qué acciones cuentan para «una copia cada K acciones» y para el límite
+  de K acciones por consulta? → **R**: Las acciones ejecutadas, incluidas las
+  revertidas después por un pergamino; el uso del pergamino no cuenta.
+  Interpretación del equipo aprobada tras `/speckit-analyze`. Aplicado a FR-LT-013.

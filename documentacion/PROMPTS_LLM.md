@@ -1080,7 +1080,7 @@ pruebas o benchmarks ni se implementó código de la capacidad.
 
     *Fecha: 2026-10-17*
 
-### Entradas 72–90: Auditoría P2, integraciones, especificación y plan de línea de tiempo
+### Entradas 72–91: Auditoría P2, integraciones, especificación y plan de línea de tiempo
 
 *Fecha original de las intervenciones: 2026-11-09*
 
@@ -1109,7 +1109,8 @@ original y resume su resultado, sin convertir recomendaciones en decisiones.
 | 87 | Sí, dos arreglos (Recomendado) | D-LT-05: órdenes ejecutadas (solo crece, incluye revertidas) y acciones vigentes; punto cada K acciones ejecutadas. |
 | 88 | Guardar todos los puntos (Recomendado) | D-LT-06: el formato 6 persiste órdenes, acciones, tramos de K y todos los puntos. |
 | 89 | commit cambios actuales | Sin cambios pendientes; nada que confirmar. |
-| 90 | el push fue ejecutado correctamente, proceed with  next steps | speckit-tasks: 37 tareas trazables en `specs/004-linea-tiempo/tasks.md`; luego speckit-analyze. |
+| 90 | el push fue ejecutado correctamente, proceed with  next steps | speckit-tasks: 37 tareas trazables en `specs/004-linea-tiempo/tasks.md`; luego speckit-analyze (0 críticos, 1 alto, 4 medios, 2 bajos). |
+| 91 | si, aplica las correcciones correspondientes | Interpretación aprobada: para K cuentan las acciones ejecutadas, incluidas las revertidas; el pergamino no cuenta (FR-LT-013). Copiador en `adaptadores/`; medición de guardado con muchos puntos; estrategia de 5 000 acciones. |
 
 Detalle en [especificación](../specs/004-linea-tiempo/spec.md) e
 [investigación de la línea de tiempo](../specs/004-linea-tiempo/research.md).

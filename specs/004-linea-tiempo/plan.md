@@ -44,7 +44,9 @@ conserva toda la línea en un formato nuevo.
    - **+1, acción**: agregar (instante de decisión, posición) a las acciones
      vigentes y sumar una acción al tramo.
    - **−1, pergamino**: truncar las acciones vigentes al contador restaurado.
-     También suma al tramo, porque re-simularla repite una acción revertida.
+     No suma al tramo: el pergamino no es una acción (FR-LT-013). La acción que
+     revierte ya se contó al ejecutarse, así que re-simular su `retroceder` no
+     amplía el límite de K acciones por consulta.
    - **0, navegación**: solo queda en el arreglo de órdenes.
 3. Actualizar el instante de decisión pendiente con el reloj actual.
 4. Si el tramo llegó a K, crear un punto con la posición, la acción y el instante
@@ -100,7 +102,7 @@ caso de cualquier carga.
 | Archivo o área prevista | Responsabilidad | Requisitos |
 | --- | --- | --- |
 | `modelo/linea_tiempo.py` (nuevo) | Arreglos de órdenes, acciones y puntos; búsquedas binarias; recorte; tramos de K; cálculo de objetivo. | FR-LT-001/003/004/007/008/009/012/013; PR-LT-002/003/004 |
-| `modelo/copia_estado.py` (nuevo) | Tabla de identidades propia y copiador iterativo guiado por esquema; reconstrucción de auxiliares; copia de `random.Random`. | FR-LT-013/014; PR-LT-003 |
+| `adaptadores/copia_estado.py` (nuevo) | Tabla de identidades propia y copiador iterativo guiado por el esquema de `estado_binario.py`; reconstrucción de auxiliares; copia de `random.Random`. Vive junto al esquema para que el modelo no dependa de adaptadores; la línea recibe la función de copia por parámetro. | FR-LT-013/014; PR-LT-003 |
 | `modelo/motor_eventos.py` | Límite de tiempo opcional en el avance de eventos, inactivo en la partida real. | FR-LT-003 |
 | `controlador/partida.py` | Línea por partida, registro tras cada orden, consulta y resumen histórico (enemigos vivos con estado). | FR-LT-001/002/004/005/006 |
 | `controlador/comandos.py`, `controlador/controlador.py` | Analizar `historia <t>`/`historia #k`, consulta sin registro, interrupción de «ir a». | FR-LT-001/006/007 |
@@ -117,7 +119,7 @@ caso de cualquier carga.
 | --- | --- |
 | I. Estructuras manuales | Arreglos con búsqueda binaria propia y tabla de identidades propia. Sin `dict`/`set` como índice, sin `bisect`, `heapq`, `collections` ni `copy.deepcopy`. Los `dict` de fichas son datos, no índices. |
 | II. Determinismo | El punto incluye `random.Random`. La re-simulación usa las mismas órdenes y el mismo ejecutor que replay. K no cambia resultados (FR-LT-014). Bench determinista por semilla. |
-| III. MVC y modos sin vista | Línea y copia en el modelo; órdenes en el controlador; presentación en la vista. `--replay --hasta` no instancia la vista. |
+| III. MVC y modos sin vista | Línea en el modelo, sin importar adaptadores; copiador junto al esquema en adaptadores; órdenes en el controlador; presentación en la vista. `--replay --hasta` no instancia la vista. |
 | IV. Datos externos | Sin datos de criptas en el código; la re-simulación usa los datos ya descargados de la cripta en curso. |
 | V. Presupuesto y versiones | Las consultas no hacen solicitudes. Formato 6 y rechazo explícito de formatos anteriores. |
 | VI. Rendimiento medido | El K por defecto se elige con `--bench`. Se miden adelante/atrás, copias y P1 con la carga nueva. |

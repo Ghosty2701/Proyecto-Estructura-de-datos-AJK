@@ -37,7 +37,7 @@ en la implementación sin quitar campos.
 | --- | --- |
 | `--checkpoint-cada K` | Entero ≥ 1. Válida con `--cripta`, `--cargar` y `--replay`. Sin la opción: K por defecto (D-LT-07); al cargar, el K guardado. |
 | `--replay LOG --hasta T` | T entero ≥ 0. Imprime el resumen histórico de T sin vista y termina con código 0. Si T es posterior al final del log, imprime el estado final y añade «la partida terminó en t=R, antes de T» (o «el registro termina en t=R» si la partida seguía en curso). |
-| `--hasta` sin `--replay`, T inválido, `--checkpoint-cada` inválido | Error de uso de argparse (código 2) con explicación, sin ejecutar ningún modo. |
+| `--hasta` sin `--replay`, T inválido, `--checkpoint-cada` inválido | Error de uso de argparse (código 2) con explicación, sin ejecutar ningún modo. Los demás modos (`--cripta`, `--cargar`, `--listar`, `--verificar`, `--bench`, `--ver-puntajes`) ya son excluyentes con `--replay` en el grupo de argparse; combinar `--hasta` con ellos produce ese mismo error. |
 
 Los errores de log (compatibilidad, versión, acción fallida) conservan su
 comportamiento actual.

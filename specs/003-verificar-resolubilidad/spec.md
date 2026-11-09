@@ -120,6 +120,8 @@ si se crea vista, se inicia partida o se modifica el estado.
    Al cargar una partida o reproducir un log no se repite automáticamente esta
    verificación ni se exige `--forzar` por su resultado; se conservan las
    validaciones existentes de formato, identidad y versiones.
+   El proceso termina con código 0 si es resoluble, 1 si no es resoluble y
+   2 si ocurre un error que impide completar la verificación.
 4. **AC-RS-016** — **Dada** una verificación anterior al juego, **cuando** termina
    y se permite iniciar, **entonces** no ha consumido acciones, tiempo virtual,
    azar de la partida ni llaves reales, ni ha marcado salas como exploradas.
@@ -213,6 +215,8 @@ y fallos de obtención; comprobar solicitudes y resultado informado.
   La verificación automática se limita a partidas nuevas; cargar y replay no
   la repiten ni incorporan un nuevo bloqueo por resolubilidad. Conservan sus
   validaciones de formato, identidad y versiones.
+  En `--verificar`, devolver 0 para resoluble, 1 para no resoluble y 2 para error
+  que impide completar la verificación; distinguir también el resultado en el texto.
   Escenario: AC-RS-015.
 - **FR-RS-013**: La verificación no debe alterar conocimiento del mapa, reloj,
   inventario, actores, acciones o historial del juego que se iniciará.
@@ -285,7 +289,8 @@ y fallos de obtención; comprobar solicitudes y resultado informado.
   y la integración concreta se precisarán en el plan.
 - La verificación automática se aplica a partidas nuevas; cargar y replay
   mantienen su comportamiento sin repetirla. `--verificar` es consulta independiente.
-  Quedan por concretar los códigos de salida y otras combinaciones de banderas.
+  `--verificar` termina con códigos 0/1/2 para resoluble/no resoluble/error.
+  Quedan por concretar otras combinaciones de banderas.
 - Frontera y dependencias se reportan conforme a §3.5. En aclaración se precisará
   la presentación de conexiones repetidas y dependencias con accesos alternativos,
   sin imponer un criterio nuevo de resolubilidad.
@@ -301,3 +306,6 @@ y fallos de obtención; comprobar solicitudes y resultado informado.
   o reproducir un log? → **R**: A, automática solo para partidas nuevas y
   `--verificar` como consulta independiente; cargar y replay no la repiten.
   Se conservan sus validaciones existentes. Aplicado a FR-RS-001/010/012 y AC-RS-015.
+
+- **P**: ¿Qué códigos devuelve `--verificar` al terminar? → **R**: A, 0 para
+  resoluble, 1 para no resoluble y 2 para error. Aplicado a FR-RS-012 y AC-RS-015.

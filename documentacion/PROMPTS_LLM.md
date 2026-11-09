@@ -525,6 +525,31 @@ pruebas o benchmarks ni se implementó código de la capacidad.
     benchmarks ni se implementó resolubilidad. Detalle en
     [auditoría de integridad](evidencia/auditoria_integridad_2026-11-09.md).*
 
+66. Continuemos con lo que es el proyecto, y no se si esta vez para lo que son la toma de decisiones me puedes mandar todas las opciones para yo mandarte una sola respuesta, asi avanzariamos hasta mas rapido
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: se retoma `$speckit-clarify` de resolubilidad. Por petición
+    explícita del usuario se agrupan las preguntas pendientes en un bloque,
+    en lugar de presentarlas individualmente. Ya están acordados el alcance
+    automático solo en partidas nuevas y los códigos 0/1/2. Se presentan
+    alternativas para conexiones repetidas del informe y combinaciones de
+    banderas; las recomendaciones no son decisiones aprobadas. Las elecciones
+    de estructuras se consultarán en el bloque de planificación, una vez
+    cerrada la especificación. Sin implementación, pruebas ni mediciones nuevas.
+    No se incorporan los intercambios excluidos sobre incorporación de Kendall.*
+
+    | Pregunta agrupada | Respuesta literal y fecha | Acuerdo registrado |
+    | --- | --- | --- |
+    | Una entrada por puerta física o por salida; rechazar combinaciones incompatibles o dar prioridad a verificar | «A y A» — 2026-11-09 | Una entrada por puerta física, distinguiendo puertas distintas entre las mismas salas; rechazar otros modos y `--forzar` junto con `--verificar`, manteniendo opciones compatibles como `--offline`. |
+
+    *Resultado: se actualizan FR-RS-007/012, AC-RS-008/015, supuestos y
+    aclaraciones. Cuatro preguntas resueltas en total; revisión documental
+    16/16 → 16/16, sin regresiones. Preparada la planificación. Sin código,
+    pruebas de ejecución ni mediciones nuevas.*
+
 ## 🟣 Kendall
 
 1. Actúa como un arquitecto de software y líder técnico experto en Python y Estructuras de Datos.

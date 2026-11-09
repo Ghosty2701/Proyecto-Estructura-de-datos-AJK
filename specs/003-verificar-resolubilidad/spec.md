@@ -2,7 +2,7 @@
 
 **Rama Git**: `main` (actual; no se crea otra rama).
 **Creación**: 2026-11-09.
-**Estado**: Especificación revisada; preparada para aclaración antes del plan.
+**Estado**: Aclaración completada; preparada para planificación, sin implementación.
 **Entrada del usuario**: «Continuemos», después de confirmar resolubilidad como
 siguiente capacidad.
 
@@ -73,6 +73,9 @@ conocidos, rutas alternativas y ejecuciones repetidas.
    una región inaccesible, que requiere la llave K ubicada en esta última,
    **cuando** no existe solución, **entonces** el informe incluye K no obtenible,
    la puerta de frontera, la llave que requiere y su ubicación.
+   Si una puerta física aparece en las salidas de ambas salas, se informa una
+   sola vez con sus extremos, sin fusionar puertas físicas distintas que
+   conecten las mismas salas.
    Requisitos: FR-RS-006/007.
 4. **AC-RS-009** — **Dada** la llave de salida detrás de la única puerta que
    ella misma abre, **cuando** se verifica, **entonces** se informa no resoluble
@@ -122,6 +125,9 @@ si se crea vista, se inicia partida o se modifica el estado.
    validaciones existentes de formato, identidad y versiones.
    El proceso termina con código 0 si es resoluble, 1 si no es resoluble y
    2 si ocurre un error que impide completar la verificación.
+   Combinar `--verificar` con otro modo de ejecución o con `--forzar` se rechaza
+   con error de uso y explicación, sin iniciar juego ni ejecutar otro modo.
+   Las opciones compatibles de fuente de datos, como `--offline`, siguen admitidas.
 4. **AC-RS-016** — **Dada** una verificación anterior al juego, **cuando** termina
    y se permite iniciar, **entonces** no ha consumido acciones, tiempo virtual,
    azar de la partida ni llaves reales, ni ha marcado salas como exploradas.
@@ -197,7 +203,9 @@ y fallos de obtención; comprobar solicitudes y resultado informado.
   Escenarios: AC-RS-003/004/008/009/010/012/013/015.
 - **FR-RS-007**: En el resultado negativo, informar puertas cerradas de la
   frontera bloqueada adyacente a la región alcanzable, con la llave requerida
-  y la ubicación de cada una de esas llaves. Escenarios: AC-RS-008/009/010/012.
+  y la ubicación de cada una de esas llaves. Mostrar una entrada por puerta
+  física con sus extremos, aunque tenga salidas recíprocas; no fusionar puertas
+  físicas distintas entre las mismas salas. Escenarios: AC-RS-008/009/010/012.
 - **FR-RS-008**: Señalar el ciclo concreto cuando una llave solo es accesible
   tras puertas que requieren esa misma llave directa o indirectamente, con
   detección determinista. No inventar ciclos por aislamiento o rutas alternativas.
@@ -217,6 +225,10 @@ y fallos de obtención; comprobar solicitudes y resultado informado.
   validaciones de formato, identidad y versiones.
   En `--verificar`, devolver 0 para resoluble, 1 para no resoluble y 2 para error
   que impide completar la verificación; distinguir también el resultado en el texto.
+  Rechazar con error de uso y explicación la combinación de `--verificar` con
+  otro modo de ejecución (`--cripta`, `--cargar`, `--replay`, `--bench`, `--listar`
+  o `--ver-puntajes`) o con `--forzar`, sin ejecutar esos modos. Conservar opciones
+  compatibles de fuente de datos, como `--offline`.
   Escenario: AC-RS-015.
 - **FR-RS-013**: La verificación no debe alterar conocimiento del mapa, reloj,
   inventario, actores, acciones o historial del juego que se iniciará.
@@ -290,10 +302,11 @@ y fallos de obtención; comprobar solicitudes y resultado informado.
 - La verificación automática se aplica a partidas nuevas; cargar y replay
   mantienen su comportamiento sin repetirla. `--verificar` es consulta independiente.
   `--verificar` termina con códigos 0/1/2 para resoluble/no resoluble/error.
-  Quedan por concretar otras combinaciones de banderas.
-- Frontera y dependencias se reportan conforme a §3.5. En aclaración se precisará
-  la presentación de conexiones repetidas y dependencias con accesos alternativos,
-  sin imponer un criterio nuevo de resolubilidad.
+  Se rechaza combinar `--verificar` con otros modos o con `--forzar`; las opciones
+  compatibles de fuente de datos siguen disponibles.
+- Frontera y dependencias se reportan conforme a §3.5, con una entrada por puerta
+  física y sin confundir puertas distintas entre las mismas salas. Los accesos
+  alternativos se resuelven conforme a FR-RS-008 y AC-RS-011, sin inventar ciclos.
 - Sigue faltando el enunciado original de P1 para contrastar íntegramente sus reglas.
 - No se implementan línea de tiempo, funcionalidades de verificación, plan ni
   tareas en esta etapa. Todas las decisiones de estructuras pertenecen al usuario.
@@ -309,3 +322,12 @@ y fallos de obtención; comprobar solicitudes y resultado informado.
 
 - **P**: ¿Qué códigos devuelve `--verificar` al terminar? → **R**: A, 0 para
   resoluble, 1 para no resoluble y 2 para error. Aplicado a FR-RS-012 y AC-RS-015.
+
+- **P**: ¿Cómo mostramos una misma puerta si aparece en las salidas de ambas
+  salas? → **R**: A, una entrada por puerta física, identificando sus extremos
+  y distinguiendo puertas físicas distintas entre las mismas salas.
+  Aplicado a FR-RS-007 y AC-RS-008.
+
+- **P**: ¿Qué hacemos si se combina `--verificar` con otro modo o con `--forzar`?
+  → **R**: A, rechazar la combinación y explicar el uso correcto; conservar
+  opciones compatibles como `--offline`. Aplicado a FR-RS-012 y AC-RS-015.

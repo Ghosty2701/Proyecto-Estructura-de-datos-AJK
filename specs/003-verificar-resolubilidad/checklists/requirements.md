@@ -40,5 +40,6 @@
 - No se elige una estructura ni se exige un orden específico entre órdenes de
   llaves válidos. No se declara que el informe garantice sobrevivir al combate.
 - Lista de revisión documental, sin evidencia de ejecución todavía.
-- Preparada para `$speckit-clarify`: concretar interacción de banderas y reporte
-  antes del plan. Los detalles de presentación no cambian las reglas ya definidas.
+- Aclaración completada: alcance automático, códigos 0/1/2, una entrada por
+  puerta física y rechazo de modos incompatibles con `--verificar`.
+  Preparada para `$speckit-plan`, sin decisiones de estructuras ni implementación.

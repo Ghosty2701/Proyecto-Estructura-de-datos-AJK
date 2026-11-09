@@ -156,6 +156,8 @@ _ESQUEMAS = (
 _PARTIDA_NO_PERSISTENTES = (
     "preparar_sala", "fuente", "_mensajes", "_inicio_pendiente", "_ataque_pendiente",
     "_tiempo_accion", "_vida_inicial", "gestor_guardado", "ruta_guardado", "bitacora_activa",
+    # La línea de tiempo se persiste como raíz propia (formato 6, US6), no como campo.
+    "linea_tiempo", "gestor_linea", "_reloj_linea", "_acciones_linea",
 )
 
 
@@ -343,7 +345,8 @@ class _Registro:
                 if type(objeto) is ActorTurnos and nombre == "ultima_ruta":
                     continue
                 if type(objeto) is MotorEventos and nombre in (
-                        "revision_conexiones", "hubo_dano", "enemigos_entrada"):
+                        "revision_conexiones", "hubo_dano", "enemigos_entrada",
+                        "tiempo_limite", "limite_alcanzado"):
                     continue
                 if type(objeto) is ConocimientoMapa and nombre in (
                         "indice", "registros", "actualizaciones"):

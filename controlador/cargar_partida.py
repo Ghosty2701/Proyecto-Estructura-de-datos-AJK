@@ -4,7 +4,10 @@ Usa ServicioCripta y su estrategia de precarga sin modificar los adaptadores.
 Los IDs de salas se resuelven con el AVL existente, elegido por Kendall.
 """
 
+import json
+
 from adaptadores.cache_catalogo import ArbolAVL, ErrorCatalogo, ReferenciaFicha
+from adaptadores.copia_estado import copiar_estado
 from adaptadores.cliente_http import ErrorHTTP, PresupuestoAgotado
 from adaptadores.modo_offline import ErrorOffline
 from adaptadores.servicio_cripta import ErrorCripta
@@ -20,11 +23,92 @@ from modelo.inventario_reversible import InventarioReversible, CambioInventario
 from modelo.motor_eventos import ActorTurnos, MotorEventos
 from modelo.rastro import Puerta, SalaRastro, SalidaRastro
 from modelo.conocimiento import ConocimientoMapa
+from modelo.linea_tiempo import K_POR_DEFECTO, LineaTiempo
 from modelo.verificacion import agrupar_puertas
 
 
 class ErrorDatosPartida(Exception):
     pass
+
+
+class ErrorReconstruccion(Exception):
+    """La línea de tiempo no puede reconstruir un estado sin pedir datos a la red."""
+
+
+class _FichasConsulta:
+    """Fichas de solo lectura para copias (T008; FR-LT-006, constitución V).
+
+    Lee la ficha residente en el AVL de la caché o el archivo persistido, sin
+    solicitudes, sin tocar la LRU ni los contadores y sin insertar ni desalojar.
+    Ofrece referencia() con el contrato que usan los constructores de entidades.
+    """
+
+    def __init__(self, cache):
+        self.cache = cache
+
+    def ficha(self, id_ficha):
+        nodo = self.cache.arbol.buscar(id_ficha)
+        if nodo is not None:
+            return nodo.ficha
+        try:
+            with open(self.cache._ruta_ficha(id_ficha), encoding="utf-8") as archivo:
+                return json.load(archivo)
+        except (OSError, ValueError, ErrorCatalogo) as error:
+            raise ErrorReconstruccion(
+                f"la ficha {id_ficha} no está disponible sin red") from error
+
+    def referencia(self, id_ficha):
+        return ReferenciaFicha(id_ficha, self.ficha(id_ficha))
+
+
+class _GestorConsulta:
+    """Gestor de guardado inerte para copias: las fichas ya se completaron."""
+
+    def preparar_botin(self, enemigo):
+        pass
+
+    def preparar_retroceso(self, partida):
+        pass
+
+    def guardar_sesion(self, partida, ruta):
+        raise ErrorGuardado("una copia de la línea de tiempo no se guarda")
+
+    def leer_sesion(self, *argumentos):
+        raise ErrorGuardado("una copia de la línea de tiempo no carga partidas")
+
+
+class PreparadorConsulta:
+    """Prepara salas de una copia con el contenido ya descargado, sin red ni precarga."""
+
+    def __init__(self, servicio, partida):
+        self.servicio = servicio
+        self.partida = partida
+        self.fichas = _FichasConsulta(servicio.cache)
+
+    def preparar_sala(self, sala):
+        if sala.contenido_cargado:
+            return
+        contenido = self.servicio.contenido.buscar(sala.sala_id)
+        if contenido is None:
+            raise ErrorReconstruccion(f"el contenido de la sala {sala.sala_id} no está disponible sin red")
+        fichas = self.fichas
+        try:
+            enemigos = []
+            for entrada in contenido["enemigos"]:
+                ficha = fichas.ficha(entrada["tipo"])
+                datos = {"instancia": entrada["instancia"], "vida": entrada.get("vida"), "ficha": ficha,
+                         "suelta": [fichas.ficha(i) for i in ficha.get("suelta") or []]}
+                enemigos.append(_crear_enemigo(datos, sala, fichas))
+            objetos = [_crear_objeto(fichas.ficha(i), fichas) for i in contenido["objetos"]]
+            trampas = [_crear_trampa({"instancia": t["instancia"], "ficha": fichas.ficha(t["tipo"])}, fichas)
+                       for t in contenido["trampas"]]
+        except (KeyError, TypeError, ValueError) as error:
+            raise ErrorReconstruccion(f"Sala {sala.sala_id}: datos incompatibles ({error}).") from error
+        sala.enemigos = enemigos
+        sala.objetos_suelo = objetos
+        sala.trampas = trampas
+        self.partida.enemigos.extend(enemigos)
+        sala.contenido_cargado = True
 
 
 def _recorrer_arbol(nodo):
@@ -87,7 +171,8 @@ class CargadorPartida:
         self._ids_preparando = []
         self.servicio.cache.esta_en_uso = self.ficha_en_uso
 
-    def crear(self, cripta_id, semilla, *, encabezado_log=None, datos_verificados=None):
+    def crear(self, cripta_id, semilla, *, encabezado_log=None, datos_verificados=None,
+              checkpoint_cada=None):
         if self.jugador is not None:
             raise ErrorDatosPartida("Usa un cargador nuevo para iniciar otra partida.")
         try:
@@ -128,7 +213,35 @@ class CargadorPartida:
             id_cripta=cripta_id, version_cripta=datos["version"],
         )
         partida.gestor_guardado = self
+        self.iniciar_linea(partida, K_POR_DEFECTO if checkpoint_cada is None else checkpoint_cada)
         return partida
+
+    # --- Línea de tiempo (T009) ---
+
+    def iniciar_linea(self, partida, k):
+        """Punto 0 en el estado actual; raíces iguales a las del guardado."""
+        linea = LineaTiempo(k, copiar_estado)
+        linea.iniciar(lambda: (partida, self.salas_ordenadas()), partida.motor.reloj)
+        partida.linea_tiempo = linea
+        partida.gestor_linea = self
+        partida._reloj_linea = partida.motor.reloj
+        partida._acciones_linea = partida.acciones_ejecutadas
+
+    def copia_de_trabajo(self, punto):
+        """Copia independiente de un punto, conectada a datos de solo lectura."""
+        referencias = []
+        copia, _ = copiar_estado(punto.estado, referencias)
+        fichas = _FichasConsulta(self.servicio.cache)
+        for referencia in referencias:
+            if referencia.datos is None:
+                referencia.datos = fichas.ficha(referencia.id_ficha)
+        copia.preparar_sala = PreparadorConsulta(self.servicio, copia).preparar_sala
+        copia.gestor_guardado = _GestorConsulta()
+        return copia
+
+    def salas_ordenadas(self):
+        """Salas del esqueleto en orden de ID: las mismas raíces que el guardado."""
+        return list(_recorrer_arbol(self.salas.raiz))
 
     def preparar_destino(self, sala):
         try:

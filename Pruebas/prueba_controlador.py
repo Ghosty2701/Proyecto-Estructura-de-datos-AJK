@@ -166,3 +166,33 @@ def test_wasd_mueve_y_atacar_se_mantiene_separado():
         ("mover", "N"), ("mover", "O"), ("mover", "S"),
         ("mover", "E"), ("atacar", 1),
     ]
+
+
+def test_t010_controlador_registra_ordenes_aceptadas_en_la_linea(tmp_path):
+    # FR-LT-006/013: mismas órdenes que el log, con o sin bitácora; nunca consultas.
+    from datos_linea_tiempo import crear_partida, escribir_paquete
+
+    partida, _ = crear_partida(escribir_paquete(tmp_path / "datos"), tmp_path / "cache")
+    ctl = Controlador(partida, VistaConsola(salida=lambda texto: None))
+    for texto in ("inv", "ayuda", "ver mapa", "recoger 1", "recoger 1", "sig", "atacar 7",
+                  "orden peso", "w", "retroceder", "  ESPERAR "):
+        ctl.procesar(texto)
+    linea = partida.linea_tiempo
+    assert [(o.texto, o.tipo) for o in linea.ordenes] == [
+        ("recoger 1", "accion"), ("recoger 1", "accion"), ("sig", "navegacion"),
+        ("w", "accion"), ("retroceder", "pergamino"), ("esperar", "accion"),
+    ]
+    assert linea.cantidad_acciones == partida.acciones_ejecutadas == 3
+
+
+def test_t010_viaje_registra_cada_paso_sin_el_comentario(tmp_path):
+    from datos_linea_tiempo import crear_partida, escribir_paquete
+
+    partida, _ = crear_partida(escribir_paquete(tmp_path / "datos"), tmp_path / "cache")
+    ctl = Controlador(partida, VistaConsola(salida=lambda texto: None))
+    ctl.procesar("w")
+    ctl.procesar("s")
+    ctl.procesar("ir a Pasillo")
+    textos = [orden.texto for orden in partida.linea_tiempo.ordenes]
+    assert textos == ["w", "s", "ir n"]
+    assert not any(texto.startswith("#") for texto in textos)

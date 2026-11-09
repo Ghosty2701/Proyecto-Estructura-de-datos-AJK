@@ -2,7 +2,8 @@
 
 from dataclasses import dataclass, field
 
-from controlador.controlador import AccionInvalida
+from controlador.controlador import AccionInvalida, ejecutar_accion_replay
+from modelo.linea_tiempo import ACCION, NAVEGACION, PERGAMINO
 from adaptadores.guardado_binario import ErrorGuardado
 
 
@@ -63,6 +64,11 @@ class Partida:
         self.gestor_guardado = None
         self.ruta_guardado = "partida.bin"
         self.bitacora_activa = False
+        # Línea de tiempo (FR-LT-001/013): la conecta el cargador; None en dobles de prueba.
+        self.linea_tiempo = None
+        self.gestor_linea = None
+        self._reloj_linea = 0
+        self._acciones_linea = 0
 
     def resultado_final(self):
         if not self.victoria and self.jugador.vida > 0:
@@ -76,6 +82,44 @@ class Partida:
             "enemigos_derrotados": sum(1 for enemigo in self.enemigos if enemigo.vida == 0),
             "tiempo_final": self.motor.reloj,
         }
+
+    # --- Línea de tiempo (T009) ---
+
+    def registrar_orden(self, texto):
+        """Registra una orden aceptada y reproducible (la misma que va al log).
+
+        El tipo se deduce del contador de acciones: +1 acción, -1 pergamino y 0
+        navegación del inventario. Las consultas y comentarios no llegan aquí.
+        """
+        # Una partida restaurada se crea sin __init__; la línea llega con US6.
+        linea = getattr(self, "linea_tiempo", None)
+        if linea is None:
+            return
+        diferencia = self.acciones_ejecutadas - self._acciones_linea
+        tipo = {1: ACCION, -1: PERGAMINO, 0: NAVEGACION}.get(diferencia)
+        if tipo is None:
+            raise RuntimeError("La orden registrada cambió el contador de acciones en más de una unidad.")
+        linea.registrar(texto, tipo, self._reloj_linea, self.motor.reloj, self.acciones_ejecutadas)
+        self._reloj_linea = self.motor.reloj
+        self._acciones_linea = self.acciones_ejecutadas
+
+    def reconstruir(self, objetivo):
+        """Copia de trabajo en el objetivo de consulta, sin alterar esta partida.
+
+        objetivo: (posición final exclusiva, límite de tiempo o None) de la línea.
+        Copia el último punto anterior y re-ejecuta ≤ K acciones con el mismo
+        ejecutor que el replay; la última acción respeta el límite de tiempo.
+        """
+        posicion, limite = objetivo
+        linea = self.linea_tiempo
+        punto = linea.punto_para(posicion if limite is None else posicion - 1)
+        copia = self.gestor_linea.copia_de_trabajo(punto)
+        ordenes = linea.ordenes_entre(punto.posicion, posicion)
+        for numero, orden in enumerate(ordenes, 1):
+            if limite is not None and numero == len(ordenes):
+                copia.motor.tiempo_limite = limite
+            ejecutar_accion_replay(copia, orden.texto)
+        return copia
 
     def _contar_accion(self):
         self.motor._cambiar(self, "acciones_ejecutadas", self.acciones_ejecutadas + 1)

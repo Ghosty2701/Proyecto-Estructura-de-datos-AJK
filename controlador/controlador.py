@@ -59,9 +59,13 @@ class Controlador:
         self.registrar_accion = registrar_accion
 
     def _registrar(self, texto):
+        # Misma orden normalizada para el log y la línea de tiempo (FR-LT-013).
+        normalizado = texto if texto.startswith('#') else " ".join(texto.strip().lower().split())
         if self.registrar_accion is not None:
-            self.registrar_accion(texto if texto.startswith('#') else
-                                  " ".join(texto.strip().lower().split()))
+            self.registrar_accion(normalizado)
+        registrar_orden = getattr(self.partida, "registrar_orden", None)
+        if registrar_orden is not None and not normalizado.startswith('#'):
+            registrar_orden(normalizado)
 
     def ejecutar(self):
         # Bucle principal. Termina al salir o cuando la partida acaba.

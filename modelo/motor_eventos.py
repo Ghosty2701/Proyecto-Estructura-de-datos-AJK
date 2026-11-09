@@ -79,6 +79,9 @@ class MotorEventos(MotorEfectos):
         self.conocimiento = None
         self.hubo_dano = False
         self.enemigos_entrada = False
+        # Solo para copias de la línea de tiempo (FR-LT-003): no se persiste.
+        self.tiempo_limite = None
+        self.limite_alcanzado = False
 
     def iniciar_accion(self):
         self.historial.iniciar_accion(self.reloj)
@@ -336,10 +339,18 @@ class MotorEventos(MotorEfectos):
 
     
     def avanzar_hasta_jugador(self, jugador, ejecutar_evento):
+        # Las partidas cargadas se crean sin __init__: el límite puede faltar.
+        limite = getattr(self, "tiempo_limite", None)
         while jugador.vida > 0:
             evento = self.consultar_siguiente_evento()
 
             if evento is None:
+                return None
+
+            if limite is not None and evento.tiempo > limite:
+                # Estado en t: todos los eventos <= t, ninguno posterior (copia).
+                self.reloj = limite
+                self.limite_alcanzado = True
                 return None
 
             if evento.actor is jugador and evento.tipo == "accion":

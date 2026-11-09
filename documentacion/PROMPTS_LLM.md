@@ -505,6 +505,34 @@
     documental prevista de terreno y cazadores de la evidencia de código y pruebas
     aún no implementada y de los casos de las otras capacidades todavía pendientes.*
 
+39. De ahora en adelabte quiero que en cada avance me digas en que punto del trabajo estamos trabajando mas aparte del porcentaje
+
+    *Fecha: 2026-11-08*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+40. Continua
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: `$speckit-analyze`, revisión de solo lectura. Dos hallazgos:
+    precisar tiempo < 20 ms y corregir una frase desactualizada del plan sobre tareas
+    por generar. Cobertura documental 17 requisitos y cinco criterios, 38 tareas,
+    19 escenarios. No se modificaron archivos durante el análisis.*
+
+41. Sigue avanzando que sigue?
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: autorización para aplicar las dos correcciones propuestas y continuar
+    con `$speckit-implement`, conforme a las estructuras elegidas. Se actualiza también
+    AGENTS.md con el formato de avance solicitado. Los resultados de ejecución se
+    registran en la evidencia y las tareas solo se marcan al verificarse.*
+
 ## 🟣 Kendall
 
 1. Actúa como un arquitecto de software y líder técnico experto en Python y Estructuras de Datos.

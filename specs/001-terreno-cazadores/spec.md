@@ -207,8 +207,8 @@ reproducirlas y comparar con una ejecución que guarde/cargue o retroceda un int
 
 ### Performance Requirements
 
-- **PR-TC-001**: El ciclo de eventos entre decisiones del jugador cumple el límite de
-  20 ms en la cripta de referencia con decenas de cazadores activos, medido localmente
+- **PR-TC-001**: Cada ciclo de eventos entre decisiones del jugador tarda menos de
+  20 ms (tiempo < 20 ms) en la cripta de referencia con decenas de cazadores activos, medido localmente
   sin red ni renderizado (P2 §6.1; sujeto a enmienda oficial).
 - **PR-TC-002**: El trabajo de la decisión de un cazador de rango pequeño depende de la
   región dentro de su rango y no crece proporcionalmente con toda la cripta. La medición
@@ -238,8 +238,8 @@ reproducirlas y comparar con una ejecución que guarde/cargue o retroceda un int
   esperado en las pruebas o reproducciones asociadas; cada evidencia cita sus requisitos.
 - **SC-TC-003**: Con iguales versiones, cripta, semilla y acciones, dos ejecuciones y su
   reproducción coinciden en estado observable, decisiones y tiempos (FR-TC-013).
-- **SC-TC-004**: En la cripta de referencia con decenas de cazadores, el ciclo medido cumple
-  20 ms sin incluir red ni renderizado (PR-TC-001). Se informa el máximo observado y la
+- **SC-TC-004**: En la cripta de referencia con decenas de cazadores, cada ciclo medido tarda
+  menos de 20 ms; un ciclo de 20 ms o más incumple (PR-TC-001). Se excluyen red y renderizado. Se informa el máximo observado y la
   carga utilizada; la aceptación queda pendiente si no está disponible esa referencia.
 - **SC-TC-005**: La evidencia muestra el costo de persecución con región de rango fijo y
   más salas fuera de ella, y cubre todas las comparaciones de PR-TC-003 sin sacrificar

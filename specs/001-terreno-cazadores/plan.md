@@ -78,7 +78,7 @@ Cambiar la estructura o su política acordada exige volver a consultar al usuari
 | Evidencia de rendimiento | Pendiente | Protocolo definido; mediciones y aceptación pendientes de implementación |
 | Búsqueda local por rango | Exigida | Tabla pequeña por búsqueda, adyacencia local y corte por rango; sin escaneo global |
 | Especificación antes del código en Git | Pendiente | Obligación anterior a implementar; esta fase solo crea documentos |
-| Trazabilidad | Spec y escenarios presentes | Grupos de cambios y validación vinculados; tareas y pruebas todavía por generar |
+| Trazabilidad | Spec y escenarios presentes | Tareas generadas y vinculadas; implementación y pruebas pendientes |
 | Prompts | Registro existente | Prompt de aprobación añadido a documentacion/PROMPTS_LLM.md |
 | Elección del usuario | Decisiones abiertas | D-TC-01 a D-TC-08 resueltas, con historia en research.md |
 

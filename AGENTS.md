@@ -17,3 +17,6 @@ Al terminar cada tarea, incluye el porcentaje estimado de avance global de Cript
 Parte II, basado en requisitos completados y verificados. Distingue los documentos
 revisados de las funcionalidades implementadas, las pruebas ejecutadas y las
 mediciones realizadas; no presentes la estimación como una medición exacta.
+
+En cada avance indica también el punto actual del trabajo, qué se completó y cuál es
+el siguiente paso, además del porcentaje global estimado.

@@ -22,6 +22,11 @@ Antes del código, confirmar la especificación en Git. Generar tasks.md, ejecut
 análisis de consistencia y después implementar las tareas. Ningún comando de esta guía
 ya fue ejecutado como prueba de P2 durante la planificación.
 
+La especificación y sus artefactos iniciales quedaron confirmados en `290f173`
+(2026-11-08), antes de la implementación. El análisis del 2026-11-09 comprobó cobertura
+documental y dependencias; su aclaración del límite establece tiempo estrictamente
+menor que 20 ms, conforme al benchmark heredado que rechaza tiempos mayores o iguales.
+
 ## Comprobaciones automatizadas previstas
 
 | Grupo | Ejecución de aceptación después de implementar | Resultado esperado |

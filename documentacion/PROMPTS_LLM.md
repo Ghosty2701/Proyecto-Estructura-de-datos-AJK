@@ -550,6 +550,22 @@ pruebas o benchmarks ni se implementó código de la capacidad.
     16/16 → 16/16, sin regresiones. Preparada la planificación. Sin código,
     pruebas de ejecución ni mediciones nuevas.*
 
+67. COntinuemos
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: inicio de `$speckit-plan` de resolubilidad; setup-plan crea el
+    borrador y se realiza investigación delegada de solo lectura según la
+    habilidad. Se agrupan siete decisiones: topología, índice de salas, índice
+    de llaves, trabajo pendiente, relaciones por llave/sala, representación
+    para ciclos y persistencia de ubicaciones. Se generan plan.md y research.md
+    como borradores, sin registrar recomendaciones como aprobadas. Sigue
+    pendiente justificar el diagnóstico correcto de ciclos con alternativas;
+    elegir estructuras no equivale a resolverlo. Sin código, consultas HTTP,
+    pruebas ejecutadas ni benchmarks. Se espera la elección del usuario.*
+
 ## 🟣 Kendall
 
 1. Actúa como un arquitecto de software y líder técnico experto en Python y Estructuras de Datos.

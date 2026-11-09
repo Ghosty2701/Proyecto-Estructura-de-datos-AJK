@@ -46,10 +46,10 @@
   | Cambio de velocidad en salida costosa | AC-TC-004 | FR-TC-003 |
 
 - PR-TC-001 se acepta mediante SC-TC-004; PR-TC-002 y PR-TC-003 mediante SC-TC-005.
-  La carga y las mediciones se concretarán en el plan; no se inventa un resultado empírico.
-- Falta el enunciado original de P1 y falta identificar la cripta de referencia y la carga
-  oficial de cazadores. Estas limitaciones están declaradas y no se convierten en reglas nuevas.
+  La carga y las mediciones ejecutadas están identificadas en plan y tasks.md.
+- Falta el enunciado original de P1. La referencia y la carga oficial de cazadores
+  ya se identificaron y midieron; se conserva la evidencia histórica y sus límites.
 - No hay aclaraciones imprescindibles para redactar esta especificación: las reglas principales
-  proceden de P2. La siguiente fase del flujo es `$speckit-clarify`, antes de `$speckit-plan`.
+  proceden de P2. El flujo de esta capacidad se completó; véase tasks.md.
 - No se requiere rama nueva según la habilidad sin hooks. La rama actual es `main`.
-- La especificación deberá confirmarse en Git antes de los cambios de código que la implementen.
+- La especificación se confirmó en Git antes de los cambios de código que la implementaron.

@@ -32,7 +32,8 @@ en [quickstart.md](quickstart.md).
 rango, versionar el esquema y rechazar versiones anteriores incompatibles. Las estructuras
 de búsqueda y el último resultado son derivados; no se serializan y se invalidan al cargar.
 
-**Testing**: pytest; evidencia futura para AC-TC-001 a AC-TC-019 y regresiones de P1.
+**Testing**: pytest; evidencia ejecutada para AC-TC-001 a AC-TC-019 y regresiones
+en tasks.md. Cierre original: 469 pruebas; auditoría actual: 492 aprobadas.
 
 **Target Platform**: consola, entorno de desarrollo Windows y PowerShell.
 
@@ -45,7 +46,8 @@ local por rango y comparación de las alternativas exigidas por P2.
 presupuesto y versiones; las elecciones de estructuras pertenecen al usuario.
 
 **Scale/Scope**: uno y muchos cazadores, rangos pequeños/grandes y puertas estables/inestables.
-La aceptación oficial de 20 ms requiere identificar la cripta y carga de referencia.
+La referencia se identificó y midió en el cierre; condiciones y resultados
+históricos en evidencia, y los posteriores a niebla en README.
 
 ### Decisiones aprobadas el 2026-11-08
 

@@ -295,8 +295,8 @@ observaciones de puertas y pasos de viaje.
   efecto al entrar. Las demás reglas de antorcha se conservan.
 - La integración con consultas históricas corresponde a línea de tiempo;
   aquí se exige conservar el conocimiento como estado del juego.
-- No se crean plan, tareas o funcionalidades ni se eligen estructuras,
-  algoritmos, clases o módulos; las decisiones técnicas requieren al usuario.
+- Esta especificación no prescribe estructuras ni algoritmos. El plan, las
+  tareas y la implementación posteriores conservan las elecciones del usuario.
 
 ## Aclaraciones registradas
 

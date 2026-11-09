@@ -1,6 +1,8 @@
 # Contratos — Terreno y cazadores
 
-**Fecha**: 2026-11-08. Contratos previstos; las interfaces nuevas aún no están implementadas.
+**Fecha de diseño**: 2026-11-08. Implementados y verificados el 2026-11-09.
+El esquema binario vigente es 5, tras la integración de niebla; ver README.md
+en la raíz para comandos y evidencia actuales.
 Referencias: [especificación](../spec.md), [modelo de datos](../data-model.md).
 
 ## Datos de entrada y versiones

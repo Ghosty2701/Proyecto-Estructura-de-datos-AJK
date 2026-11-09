@@ -1,23 +1,3 @@
-﻿<!--
-Informe de impacto de sincronización — temporal; retirar antes del commit de la constitución.
-Versión: plantilla sin versión efectiva → 1.0.0 (constitución inicial).
-Principios: los cinco espacios genéricos se sustituyen por nueve principios del proyecto:
-I. Estructuras propias; II. Determinismo; III. MVC y ejecución sin vista;
-IV. Datos externos; V. Presupuesto y versiones; VI. Rendimiento medido;
-VII. Especificación previa; VIII. Trazabilidad; IX. Registro de prompts.
-Secciones concretadas: Alcance y fuentes; Flujo de trabajo y revisión; Gobernanza.
-Secciones eliminadas: ninguna regla previa del proyecto; solo ejemplos de plantilla.
-Plantillas revisadas: constitution-template.md, spec-template.md, plan-template.md,
-tasks-template.md. Sin cambios: plan contiene Constitution Check; los comandos de
-specify, plan y tasks leen esta constitución al ejecutarse. La habilidad no requiere
-modificar plantillas ni las capas resueltas.
-Registro asociado: documentacion/PROMPTS_LLM.md, Andrey, entrada 17.
-Pendientes de contexto: falta el enunciado original de P1 para contrastar íntegramente
-restricciones y excepciones; README aún no registra spec-kit 1.3.2 y agente Codex,
-identificados en .specify/init-options.json e integration.json (fuera de esta edición).
-Marcadores aplazados: ninguno. No se crean especificaciones de capacidades ni código.
--->
-
 # Constitución de Cripta — Parte II
 
 ## Principios fundamentales

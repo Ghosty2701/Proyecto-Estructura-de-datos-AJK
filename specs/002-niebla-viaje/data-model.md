@@ -111,7 +111,7 @@ la tecla detectada. No hilos ni colas adicionales. Replay no sondea teclado.
 
 ## Persistencia y aislamiento
 
-Formato de modelo previsto: 5, con rechazo explícito de versiones anteriores.
+Formato de modelo implementado: 5, con rechazo explícito de versiones anteriores.
 Añadir esquemas y validaciones para conocimiento, recuerdos, salidas conocidas,
 referencias físicas y deltas. Conservar ID/posición y el grafo de referencias
 compartidas; no reconstruir recuerdos a partir del estado real de puertas.

@@ -1,4 +1,4 @@
-# Investigación preliminar — Terreno y cazadores
+# Investigación y decisiones — Terreno y cazadores
 
 **Fecha**: 2026-11-08
 **Estado**: fase 0 completa; D-TC-01 y tabla hash propia de D-TC-02 aprobadas;
@@ -7,7 +7,9 @@ registro de posiciones en la misma tabla (D-TC-03a) aprobado;
 búsquedas individuales de D-TC-04 y reutilización conservadora de D-TC-05 aprobadas;
 listas de adyacencia existentes como decisión final de D-TC-06; D-TC-06a resuelta.
 Último resultado por cazador (D-TC-07) y configuración de tabla D-TC-08 aprobados.
-Las decisiones de estructuras están resueltas; la evidencia experimental sigue pendiente.
+Las decisiones de estructuras están resueltas y ejecutadas; la evidencia del cierre
+original está en tasks.md. Las mediciones posteriores a niebla se distinguen en
+README y DOCUMENTO_DECISIONES.md; no se sobrescriben las cifras históricas.
 **Referencias**: [spec.md](spec.md), [plan.md](plan.md), [AGENTS.md](../../AGENTS.md).
 
 El usuario y su equipo eligieron la opción A de D-TC-01 el 2026-11-08. Después, el usuario
@@ -47,8 +49,8 @@ agenda de eventos. Respuesta original: «La opcion que concorde con mi equipo fu
 **Justificación técnica**: los costos positivos permiten detener la búsqueda
 cuando ya no hay candidatos dentro del rango. El desempate por primer vecino debe
 tratarse expresamente: ordenar únicamente por ID de extracción no garantiza FR-TC-009.
-El heap permite operaciones de frontera logarítmicas. La justificación empírica sigue
-pendiente de --bench; esta elección no autoriza las demás estructuras ni sus variantes.
+El heap permite operaciones de frontera logarítmicas. La evidencia de --bench se
+incorporó al cierre en tasks.md; esta elección no autoriza otras estructuras ni variantes.
 
 Alternativas consideradas al tomar la decisión:
 
@@ -173,8 +175,8 @@ Alternativas consideradas:
 | A. Campo de posición en el registro hash de cada sala, junto a su distancia | Aprovecha la tabla elegida y evita otro índice | El registro reúne distancia y estado de participación en el heap; se deben actualizar juntos |
 | B. Otra tabla hash propia para sala → posición del heap | Separa el índice del registro de distancias | Mantiene dos tablas, con su memoria, colisiones y posibles ampliaciones |
 
-Se adopta A. No se fija todavía el valor que señalará una sala fuera del heap ni los
-detalles de crecimiento. La posición en el heap no debe confundirse con la casilla de
+Se adopta A. La implementación usa -1 fuera del heap y D-TC-08 define el crecimiento.
+La posición en el heap no debe confundirse con la casilla de
 la tabla hash, que puede cambiar al redistribuir los registros.
 
 ## D-TC-04 — Trabajo individual o compartido

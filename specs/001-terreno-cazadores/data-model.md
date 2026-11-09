@@ -1,6 +1,6 @@
 # Modelo de datos — Terreno y cazadores
 
-**Fecha**: 2026-11-08. Diseño para implementación posterior, sin código ejecutable nuevo.
+**Fecha de diseño**: 2026-11-08. Implementado y verificado el 2026-11-09.
 Fuentes: [spec.md](spec.md), [plan.md](plan.md) y [research.md](research.md).
 
 ## Estado persistente del juego

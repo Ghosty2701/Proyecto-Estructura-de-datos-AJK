@@ -101,20 +101,20 @@ presentar alternativas y esperar elección del usuario.
 
 ## Constitution Check
 
-Puerta previa a fase 0 y revisión tras fase 1: diseño conforme a la constitución;
-elecciones explícitas registradas. Esto permite generar tareas, no declarar
-funcionalidad implementada ni límites de rendimiento cumplidos.
+La revisión previa a tareas confirmó diseño conforme a la constitución y
+elecciones explícitas. La ejecución posterior y sus límites se registran en
+tasks.md y al final de este plan; no se dedujo cumplimiento solo del diseño.
 
 | Principio | Comprobación prevista | Estado |
 | --- | --- | --- |
 | I. Estructuras propias | Comparaciones y elecciones explícitas D-NV | Conforme en diseño |
 | II. Determinismo | Desempate por ID; no consumir azar al consultar; replay equivalente | Regla definida |
 | III. MVC | Conocimiento en modelo; pantalla recibe proyección; bench/replay sin vista | Integración identificada |
-| IV. Datos externos | Ningún mapa oficial incorporado a código | Sin cambios de código |
+| IV. Datos externos | Ningún mapa oficial incorporado a código | Verificado en auditoría |
 | V. Presupuesto/versiones | Esqueleto existente, sin contenido por revelación; formato 5 explícito | Conforme en diseño |
-| VI. Rendimiento | Medir consultas, revelación, inversión y ruta; límite <5 ms | Pendiente de ejecución |
+| VI. Rendimiento | Medir consultas, revelación, inversión y ruta; límite <5 ms | Ejecutado; resultados y límites al final |
 | VII. Especificación previa | Commits 8c20823 y 9a534fd anteriores a implementación | Cumplido hasta esta etapa |
-| VIII. Trazabilidad | Mantener 17 FR, 3 PR y 22 AC; enlazar futuras tareas y pruebas | Cobertura documental |
+| VIII. Trazabilidad | Mantener 17 FR, 3 PR y 22 AC; enlazar tareas y pruebas | Cadena ejecutada en tasks.md |
 | IX. Prompts | Entrada de esta sesión en bitácora existente | Registrado |
 
 ## Project Structure

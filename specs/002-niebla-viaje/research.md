@@ -283,7 +283,7 @@ modifiquen los mismos registros auxiliares; mantener separado el estado del caza
 **Validación prevista**: rutas sucesivas distintas, consulta sin ruta, origen
 igual a destino, salida temprana con candidatos pendientes, cambios de puerta
 recordada y retroceso seguido de nueva búsqueda. Ninguna generación convierte
-una sala desconocida en explorada. La implementación sigue pendiente.
+una sala desconocida en explorada. La implementación y sus pruebas están cerradas en tasks.md.
 
 ## D-NV-05 — Registrar e invertir cambios de conocimiento
 
@@ -423,4 +423,8 @@ No se introducen índices adicionales de puertas, nombres o deduplicación.
   recupere después; no deducirlo únicamente de vida final menos vida inicial.
 
 La fase 1 concreta estas integraciones en data-model.md, contracts y quickstart.
-La implementación, tareas y evidencia empírica siguen pendientes.
+La implementación y las 30 tareas están completadas. La evidencia empírica y sus
+límites están en tasks.md y documentacion/evidencia/mediciones_niebla.json:
+492 pruebas aprobadas y máximo de cálculo de ruta oficial 2,1130 ms. Las
+alternativas anteriores conservan la evaluación de diseño, no mediciones de todas
+las opciones; no se afirma superioridad empírica para las que no se midieron.

@@ -12,6 +12,9 @@ Proceso SDD: **spec-kit 1.3.2**, agente **Codex**, configuración compartida en 
 y habilidades en `.agents/skills/`. Los artefactos de la primera capacidad están en
 [specs/001-terreno-cazadores](specs/001-terreno-cazadores/plan.md); la segunda está en
 [specs/002-niebla-viaje](specs/002-niebla-viaje/plan.md).
+La especificación de resolubilidad está en
+[specs/003-verificar-resolubilidad](specs/003-verificar-resolubilidad/spec.md),
+actualmente en aclaración: `--verificar` y `--forzar` aún no están implementados.
 
 ## Instalación
 
@@ -148,6 +151,7 @@ Las mediciones anteriores de P1 permanecen en su documentación histórica.
 
 - [Decisiones de diseño](documentacion/DOCUMENTO_DECISIONES.md): alternativas, complejidades, resultados y límites.
 - [Prompts del equipo](documentacion/PROMPTS_LLM.md): relevantes por integrante, con metadatos verificables y datos desconocidos indicados.
+- [Auditoría de integridad](documentacion/evidencia/auditoria_integridad_2026-11-09.md): estado revisado, correcciones y límites de la verificación.
 - [Pruebas](documentacion/evidencia/pruebas.txt) y [mediciones](documentacion/evidencia/mediciones.json): resultados de las ejecuciones de verificación.
 
 Organización: `modelo/` contiene reglas y estructuras; `controlador/`, acciones y coordinación; `vista/`, consola; `adaptadores/`, red y persistencia; `comun/`, ordenamientos; `Pruebas/`, verificaciones.

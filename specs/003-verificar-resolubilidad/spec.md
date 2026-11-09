@@ -117,6 +117,9 @@ si se crea vista, se inicia partida o se modifica el estado.
    es resoluble o no resoluble, **entonces** se presenta el resultado correspondiente
    sin instanciar la vista ni comenzar una simulación interactiva.
    Requisitos: FR-RS-003/006/012.
+   Al cargar una partida o reproducir un log no se repite automáticamente esta
+   verificación ni se exige `--forzar` por su resultado; se conservan las
+   validaciones existentes de formato, identidad y versiones.
 4. **AC-RS-016** — **Dada** una verificación anterior al juego, **cuando** termina
    y se permite iniciar, **entonces** no ha consumido acciones, tiempo virtual,
    azar de la partida ni llaves reales, ni ha marcado salas como exploradas.
@@ -171,7 +174,7 @@ y fallos de obtención; comprobar solicitudes y resultado informado.
 
 ### Requisitos funcionales
 
-- **FR-RS-001**: Verificar antes de iniciar una partida usando el esqueleto y
+- **FR-RS-001**: Verificar antes de iniciar una partida nueva usando el esqueleto y
   la ubicación de llaves válida de la cripta seleccionada. Escenarios:
   AC-RS-001/007/017/020.
 - **FR-RS-002**: Aplicar los supuestos de §3.5: salidas abiertas transitables;
@@ -200,13 +203,16 @@ y fallos de obtención; comprobar solicitudes y resultado informado.
 - **FR-RS-009**: Con los mismos datos y versiones, el resultado, orden válido
   elegido e informe deben ser reproducibles sin consumir el azar del juego.
   Escenarios: AC-RS-006/010/016.
-- **FR-RS-010**: Una cripta no resoluble no debe iniciar sin `--forzar`; mostrar
+- **FR-RS-010**: Una partida nueva en cripta no resoluble no debe iniciar sin `--forzar`; mostrar
   el reporte de verificación al iniciar. Escenarios: AC-RS-013/014.
 - **FR-RS-011**: `--forzar` permite iniciar pese al resultado negativo, sin
   cambiar reglas de partida ni producir llaves, movimiento o exploración por
   la verificación previa. Escenarios: AC-RS-014/016.
 - **FR-RS-012**: `--verificar <cripta>` ejecuta solo la verificación e imprime
   su resultado sin instanciar la vista ni iniciar juego interactivo.
+  La verificación automática se limita a partidas nuevas; cargar y replay no
+  la repiten ni incorporan un nuevo bloqueo por resolubilidad. Conservan sus
+  validaciones de formato, identidad y versiones.
   Escenario: AC-RS-015.
 - **FR-RS-013**: La verificación no debe alterar conocimiento del mapa, reloj,
   inventario, actores, acciones o historial del juego que se iniciará.
@@ -277,11 +283,21 @@ y fallos de obtención; comprobar solicitudes y resultado informado.
   no obliga a elegir aquí una estrategia particular de almacenamiento.
 - Si hay datos offline, deben aportar información equivalente y válida; su formato
   y la integración concreta se precisarán en el plan.
-- El texto no fija códigos de salida del proceso ni combinaciones de banderas
-  con reanudación o replay; se revisarán en aclaración antes del plan.
+- La verificación automática se aplica a partidas nuevas; cargar y replay
+  mantienen su comportamiento sin repetirla. `--verificar` es consulta independiente.
+  Quedan por concretar los códigos de salida y otras combinaciones de banderas.
 - Frontera y dependencias se reportan conforme a §3.5. En aclaración se precisará
   la presentación de conexiones repetidas y dependencias con accesos alternativos,
   sin imponer un criterio nuevo de resolubilidad.
 - Sigue faltando el enunciado original de P1 para contrastar íntegramente sus reglas.
 - No se implementan línea de tiempo, funcionalidades de verificación, plan ni
   tareas en esta etapa. Todas las decisiones de estructuras pertenecen al usuario.
+
+## Aclaraciones
+
+### Sesión del 2026-11-09
+
+- **P**: ¿La verificación automática también se ejecuta al cargar una partida
+  o reproducir un log? → **R**: A, automática solo para partidas nuevas y
+  `--verificar` como consulta independiente; cargar y replay no la repiten.
+  Se conservan sus validaciones existentes. Aplicado a FR-RS-001/010/012 y AC-RS-015.

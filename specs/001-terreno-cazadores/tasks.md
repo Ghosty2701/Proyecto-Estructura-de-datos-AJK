@@ -247,7 +247,9 @@ en la tabla siguiente.
 Todas las tareas comienzan sin marcar. Solo la ejecución y verificación posteriores
 permiten completarlas. Registrar prompts de cada fase con fecha y metadatos conocidos.
 Los cambios de enunciado se reflejan primero en spec y luego en código, en commits distintos.
-No generar todavía las otras tres capacidades ni implementar una estructura no aprobada.
+Esta capacidad no autoriza otras estructuras. Las siguientes capacidades siguen
+su propio flujo y elecciones; niebla ya está implementada y resolubilidad está
+en aclaración. No implementar una estructura no aprobada.
 
 
 ## Trazabilidad verificada: 2026-11-09

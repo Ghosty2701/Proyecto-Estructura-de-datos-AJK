@@ -35,8 +35,7 @@
 - Los seis casos de niebla del apéndice B aparecen en AC-NV-009, AC-NV-013,
   AC-NV-014, AC-NV-006/007, AC-NV-019 y AC-NV-020, respectivamente.
 - Se registra la interpretación elegida por el usuario sobre puertas reveladas
-  por antorcha; ninguna estructura de datos está elegida para esta capacidad.
+  por antorcha; las estructuras elegidas después están en plan.md y research.md.
 - La lista certifica revisión documental, no implementación, pruebas ni mediciones.
-- Preparada para `$speckit-clarify`. Antes del plan deben concretarse sintaxis
-  de mapa/destino, destino igual a sala actual e interacción con el pergamino
-  durante el viaje. Las reglas ya definidas se pueden revisar sin esas decisiones.
+- Aclaración, plan, tareas e implementación completados. La sintaxis y la
+  interacción elegidas están en spec.md; evidencia de ejecución en tasks.md.

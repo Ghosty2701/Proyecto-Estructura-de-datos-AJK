@@ -514,7 +514,16 @@ pruebas o benchmarks ni se implementó código de la capacidad.
 
     | Pregunta | Respuesta literal y fecha | Acuerdo registrado |
     | --- | --- | --- |
-    | ¿Ejecutar verificación automática también al cargar o reproducir? | Pendiente | Sin decisión todavía. |
+    | ¿Ejecutar verificación automática también al cargar o reproducir? | «A , verifica la integridad del proye to que todo este al dia» — 2026-11-09 | Automática solo en partidas nuevas; verificar es consulta independiente. Cargar/replay conservan validaciones sin repetirla. Solicita además auditoría general de integridad y actualización. |
+    | ¿Qué códigos de salida usar en verificar? | Pendiente | Se presentará la comparación para distinguir resultado negativo y error de obtención. |
+
+    *Resultado de la auditoría solicitada: 492 pruebas aprobadas, 34 archivos de
+    producción con sintaxis válida, dependencias sin conflictos, enlaces locales
+    válidos y huellas finales de niebla vigentes. Se corrigen referencias documentales
+    desactualizadas sin modificar estructuras ni código de producción; fetch origin
+    confirmó 0/0 con origin/main antes del commit de auditoría. No se repitieron
+    benchmarks ni se implementó resolubilidad. Detalle en
+    [auditoría de integridad](evidencia/auditoria_integridad_2026-11-09.md).*
 
 ## 🟣 Kendall
 

@@ -89,5 +89,5 @@ La cadena ejecutada y los nombres de pruebas se conservan en tasks.md.
 Los AC se leen con prefijo AC-NV-. PR-NV-001/002/003 corresponden a mediciones
 en bench_conocimiento y --bench: paso completo <5 ms en referencia conocida,
 actualización proporcional a revelación y consultas de estados/puertas.
-Los resultados finales y límites irán al Documento de Decisiones; este contrato
+Los resultados finales y límites están en el Documento de Decisiones; este contrato
 no sustituye una tarea ni una prueba.

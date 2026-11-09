@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-07
 
-**Status**: Draft
+**Status**: Implementada y verificada; cierre original en tasks.md y estado actual en README.md.
 
 **Input**: User description: «Continuemos», tras crear la constitución de Cripta Parte II.
 Se toma como siguiente etapa la primera capacidad de P2 §2.2: terreno y cazador,
@@ -263,6 +263,6 @@ reproducirlas y comparar con una ejecución que guarde/cargue o retroceda un int
 - La cripta de referencia, su versión y la carga concreta de «decenas de cazadores» deben
   identificarse antes de afirmar cumplimiento de PR-TC-001. Las cargas sintéticas permiten
   preparar la verificación, pero no sustituyen esa evidencia.
-- Cada escenario necesitará prueba automatizada o log de reproducción en las fases de
-  tareas e implementación. Esta revisión comprueba la especificación, no el juego ejecutado.
+- Cada escenario tiene prueba automatizada o reproducción asociada en tasks.md;
+  la evidencia histórica del cierre y las regresiones actuales se distinguen en README.
 - Antes del código, esta especificación debe confirmarse en Git conforme a la constitución.

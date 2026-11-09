@@ -204,8 +204,9 @@ de benchmark anterior, sin introducir estructuras nuevas.
 Los resultados corresponden a ese equipo, versiones y recorridos. El margen sintético
 es pequeño y no garantiza todos los mapas ni equipos. La búsqueda individual puede
 repetir trabajo; cambiarla exige autorización del usuario y nuevas mediciones. El rango
-no autoriza inicializar todo el mapa por consulta. La versión4 no implementa todavía
-la línea de tiempo de la capacidad futura; niebla, viaje y resolubilidad siguen pendientes.
+no autoriza inicializar todo el mapa por consulta. Este cierre histórico usaba
+versión4; la integración posterior de niebla y viaje, al inicio de este documento,
+usa versión5. Resolubilidad y línea de tiempo siguen pendientes.
 
 ---
 
@@ -432,7 +433,7 @@ Lectura honesta de los datos:
 
 Registrar cuesta pocas veces más que soltar sin registro, y deshacer crece aproximadamente de forma lineal (×10 de elementos ≈ ×10 de tiempo), lo que confirma el análisis.
 
-**Límites.** Hay que deshacer en orden inverso (LIFO). No se deben mezclar cambios registrados con operaciones sin registro sobre objetos ordinarios. La clase del objeto no puede cambiar mientras está en la lista. A fecha de esta redacción, `controlador/partida.py` todavía usa el `Inventario` común y no las operaciones `*_reversible`, de modo que la integración con el historial de retroceso está **pendiente**.
+**Límites.** Hay que deshacer en orden inverso (LIFO). No se deben mezclar cambios registrados con operaciones sin registro sobre objetos ordinarios. La clase del objeto no puede cambiar mientras está en la lista. La observación original de integración pendiente ya fue resuelta: `controlador/cargar_partida.py` crea `InventarioReversible` y el motor registra sus deltas. El pergamino real, incluido el conocimiento añadido por niebla, tiene pruebas de integración ejecutadas.
 
 ---
 

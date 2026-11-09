@@ -1,5 +1,11 @@
 ## 🔵 Andrey
 
+Formato de Parte II: las aclaraciones y elecciones breves se agrupan por
+capacidad y fase, conservando número, fecha y respuesta literal junto a su
+pregunta o significado. No se inventa un prompt único ni se renumeran las
+intervenciones históricas. Los próximos intercambios de una misma sesión
+se añaden a su tabla; el prompt de inicio de cada comando queda explícito.
+
 1. No se si puedas revisar lo que ya llevemos hecho y conectarte con el chat anterior de codex que teniamos para este proyecto
 
 2. no tienes acceso al del web que se llama conffgurar pporyecto edd
@@ -287,186 +293,39 @@
     La elección de estructuras se reserva al usuario para la planificación.
     Sus preferencias de decisión y comunicación del avance quedan en `AGENTS.md`.*
 
-20. Continuemos con el progreso
+### Entradas 20–35: Terreno y cazadores — decisiones de planificación
 
-    *Fecha: 2026-11-08*
+*Fecha original de las intervenciones: 2026-11-08*
 
-    *Agente: Codex. Modelo exacto: no registrado.*
+*Agente: Codex. Modelo exacto: no registrado.*
 
-    *Contexto de la invocación: inicio de `$speckit-plan` para terreno y cazadores.
-    Se revisan las estructuras y puntos de integración existentes, se prepara
-    `plan.md` como borrador y `research.md` con alternativas no aprobadas.
-    La investigación incluye una revisión de solo lectura delegada conforme a la
-    habilidad. Todas las decisiones de estructuras siguen reservadas al usuario;
-    primero se presenta D-TC-01 y se espera su elección. No se completa el diseño
-    de fase 1, no se generan tareas y no se implementan funcionalidades.*
+Agrupación editorial de una sesión: cada fila conserva el número y el
+mensaje literal original. No representa un único prompt enviado al agente.
+La interpretación contextual resume el resultado, sin convertir interés
+o recomendaciones en decisiones aprobadas.
 
-21. La opcion que concorde con mi equipo fue la A
+| Entrada | Mensaje original | Significado y resultado |
+| --- | --- | --- |
+| 20 | Continuemos con el progreso | Inicio de speckit-plan; alternativas pendientes, sin implementación. |
+| 21 | La opcion que concorde con mi equipo fue la A | D-TC-01: Dijkstra por rango y heap de rutas propio, separado de agenda; acuerdo del equipo. |
+| 22 | La Tabla hash es la mas interesante de todas | Interés en tabla hash; todavía no constituye aprobación. |
+| 23 | Las colisiones de igual manera hay metodos para solucionarlas entonces no me preocupan, y por el resto de las condiciones yo creo que por tema de rapides y que puede llegarnos a funcionar estaria bastante bien, pero aqui viene mi pregunta, esto nos va a dejar a ajustar bien todos los tiempos los cuales el profe nos habia asignado que teniamos que cumplir correcto? | Consulta de tiempos: O(1) esperado no garantiza el ciclo; requiere --bench. |
+| 24 | Ok demosle con eso entonces | D-TC-02: aprueba tabla hash propia para distancias. |
+| 25 | Double hashing suen bastante bien | Interés en doble hashing; confirmación aún pendiente en esta intervención. |
+| 26 | Confirmo | D-TC-02a: confirma doble hashing para colisiones. |
+| 27 | B | D-TC-03: heap indexado, mejora de prioridad sin duplicar entradas. |
+| 28 | A | D-TC-03a: posición del heap en el mismo registro hash de distancia. |
+| 29 | A | D-TC-04: búsqueda individual limitada por rango. |
+| 30 | B | D-TC-05: reutilización conservadora con recálculo al cambiar validez. |
+| 31 | C | D-TC-06: elige inicialmente matriz; se detecta riesgo al escanear filas. Sustituida después por entrada 33. |
+| 32 | no habria una manera de evitar ese O(n^2) | Pregunta cómo evitar O(n²); se explican alternativas sin cambiar la elección. |
+| 33 | hagamoslo con las listas existentes | D-TC-06/06a: sustituye matriz por listas existentes; esta es la decisión final. |
+| 34 | A | D-TC-07: conservar solo el último resultado por cazador. |
+| 35 | A entonces | D-TC-08: capacidad inicial 32, duplicación, salto impar y crecer antes de superar 70 %. Cierra diseño. |
 
-    *Fecha: 2026-11-08*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto de la invocación: continuación de `$speckit-plan`. El usuario confirma
-    el acuerdo del equipo sobre D-TC-01, opción A: Dijkstra limitado por rango con
-    heap binario propio de rutas separado de la agenda. Se registra en plan.md y
-    research.md; las demás elecciones siguen pendientes. Se prepara la comparación
-    de D-TC-02, registro de distancias, sin elegir estructura por el usuario ni
-    implementar funcionalidades.*
-
-22. La Tabla hash es la mas interesante de todas
-
-    *Fecha: 2026-11-08*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: se explica la tabla hash propia como alternativa para distancias.
-    El interés expresado todavía no se registra como decisión aprobada.*
-
-23. Las colisiones de igual manera hay metodos para solucionarlas entonces no me preocupan, y por el resto de las condiciones yo creo que por tema de rapides y que puede llegarnos a funcionar estaria bastante bien, pero aqui viene mi pregunta, esto nos va a dejar a ajustar bien todos los tiempos los cuales el profe nos habia asignado que teniamos que cumplir correcto?
-
-    *Fecha: 2026-11-08*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: se aclara que O(1) esperado no garantiza el límite del ciclo completo;
-    colisiones, ampliaciones y trabajo de los cazadores requieren medición con --bench.*
-
-24. Ok demosle con eso entonces
-
-    *Fecha: 2026-11-08*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se registra D-TC-02, tabla hash propia
-    para distancias, como elección aprobada. El método de colisiones queda pendiente
-    de elección del usuario. Se actualizan plan.md y research.md; no se implementa
-    código ni se declaran mediciones realizadas.*
-
-25. Double hashing suen bastante bien
-
-    *Fecha: 2026-11-08*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: el usuario expresa interés por doble hashing. Se explica el salto
-    de sondeo y la necesidad de que permita recorrer toda la tabla, y se solicita
-    confirmar la elección antes de registrarla como aprobada.*
-
-26. Confirmo
-
-    *Fecha: 2026-11-08*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se aprueba D-TC-02a, doble hashing
-    para resolver colisiones de la tabla propia de distancias. Se actualizan
-    plan.md y research.md; se prepara D-TC-03, manejo de mejoras de distancia en
-    el heap. No se elige esa variante por el usuario ni se implementa código.*
-
-27. B
-
-    *Fecha: 2026-11-08*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. El usuario elige D-TC-03, opción B:
-    heap indexado con actualización de la prioridad existente, sin duplicados por
-    mejoras de distancia. Se registra en plan.md y research.md. D-TC-03a, ubicación
-    del registro de posiciones, queda pendiente de elección. No se implementa código.*
-
-28. A
-
-    *Fecha: 2026-11-08*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se aprueba D-TC-03a, guardar la
-    posición del heap junto a la distancia en el registro hash de cada sala.
-    Se actualizan plan.md y research.md y se preparan las alternativas de D-TC-04:
-    búsqueda individual, compartida o combinada. Esa estrategia sigue pendiente de
-    elección; no se implementa código ni se declaran mediciones realizadas.*
-
-29. A
-
-    *Fecha: 2026-11-08*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se aprueba D-TC-04, búsqueda
-    individual desde cada cazador limitada por rango. Se mantiene la comparación
-    con cálculo compartido exigida por P2 para --bench. Se actualizan plan.md y
-    research.md y se prepara D-TC-05, vigencia y reutilización de resultados.
-    No se implementa código ni se declaran mediciones realizadas.*
-
-30. B
-
-    *Fecha: 2026-11-08*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se aprueba D-TC-05, reutilización
-    conservadora de resultados con recálculo cuando cambien las condiciones de
-    validez. Se actualizan plan.md y research.md y se presenta D-TC-06, representación
-    del mapa. No se eligen estructuras auxiliares de reutilización ni se implementa código.*
-
-31. C
-
-    *Fecha: 2026-11-08*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se registra la elección de matriz
-    de adyacencia en D-TC-06. Se detecta que escanear filas completas incumpliría
-    PR-TC-002; se propone conservar las listas existentes para enumerar vecinos
-    sin elegir esa combinación por el usuario. D-TC-06a queda pendiente. Se actualizan
-    plan.md y research.md; no se implementa código ni se declaran benchmarks realizados.*
-
-32. no habria una manera de evitar ese O(n^2)
-
-    *Fecha: 2026-11-08*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: se explica la diferencia entre matriz convencional, representación
-    dispersa y listas de adyacencia; no se cambia la elección sin respuesta del usuario.*
-
-33. hagamoslo con las listas existentes
-
-    *Fecha: 2026-11-08*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se sustituye la matriz de D-TC-06
-    por las listas existentes, se resuelve D-TC-06a y se conservan las alternativas
-    y el motivo del cambio. Se prepara D-TC-07, almacenamiento de resultados
-    reutilizables, pendiente del usuario. No se implementa código.*
-
-34. A
-
-    *Fecha: 2026-11-08*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se aprueba D-TC-07, conservar
-    únicamente el último resultado de búsqueda de cada cazador y sus condiciones
-    de validez. Se actualizan plan.md y research.md. Se presenta D-TC-08 como
-    conjunto de parámetros de capacidad, salto y crecimiento de la tabla propia;
-    su elección queda pendiente. No se implementa código ni se ejecutan benchmarks.*
-
-35. A entonces
-
-    *Fecha: 2026-11-08*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: cierre de `$speckit-plan`. Se aprueba D-TC-08, tabla con capacidad
-    inicial 32, duplicación, salto impar y ampliación antes de superar 70 %.
-    Se completan plan.md, research.md, data-model.md, contracts/terreno-cazadores.md
-    y quickstart.md. La revisión técnica delegada prevista por la habilidad comprueba
-    riesgos de empate, puertas, referencias y datos derivados, sin elegir estructuras
-    nuevas. Se valida la documentación; no se generan tareas ni se implementa código,
-    y no se presentan pruebas del juego o benchmarks como ejecutados.*
+Detalle técnico y alternativas conservados en [plan](../specs/001-terreno-cazadores/plan.md) y [alternativas](../specs/001-terreno-cazadores/research.md).
+Durante estas intervenciones se actualizaron documentos; no se ejecutaron
+pruebas o benchmarks ni se implementó código de la capacidad.
 
 36. Continuemos
 
@@ -542,276 +401,62 @@
     en el esquema binario por su dependencia estricta. No se cambian las elecciones
     del usuario ni se implementan las otras tres capacidades.*
 
-42. Continemos con la niebla
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: `$speckit-specify` para niebla de guerra e «ir a», una capacidad
-    según P2 §2.2. Se revisan enunciado, constitución y documentación heredada.
-    Se crean especificación y lista de calidad y se actualiza la capacidad activa.
-    No se implementa código ni se eligen estructuras. Las pruebas y mediciones de
-    terreno no se presentan como evidencia de niebla. Sigue `$speckit-clarify`.*
-
-43. Registrar su estado al revelarlas con la antorcha, como interpretación del equipo.
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: respuesta a la pregunta sobre puertas de vecinas reveladas con
-    antorcha que no conectan con la sala actual. Se registra como interpretación
-    explícita en spec.md, AC-NV-006 y FR-NV-003/006. No implica actualizar puertas
-    remotas posteriormente ni elegir estructuras.*
-
-44. Continuemos
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: inicio de `$speckit-clarify` sobre niebla e «ir a». Se revisan
-    la especificación activa y su lista de calidad. Se comienza por aclarar cómo
-    puede el jugador usar el pergamino entre pasos del viaje, exigido por el
-    apéndice B; siguen pendientes sintaxis y destino igual a la sala actual.
-    Las respuestas se integrarán individualmente en la especificación. No se
-    eligen estructuras ni se implementan funcionalidades o pruebas.*
-
-45. A
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: primera respuesta de `$speckit-clarify` para niebla e «ir a».
-    Aprueba el avance automático con interrupción entre pasos para ejecutar
-    retroceder. Se actualizan FR-NV-016, AC-NV-020, casos límite y aclaraciones.
-    No se decide el mecanismo técnico de entrada ni se eligen estructuras.*
-
-46. C
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: segunda respuesta de `$speckit-clarify` para niebla e «ir a».
-    Se aprueban ID y nombre como formatos del destino. Se actualizan FR-NV-008,
-    AC-NV-009, supuestos y aclaraciones. Se pregunta a continuación por
-    coincidencias de nombres y ambigüedades; no se elige estructura de búsqueda.*
-
-47. B
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: tercera respuesta de `$speckit-clarify` para niebla e «ir a».
-    Se aprueba nombre completo distinguiendo mayúsculas y minúsculas; nombres
-    repetidos entre salas exploradas se rechazan sin acción ni tiempo y se pide
-    ID. Se actualizan FR-NV-008, AC-NV-009, supuestos y aclaraciones. No se eligen
-    estructuras ni se implementa código. Sigue destino igual a sala actual.*
-
-48. A
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: cuarta respuesta de `$speckit-clarify` para niebla e «ir a».
-    Destino igual a sala actual: informar «Ya estás en esa sala», sin movimiento,
-    acción ni tiempo. Se actualizan FR-NV-013, AC-NV-017, casos límite y
-    aclaraciones. Queda concretar el comando de mapa antes de planificar.
-    No se eligen estructuras ni se implementan funcionalidades.*
-
-49. b
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: quinta respuesta y cierre de `$speckit-clarify` para niebla e
-    «ir a». Se aprueba `ver mapa`; se actualizan FR-NV-004, AC-NV-001, supuestos
-    y aclaraciones. Cinco respuestas integradas, identificadores conservados,
-    lista de calidad revalidada 16/16 sin cambios de marcadores. No se eligen
-    estructuras ni se ejecutan pruebas o mediciones nuevas del juego. Sigue
-    `$speckit-plan`, con decisiones de estructuras reservadas al usuario.*
-
-50. Continuemos
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: inicio de `$speckit-plan` para niebla e «ir a». Se ejecuta setup-plan,
-    se revisan constitución, especificación y código de integración. La habilidad
-    requiere investigación mediante agentes: se delega una revisión de solo lectura
-    de alternativas del índice de conocimiento. Se crean plan.md y research.md como
-    borradores de fase 0. D-NV-01 compara tabla hash propia, AVL propio y arreglo
-    por posiciones compactas; tras contrastar la revisión delegada se recomienda
-    C por actualización directa sin ampliaciones, sin elegir por el usuario. No se
-    generan tareas ni se implementa código ni se declaran pruebas o benchmarks nuevos.*
-
-51. C
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-01: arreglo de
-    conocimiento con posiciones compactas del esqueleto. Se actualizan plan.md
-    y research.md sin extender esta aprobación a otras estructuras. D-NV-02
-    compara resolver IDs con el AVL existente, búsqueda binaria manual en arreglo
-    ordenado o tabla hash propia; se recomienda A y se espera elección explícita.
-    No se implementa código ni se ejecutan pruebas o mediciones nuevas.*
-
-52. C
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-02: tabla hash
-    propia ID → posición compacta, conservando el arreglo elegido en D-NV-01.
-    Se actualizan plan.md y research.md; D-NV-02a presenta doble hashing, sondeo
-    lineal y encadenamiento separado con listas propias. Se recomienda doble
-    hashing sin darlo por elegido ni heredar parámetros de terreno. No se
-    implementa código ni se ejecutan pruebas o mediciones nuevas.*
-
-53. A
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-02a, doble
-    hashing para ID → posición. Se actualizan plan.md y research.md. D-NV-02b
-    propone reserva inicial al 70 %, reserva al 50 % o crecimiento desde 32 al
-    70 %, con capacidad potencia de dos, salto impar y sondeo acotado. Se
-    recomienda reserva inicial al 70 % sin elegir por el usuario. No hay código,
-    pruebas ni mediciones nuevas; otras estructuras permanecen pendientes.*
-
-54. A
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-02b: reservar
-    desde el inicio con máximo 70 %, capacidad potencia de dos, salto impar,
-    mezclas deterministas y sondeo acotado. Se actualizan plan.md y research.md.
-    D-NV-03 compara listas de salidas con recuerdo compartido, listas con copias
-    por sentido y matriz; se recomienda la primera sin elegir por el usuario.
-    Sin implementación, tareas, pruebas ni mediciones nuevas.*
-
-55. A
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-03: listas de
-    salidas conocidas por sala y un recuerdo de puerta compartido por ambos
-    sentidos, separado del estado físico. Se actualizan plan.md y research.md.
-    D-NV-04 compara núcleo Dijkstra compartido con acceso separado a cada mapa
-    frente a búsqueda independiente; se recomienda compartir sin decidir por el
-    usuario. Los auxiliares siguen pendientes. Sin código, tareas, pruebas ni
-    mediciones nuevas.*
-
-56. A
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-04: compartir
-    núcleo Dijkstra con acceso separado al mapa real y al conocimiento. Se
-    actualizan plan.md y research.md. D-NV-04a compara arreglo de registros más
-    heap indexado propio, tabla hash de distancias más heap propio y arreglo con
-    selección lineal; se recomienda la primera sin darla por aprobada. La limpieza
-    entre consultas queda pendiente. No hay implementación, pruebas ni mediciones
-    nuevas y no se modifican las estructuras aprobadas para cazadores.*
-
-57. A
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-04a: arreglo de
-    registros por posición compacta y heap indexado propio existente para el viaje.
-    Se actualizan plan.md y research.md. D-NV-04b compara marcas de generación,
-    lista de posiciones tocadas y reinicio completo; se recomienda generación
-    sin darla por elegida. La preparación medida incluirá liberar candidatos
-    pendientes del heap. Sin implementación, tareas, pruebas ni mediciones nuevas.*
-
-58. A
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-04b, marcas de
-    generación para registros de búsqueda del viaje. Se actualizan plan.md y
-    research.md. D-NV-05 compara deltas de atributos/referencias en la lista de
-    cambios existente frente a grupo especializado de cambios de conocimiento;
-    se recomienda la primera sin elegir por el usuario. No se implementa código,
-    ni se ejecutan pruebas o mediciones nuevas.*
-
-59. A , pero todo esto como se va a hacer con spec kit, para que sirve spec kit, y como funciona_
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-05: usar la
-    lista de cambios existente para deltas de atributos y referencias del
-    conocimiento. Se actualizan plan.md y research.md. Se explica el propósito
-    de spec-kit, sus fases, los artefactos existentes, las decisiones pendientes
-    y la trazabilidad que se completará con tareas, código y pruebas. No se
-    implementa código ni se ejecutan pruebas o mediciones nuevas.*
-
-60. Continuemos
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se presenta D-NV-06 para resolver
-    destinos por nombre: recorrer el arreglo existente al recibir la orden, AVL
-    por nombre o tabla hash de nombres explorados. Se recomienda el recorrido
-    sin otro índice y sin repetirlo por paso; el usuario aún no lo elige. Se
-    actualizan plan.md y research.md. Sin implementación, tareas, pruebas ni
-    mediciones nuevas.*
-
-61. A
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: continuación de `$speckit-plan`. Se aprueba D-NV-06: recorrer
-    el arreglo existente al recibir destino por nombre, usando solo exploradas.
-    Se actualizan plan.md y research.md. D-NV-07 compara referencia directa de
-    puerta a recuerdo reservado al iniciar, arreglo de recuerdos por posición de
-    puerta e índice hash de puertas; se recomienda la primera sin aprobarla por
-    el usuario. Sin implementación, tareas, pruebas ni mediciones nuevas.*
-
-62. A
-
-    *Fecha: 2026-11-09*
-
-    *Agente: Codex. Modelo exacto: no registrado.*
-
-    *Contexto: cierre de `$speckit-plan`. Se aprueba D-NV-07: referencia directa
-    puerta → recuerdo compartido reservado inicialmente sin observar. Se revisan
-    plan.md y research.md y se generan data-model.md, contracts/niebla-viaje.md y
-    quickstart.md con las elecciones explícitas previas. La revisión delegada de
-    solo lectura comprueba integración y riesgos; se precisan observación dentro
-    de acciones, enemigos al entrar, daño aunque haya cura, guardado de referencias
-    y deltas, interrupción sin confirmación por paso y replay sin vista. Los
-    artefactos se validan documentalmente; no se generan tareas ni se implementa
-    código ni se ejecutan pruebas o mediciones nuevas de niebla.*
+### Entradas 42–49: Niebla e ir a — especificación y aclaraciones
+
+*Fecha original de las intervenciones: 2026-11-09*
+
+*Agente: Codex. Modelo exacto: no registrado.*
+
+Agrupación editorial de una sesión: cada fila conserva el número y el
+mensaje literal original. No representa un único prompt enviado al agente.
+La interpretación contextual resume el resultado, sin convertir interés
+o recomendaciones en decisiones aprobadas.
+
+| Entrada | Mensaje original | Significado y resultado |
+| --- | --- | --- |
+| 42 | Continemos con la niebla | speckit-specify de niebla e ir a; sin estructuras elegidas ni código. |
+| 43 | Registrar su estado al revelarlas con la antorcha, como interpretación del equipo. | Interpretación del equipo: antorcha registra también las puertas reveladas de vecinas. |
+| 44 | Continuemos | Inicio de speckit-clarify; se revisan ambigüedades de interacción. |
+| 45 | A | Viaje automático con interrupción entre pasos para retroceder, sin continuar después. |
+| 46 | C | Destino por ID o nombre completo. |
+| 47 | B | Nombre sensible a mayúsculas; repetidos entre exploradas se rechazan y requieren ID. |
+| 48 | A | Destino actual: informar que ya está allí, sin acción ni tiempo. |
+| 49 | b | Comando ver mapa. Cierra cinco aclaraciones; checklist documental 16/16. |
+
+Detalle técnico y alternativas conservados en [especificación y aclaraciones](../specs/002-niebla-viaje/spec.md).
+Durante estas intervenciones se actualizaron documentos; no se ejecutaron
+pruebas o benchmarks ni se implementó código de la capacidad.
+
+### Entradas 50–62: Niebla e ir a — decisiones de planificación
+
+*Fecha original de las intervenciones: 2026-11-09*
+
+*Agente: Codex. Modelo exacto: no registrado.*
+
+Agrupación editorial de una sesión: cada fila conserva el número y el
+mensaje literal original. No representa un único prompt enviado al agente.
+La interpretación contextual resume el resultado, sin convertir interés
+o recomendaciones en decisiones aprobadas.
+
+| Entrada | Mensaje original | Significado y resultado |
+| --- | --- | --- |
+| 50 | Continuemos | Inicio de speckit-plan; investigación de alternativas, sin elección automática. |
+| 51 | C | D-NV-01: arreglo de conocimiento con posiciones compactas. |
+| 52 | C | D-NV-02: tabla hash propia ID → posición. |
+| 53 | A | D-NV-02a: colisiones por doble hashing. |
+| 54 | A | D-NV-02b: reserva inicial al 70 % máximo, potencia de dos, salto impar y sondeo acotado. |
+| 55 | A | D-NV-03: listas de salidas con un recuerdo compartido por puerta, separado de la realidad. |
+| 56 | A | D-NV-04: núcleo Dijkstra compartido con fuentes separadas para cazador y viaje. |
+| 57 | A | D-NV-04a: arreglo de registros y heap indexado propio existente para viaje. |
+| 58 | A | D-NV-04b: marcas de generación entre búsquedas. |
+| 59 | A , pero todo esto como se va a hacer con spec kit, para que sirve spec kit, y como funciona_ | D-NV-05: deltas en lista existente; solicita y recibe explicación del flujo de spec-kit. |
+| 60 | Continuemos | Continuación del plan: se presentan alternativas para nombres, aún sin elegir. |
+| 61 | A | D-NV-06: recorrer arreglo una vez al recibir destino por nombre, solo exploradas. |
+| 62 | A | D-NV-07: referencia directa puerta → recuerdo inicialmente no observado. Cierra plan y artefactos de fase 1. |
+
+Detalle técnico y alternativas conservados en [plan](../specs/002-niebla-viaje/plan.md) y [alternativas](../specs/002-niebla-viaje/research.md).
+Durante estas intervenciones se actualizaron documentos; no se ejecutaron
+pruebas o benchmarks ni se implementó código de la capacidad.
 
 63. continuiemos con la implementacion entonces
 
@@ -851,6 +496,25 @@
     de supervivencia y se cubren los cuatro casos obligatorios. No se eligen
     estructuras ni se implementa código ni se ejecutan pruebas o mediciones nuevas.
     Sigue `$speckit-clarify` antes de planificar.*
+
+65. continuemos, y por si acaso, todos estos mensajes de A, B, C etc para los prompts llm son un poco confusos, yo creo que seria mejor unificarlos
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: autorización para agrupar editorialmente las respuestas breves
+    de Parte II sin perder mensajes literales, números, fechas ni cambios
+    de decisión. Se unifican entradas20–35,42–49 y50–62 por capacidad/fase;
+    se conservan las secciones de los otros integrantes. Comienza
+    `$speckit-clarify` de resolubilidad, sin implementación ni elecciones
+    de estructuras. Respuestas posteriores se añadirán a la tabla de sesión.*
+
+    **Aclaraciones de resolubilidad de esta sesión**
+
+    | Pregunta | Respuesta literal y fecha | Acuerdo registrado |
+    | --- | --- | --- |
+    | ¿Ejecutar verificación automática también al cargar o reproducir? | Pendiente | Sin decisión todavía. |
 
 ## 🟣 Kendall
 

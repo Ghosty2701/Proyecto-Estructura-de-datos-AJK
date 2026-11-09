@@ -2,7 +2,7 @@
 
 **Rama**: `main` (actual; sin rama nueva).
 **Creación**: 2026-11-09.
-**Estado**: Revisada; pendiente del flujo de aclaración y planificación.
+**Estado**: Aclaración completada; preparada para planificación.
 **Entrada**: «Continemos con la niebla».
 
 **Fuentes**: [Enunciado P2](../../Cripta%20-%20Parte%20II.pdf), §§2.2–2.6,
@@ -27,7 +27,7 @@ puertas; contrastarlo con cambios remotos y precarga de contenido.
 **Escenarios de aceptación**:
 
 1. **AC-NV-001** — **Dado** el inicio en A, conectada a B, con C fuera de las
-   salidas de A, **cuando** el reloj es 0 y se consulta el mapa, **entonces** A está
+   salidas de A, **cuando** el reloj es 0 y se ejecuta `ver mapa`, **entonces** A está
    explorada, B avistada y C desconocida; solo A revela nombre, salidas, costos
    y puertas observadas. Requisitos: FR-NV-001, FR-NV-002, FR-NV-004.
 2. **AC-NV-002** — **Dada** B avistada, **cuando** se entra por primera vez,
@@ -84,6 +84,11 @@ enemigos, daño y falta de ruta entre pasos; revisar reloj y registro de accione
 
 1. **AC-NV-009** — **Dado** un destino avistado o desconocido, **cuando** se ordena
    `ir a`, **entonces** se rechaza sin movimiento, acción ni tiempo virtual.
+   Para un destino explorado único, indicar su ID o su nombre identifica la
+   misma sala y aplica las mismas reglas de viaje.
+   El nombre debe coincidir completo y distinguir mayúsculas y minúsculas;
+   si coincide con varias salas exploradas, se rechaza sin acción ni tiempo
+   y se pide indicar el ID, sin seleccionar una de ellas automáticamente.
    Requisito: FR-NV-008. Apéndice B, niebla, caso 1.
 2. **AC-NV-010** — **Dadas** rutas conocidas abiertas al destino explorado, una
    de dos pasos de costo 200 y otra de tres de costo 100, **cuando** se calcula
@@ -116,6 +121,8 @@ enemigos, daño y falta de ruta entre pasos; revisar reloj y registro de accione
 9. **AC-NV-017** — **Dado** un viaje completado o interrumpido, **cuando** se
    informa su resultado, **entonces** se explica llegada, enemigos, daño o falta
    de ruta según lo ocurrido, sin revelar información desconocida.
+   Si el destino es la sala actual, se informa «Ya estás en esa sala» sin
+   movimiento, acción ni avance del reloj.
    Requisitos: FR-NV-005, FR-NV-013.
 10. **AC-NV-018** — **Dado** un viaje de tres pasos, **cuando** se registra y
     reproduce, **entonces** cada paso figura como movimiento individual en
@@ -139,7 +146,7 @@ observaciones de puertas y pasos de viaje.
    recuperan sus estados previos, incluso avistada o desconocida; se conserva lo
    conocido antes de la acción. Requisito: FR-NV-016. Apéndice B, niebla, caso 5.
 2. **AC-NV-020** — **Dados** varios pasos automáticos ejecutados, **cuando** se usa
-   un pergamino en el contexto del viaje, **entonces** revierte solo el último paso,
+   un pergamino tras interrumpir entre pasos del viaje, **entonces** revierte solo el último paso,
    restaura su conocimiento y el viaje no continúa. Se conservan las excepciones
    de consumo de P1. Requisitos: FR-NV-011, FR-NV-016. Apéndice B, niebla, caso 6.
 3. **AC-NV-021** — **Dado** un mapa con los tres estados y un recuerdo de puerta
@@ -162,8 +169,11 @@ observaciones de puertas y pasos de viaje.
   explorarlas recursivamente.
 - Cambios sucesivos de una puerta remota no actualizan el recuerdo sin observación.
 - Muerte o victoria conserva la terminación ordinaria y no permite más pasos.
-- El destino igual a la sala actual y la forma de interrumpir para usar pergamino
-  se revisarán en aclaración antes de planificar; no se inventa una regla aquí.
+- El viaje avanza automáticamente sin exigir confirmación después de cada paso;
+  el jugador puede interrumpirlo entre pasos para ejecutar `retroceder`.
+  No se interrumpe a mitad del procesamiento de una acción.
+- Si el destino es la sala actual, se informa «Ya estás en esa sala» sin
+  movimiento, acción ni avance del reloj.
 
 ## Requisitos
 
@@ -179,7 +189,7 @@ observaciones de puertas y pasos de viaje.
   sus extremos y conservarlo ante cambios remotos. La antorcha registra el estado
   de puertas reveladas según la aclaración del equipo.
   Escenarios: AC-NV-004/005/006/013/021.
-- **FR-NV-004**: Ofrecer un comando para ver exploradas, sus salidas, costos y
+- **FR-NV-004**: Ofrecer el comando `ver mapa` para ver exploradas, sus salidas, costos y
   puertas recordadas, y salas avistadas; consultar no consume tiempo.
   Escenarios: AC-NV-001/004/005.
 - **FR-NV-005**: Derivar toda presentación y decisión de `ir a` exclusivamente
@@ -193,7 +203,12 @@ observaciones de puertas y pasos de viaje.
   entrar físicamente conserva efectos y activación de P1.
   Escenarios: AC-NV-007/014.
 - **FR-NV-008**: Admitir `ir a <sala>` a exploradas y rechazar avistadas o
-  desconocidas sin acción ni tiempo. Escenario: AC-NV-009.
+  desconocidas sin acción ni tiempo. El destino puede indicarse por ID o por
+  nombre de sala; ambos formatos identifican el mismo destino cuando corresponden
+  a una única sala explorada. Los nombres deben coincidir completos y distinguir
+  mayúsculas y minúsculas. Si varias exploradas tienen ese nombre, se rechaza
+  sin acción ni tiempo y se pide el ID; no se elige una sala automáticamente.
+  Escenario: AC-NV-009.
 - **FR-NV-009**: Viajar solo por exploradas y salidas recordadas abiertas; no abrir
   puertas aunque se tenga llave; detenerse sin tiempo adicional si no hay ruta.
   Escenarios: AC-NV-010/013/016.
@@ -206,6 +221,8 @@ observaciones de puertas y pasos de viaje.
   incorporando las observaciones al llegar. Escenarios: AC-NV-012/013.
 - **FR-NV-013**: Detenerse al llegar al destino, entrar con enemigos activos o
   dormidos, recibir daño o perder ruta conocida; explicar el motivo.
+  Si el destino coincide con la sala actual, informar «Ya estás en esa sala»
+  sin movimiento, acción ni avance del reloj.
   Escenarios: AC-NV-013/014/015/016/017.
 - **FR-NV-014**: Registrar pasos como movimientos individuales y la orden como
   comentario de depuración; replay reproduce sin vista.
@@ -214,7 +231,9 @@ observaciones de puertas y pasos de viaje.
   y conocimiento; consultar o presentar el mapa no consume reloj ni azar.
   Escenarios: AC-NV-005/018/022.
 - **FR-NV-016**: Revertir el conocimiento junto a su acción, incluidas antorcha
-  y observaciones. En viaje revertir solo el último paso y no continuar. Conservar
+  y observaciones. El viaje avanza automáticamente y permite interrumpir entre
+  pasos para ejecutar `retroceder`, que revierte solo el último paso y no continúa.
+  No se exige confirmación por paso ni se interrumpe una acción en curso. Conservar
   límite de cinco acciones y excepciones de pergamino de P1.
   Escenarios: AC-NV-019/020.
 - **FR-NV-017**: Guardar/cargar conserva conocimiento e historial reversible.
@@ -269,8 +288,9 @@ observaciones de puertas y pasos de viaje.
   para este problema nuevo.
 - Falta el enunciado original de P1. Código y documentación heredados no permiten
   contrastar íntegramente sus reglas.
-- El nombre del comando de mapa y la representación de `<sala>` se concretarán
-  en aclaración: P2 exige las operaciones, pero no fija toda su sintaxis.
+- Se acepta `<sala>` por ID o nombre completo, distinguiendo mayúsculas y
+  minúsculas; los nombres repetidos entre exploradas requieren indicar el ID.
+  La consulta del mapa se solicita con `ver mapa`.
 - No se añade revelación al encender antorcha sin entrar: §3.3 prescribe el
   efecto al entrar. Las demás reglas de antorcha se conservan.
 - La integración con consultas históricas corresponde a línea de tiempo;
@@ -281,6 +301,25 @@ observaciones de puertas y pasos de viaje.
 ## Aclaraciones registradas
 
 ### Sesión del 2026-11-09
+
+- **P**: ¿Qué comando consulta el mapa conocido? → **R**: Opción B, `ver mapa`.
+  Se aplica a FR-NV-004 y AC-NV-001.
+
+- **P**: ¿Qué ocurre si el destino es la sala actual? → **R**: Opción A,
+  informar «Ya estás en esa sala», sin acción ni tiempo. Se aplica a FR-NV-013,
+  AC-NV-017 y casos límite.
+
+- **P**: ¿Cómo indicar la sala de destino? → **R**: Opción C, admitir tanto ID
+  como nombre. Se aplica a FR-NV-008 y AC-NV-009.
+
+- **P**: ¿Cómo tratar nombres repetidos y mayúsculas? → **R**: Opción B,
+  nombre completo distinguiendo mayúsculas y minúsculas; si varias salas
+  exploradas comparten ese nombre, rechazar y pedir ID. Se aplica a FR-NV-008
+  y AC-NV-009.
+
+- **P**: ¿Cómo permitir el pergamino entre pasos de «ir a»? → **R**: Opción A,
+  avance automático con posibilidad de interrumpir entre pasos y ejecutar
+  `retroceder`. Se aplica a FR-NV-016, AC-NV-020 y casos límite.
 
 - **Pregunta**: La antorcha revela vecinas, pero la observación ordinaria exige
   estar en un extremo de la puerta. ¿Qué se conoce de puertas reveladas de una

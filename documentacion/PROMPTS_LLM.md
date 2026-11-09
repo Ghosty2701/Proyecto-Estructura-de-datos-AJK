@@ -565,6 +565,78 @@
     explícita en spec.md, AC-NV-006 y FR-NV-003/006. No implica actualizar puertas
     remotas posteriormente ni elegir estructuras.*
 
+44. Continuemos
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: inicio de `$speckit-clarify` sobre niebla e «ir a». Se revisan
+    la especificación activa y su lista de calidad. Se comienza por aclarar cómo
+    puede el jugador usar el pergamino entre pasos del viaje, exigido por el
+    apéndice B; siguen pendientes sintaxis y destino igual a la sala actual.
+    Las respuestas se integrarán individualmente en la especificación. No se
+    eligen estructuras ni se implementan funcionalidades o pruebas.*
+
+45. A
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: primera respuesta de `$speckit-clarify` para niebla e «ir a».
+    Aprueba el avance automático con interrupción entre pasos para ejecutar
+    retroceder. Se actualizan FR-NV-016, AC-NV-020, casos límite y aclaraciones.
+    No se decide el mecanismo técnico de entrada ni se eligen estructuras.*
+
+46. C
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: segunda respuesta de `$speckit-clarify` para niebla e «ir a».
+    Se aprueban ID y nombre como formatos del destino. Se actualizan FR-NV-008,
+    AC-NV-009, supuestos y aclaraciones. Se pregunta a continuación por
+    coincidencias de nombres y ambigüedades; no se elige estructura de búsqueda.*
+
+47. B
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: tercera respuesta de `$speckit-clarify` para niebla e «ir a».
+    Se aprueba nombre completo distinguiendo mayúsculas y minúsculas; nombres
+    repetidos entre salas exploradas se rechazan sin acción ni tiempo y se pide
+    ID. Se actualizan FR-NV-008, AC-NV-009, supuestos y aclaraciones. No se eligen
+    estructuras ni se implementa código. Sigue destino igual a sala actual.*
+
+48. A
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: cuarta respuesta de `$speckit-clarify` para niebla e «ir a».
+    Destino igual a sala actual: informar «Ya estás en esa sala», sin movimiento,
+    acción ni tiempo. Se actualizan FR-NV-013, AC-NV-017, casos límite y
+    aclaraciones. Queda concretar el comando de mapa antes de planificar.
+    No se eligen estructuras ni se implementan funcionalidades.*
+
+49. b
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: quinta respuesta y cierre de `$speckit-clarify` para niebla e
+    «ir a». Se aprueba `ver mapa`; se actualizan FR-NV-004, AC-NV-001, supuestos
+    y aclaraciones. Cinco respuestas integradas, identificadores conservados,
+    lista de calidad revalidada 16/16 sin cambios de marcadores. No se eligen
+    estructuras ni se ejecutan pruebas o mediciones nuevas del juego. Sigue
+    `$speckit-plan`, con decisiones de estructuras reservadas al usuario.*
+
 ## 🟣 Kendall
 
 1. Actúa como un arquitecto de software y líder técnico experto en Python y Estructuras de Datos.

@@ -91,6 +91,17 @@ class Controlador:
             self._solo_consulta = True
             self.vista.mostrar_mapa(self.partida.mapa())
             return True
+        if nombre == 'historia':
+            # Consulta: sin tiempo, sin log ni retroceso (FR-LT-006).
+            try:
+                resumen = self.partida.historia(comando.argumento)
+            except AccionInvalida as error:
+                # El rechazo se ve al redibujar la sala; nada del juego cambia.
+                self.vista.agregar_mensajes([str(error)])
+                return True
+            self._solo_consulta = True
+            self.vista.mostrar_historia(resumen)
+            return True
         if nombre == "salir":
             return False
         if nombre == "ayuda":

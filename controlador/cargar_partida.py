@@ -23,16 +23,12 @@ from modelo.inventario_reversible import InventarioReversible, CambioInventario
 from modelo.motor_eventos import ActorTurnos, MotorEventos
 from modelo.rastro import Puerta, SalaRastro, SalidaRastro
 from modelo.conocimiento import ConocimientoMapa
-from modelo.linea_tiempo import K_POR_DEFECTO, LineaTiempo
+from modelo.linea_tiempo import K_POR_DEFECTO, ErrorReconstruccion, LineaTiempo
 from modelo.verificacion import agrupar_puertas
 
 
 class ErrorDatosPartida(Exception):
     pass
-
-
-class ErrorReconstruccion(Exception):
-    """La línea de tiempo no puede reconstruir un estado sin pedir datos a la red."""
 
 
 class _FichasConsulta:

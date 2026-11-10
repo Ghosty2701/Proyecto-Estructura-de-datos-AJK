@@ -1,6 +1,6 @@
 # Tareas: Línea de tiempo y puntos de control
 
-**Fecha**: 2026-11-09. **Estado**: 11/37 tareas ejecutadas (fases 1 y 2).
+**Fecha**: 2026-11-09. **Estado**: 16/37 tareas ejecutadas (fases 1 a 3).
 **Entrada**: [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md),
 [data-model.md](data-model.md), [contrato](contracts/linea-tiempo.md) y
 [quickstart.md](quickstart.md). Rama real: `main`.
@@ -53,11 +53,11 @@ Objetivo: `historia <t>` e `historia #k` en la consola con el resumen completo.
 Prueba independiente: jugar una secuencia conocida, consultar y comparar con el
 estado capturado en vivo.
 
-- [ ] T012 [P] [US1] Escribir en Pruebas/prueba_comandos.py el análisis de `historia <t>` e `historia #k` (mayúsculas indistintas; enteros base 10 sin `+`; `historia` sin argumento, t negativo, `#0`, `#` sin número y texto no numérico devuelven un comando de error de uso). Dep.: T011. Requisitos: FR-LT-001, FR-LT-007. Escenarios: AC-LT-009.
-- [ ] T013 [US1] Implementar en controlador/comandos.py el comando `historia` según el contrato, sin afectar `ir`, `ver mapa` ni los comandos existentes. Hacer pasar T012. Dep.: T012. Requisitos: FR-LT-001, FR-LT-007.
-- [ ] T014 [US1] Implementar en controlador/partida.py `historia(argumento)` y el resumen histórico: «reloj; sala (ID y nombre); vida/máxima, ataque y defensa; inventario en orden real con equipados y cursor; efectos activos; enemigos vivos de la sala con vida/máxima, dormido o activo y marca de cazador; mapa conocido», derivado solo de la copia. t = reloj actual y k = N + 1 usan el estado actual sin copiar; t > reloj se rechaza. Dep.: T011, T013. Requisitos: FR-LT-001, FR-LT-002, FR-LT-003, FR-LT-004, FR-LT-005, FR-LT-007. Escenarios: AC-LT-001, AC-LT-002, AC-LT-003, AC-LT-006, AC-LT-008.
-- [ ] T015 [US1] Presentar el resumen en vista/vista_consola.py con el formato del contrato (reutilizar la presentación de `ver mapa`) y enrutar la consulta en controlador/controlador.py como consulta sin registro; añadir `historia` a la ayuda. Dep.: T014. Requisitos: FR-LT-001, FR-LT-002.
-- [ ] T016 [US1] Escribir y pasar en Pruebas/prueba_historia_partida.py la aceptación de US1 por controlador: AC-LT-001 a 006, incluidos `historia 0`, `historia #1`, una partida sin acciones (rechaza `#2`), el mapa conocido de entonces con memoria de puertas distinta del estado real y la sala inicial explorada en el instante 0. Dep.: T015. Requisitos: FR-LT-001 a FR-LT-005. Escenarios: AC-LT-001, AC-LT-002, AC-LT-003, AC-LT-004, AC-LT-005, AC-LT-006.
+- [X] T012 [P] [US1] Escribir en Pruebas/prueba_comandos.py el análisis de `historia <t>` e `historia #k` (mayúsculas indistintas; enteros base 10 sin `+`; `historia` sin argumento, t negativo, `#0`, `#` sin número y texto no numérico devuelven un comando de error de uso). Dep.: T011. Requisitos: FR-LT-001, FR-LT-007. Escenarios: AC-LT-009.
+- [X] T013 [US1] Implementar en controlador/comandos.py el comando `historia` según el contrato, sin afectar `ir`, `ver mapa` ni los comandos existentes. Hacer pasar T012. Dep.: T012. Requisitos: FR-LT-001, FR-LT-007.
+- [X] T014 [US1] Implementar en controlador/partida.py `historia(argumento)` y el resumen histórico: «reloj; sala (ID y nombre); vida/máxima, ataque y defensa; inventario en orden real con equipados y cursor; efectos activos; enemigos vivos de la sala con vida/máxima, dormido o activo y marca de cazador; mapa conocido», derivado solo de la copia. t = reloj actual y k = N + 1 usan el estado actual sin copiar; t > reloj se rechaza. Dep.: T011, T013. Requisitos: FR-LT-001, FR-LT-002, FR-LT-003, FR-LT-004, FR-LT-005, FR-LT-007. Escenarios: AC-LT-001, AC-LT-002, AC-LT-003, AC-LT-006, AC-LT-008.
+- [X] T015 [US1] Presentar el resumen en vista/vista_consola.py con el formato del contrato (reutilizar la presentación de `ver mapa`) y enrutar la consulta en controlador/controlador.py como consulta sin registro; añadir `historia` a la ayuda. Dep.: T014. Requisitos: FR-LT-001, FR-LT-002.
+- [X] T016 [US1] Escribir y pasar en Pruebas/prueba_historia_partida.py la aceptación de US1 por controlador: AC-LT-001 a 006, incluidos `historia 0`, `historia #1`, una partida sin acciones (rechaza `#2`), el mapa conocido de entonces con memoria de puertas distinta del estado real y la sala inicial explorada en el instante 0. Dep.: T015. Requisitos: FR-LT-001 a FR-LT-005. Escenarios: AC-LT-001, AC-LT-002, AC-LT-003, AC-LT-004, AC-LT-005, AC-LT-006.
 
 ## Fase 4 — US2: Consultar sin alterar nada (P1)
 

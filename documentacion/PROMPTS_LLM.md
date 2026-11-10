@@ -1080,7 +1080,7 @@ pruebas o benchmarks ni se implementó código de la capacidad.
 
     *Fecha: 2026-10-17*
 
-### Entradas 72–92: Auditoría P2, integraciones, especificación y plan de línea de tiempo
+### Entradas 72–93: Auditoría P2, integraciones, especificación y plan de línea de tiempo
 
 *Fecha original de las intervenciones: 2026-11-09*
 
@@ -1112,6 +1112,7 @@ original y resume su resultado, sin convertir recomendaciones en decisiones.
 | 90 | el push fue ejecutado correctamente, proceed with  next steps | speckit-tasks: 37 tareas trazables en `specs/004-linea-tiempo/tasks.md`; luego speckit-analyze (0 críticos, 1 alto, 4 medios, 2 bajos). |
 | 91 | si, aplica las correcciones correspondientes | Interpretación aprobada: para K cuentan las acciones ejecutadas, incluidas las revertidas; el pergamino no cuenta (FR-LT-013). Copiador en `adaptadores/`; medición de guardado con muchos puntos; estrategia de 5 000 acciones. |
 | 92 | si, prosigue | speckit-implement, fases 1 y 2 (T001–T011): copiador propio, línea de tiempo, límite de tiempo del motor, preparador sin red y registro de órdenes; equivalencia verificada con K = 1, 3 y 10; 585 pruebas aprobadas. |
+| 93 | de acuerdo, prosigue con el siguiente paso | speckit-implement, fase 3 (US1, T012–T016): órdenes `historia <t>` e `historia #k`, resumen histórico y presentación en consola; 594 pruebas aprobadas. |
 
 Detalle en [especificación](../specs/004-linea-tiempo/spec.md) e
 [investigación de la línea de tiempo](../specs/004-linea-tiempo/research.md).

@@ -6,6 +6,8 @@ from vista.bitacora_pantalla import BitacoraPantalla
 
 AYUDA = """Comandos:
   ver mapa              consultar el mapa conocido, sin pasar tiempo
+  historia <t>          estado en el instante t, sin pasar tiempo
+  historia #k           estado justo antes de la accion numero k
   ir a <ID o nombre>    viajar por salas exploradas; escribir interrumpe entre pasos
   w a s d               moverse (norte, oeste, sur, este)
   ir <n/s/e/o>           moverse por direccion cardinal
@@ -55,7 +57,7 @@ class VistaConsola:
 
     def mostrar_comandos(self):
         cargar = " | cargar" if self.permitir_cargar else ""
-        self._salida("Comandos: ver mapa | ir a <ID o nombre> | w/a/s/d | atacar [numero] | recoger [numero] | abrir <n/s/e/o> | "
+        self._salida("Comandos: ver mapa | historia <t>|#k | ir a <ID o nombre> | w/a/s/d | atacar [numero] | recoger [numero] | abrir <n/s/e/o> | "
                      f"esperar | inv | retroceder | guardar{cargar} | ayuda | salir")
         if self._inventario_visible:
             self._salida("Inventario: sig | ant | orden peso/valor/nombre | usar | equipar | soltar")
@@ -65,6 +67,10 @@ class VistaConsola:
             self.bitacora.agregar(mensaje)
 
     def mostrar_mapa(self, salas):
+        self._lineas_mapa(salas)
+        self.mostrar_comandos()
+
+    def _lineas_mapa(self, salas):
         self._salida('Mapa conocido:')
         for identificador, estado, nombre, salidas in salas:
             if estado == 1:
@@ -75,7 +81,28 @@ class VistaConsola:
                 estado_puerta = 'sin observar' if abierta is None else ('abierta' if abierta else 'cerrada')
                 self._salida(f'    {direccion}: {nombre_destino or "sala avistada"} '
                              f'#{destino}; costo {costo}; {estado_puerta}')
-        self.mostrar_comandos()
+
+    def mostrar_historia(self, resumen):
+        # Resumen historico (FR-LT-002): consulta sin tiempo, no redibuja la sala actual.
+        s = self._salida
+        s("")
+        s("=" * 50)
+        s(f"Historia en t={resumen.reloj} ({resumen.titulo})")
+        s(f"Sala {resumen.sala_id} - {resumen.sala_nombre}")
+        s(f"Vida {resumen.vida}/{resumen.vida_max} · ataque {resumen.ataque} · defensa {resumen.defensa}")
+        s("Efectos: " + (", ".join(resumen.efectos) if resumen.efectos else "ninguno"))
+        objetos = [("> " if seleccionado else "") + nombre + (" [E]" if equipado else "")
+                   for nombre, equipado, seleccionado in resumen.inventario]
+        s(f"Inventario ({len(resumen.inventario)}/{resumen.capacidad}): "
+          + (", ".join(objetos) if objetos else "vacio"))
+        if resumen.enemigos:
+            s("Enemigos en la sala:")
+            for nombre, vida, vida_max, dormido in resumen.enemigos:
+                s(f"  {nombre} vida {vida}/{vida_max} ({'dormido' if dormido else 'activo'})")
+        else:
+            s("Enemigos en la sala: ninguno")
+        self._lineas_mapa(resumen.mapa)
+        s("-" * 50)
 
     def mostrar_estado(self, estado):
         self._inventario_visible = False

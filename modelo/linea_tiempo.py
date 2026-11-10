@@ -21,6 +21,10 @@ class ErrorHistoria(ValueError):
     """Consulta rechazada: no altera la partida."""
 
 
+class ErrorReconstruccion(Exception):
+    """La línea de tiempo no puede reconstruir un estado sin pedir datos a la red."""
+
+
 def validar_k(k):
     if type(k) is not int or k < 1:
         raise ValueError('K debe ser un entero mayor o igual que 1')
@@ -185,6 +189,10 @@ class LineaTiempo:
         if accion.reloj == t:
             return accion.posicion, None
         return accion.posicion + 1, t
+
+    def accion_en(self, t):
+        """Número k de la última acción vigente decidida en un instante ≤ t (0 si no hay)."""
+        return self._ultima_accion_hasta(t) + 1
 
     def acciones_ejecutadas_entre(self, desde, hasta):
         """Acciones ejecutadas (incluidas las revertidas) en órdenes [desde, hasta)."""

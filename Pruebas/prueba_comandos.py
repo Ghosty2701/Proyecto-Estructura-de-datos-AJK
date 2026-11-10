@@ -53,3 +53,19 @@ def test_texto_vacio_o_desconocido():
     assert _t("   ") is None
     assert _t("bailar") is None
     assert _t("esperar ya") is None
+
+
+def test_t012_historia_por_instante_y_por_numero_de_accion():
+    # FR-LT-001: historia <t> e historia #k; mayúsculas indistintas.
+    assert _t("historia 250") == ("historia", ("t", 250))
+    assert _t("historia 0") == ("historia", ("t", 0))
+    assert _t("  HISTORIA   #3 ") == ("historia", ("k", 3))
+    assert _t("Historia #12") == ("historia", ("k", 12))
+
+
+def test_t012_historia_mal_formada_es_error_de_uso():
+    # FR-LT-007, AC-LT-009: se reconoce la orden y se rechaza con su uso, sin efectos.
+    for texto in ("historia", "historia -1", "historia +5", "historia #0", "historia #",
+                  "historia # 3", "historia abc", "historia 2.5", "historia #-2", "historia 1 2",
+                  "historia ³", "historia #٣"):
+        assert _t(texto) == ("historia", None), texto

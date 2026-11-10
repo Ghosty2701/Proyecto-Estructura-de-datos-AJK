@@ -3,7 +3,8 @@
 from dataclasses import dataclass, field
 
 from controlador.controlador import AccionInvalida, ejecutar_accion_replay
-from modelo.linea_tiempo import ACCION, NAVEGACION, PERGAMINO
+from modelo.linea_tiempo import ACCION, NAVEGACION, PERGAMINO, ErrorHistoria, ErrorReconstruccion
+from adaptadores.cache_catalogo import ErrorCatalogo
 from adaptadores.guardado_binario import ErrorGuardado
 
 
@@ -40,6 +41,27 @@ class EstadoPartida:
     reserva: int = 0
     reintentos: int = 0
     resumen: dict | None = None
+
+
+@dataclass
+class ResumenHistorico:
+    """Contenido mínimo de historia (FR-LT-002); sin referencias al modelo."""
+    reloj: int
+    titulo: str
+    sala_id: int
+    sala_nombre: str
+    vida: int
+    vida_max: int
+    ataque: int
+    defensa: int
+    efectos: list
+    inventario: list      # (nombre, equipado, seleccionado) en orden real
+    capacidad: int
+    enemigos: list        # (nombre con marca de cazador, vida, vida_max, dormido)
+    mapa: list            # misma proyección que «ver mapa»
+
+
+USO_HISTORIA = "Uso: historia <t> (instante entero >= 0) o historia #k (número de acción >= 1)."
 
 
 class Partida:
@@ -102,6 +124,60 @@ class Partida:
         linea.registrar(texto, tipo, self._reloj_linea, self.motor.reloj, self.acciones_ejecutadas)
         self._reloj_linea = self.motor.reloj
         self._acciones_linea = self.acciones_ejecutadas
+
+    def resumen_historico(self, titulo):
+        """Resumen del estado de esta partida (viva o copia de la línea)."""
+        jugador = self.jugador
+        sala = jugador.sala_actual
+        inventario = self.inventario
+        equipados = (inventario.arma_equipada, inventario.armadura_equipada)
+        seleccionado = inventario.actual()
+        return ResumenHistorico(
+            reloj=self.motor.reloj, titulo=titulo, sala_id=sala.sala_id, sala_nombre=sala.nombre,
+            vida=jugador.vida, vida_max=jugador.vida_max, ataque=jugador.ataque,
+            defensa=jugador.defensa, efectos=self.estado().efectos,
+            inventario=[(o.nombre, any(o is e for e in equipados if e is not None), o is seleccionado)
+                        for o in inventario.listar()],
+            capacidad=inventario.capacidad,
+            enemigos=[(self._nombre_enemigo(e), e.vida, e.vida_max, not e.activo)
+                      for e in self._enemigos_presentes()],
+            mapa=self.mapa(),
+        )
+
+    def historia(self, argumento):
+        """Consulta historia <t> o historia #k sin alterar la partida (FR-LT-001/006/007).
+
+        argumento: ("t", instante), ("k", número) o None si la orden está mal formada.
+        """
+        linea = getattr(self, "linea_tiempo", None)
+        if linea is None:
+            raise AccionInvalida("La línea de tiempo no está disponible en esta partida.")
+        if argumento is None:
+            raise AccionInvalida(USO_HISTORIA)
+        clase, valor = argumento
+        actual = linea.cantidad_acciones + 1
+        try:
+            if clase == "k":
+                objetivo = linea.objetivo_por_k(valor)
+                titulo = f"antes de la acción #{valor}"
+            else:
+                objetivo = linea.objetivo_por_t(valor, self.motor.reloj)
+                numero = linea.accion_en(valor)
+                if objetivo is None:
+                    titulo = f"antes de la acción #{actual}"
+                elif objetivo[1] is None:
+                    titulo = f"antes de la acción #{numero}"
+                else:
+                    titulo = f"durante la acción #{numero}"
+        except ErrorHistoria as error:
+            raise AccionInvalida(f"Historia rechazada: {error}.") from error
+        if objetivo is None:
+            return self.resumen_historico(f"estado actual, {titulo}")
+        try:
+            copia = self.reconstruir(objetivo)
+        except (ErrorReconstruccion, AccionInvalida, ErrorCatalogo, ValueError) as error:
+            raise AccionInvalida(f"No se pudo reconstruir la historia: {error}") from error
+        return copia.resumen_historico(titulo)
 
     def reconstruir(self, objetivo):
         """Copia de trabajo en el objetivo de consulta, sin alterar esta partida.

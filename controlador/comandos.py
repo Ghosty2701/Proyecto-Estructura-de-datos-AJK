@@ -20,8 +20,31 @@ def _entero_o_defecto(texto, defecto):
         return None if texto is not None else defecto
 
 
+def _entero_sin_signo(texto):
+    # Solo digitos ASCII en base 10: sin signo, decimales ni otros sistemas numericos.
+    if not texto or any(c not in "0123456789" for c in texto):
+        return None
+    return int(texto)
+
+
+def _historia(argumentos):
+    # historia <t> -> ("t", t); historia #k -> ("k", k) con k >= 1; mal formada -> None.
+    if len(argumentos) != 1:
+        return None
+    argumento = argumentos[0]
+    if argumento.startswith("#"):
+        numero = _entero_sin_signo(argumento[1:])
+        return None if numero is None or numero < 1 else ("k", numero)
+    instante = _entero_sin_signo(argumento)
+    return None if instante is None else ("t", instante)
+
+
 def parsear(texto):
     # Devuelve un Comando, o None si el texto no se reconoce o su argumento es invalido.
+    # "historia" con argumento invalido devuelve Comando("historia", None): error de uso.
+    palabras = texto.strip().split()
+    if palabras and palabras[0].lower() == "historia":
+        return Comando("historia", _historia(palabras[1:]))
     original = texto.strip().split(maxsplit=2)
     if len(original) == 2 and [s.lower() for s in original] == ['ver', 'mapa']:
         return Comando('mapa')

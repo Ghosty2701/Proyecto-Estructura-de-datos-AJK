@@ -105,3 +105,115 @@ def test_t008_contenido_ausente_falla_con_mensaje(paquete, tmp_path):
     with pytest.raises(ErrorReconstruccion, match="sin red"):
         PreparadorConsulta(vacio, partida).preparar_sala(sala)
     assert not sala.contenido_cargado
+
+
+# --- T016: aceptación de US1 por controlador y vista (AC-LT-001 a 006) ---
+
+from controlador.controlador import AccionInvalida, Controlador
+from vista.vista_consola import VistaConsola
+
+
+def _coincide(resumen, foto):
+    """El resumen contiene lo mismo que el estado observado en vivo (FR-LT-002)."""
+    reloj, sala, vida, vida_max, ataque, defensa, efectos, *_ = foto
+    assert (resumen.reloj, resumen.sala_id, resumen.vida, resumen.vida_max,
+            resumen.ataque, resumen.defensa, tuple(resumen.efectos)) == (
+            reloj, sala, vida, vida_max, ataque, defensa, efectos)
+    assert repr(resumen.mapa) == foto[12]
+
+
+def _consola(partida):
+    salida = []
+    return Controlador(partida, VistaConsola(salida=salida.append)), salida
+
+
+def test_ac001_002_003_historia_por_instante_y_numero(paquete, tmp_path):
+    # FR-LT-001/002/003/004: resumen completo del estado vivido en ese momento.
+    partida, _ = crear_partida(paquete, tmp_path / "cache", checkpoint_cada=5)
+    grabacion = jugar(partida)
+    for numero, decision, foto in grabacion.antes_de_accion:
+        por_k = partida.historia(("k", numero))
+        assert por_k.titulo == f"antes de la acción #{numero}"
+        _coincide(por_k, foto)
+        por_t = partida.historia(("t", decision))   # AC-LT-003: antes de decidir
+        _coincide(por_t, foto)
+        assert por_t.titulo == f"antes de la acción #{numero}"
+    actual = partida.historia(("k", partida.linea_tiempo.cantidad_acciones + 1))
+    assert actual.titulo.startswith("estado actual")
+    _coincide(actual, instantanea(partida))
+
+
+def test_ac001_inventario_y_enemigos_del_resumen(paquete, tmp_path):
+    # FR-LT-002: inventario en orden real con cursor y equipo; enemigos vivos con estado.
+    partida, _ = crear_partida(paquete, tmp_path / "cache", checkpoint_cada=3)
+    grabacion = jugar(partida)
+    for numero, _, foto in grabacion.antes_de_accion:
+        resumen = partida.historia(("k", numero))
+        ids_nombres = {"pergamino": "Pergamino", "daga": "Daga", "antorcha": "Antorcha", "pocion": "Pocion"}
+        assert [nombre for nombre, _, _ in resumen.inventario] == [ids_nombres[i] for i in foto[7]]
+        seleccionados = [nombre for nombre, _, elegido in resumen.inventario if elegido]
+        assert seleccionados == ([ids_nombres[foto[8]]] if foto[8] else [])
+        assert [(vida, vida_max, dormido) for _, vida, vida_max, dormido in resumen.enemigos] == [
+            (vida, vida_max, not activo) for _, vida, vida_max, activo in foto[11]]
+    con_cazador = [r for r in (partida.historia(("k", n)) for n, _, _ in grabacion.antes_de_accion)
+                   if any("[cazador]" in nombre for nombre, *_ in r.enemigos)]
+    assert con_cazador, "la partida sintética debe mostrar al cazador en algún instante"
+
+
+def test_ac004_005_instantes_intermedios_por_consola(paquete, tmp_path):
+    # FR-LT-003: eventos <= t, ninguno posterior; título indica la acción en curso.
+    partida, _ = crear_partida(paquete, tmp_path / "cache", checkpoint_cada=4)
+    grabacion = jugar(partida)
+    t, foto = instantes_intermedios(grabacion)[3]
+    resumen = partida.historia(("t", t))
+    assert resumen.titulo.startswith("durante la acción #")
+    _coincide(resumen, foto)
+
+
+def test_ac001_historia_0_y_1_muestran_el_estado_inicial(paquete, tmp_path):
+    # Casos límite: sala inicial explorada desde el instante 0 (§3.3).
+    partida, _ = crear_partida(paquete, tmp_path / "cache")
+    jugar(partida)
+    for argumento in (("t", 0), ("k", 1)):
+        resumen = partida.historia(argumento)
+        assert (resumen.reloj, resumen.sala_id, resumen.vida) == (0, 1, 200)
+        assert resumen.inventario == []
+        explorada = [sala for sala in resumen.mapa if sala[1] == 2]
+        assert [sala[0] for sala in explorada] == [1]
+
+
+def test_partida_sin_acciones_admite_0_y_1_y_rechaza_2(paquete, tmp_path):
+    partida, _ = crear_partida(paquete, tmp_path / "cache")
+    assert partida.historia(("t", 0)).titulo.startswith("estado actual")
+    assert partida.historia(("k", 1)).titulo.startswith("estado actual")
+    with pytest.raises(AccionInvalida, match="#k"):
+        partida.historia(("k", 2))
+
+
+def test_ac006_mapa_conocido_de_entonces(paquete, tmp_path):
+    # FR-LT-005: el mapa histórico no revela salas exploradas después.
+    partida, _ = crear_partida(paquete, tmp_path / "cache", checkpoint_cada=2)
+    jugar(partida)
+    exploradas_ahora = [s[0] for s in partida.mapa() if s[1] == 2]
+    exploradas_k3 = [s[0] for s in partida.historia(("k", 3)).mapa if s[1] == 2]
+    assert len(exploradas_k3) < len(exploradas_ahora)
+    assert set(exploradas_k3) <= set(exploradas_ahora)
+
+
+def test_t015_consola_muestra_resumen_y_rechazos(paquete, tmp_path):
+    # FR-LT-001/002/007: presentación con el formato del contrato; rechazo con mensaje.
+    partida, _ = crear_partida(paquete, tmp_path / "cache")
+    controlador, salida = _consola(partida)
+    for texto in ("recoger 1", "w", "esperar"):
+        controlador.procesar(texto)
+    salida.clear()
+    controlador.procesar("historia #2")
+    texto = "\n".join(salida)
+    assert "Historia en t=" in texto and "(antes de la acción #2)" in texto
+    assert "Sala 1 - Entrada" in texto and "Inventario (1/6): > Pergamino" in texto
+    assert "Enemigos en la sala: ninguno" in texto and "Mapa conocido:" in texto
+    controlador.procesar("historia 999999")
+    controlador.procesar("historia #x")
+    mensajes = controlador.vista.bitacora.mensajes()
+    assert any("posterior al reloj actual" in m for m in mensajes)
+    assert any(m.startswith("Uso: historia") for m in mensajes)

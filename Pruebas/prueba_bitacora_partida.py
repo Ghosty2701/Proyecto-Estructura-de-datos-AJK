@@ -316,3 +316,93 @@ def test_ac018_022_viaje_registrado_equivale_a_movimientos_y_replay(tmp_path):
     assert p.mapa() == manual.mapa() == q.mapa()
     assert p.motor.azar.getstate() == q.motor.azar.getstate()
     assert ruta.read_text(encoding='utf-8').splitlines()[-5:] == ['# ir a Sala 4'] + ['ir N'] * 4
+
+
+# --- T021: --replay LOG --hasta T (US4; FR-LT-008/010/011, AC-LT-015 a 018) ---
+
+import pytest as _pytest
+
+
+@_pytest.fixture
+def partida_grabada(tmp_path):
+    """Partida sintética grabada con pergaminos, y sus resúmenes en vivo por instante."""
+    from controlador.controlador import Controlador
+    from datos_linea_tiempo import CRIPTA, SEMILLA, crear_partida, escribir_paquete, jugar
+    from vista.vista_consola import VistaConsola, lineas_historia
+
+    carpeta = escribir_paquete(tmp_path / "datos", objetos_entrada=[
+        "pergamino", "pergamino", "pergamino", "daga", "antorcha"])
+    partida, _ = crear_partida(carpeta, tmp_path / "cache")
+    ruta = tmp_path / "partida.log"
+    with EscritorBitacora(ruta, CRIPTA, "v1", "cat-lt", SEMILLA) as escritor:
+        controlador = Controlador(partida, VistaConsola(salida=lambda texto: None), escritor.registrar_accion)
+        grabacion = jugar(partida, ["recoger 1", "recoger 1", "w", "retroceder", "w", "w",
+                                    "atacar", "atacar", "retroceder", "s", "d", "esperar"],
+                          controlador=controlador)
+    instantes = sorted({0, *grabacion.decisiones, *[t for t, _ in grabacion.tras_evento]})
+    instantes = [t for t in instantes if t < partida.motor.reloj]
+    esperados = {t: lineas_historia(partida.historia(("t", t))) for t in instantes}
+    return carpeta, ruta, partida, esperados
+
+
+def _main(argumentos, monkeypatch, capsys):
+    import main as aplicacion
+
+    def sin_vista(*_, **__):
+        raise AssertionError("--replay --hasta no debe instanciar la vista")
+
+    monkeypatch.setattr(aplicacion, "VistaConsola", sin_vista)
+    codigo = aplicacion.main(argumentos)
+    return codigo, capsys.readouterr().out
+
+
+def test_ac015_017_hasta_igual_a_historia_tambien_con_pergaminos(partida_grabada, tmp_path, monkeypatch, capsys):
+    carpeta, ruta, _, esperados = partida_grabada
+    assert len(esperados) >= 8
+    for t, lineas in esperados.items():
+        codigo, salida = _main(["--replay", str(ruta), "--hasta", str(t), "--offline", str(carpeta),
+                                "--cache-dir", str(tmp_path / "cache-replay")], monkeypatch, capsys)
+        assert codigo == 0
+        assert "\n".join(lineas) in salida, t
+        assert "terminó" not in salida and "termina en" not in salida
+
+
+def test_ac016_hasta_posterior_al_final_muestra_estado_final(partida_grabada, tmp_path, monkeypatch, capsys):
+    from vista.vista_consola import lineas_historia
+
+    carpeta, ruta, partida, _ = partida_grabada
+    final = partida.motor.reloj
+    codigo, salida = _main(["--replay", str(ruta), "--hasta", str(final + 5000), "--offline", str(carpeta),
+                            "--cache-dir", str(tmp_path / "cache-replay")], monkeypatch, capsys)
+    assert codigo == 0
+    assert f"El registro termina en t={final}, antes de {final + 5000}" in salida
+    actual = lineas_historia(partida.historia(("t", final)))
+    assert "\n".join(actual[2:]) in salida   # mismo estado final; el título dice «estado actual»
+
+
+@_pytest.mark.parametrize("argumentos", [
+    ["--hasta", "10"],
+    ["--cripta", "lt", "--hasta", "10"],
+    ["--replay", "x.log", "--hasta", "-1"],
+    ["--replay", "x.log", "--hasta", "abc"],
+    ["--replay", "x.log", "--hasta", "+3"],
+])
+def test_ac018_hasta_invalido_es_error_de_uso(argumentos, capsys):
+    import main as aplicacion
+
+    with _pytest.raises(SystemExit) as salida:
+        aplicacion.main(argumentos)
+    assert salida.value.code == 2
+    assert "--hasta" in capsys.readouterr().err
+
+
+def test_ac016_partida_terminada_antes_de_t(partida_grabada):
+    # FR-LT-010: si la partida terminó antes de T se indica, con su estado final.
+    from main import informe_hasta
+
+    _, _, partida, esperados = partida_grabada
+    final = partida.motor.reloj
+    partida.victoria = True            # simula el final; solo afecta al aviso
+    texto = informe_hasta(partida, final + 1)
+    assert texto.endswith(f"La partida terminó en t={final}, antes de {final + 1}.")
+    assert informe_hasta(partida, 0) == "\n".join(esperados[0])

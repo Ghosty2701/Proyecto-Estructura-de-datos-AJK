@@ -1,6 +1,6 @@
 # Tareas: Línea de tiempo y puntos de control
 
-**Fecha**: 2026-11-09. **Estado**: 20/37 tareas ejecutadas (fases 1 a 5). T018 y T020 no requirieron cambios de código: la interrupción existente y el diseño de D-LT-05 ya cubrían los casos.
+**Fecha**: 2026-11-09. **Estado**: 23/37 tareas ejecutadas (fases 1 a 6). T018 y T020 no requirieron cambios de código: la interrupción existente y el diseño de D-LT-05 ya cubrían los casos.
 **Entrada**: [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md),
 [data-model.md](data-model.md), [contrato](contracts/linea-tiempo.md) y
 [quickstart.md](quickstart.md). Rama real: `main`.
@@ -81,9 +81,9 @@ Prueba independiente: consultar, retroceder y repetir consultas.
 Objetivo: `--replay LOG --hasta T` imprime el mismo resumen sin vista.
 Prueba independiente: grabar, reproducir con varios T y comparar con `historia`.
 
-- [ ] T021 [P] [US4] Escribir en Pruebas/prueba_bitacora_partida.py y Pruebas/prueba_partida.py: el resumen de `--hasta T` es idéntico al de `historia T` en la partida original (también con pergaminos en el log); T posterior al final muestra el estado final y «la partida terminó en t=R, antes de T» o «el registro termina en t=R»; no se instancia la vista; `--hasta` sin `--replay` y T inválido son errores de uso de argparse (código 2). Dep.: T016. Requisitos: FR-LT-008, FR-LT-010, FR-LT-011. Escenarios: AC-LT-015, AC-LT-016, AC-LT-017, AC-LT-018.
-- [ ] T022 [US4] Hacer que adaptadores/bitacora_partida.py registre cada orden reproducida en la línea de la partida (mismo `registrar_orden`, ignorando comentarios) sin cambiar su contrato de errores. Dep.: T021, T009. Requisitos: FR-LT-010, FR-LT-014.
-- [ ] T023 [US4] Implementar en main.py `--hasta T` (solo con `--replay`, T entero ≥ 0) que, tras el replay completo, imprime el resumen de T con la misma rutina que `historia` y el aviso de fin anticipado, sin instanciar la vista; validar combinaciones con `parser.error`. Hacer pasar T021. Dep.: T022, T014. Requisitos: FR-LT-010, FR-LT-011. Escenarios: AC-LT-015, AC-LT-016, AC-LT-017, AC-LT-018.
+- [X] T021 [P] [US4] Escribir en Pruebas/prueba_bitacora_partida.py y Pruebas/prueba_partida.py: el resumen de `--hasta T` es idéntico al de `historia T` en la partida original (también con pergaminos en el log); T posterior al final muestra el estado final y «la partida terminó en t=R, antes de T» o «el registro termina en t=R»; no se instancia la vista; `--hasta` sin `--replay` y T inválido son errores de uso de argparse (código 2). Dep.: T016. Requisitos: FR-LT-008, FR-LT-010, FR-LT-011. Escenarios: AC-LT-015, AC-LT-016, AC-LT-017, AC-LT-018.
+- [X] T022 [US4] Hacer que adaptadores/bitacora_partida.py registre cada orden reproducida en la línea de la partida (mismo `registrar_orden`, ignorando comentarios) sin cambiar su contrato de errores. Dep.: T021, T009. Requisitos: FR-LT-010, FR-LT-014.
+- [X] T023 [US4] Implementar en main.py `--hasta T` (solo con `--replay`, T entero ≥ 0) que, tras el replay completo, imprime el resumen de T con la misma rutina que `historia` y el aviso de fin anticipado, sin instanciar la vista; validar combinaciones con `parser.error`. Hacer pasar T021. Dep.: T022, T014. Requisitos: FR-LT-010, FR-LT-011. Escenarios: AC-LT-015, AC-LT-016, AC-LT-017, AC-LT-018.
 
 ## Fase 7 — US5: Configurar los puntos de control (P2)
 

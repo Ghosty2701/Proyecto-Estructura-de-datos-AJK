@@ -15,7 +15,7 @@ from adaptadores.bitacora_partida import (
 )
 from controlador.cargar_partida import CargadorPartida, ErrorDatosPartida
 from controlador.controlador import Controlador, ejecutar_accion_replay
-from vista.vista_consola import VistaConsola
+from vista.vista_consola import VistaConsola, lineas_historia
 from modelo.verificacion import verificar
 
 
@@ -69,6 +69,26 @@ def _entero_positivo(texto):
     return valor
 
 
+def _entero_no_negativo(texto):
+    if not texto or any(c not in "0123456789" for c in texto):
+        raise argparse.ArgumentTypeError("debe ser un entero mayor o igual que 0")
+    return int(texto)
+
+
+def informe_hasta(partida, hasta):
+    """Resumen histórico de --replay --hasta sin instanciar la vista (FR-LT-010)."""
+    reloj = partida.motor.reloj
+    if hasta < reloj:
+        return "\n".join(lineas_historia(partida.historia(("t", hasta))))
+    lineas = lineas_historia(partida.historia(("t", reloj)))
+    if hasta > reloj:
+        if partida.estado().terminada:
+            lineas.append(f"La partida terminó en t={reloj}, antes de {hasta}.")
+        else:
+            lineas.append(f"El registro termina en t={reloj}, antes de {hasta}; la partida seguía en curso.")
+    return "\n".join(lineas)
+
+
 def _resumen_red(fuente, cache):
     presupuesto = fuente.presupuesto_solicitudes
     print(f"Solicitudes: {fuente.solicitudes_realizadas}/{presupuesto}; "
@@ -92,6 +112,8 @@ def main(argumentos=None):
     parser.add_argument("--archivo-guardado", help="ruta usada por los comandos guardar y cargar")
     seleccion.add_argument("--replay", help="reproducir una bitacora sin interfaz ni interaccion")
     parser.add_argument("--sin-interfaz", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--hasta", type=_entero_no_negativo, metavar="T",
+                        help="con --replay: imprimir el estado en el instante T sin vista")
     parser.add_argument("--bitacora", help="ruta de una nueva bitacora; no sobrescribe archivos existentes")
     parser.add_argument("--semilla", type=int, default=2026)
     parser.add_argument("--nombre", help="nombre para la tabla de puntajes")
@@ -109,6 +131,8 @@ def main(argumentos=None):
         parser.error('--forzar requiere --cripta en una partida nueva')
     if opciones.bitacora and not opciones.cripta:
         parser.error("--bitacora requiere --cripta")
+    if opciones.hasta is not None and not opciones.replay:
+        parser.error("--hasta requiere --replay")
     if opciones.sin_interfaz and not opciones.replay:
         parser.error("--sin-interfaz requiere --replay")
     if opciones.nombre is not None and not opciones.nombre.strip():
@@ -187,6 +211,8 @@ def main(argumentos=None):
             print(f"Replay completado: sala {partida.jugador.sala_actual.sala_id}, "
                   f"vida {partida.jugador.vida}, reloj {partida.motor.reloj}, "
                   f"acciones {partida.acciones_ejecutadas}; resultado: {partida.estado().resultado or 'en curso'}.")
+            if opciones.hasta is not None:
+                print(informe_hasta(partida, opciones.hasta))
             _resumen_red(fuente, cache)
             return 0
         if opciones.cargar:

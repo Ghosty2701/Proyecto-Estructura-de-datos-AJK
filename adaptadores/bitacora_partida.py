@@ -104,6 +104,10 @@ def reproducir_bitacora(
             resultado = ejecutar_accion(partida, accion)
             if resultado is False:
                 raise ValueError("accion rechazada")
+            # La misma línea de tiempo que en vivo, para --hasta (FR-LT-010/014).
+            registrar_orden = getattr(partida, "registrar_orden", None)
+            if registrar_orden is not None:
+                registrar_orden(accion)
         except Exception as error:
             raise ErrorBitacora(
                 f"replay: fallo en accion {numero} ({accion!r}): {error}"

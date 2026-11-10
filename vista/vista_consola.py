@@ -30,6 +30,43 @@ def _nombre(objeto):
     return getattr(objeto, "nombre", str(objeto))
 
 
+def lineas_mapa(salas):
+    """Texto del mapa conocido; función pura reutilizable sin instanciar la vista."""
+    lineas = ['Mapa conocido:']
+    for identificador, estado, nombre, salidas in salas:
+        if estado == 1:
+            lineas.append(f'  Sala {identificador}: avistada')
+            continue
+        lineas.append(f'  Sala {identificador}: {nombre} (explorada)')
+        for direccion, destino, nombre_destino, costo, abierta in salidas:
+            estado_puerta = 'sin observar' if abierta is None else ('abierta' if abierta else 'cerrada')
+            lineas.append(f'    {direccion}: {nombre_destino or "sala avistada"} '
+                          f'#{destino}; costo {costo}; {estado_puerta}')
+    return lineas
+
+
+def lineas_historia(resumen):
+    """Resumen histórico (FR-LT-002); lo usan la consola y --replay --hasta (sin vista)."""
+    objetos = [("> " if seleccionado else "") + nombre + (" [E]" if equipado else "")
+               for nombre, equipado, seleccionado in resumen.inventario]
+    lineas = [
+        "=" * 50,
+        f"Historia en t={resumen.reloj} ({resumen.titulo})",
+        f"Sala {resumen.sala_id} - {resumen.sala_nombre}",
+        f"Vida {resumen.vida}/{resumen.vida_max} · ataque {resumen.ataque} · defensa {resumen.defensa}",
+        "Efectos: " + (", ".join(resumen.efectos) if resumen.efectos else "ninguno"),
+        f"Inventario ({len(resumen.inventario)}/{resumen.capacidad}): "
+        + (", ".join(objetos) if objetos else "vacio"),
+    ]
+    if resumen.enemigos:
+        lineas.append("Enemigos en la sala:")
+        for nombre, vida, vida_max, dormido in resumen.enemigos:
+            lineas.append(f"  {nombre} vida {vida}/{vida_max} ({'dormido' if dormido else 'activo'})")
+    else:
+        lineas.append("Enemigos en la sala: ninguno")
+    return lineas + lineas_mapa(resumen.mapa) + ["-" * 50]
+
+
 class VistaConsola:
     def __init__(self, entrada=input, salida=print, capacidad_bitacora=20, *, interrupcion=None):
         self._entrada = entrada
@@ -67,42 +104,15 @@ class VistaConsola:
             self.bitacora.agregar(mensaje)
 
     def mostrar_mapa(self, salas):
-        self._lineas_mapa(salas)
+        for linea in lineas_mapa(salas):
+            self._salida(linea)
         self.mostrar_comandos()
 
-    def _lineas_mapa(self, salas):
-        self._salida('Mapa conocido:')
-        for identificador, estado, nombre, salidas in salas:
-            if estado == 1:
-                self._salida(f'  Sala {identificador}: avistada')
-                continue
-            self._salida(f'  Sala {identificador}: {nombre} (explorada)')
-            for direccion, destino, nombre_destino, costo, abierta in salidas:
-                estado_puerta = 'sin observar' if abierta is None else ('abierta' if abierta else 'cerrada')
-                self._salida(f'    {direccion}: {nombre_destino or "sala avistada"} '
-                             f'#{destino}; costo {costo}; {estado_puerta}')
-
     def mostrar_historia(self, resumen):
-        # Resumen historico (FR-LT-002): consulta sin tiempo, no redibuja la sala actual.
-        s = self._salida
-        s("")
-        s("=" * 50)
-        s(f"Historia en t={resumen.reloj} ({resumen.titulo})")
-        s(f"Sala {resumen.sala_id} - {resumen.sala_nombre}")
-        s(f"Vida {resumen.vida}/{resumen.vida_max} · ataque {resumen.ataque} · defensa {resumen.defensa}")
-        s("Efectos: " + (", ".join(resumen.efectos) if resumen.efectos else "ninguno"))
-        objetos = [("> " if seleccionado else "") + nombre + (" [E]" if equipado else "")
-                   for nombre, equipado, seleccionado in resumen.inventario]
-        s(f"Inventario ({len(resumen.inventario)}/{resumen.capacidad}): "
-          + (", ".join(objetos) if objetos else "vacio"))
-        if resumen.enemigos:
-            s("Enemigos en la sala:")
-            for nombre, vida, vida_max, dormido in resumen.enemigos:
-                s(f"  {nombre} vida {vida}/{vida_max} ({'dormido' if dormido else 'activo'})")
-        else:
-            s("Enemigos en la sala: ninguno")
-        self._lineas_mapa(resumen.mapa)
-        s("-" * 50)
+        # Consulta sin tiempo: no redibuja la sala actual.
+        self._salida("")
+        for linea in lineas_historia(resumen):
+            self._salida(linea)
 
     def mostrar_estado(self, estado):
         self._inventario_visible = False

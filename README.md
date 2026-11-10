@@ -14,7 +14,10 @@ y habilidades en `.agents/skills/`. Los artefactos de la primera capacidad está
 [specs/002-niebla-viaje](specs/002-niebla-viaje/plan.md).
 La especificación de resolubilidad está en
 [specs/003-verificar-resolubilidad](specs/003-verificar-resolubilidad/spec.md),
-actualmente en aclaración: `--verificar` y `--forzar` aún no están implementados.
+con [planificación completada](specs/003-verificar-resolubilidad/plan.md) y
+[guía de validación prevista](specs/003-verificar-resolubilidad/quickstart.md).
+Siguen pendientes tareas e implementación: `--verificar` y `--forzar` aún no
+están implementados.
 
 ## Instalación
 

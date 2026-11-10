@@ -42,4 +42,10 @@
 - Lista de revisión documental, sin evidencia de ejecución todavía.
 - Aclaración completada: alcance automático, códigos 0/1/2, una entrada por
   puerta física y rechazo de modos incompatibles con `--verificar`.
-  Preparada para `$speckit-plan`, sin decisiones de estructuras ni implementación.
+- Interpretaciones del equipo integradas: certificado del grupo con alternativas
+  y ciclo concreto; recíprocas compatibles con emparejamiento único comparten
+  puerta, ambigüedad informada sin fusionar. No se exige exclusividad individual
+  de cada flecha ni enumeración de todos los ciclos posibles.
+- Planificación completada con siete elecciones explícitas en plan.md/research.md;
+  la especificación conserva comportamiento sin prescribir estructuras.
+  Sigue `$speckit-tasks`; no hay implementación ni evidencia de ejecución nueva.

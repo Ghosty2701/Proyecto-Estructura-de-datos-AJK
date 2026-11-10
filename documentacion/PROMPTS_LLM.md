@@ -603,8 +603,23 @@ pruebas o benchmarks ni se implementó código de la capacidad.
 
     | Aclaración agrupada | Respuesta | Estado |
     | --- | --- | --- |
-    | Certificado circular del grupo y ciclo concreto, o exclusividad de cada flecha | Pendiente | Recomendación: grupo con todas las alternativas; no aplicada. |
-    | Identidad física de salidas recíprocas | Pendiente | Recomendación: convenio heredado con emparejamiento único compatible e informe de ambigüedad; no aplicada. |
+    | Certificado circular del grupo y ciclo concreto, o exclusividad de cada flecha | «Certificado del grupo y ciclo concreto (recomendado)» — 2026-11-09 | Aprobado: grupo con todas las alternativas y ciclo concreto; sin exigir exclusividad individual de cada flecha. |
+    | Identidad física de salidas recíprocas | «Recíprocas únicas comparten puerta; ambigüedad se informa (recomendado)» — 2026-11-09 | Aprobado: recíprocas compatibles con emparejamiento único comparten puerta; informar ambigüedad sin fusionar conexiones. |
+
+    *Resultado: interpretaciones integradas en FR-RS-007/008, AC-RS-008/011,
+    SC-RS-003 y aclaraciones, sin estructuras en spec.md. Se cierra investigación
+    con revisión cruzada del certificado; se completa plan, modelo de datos,
+    contrato y quickstart. README y Documento de Decisiones enlazan el diseño
+    y explicitan implementación/mediciones pendientes. Checklist documental
+    16/16 se conserva. Se mantiene la simetría de costes vigente de terreno y
+    se exige normalización compartida entre verificador y juego. No se generan
+    tareas ni código en esta fase; no se ejecutan pruebas o benchmarks nuevos.*
+
+    *Validación documental ejecutada: 10 archivos Markdown, enlaces locales y
+    UTF-8 válidos; 15 FR, 3 PR, 5 SC y 20 AC conservados; checklist 16/16.
+    Confirmado que tasks.md no se generó y spec.md no incorpora las estructuras
+    del plan. La revisión lógica del certificado no se registra como pruebas
+    automatizadas de la funcionalidad.*
 
 ## 🟣 Kendall
 

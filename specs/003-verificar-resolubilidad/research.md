@@ -1,7 +1,9 @@
 # Investigación: Verificación de resolubilidad
 
-**Fecha**: 2026-11-09. **Estado**: siete elecciones aprobadas; fase 0 en curso
-por la justificación pendiente del diagnóstico de ciclos.
+**Fecha**: 2026-11-09. **Estado**: investigación completada; siete elecciones
+aprobadas y dos interpretaciones finales aceptadas por el equipo.
+El diagnóstico se justifica con el certificado de grupo descrito al final;
+implementación, pruebas ejecutadas y mediciones siguen pendientes.
 Fuentes: [spec.md](spec.md), constitución, PDF §§3.5/4.2/5.4 y código local.
 Investigación delegada de solo lectura conforme a speckit-plan.
 Los costes siguientes son teóricos; no son mediciones del proyecto.
@@ -103,7 +105,8 @@ se reserva para la comparación lenta de bench.
 
 **Decisión de representación**: A, aprobada en el mismo bloque.
 **Recomendación presentada**: A.
-Atiende FR-RS-008/009 y PR-RS-002. La corrección del algoritmo sigue pendiente.
+Atiende FR-RS-008/009 y PR-RS-002. La justificación del algoritmo se concreta
+en el cierre de investigación; las comprobaciones de ejecución siguen pendientes.
 
 | Opción | Ventajas | Costes y riesgos |
 | --- | --- | --- |
@@ -190,7 +193,7 @@ donde U es el número de ubicaciones; con índices hash, la preparación tiene
 coste esperado lineal en registros y longitud de IDs, no garantía de peor caso.
 Esto todavía no demuestra la complejidad del diagnóstico de ciclos.
 
-## Límite pendiente: certificado de ciclos
+## Análisis previo del certificado de ciclos
 
 Un certificado de autobloqueo para un conjunto C de llaves debe distinguir
 aislamiento de dependencia circular. Como comprobación conceptual: aun
@@ -200,9 +203,10 @@ no autoriza implementar un recorrido nuevo por cada llave o candidato: todavía
 falta justificar la generación y validación del informe en el trabajo permitido.
 No registrar DFS/componentes conexas sobre dependencias simplificadas como una
 solución ya demostrada. Las elecciones de estructuras están cerradas; esta
-obligación de corrección sigue abierta antes de generar el diseño de fase 1.
+obligación de corrección quedó abierta en esta revisión previa y se resuelve
+con el certificado y la interpretación aprobada al final de este documento.
 
-### Resultado de la revisión cruzada del certificado
+### Resultado de la revisión cruzada previa del certificado (histórico)
 
 Se estudió un certificado colectivo que usa solo los arreglos, listas, índices
 y cola aprobados, sin cambiar la partida ni sus llaves reales:
@@ -237,7 +241,7 @@ sigue pendiente de contrastar con el contrato exacto en esa revisión histórica
 
 ## Revisión posterior: contrato verificado y propuesta de certificado con alternativas
 
-**Estado**: propuesta técnica revisada; interpretación del equipo pendiente.
+**Estado**: propuesta técnica revisada, posteriormente aceptada por el equipo.
 Las siete decisiones de estructuras siguen aprobadas y no se sustituyen.
 
 ### Evidencia del contrato
@@ -268,7 +272,7 @@ la lectura terminó correctamente. No se cambió el cliente del juego.
 
 Esta propuesta conserva los antecedentes conjuntos y todas las alternativas;
 no demuestra que cada flecha comprimida entre llaves sea individualmente
-inevitable. Esa distinción se consulta al equipo antes de fijarla en spec.md.
+inevitable. El equipo aceptó esa distinción, incorporada a FR-RS-008 en spec.md.
 
 1. Mantener el cierre real y su informe, sin modificarlo. Para el diagnóstico,
    usar la conectividad física y el cierre hipotético con llaves aisladas ya
@@ -307,16 +311,78 @@ vez, no por componente. El trabajo esperado incluye índices y longitud de
 IDs; falta contrastarlo con pruebas y bench. Una propuesta y su razonamiento
 no se registran como funcionalidad implementada o verificada.
 
-### Dos interpretaciones pendientes del equipo
+### Dos interpretaciones aprobadas por el equipo
 
 1. Aceptar el certificado de grupo con alternativas y un ciclo concreto de
    reglas, o exigir que cada flecha entre llaves sea individualmente inevitable
-   en todas las rutas. Recomendada la primera lectura; no se aplica todavía.
+   en todas las rutas. El equipo aprobó la primera lectura.
 2. Conservar el convenio heredado de puerta compartida cuando las salidas
    recíprocas admiten un emparejamiento único y compatible, informando la
    ambigüedad sin fusionar conexiones; o considerar cada salida dirigida una
-   unidad independiente. Recomendada la primera interpretación del equipo;
-   Swagger por sí solo no la establece. No se aplica todavía.
+   unidad independiente. El equipo aprobó la primera interpretación;
+   Swagger por sí solo no la establece.
 
-Se presentan juntas por preferencia del usuario. Las respuestas se integrarán
-antes de cerrar investigación y producir artefactos de diseño final.
+Se presentaron juntas por preferencia del usuario. Respuestas literales:
+«Certificado del grupo y ciclo concreto (recomendado)» y «Recíprocas únicas
+comparten puerta; ambigüedad se informa (recomendado)».
+
+## Cierre de investigación
+
+La revisión cruzada confirma el certificado de grupo bajo la interpretación
+aprobada. Para no perder alternativas, una llave es físicamente conectada si
+AL MENOS UNA de sus ubicaciones lo es; el grafo residual incluye TODAS sus
+ubicaciones físicamente conectadas. Una alternativa de origen aislado o de
+barrera cerrada sin llave se conserva en el informe con esa justificación.
+No se exige que produzca un enlace circular. Cada alternativa posible aporta
+su antecedente falso al certificado. Un primer nodo obtenible del grupo
+contradiría alguno de esos antecedentes, por lo que el bloqueo es circular.
+
+Una componente cerrada relevante no puede estar formada solo por salas:
+el primer ingreso de un camino físico desde el inicio a ese grupo produciría
+un enlace hacia una sala exterior o una llave faltante, contradiciendo que
+no haya enlaces salientes. El testigo elegido incluye por tanto una llave,
+no simplemente un circuito de corredores.
+
+Se empleará Kosaraju iterativo propio para las componentes, con las listas de
+incidencias directas/inversas, arreglos de marcas, orden de finalización y pila
+ya aprobados en D-RS-06A. Es una concreción del algoritmo sobre las estructuras
+elegidas, sin bibliotecas de grafos ni recursión dependiente del tamaño del mapa.
+La extracción de un testigo por componente cerrada con llave se limita a esa
+componente; no inicializar un arreglo global nuevo por componente ni repetir
+el recorrido de la cripta por llave. El certificado se genera solo para el
+informe negativo; el veredicto siempre procede del cierre real.
+
+Las salidas se recorren en orden N, S, E, O y las salas en el orden estable de
+las páginas del esqueleto. Las ubicaciones conservan el orden de respuesta.
+No recorrer casillas hash para producir el orden del informe. Al normalizar,
+comparar como máximo las pocas salidas del destino para hallar una pareja
+recíproca compatible y única; los costes dirigidos no identifican la puerta.
+Compatibilidad de puerta: estado inicial, llave y cierre automático. Sin
+emparejamiento único, conservar salidas separadas y advertir ambigüedad. No
+rechazar una cripta válida solo por no poder inferir identidad física.
+
+Para texto, concretar la mezcla de D-RS-03A mediante un acumulador entero fijo
+de 64 bits: iniciar en 0xcbf29ce484222325 y aplicar la mezcla entera propia
+existente a acumulador XOR ord(caracter) por cada carácter. Inicio por máscara;
+segundo salto por mezcla del acumulador XOR 0x9e3779b97f4a7c15, enmascarado e
+impar. Comparar siempre la clave completa. Es reproducible, no criptográfico;
+no garantiza ausencia de colisiones ni tiempo constante en peor caso. Se
+documentarán sondeos y límites en bench antes de afirmar ventaja empírica.
+
+La carga de verificación leerá páginas en listas y normalizará directamente
+con los índices aprobados, sin construir el AVL del juego. Al iniciar después,
+la carga heredada podrá construir su AVL a partir de los mismos datos ya leídos,
+sin nuevas solicitudes. Medir el procesamiento completo de verificación, no
+ocultar preparación; el coste de construir una partida se informa por separado.
+Compartir también la normalización de puertas entre verificador y cargador,
+conservando la simetría de costes vigente de FR-TC-001. Para que la presentación
+siga siendo lineal, mostrar ubicaciones y alternativas una sola vez en tablas
+compartidas; puertas y grupos las referencian sin duplicar listas completas.
+
+No quedan decisiones de estructuras ni interpretaciones abiertas para el diseño.
+Las limitaciones conocidas (P1 ausente, colisiones y evidencia de ejecución
+pendiente) se conservan sin atribuir resultados inexistentes al código actual.
+
+Revisión documental final: 10 archivos Markdown revisados, enlaces locales
+válidos, UTF-8 válido, 15 FR/3 PR/5 SC/20 AC conservados y checklist 16/16.
+No se generó tasks.md. No son pruebas de ejecución del verificador ni mediciones.

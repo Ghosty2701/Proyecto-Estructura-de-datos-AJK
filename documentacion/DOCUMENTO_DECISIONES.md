@@ -1,5 +1,31 @@
 # Documento de Decisiones de Diseño
 
+## Parte II — Resolubilidad: diseño aprobado, implementación pendiente (2026-11-09)
+
+Fuentes: [especificación](../specs/003-verificar-resolubilidad/spec.md),
+[plan](../specs/003-verificar-resolubilidad/plan.md),
+[alternativas y justificación](../specs/003-verificar-resolubilidad/research.md),
+[modelo de datos](../specs/003-verificar-resolubilidad/data-model.md),
+[contratos](../specs/003-verificar-resolubilidad/contracts/verificacion.md) y
+[validación prevista](../specs/003-verificar-resolubilidad/quickstart.md).
+El plan es el borrador de la sección conforme a P2 §2.4; no se duplica aquí
+su diseño ni se presentan resultados empíricos aún inexistentes.
+
+Andrey aprobó D-RS-01 a D-RS-07, todas A: arreglos/listas, índices hash propios
+con doble hashing, FIFO con cursor, agrupaciones por llave/sala, procedencia
+con marcas/pila y ubicaciones en memoria. Aprobó también el certificado de
+grupo circular con alternativas y ciclo concreto, y el emparejamiento único
+de recíprocas compatibles como puerta compartida. Son interpretaciones del
+equipo; Swagger solo identifica salidas dirigidas.
+
+El diseño justifica un número constante de recorridos y cierres, más análisis
+iterativo de componentes/testigos disjuntos: trabajo esperado aproximadamente
+lineal en salas, salidas, llaves, ubicaciones y longitud de identificadores,
+con límites por colisiones. La normalización se compartirá con el cargador.
+Quedan pendientes tareas, código, pruebas y --bench, incluida la referencia
+oficial de <200 ms. No se acredita rendimiento con las mediciones de niebla
+o terreno. Se añadirán aquí las cifras y limitaciones finales al ejecutarlas.
+
 ## Parte II — Niebla de guerra y viaje «ir a» (2026-11-09)
 
 Fuentes: [especificación](../specs/002-niebla-viaje/spec.md),

@@ -2,7 +2,8 @@
 
 **Rama Git**: `main` (actual; no se crea otra rama).
 **Creación**: 2026-11-09.
-**Estado**: Aclaración completada; preparada para planificación, sin implementación.
+**Estado**: Aclaraciones e interpretaciones del equipo completadas; diseño en plan.md,
+sin implementación.
 **Entrada del usuario**: «Continuemos», después de confirmar resolubilidad como
 siguiente capacidad.
 
@@ -76,6 +77,9 @@ conocidos, rutas alternativas y ejecuciones repetidas.
    Si una puerta física aparece en las salidas de ambas salas, se informa una
    sola vez con sus extremos, sin fusionar puertas físicas distintas que
    conecten las mismas salas.
+   Según la interpretación del equipo, las salidas recíprocas compatibles
+   comparten puerta cuando su emparejamiento es único. Si no puede identificarse
+   una pareja inequívoca, se informa la ambigüedad sin fusionar conexiones.
    Requisitos: FR-RS-006/007.
 4. **AC-RS-009** — **Dada** la llave de salida detrás de la única puerta que
    ella misma abre, **cuando** se verifica, **entonces** se informa no resoluble
@@ -91,6 +95,10 @@ conocidos, rutas alternativas y ejecuciones repetidas.
    pero una ruta alternativa permite obtener una llave del supuesto ciclo,
    **cuando** se verifica, **entonces** se aprovecha esa alternativa y no se
    presenta el ciclo aparente como bloqueo inevitable.
+   Si varios accesos siguen bloqueados por llaves del mismo grupo, se presenta
+   el grupo completo, sus puertas y alternativas, junto con un ciclo concreto
+   que explique por qué ninguna llave del grupo puede obtenerse primero. No
+   se afirma que cada flecha entre llaves sea exclusiva en todas las rutas.
    Requisitos: FR-RS-002/003/005/008.
 7. **AC-RS-012** — **Dadas** llaves no obtenibles en salas aisladas, sin ciclos
    de dependencia entre ellas, **cuando** se informa una cripta no resoluble,
@@ -206,9 +214,17 @@ y fallos de obtención; comprobar solicitudes y resultado informado.
   y la ubicación de cada una de esas llaves. Mostrar una entrada por puerta
   física con sus extremos, aunque tenga salidas recíprocas; no fusionar puertas
   físicas distintas entre las mismas salas. Escenarios: AC-RS-008/009/010/012.
+  Interpretación del equipo: compartir puerta entre salidas recíprocas compatibles
+  solo cuando el emparejamiento sea único; si es ambiguo, explicarlo y conservar
+  las conexiones separadas, sin inventar identidad física.
 - **FR-RS-008**: Señalar el ciclo concreto cuando una llave solo es accesible
   tras puertas que requieren esa misma llave directa o indirectamente, con
   detección determinista. No inventar ciclos por aislamiento o rutas alternativas.
+  Conforme a la interpretación aprobada, el informe puede justificar un grupo
+  circular mediante sus puertas, todas sus alternativas y un ciclo concreto
+  dentro del grupo que explique la ausencia de un primer desbloqueo. No exige
+  que cada flecha entre dos llaves sea individualmente inevitable en todas
+  las rutas ni enumerar todos los ciclos posibles.
   Escenarios: AC-RS-009/010/011/012.
 - **FR-RS-009**: Con los mismos datos y versiones, el resultado, orden válido
   elegido e informe deben ser reproducibles sin consumir el azar del juego.
@@ -281,8 +297,10 @@ y fallos de obtención; comprobar solicitudes y resultado informado.
   cumplen los supuestos y la condición completa de victoria, y se repiten iguales
   con los mismos datos.
 - **SC-RS-003**: En los escenarios negativos se identifica cada bloqueo exigido
-  y cada ciclo concreto aplicable; los casos sin ciclo o con alternativa no
-  reciben diagnósticos circulares falsos.
+  y se justifican los grupos circulares con sus alternativas y ciclos concretos
+  conforme a FR-RS-008; los casos sin ciclo o con alternativa obtenible no
+  reciben diagnósticos circulares falsos. No se exige enumeración exhaustiva
+  de todos los ciclos posibles.
 - **SC-RS-004**: Se verifica el inicio bloqueado salvo `--forzar`, la consulta
   sin vista y cero acciones, tiempo, azar o exploración producidos por verificar.
 - **SC-RS-005**: Las mediciones cumplen PR-RS-001 y documentan crecimiento y
@@ -307,9 +325,13 @@ y fallos de obtención; comprobar solicitudes y resultado informado.
 - Frontera y dependencias se reportan conforme a §3.5, con una entrada por puerta
   física y sin confundir puertas distintas entre las mismas salas. Los accesos
   alternativos se resuelven conforme a FR-RS-008 y AC-RS-011, sin inventar ciclos.
+- El equipo aprueba el certificado del grupo circular con sus alternativas y
+  un ciclo concreto, y la identidad compartida de salidas recíprocas compatibles
+  únicamente con emparejamiento único. Son interpretaciones explícitas del
+  equipo: el contrato HTTP por sí solo describe salidas dirigidas sin ID de puerta.
 - Sigue faltando el enunciado original de P1 para contrastar íntegramente sus reglas.
-- No se implementan línea de tiempo, funcionalidades de verificación, plan ni
-  tareas en esta etapa. Todas las decisiones de estructuras pertenecen al usuario.
+- Esta especificación no implementa funcionalidades ni sustituye plan o tareas.
+  Todas las decisiones de estructuras pertenecen al usuario.
 
 ## Aclaraciones
 
@@ -331,3 +353,14 @@ y fallos de obtención; comprobar solicitudes y resultado informado.
 - **P**: ¿Qué hacemos si se combina `--verificar` con otro modo o con `--forzar`?
   → **R**: A, rechazar la combinación y explicar el uso correcto; conservar
   opciones compatibles como `--offline`. Aplicado a FR-RS-012 y AC-RS-015.
+
+### Interpretaciones del equipo durante la planificación — 2026-11-09
+
+- **P**: ¿Cómo se justifica un ciclo cuando hay accesos alternativos dentro de
+  un grupo bloqueado? → **R**: Certificado del grupo y ciclo concreto, con
+  puertas y alternativas; sin exigir exclusividad individual de cada flecha.
+  Aplicado a FR-RS-008, AC-RS-011 y SC-RS-003.
+- **P**: ¿Qué salidas recíprocas representan una puerta física? → **R**:
+  Recíprocas únicas compatibles comparten puerta; ambigüedad se informa sin
+  fusionar conexiones. Interpretación del equipo, no garantía de Swagger.
+  Aplicado a FR-RS-007 y AC-RS-008.

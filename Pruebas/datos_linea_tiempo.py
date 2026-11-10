@@ -66,8 +66,11 @@ ORDENES = [
 ]
 
 
-def escribir_paquete(carpeta):
-    """Crea el paquete offline sintético y devuelve su carpeta."""
+def escribir_paquete(carpeta, objetos_entrada=None):
+    """Crea el paquete offline sintético y devuelve su carpeta.
+
+    objetos_entrada reemplaza los objetos del suelo de la sala inicial.
+    """
     def escribir(ruta, datos):
         archivo = carpeta / ruta
         archivo.parent.mkdir(parents=True, exist_ok=True)
@@ -85,6 +88,8 @@ def escribir_paquete(carpeta):
     })
     escribir(f"criptas/{CRIPTA}/salas_1.json", {"pagina": 1, "salas": SALAS})
     for sala, contenido in CONTENIDO.items():
+        if sala == 1 and objetos_entrada is not None:
+            contenido = dict(contenido, objetos=list(objetos_entrada))
         escribir(f"criptas/{CRIPTA}/contenido/{sala}.json", dict(contenido, sala=sala))
     for ficha in FICHAS:
         escribir(f"catalogo/{ficha['id']}.json", ficha)

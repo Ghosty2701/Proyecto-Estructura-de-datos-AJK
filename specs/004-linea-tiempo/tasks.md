@@ -1,6 +1,6 @@
 # Tareas: Línea de tiempo y puntos de control
 
-**Fecha**: 2026-11-09. **Estado**: 16/37 tareas ejecutadas (fases 1 a 3).
+**Fecha**: 2026-11-09. **Estado**: 20/37 tareas ejecutadas (fases 1 a 5). T018 y T020 no requirieron cambios de código: la interrupción existente y el diseño de D-LT-05 ya cubrían los casos.
 **Entrada**: [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md),
 [data-model.md](data-model.md), [contrato](contracts/linea-tiempo.md) y
 [quickstart.md](quickstart.md). Rama real: `main`.
@@ -65,16 +65,16 @@ Objetivo: demostrar que las consultas no dejan rastro.
 Prueba independiente: comparar reloj, estado, historial de retroceso, log y azar
 antes y después de consultas repetidas.
 
-- [ ] T017 [US2] Escribir y pasar en Pruebas/prueba_historia_partida.py: tras varias consultas válidas y rechazadas, reloj, `motor.azar.getstate()`, historial de retroceso, línea de tiempo, contenido de `partida.log` (no contiene `historia`), caché de fichas y contador de solicitudes son idénticos, y la continuación es igual a una ejecución sin consultas. Dep.: T016. Requisitos: FR-LT-006, FR-LT-007; SC-LT-003. Escenarios: AC-LT-007, AC-LT-008, AC-LT-009.
-- [ ] T018 [US2] Verificar en controlador/controlador.py y en Pruebas/prueba_niebla_partida.py que escribir `historia` durante «ir a» detiene el viaje como cualquier orden, la consulta no consume tiempo y el viaje no se reanuda solo; corregir la interrupción si hace falta. Dep.: T017. Requisitos: FR-LT-006. Escenarios: AC-LT-010.
+- [X] T017 [US2] Escribir y pasar en Pruebas/prueba_historia_partida.py: tras varias consultas válidas y rechazadas, reloj, `motor.azar.getstate()`, historial de retroceso, línea de tiempo, contenido de `partida.log` (no contiene `historia`), caché de fichas y contador de solicitudes son idénticos, y la continuación es igual a una ejecución sin consultas. Dep.: T016. Requisitos: FR-LT-006, FR-LT-007; SC-LT-003. Escenarios: AC-LT-007, AC-LT-008, AC-LT-009.
+- [X] T018 [US2] Verificar en controlador/controlador.py y en Pruebas/prueba_niebla_partida.py que escribir `historia` durante «ir a» detiene el viaje como cualquier orden, la consulta no consume tiempo y el viaje no se reanuda solo; corregir la interrupción si hace falta. Dep.: T017. Requisitos: FR-LT-006. Escenarios: AC-LT-010.
 
 ## Fase 5 — US3: Coherencia con el pergamino (P1)
 
 Objetivo: la línea describe la historia vigente tras los pergaminos.
 Prueba independiente: consultar, retroceder y repetir consultas.
 
-- [ ] T019 [US3] Escribir en Pruebas/prueba_historia_partida.py: tras un pergamino, consultar un instante posterior al reloj restaurado se rechaza; las acciones nuevas toman los números k siguientes; el pergamino no ocupa un k; los efectos que no se deshacen (pergamino consumido, pergamino recogido en la acción revertida) aparecen en los instantes vigentes posteriores y no en los anteriores; dos pergaminos seguidos; un punto creado justo antes del pergamino. Comparar con el resumen en vivo. Dep.: T016. Requisitos: FR-LT-004, FR-LT-007, FR-LT-008, FR-LT-009, FR-LT-014. Escenarios: AC-LT-011, AC-LT-012, AC-LT-014.
-- [ ] T020 [US3] Corregir en modelo/linea_tiempo.py y controlador/partida.py lo que T019 detecte, manteniendo «Los puntos nunca se invalidan» y el recorte en O(acciones revertidas). Añadir una prueba con contador de trabajo que muestre que el recorte no depende de la longitud de la historia. Dep.: T019. Requisitos: FR-LT-008, FR-LT-009; PR-LT-004. Escenarios: AC-LT-011, AC-LT-012, AC-LT-013, AC-LT-014.
+- [X] T019 [US3] Escribir en Pruebas/prueba_historia_partida.py: tras un pergamino, consultar un instante posterior al reloj restaurado se rechaza; las acciones nuevas toman los números k siguientes; el pergamino no ocupa un k; los efectos que no se deshacen (pergamino consumido, pergamino recogido en la acción revertida) aparecen en los instantes vigentes posteriores y no en los anteriores; dos pergaminos seguidos; un punto creado justo antes del pergamino. Comparar con el resumen en vivo. Dep.: T016. Requisitos: FR-LT-004, FR-LT-007, FR-LT-008, FR-LT-009, FR-LT-014. Escenarios: AC-LT-011, AC-LT-012, AC-LT-014.
+- [X] T020 [US3] Corregir en modelo/linea_tiempo.py y controlador/partida.py lo que T019 detecte, manteniendo «Los puntos nunca se invalidan» y el recorte en O(acciones revertidas). Añadir una prueba con contador de trabajo que muestre que el recorte no depende de la longitud de la historia. Dep.: T019. Requisitos: FR-LT-008, FR-LT-009; PR-LT-004. Escenarios: AC-LT-011, AC-LT-012, AC-LT-013, AC-LT-014.
 
 ## Fase 6 — US4: Reproducir hasta un instante (P1)
 

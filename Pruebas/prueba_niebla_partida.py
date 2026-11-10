@@ -219,3 +219,32 @@ def test_guardado_rechaza_conocimiento_inconsistente(tmp_path, corromper):
     with pytest.raises(ErrorGuardado):
         guardar_partida(tmp_path / 'malo.bin', p.motor, p.jugador, salas,
                         id_cripta='x', version_cripta='v', version_catalogo='c')
+
+
+def test_ac_lt_010_historia_durante_ir_a_detiene_el_viaje_sin_tiempo(tmp_path):
+    # FR-LT-006, AC-LT-010: escribir historia interrumpe el viaje como cualquier orden;
+    # la consulta no consume tiempo y el viaje no se reanuda solo.
+    from controlador.controlador import Controlador
+    from datos_linea_tiempo import crear_partida, escribir_paquete
+    from vista.vista_consola import VistaConsola
+
+    partida, _ = crear_partida(escribir_paquete(tmp_path / "datos"), tmp_path / "cache")
+    llamadas = []
+    salida = []
+    comandos = iter(["historia 0"])
+    vista = VistaConsola(entrada=lambda _: next(comandos), salida=salida.append,
+                         interrupcion=lambda: llamadas.append(1) or len(llamadas) >= 2)
+    controlador = Controlador(partida, vista)
+    # La antorcha explora la Galería sin visitarla; volver a la Entrada deja el viaje listo.
+    for orden in ("recoger 1", "recoger 1", "recoger 1", "recoger 1", "sig", "sig", "sig",
+                  "usar", "w", "s"):
+        controlador.procesar(orden)
+    llamadas.clear()
+    controlador.procesar("ir a Galeria")
+    # Un paso hasta el Pasillo; luego la interrupción y la consulta escrita.
+    assert partida.jugador.sala_actual.sala_id == 2
+    reloj, acciones = partida.motor.reloj, partida.acciones_ejecutadas
+    assert "Viaje interrumpido por el jugador." in vista.bitacora.mensajes()
+    assert any("Historia en t=0" in linea for linea in salida)
+    assert (partida.motor.reloj, partida.acciones_ejecutadas) == (reloj, acciones)
+    assert [o.texto for o in partida.linea_tiempo.ordenes][-1] == "ir n"

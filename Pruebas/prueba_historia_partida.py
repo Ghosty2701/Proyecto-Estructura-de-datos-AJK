@@ -217,3 +217,137 @@ def test_t015_consola_muestra_resumen_y_rechazos(paquete, tmp_path):
     mensajes = controlador.vista.bitacora.mensajes()
     assert any("posterior al reloj actual" in m for m in mensajes)
     assert any(m.startswith("Uso: historia") for m in mensajes)
+
+
+# --- T017: consultar sin alterar nada (US2; FR-LT-006/007, SC-LT-003) ---
+
+from adaptadores.bitacora_partida import EscritorBitacora, leer_bitacora
+from datos_linea_tiempo import CRIPTA, SEMILLA, ORDENES
+
+
+def _huella(partida, cargador):
+    """Todo lo que una consulta no puede cambiar."""
+    motor = partida.motor
+    linea = partida.linea_tiempo
+    cache = cargador.servicio.cache
+    lru, nodo = [], cache.lista.frente
+    while nodo is not None:
+        lru.append(nodo.id_ficha)
+        nodo = nodo.siguiente
+    return (
+        instantanea(partida), motor.reloj, motor.azar.getstate(),
+        [(a.reloj_anterior, len(a.cambios)) for a in motor.historial.acciones],
+        [(o.texto, o.tipo) for o in linea.ordenes], [(a.reloj, a.posicion) for a in linea.acciones],
+        [(p.posicion, p.acciones) for p in linea.puntos], linea.acciones_en_tramo,
+        tuple(lru), cache.aciertos, cache.fallos, cache.lecturas_disco,
+        cargador.servicio.fuente.solicitudes_realizadas,
+    )
+
+
+CONSULTAS = ["historia 0", "historia #1", "historia #5", "historia 333", "historia 999999",
+             "historia #999", "historia", "historia -4", "historia #0", "HISTORIA #3"]
+
+
+def test_ac007_008_009_consultas_no_cambian_nada_ni_el_log(paquete, tmp_path):
+    partida, cargador = crear_partida(paquete, tmp_path / "cache", checkpoint_cada=3)
+    ruta = tmp_path / "partida.log"
+    with EscritorBitacora(ruta, CRIPTA, "v1", "cat-lt", SEMILLA) as escritor:
+        controlador = Controlador(partida, VistaConsola(salida=lambda texto: None),
+                                  escritor.registrar_accion)
+        jugar(partida, ORDENES[:20], controlador=controlador)
+        antes = _huella(partida, cargador)
+        for consulta in CONSULTAS:
+            controlador.procesar(consulta)
+        assert _huella(partida, cargador) == antes
+        jugar(partida, ORDENES[20:], controlador=controlador)
+    assert not any("historia" in accion for accion in leer_bitacora(ruta)[1])
+
+
+def test_sc003_continuacion_identica_a_una_partida_sin_consultas(paquete, tmp_path):
+    con, cargador_con = crear_partida(paquete, tmp_path / "cache-con", checkpoint_cada=2)
+    sin, cargador_sin = crear_partida(paquete, tmp_path / "cache-sin", checkpoint_cada=2)
+    ctl_con = Controlador(con, VistaConsola(salida=lambda texto: None))
+    ctl_sin = Controlador(sin, VistaConsola(salida=lambda texto: None))
+    for numero, texto in enumerate(ORDENES):
+        if numero % 3 == 0:
+            for consulta in CONSULTAS:
+                ctl_con.procesar(consulta)
+        ctl_con.procesar(texto)
+        ctl_sin.procesar(texto)
+    assert _huella(con, cargador_con)[:-1] == _huella(sin, cargador_sin)[:-1]
+    assert cargador_con.servicio.fuente.solicitudes_realizadas == cargador_sin.servicio.fuente.solicitudes_realizadas
+
+
+# --- T019: coherencia con el pergamino (US3; FR-LT-004/007/008/009/014) ---
+
+ORDENES_PERGAMINO = [
+    "recoger 1", "recoger 1",       # k1 pA, k2 pB
+    "retroceder",                   # revierte k2: pB queda (no se deshace) y se consume pA
+    "recoger 1", "recoger 1",       # k2 pC, k3 pD
+    "w", "esperar",                 # k4, k5
+    "retroceder", "retroceder",     # dos seguidos: revierte k5 y k4
+    "recoger 1", "w", "esperar",    # k4 daga, k5, k6
+]
+
+
+@pytest.fixture
+def paquete_pergaminos(tmp_path):
+    return escribir_paquete(tmp_path / "datos-p",
+                            objetos_entrada=["pergamino", "pergamino", "pergamino", "pergamino", "daga"])
+
+
+@pytest.mark.parametrize("k", [1, 2, 3])
+def test_ac011_012_014_historia_vigente_tras_pergaminos(paquete_pergaminos, tmp_path, k):
+    # Con K=1 hay un punto creado justo antes de cada pergamino; nunca se invalida.
+    partida, _ = crear_partida(paquete_pergaminos, tmp_path / f"cache{k}", checkpoint_cada=k)
+    grabacion = jugar(partida, ORDENES_PERGAMINO)
+    linea = partida.linea_tiempo
+    assert [o.tipo for o in linea.ordenes].count("pergamino") == 3
+    assert linea.cantidad_acciones == partida.acciones_ejecutadas == 6 == len(grabacion.antes_de_accion)
+    for numero, decision, foto in grabacion.antes_de_accion:
+        assert instantanea(partida.reconstruir(linea.objetivo_por_k(numero))) == foto
+        assert instantanea(partida.reconstruir(linea.objetivo_por_t(decision, partida.motor.reloj))) == foto
+    for t, foto in instantes_intermedios(grabacion):
+        if t < partida.motor.reloj:
+            assert instantanea(partida.reconstruir(linea.objetivo_por_t(t, partida.motor.reloj)))[:-1] == foto[:-1]
+
+
+def test_ac011_efectos_que_no_se_deshacen_aparecen_solo_despues(paquete_pergaminos, tmp_path):
+    # P1: el pergamino consumido no vuelve y el recogido en la acción revertida se queda.
+    partida, _ = crear_partida(paquete_pergaminos, tmp_path / "cache", checkpoint_cada=1)
+    jugar(partida, ORDENES_PERGAMINO)
+    nombres = lambda k: [nombre for nombre, _, _ in partida.historia(("k", k)).inventario]
+    assert nombres(1) == []
+    assert nombres(2) == ["Pergamino"]                       # pB conservado, pA consumido
+    assert nombres(4) == ["Pergamino"]                       # tras dos pergaminos más: solo pD
+    assert nombres(5) == ["Pergamino", "Daga"]
+
+
+def test_ac011_012_rechazo_posterior_y_numeracion_tras_pergamino(paquete_pergaminos, tmp_path):
+    partida, _ = crear_partida(paquete_pergaminos, tmp_path / "cache", checkpoint_cada=2)
+    controlador = Controlador(partida, VistaConsola(salida=lambda texto: None))
+    for orden in ORDENES_PERGAMINO[:9]:
+        controlador.procesar(orden)
+    restaurado = partida.motor.reloj
+    assert partida.linea_tiempo.cantidad_acciones == 3        # el pergamino no ocupa un k
+    with pytest.raises(AccionInvalida, match="posterior"):
+        partida.historia(("t", restaurado + 1))
+    with pytest.raises(AccionInvalida, match="#k"):
+        partida.historia(("k", 5))
+    assert partida.historia(("k", 4)).titulo.startswith("estado actual")
+    controlador.procesar("recoger 1")
+    assert partida.historia(("k", 4)).titulo == "antes de la acción #4"
+    assert partida.historia(("k", 5)).titulo.startswith("estado actual")
+
+
+def test_pr004_recorte_trabaja_solo_sobre_lo_revertido(paquete_pergaminos, tmp_path):
+    # PR-LT-004: el recorte depende de las acciones revertidas, no de la historia.
+    partida, _ = crear_partida(paquete_pergaminos, tmp_path / "cache", checkpoint_cada=50)
+    controlador = Controlador(partida, VistaConsola(salida=lambda texto: None))
+    controlador.procesar("recoger 1")
+    for _ in range(300):
+        controlador.procesar("esperar")
+    trabajo = partida.linea_tiempo.trabajo_recorte
+    controlador.procesar("retroceder")
+    assert partida.linea_tiempo.trabajo_recorte - trabajo == 1
+    assert partida.linea_tiempo.cantidad_acciones == 300

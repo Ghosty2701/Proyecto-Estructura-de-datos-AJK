@@ -1,7 +1,7 @@
 # Modelo de datos: Verificación de resolubilidad
 
-**Estado**: diseño, sin implementación. Estructuras aprobadas en [research.md](research.md).
-Los nombres describen registros previstos; no amplían reglas de [spec.md](spec.md).
+**Estado**: diseño implementado y verificado. Estructuras aprobadas en [research.md](research.md).
+Los nombres describen registros del modelo; no amplían reglas de [spec.md](spec.md).
 
 ## Entrada validada y normalización
 

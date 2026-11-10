@@ -1,0 +1,910 @@
+{
+  "semilla": 2026,
+  "repeticiones": 3,
+  "entorno": {
+    "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+    "plataforma": "Windows-11-10.0.26300-SP0",
+    "procesador": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "fuentes": [
+      {
+        "ruta": "modelo/verificacion.py",
+        "sha256": "ff03e490c89d38739afc5bda7c6533fca0e30af13d00d130567e035342a6815d"
+      },
+      {
+        "ruta": "modelo/indice_llaves.py",
+        "sha256": "386f59a1ba652ad2722d7004c39ad4b4206dd84820e6020873f0d4b2b4724913"
+      },
+      {
+        "ruta": "modelo/conocimiento.py",
+        "sha256": "4910810dd3db3128f7cffb6bba6e6a9119d4089be8e2b871a87807d240aaa118"
+      },
+      {
+        "ruta": "modelo/tabla_hash.py",
+        "sha256": "c7243a98a407cd0e8ab586f45ba7bbb100806cb6a9fb8ca0b4e9aa362d8ae20a"
+      },
+      {
+        "ruta": "modelo/bench_resolubilidad.py",
+        "sha256": "ad1e906470d6a0ca296e21a2d212e024481b3d50d40ac147a78dd1337083d41c"
+      },
+      {
+        "ruta": "modelo/bench_modelo.py",
+        "sha256": "c134a1cf4db5eda652033d5c07dc9e66f16d8b926ff875ae597c3fe676b39eb8"
+      },
+      {
+        "ruta": "adaptadores/servicio_cripta.py",
+        "sha256": "4666b6a1506a3d4f849c6a01457d27746f0a20a1cb27f702878e6860fce03283"
+      },
+      {
+        "ruta": "adaptadores/cliente_http.py",
+        "sha256": "ef4f5f4e86db9bca3bfcc5afff2287902d21a340cb129491f7933b2e703279cc"
+      },
+      {
+        "ruta": "adaptadores/modo_offline.py",
+        "sha256": "7f88baba603036cd3e94adc56d4d22471c9942d06d562408d702b9e0b99422d5"
+      },
+      {
+        "ruta": "controlador/cargar_partida.py",
+        "sha256": "2343310c0a73b9fa7ee3b867c714ad17872692b327ed681943d914913a1fa1d5"
+      },
+      {
+        "ruta": "main.py",
+        "sha256": "513f8c6c95e3435d265e538cbe4158c57b1a0b890c629d6810f5e90f301d2408"
+      }
+    ]
+  },
+  "sinteticos": [
+    {
+      "id_cripta": "sintetica-bench",
+      "version": "sintetica-1",
+      "salas": 40,
+      "salidas": 78,
+      "llaves": 39,
+      "ubicaciones": 39,
+      "resoluble": true,
+      "grupos": 0,
+      "sondeos": 438,
+      "texto_incluido": true,
+      "coinciden": true,
+      "muestras": [
+        {
+          "preparacion_ms": 1.0193,
+          "cierre_ms": 0.0384,
+          "resultado_ms": 0.0176,
+          "diagnostico_ms": 0.0002,
+          "texto_ms": 0.0712,
+          "total_ms": 1.1467,
+          "referencia_cierre_ms": 0.8712,
+          "operaciones_incremental": 157,
+          "operaciones_referencia": 4838
+        },
+        {
+          "preparacion_ms": 1.1189,
+          "cierre_ms": 0.0377,
+          "resultado_ms": 0.0486,
+          "diagnostico_ms": 0.0004,
+          "texto_ms": 0.0101,
+          "total_ms": 1.2157,
+          "referencia_cierre_ms": 0.4245,
+          "operaciones_incremental": 157,
+          "operaciones_referencia": 4838
+        },
+        {
+          "preparacion_ms": 0.7948,
+          "cierre_ms": 0.0409,
+          "resultado_ms": 0.0207,
+          "diagnostico_ms": 0.0001,
+          "texto_ms": 0.0055,
+          "total_ms": 0.862,
+          "referencia_cierre_ms": 0.398,
+          "operaciones_incremental": 157,
+          "operaciones_referencia": 4838
+        }
+      ],
+      "maximo_ms": 1.2157,
+      "minimo_ms": 0.862,
+      "excedidos_200ms": 0,
+      "escenario": "cadena"
+    },
+    {
+      "id_cripta": "sintetica-bench",
+      "version": "sintetica-1",
+      "salas": 160,
+      "salidas": 318,
+      "llaves": 159,
+      "ubicaciones": 159,
+      "resoluble": true,
+      "grupos": 0,
+      "sondeos": 1560,
+      "texto_incluido": true,
+      "coinciden": true,
+      "muestras": [
+        {
+          "preparacion_ms": 6.293,
+          "cierre_ms": 0.1113,
+          "resultado_ms": 0.0516,
+          "diagnostico_ms": 0.0001,
+          "texto_ms": 0.0177,
+          "total_ms": 6.4737,
+          "referencia_cierre_ms": 6.7745,
+          "operaciones_incremental": 637,
+          "operaciones_referencia": 76958
+        },
+        {
+          "preparacion_ms": 3.9014,
+          "cierre_ms": 0.1214,
+          "resultado_ms": 0.082,
+          "diagnostico_ms": 0.0003,
+          "texto_ms": 0.0178,
+          "total_ms": 4.1229,
+          "referencia_cierre_ms": 6.837,
+          "operaciones_incremental": 637,
+          "operaciones_referencia": 76958
+        },
+        {
+          "preparacion_ms": 3.99,
+          "cierre_ms": 0.117,
+          "resultado_ms": 0.0847,
+          "diagnostico_ms": 0.0002,
+          "texto_ms": 0.018,
+          "total_ms": 4.2099,
+          "referencia_cierre_ms": 6.7375,
+          "operaciones_incremental": 637,
+          "operaciones_referencia": 76958
+        }
+      ],
+      "maximo_ms": 6.4737,
+      "minimo_ms": 4.1229,
+      "excedidos_200ms": 0,
+      "escenario": "cadena"
+    },
+    {
+      "id_cripta": "sintetica-bench",
+      "version": "sintetica-1",
+      "salas": 640,
+      "salidas": 1278,
+      "llaves": 639,
+      "ubicaciones": 639,
+      "resoluble": true,
+      "grupos": 0,
+      "sondeos": 6848,
+      "texto_incluido": true,
+      "coinciden": true,
+      "muestras": [
+        {
+          "preparacion_ms": 18.1901,
+          "cierre_ms": 0.5847,
+          "resultado_ms": 0.1615,
+          "diagnostico_ms": 0.0002,
+          "texto_ms": 0.0475,
+          "total_ms": 18.984,
+          "referencia_cierre_ms": 108.0674,
+          "operaciones_incremental": 2557,
+          "operaciones_referencia": 1229438
+        },
+        {
+          "preparacion_ms": 15.2886,
+          "cierre_ms": 0.4978,
+          "resultado_ms": 0.3896,
+          "diagnostico_ms": 0.0004,
+          "texto_ms": 0.0476,
+          "total_ms": 16.224,
+          "referencia_cierre_ms": 109.5499,
+          "operaciones_incremental": 2557,
+          "operaciones_referencia": 1229438
+        },
+        {
+          "preparacion_ms": 15.8838,
+          "cierre_ms": 0.4849,
+          "resultado_ms": 0.5277,
+          "diagnostico_ms": 0.0006,
+          "texto_ms": 0.0501,
+          "total_ms": 16.9471,
+          "referencia_cierre_ms": 110.9633,
+          "operaciones_incremental": 2557,
+          "operaciones_referencia": 1229438
+        }
+      ],
+      "maximo_ms": 18.984,
+      "minimo_ms": 16.224,
+      "excedidos_200ms": 0,
+      "escenario": "cadena"
+    },
+    {
+      "id_cripta": "sintetica-bench",
+      "version": "sintetica-1",
+      "salas": 41,
+      "salidas": 80,
+      "llaves": 20,
+      "ubicaciones": 20,
+      "resoluble": false,
+      "grupos": 20,
+      "sondeos": 323,
+      "texto_incluido": true,
+      "coinciden": true,
+      "muestras": [
+        {
+          "preparacion_ms": 0.6057,
+          "cierre_ms": 0.028,
+          "resultado_ms": 0.0142,
+          "diagnostico_ms": 0.1533,
+          "texto_ms": 0.1305,
+          "total_ms": 0.9317,
+          "referencia_cierre_ms": 0.0111,
+          "operaciones_incremental": 81,
+          "operaciones_referencia": 122
+        },
+        {
+          "preparacion_ms": 0.6592,
+          "cierre_ms": 0.0151,
+          "resultado_ms": 0.0352,
+          "diagnostico_ms": 0.1195,
+          "texto_ms": 0.106,
+          "total_ms": 0.935,
+          "referencia_cierre_ms": 0.0105,
+          "operaciones_incremental": 81,
+          "operaciones_referencia": 122
+        },
+        {
+          "preparacion_ms": 0.577,
+          "cierre_ms": 0.0143,
+          "resultado_ms": 0.0215,
+          "diagnostico_ms": 0.1126,
+          "texto_ms": 0.1146,
+          "total_ms": 0.84,
+          "referencia_cierre_ms": 0.0106,
+          "operaciones_incremental": 81,
+          "operaciones_referencia": 122
+        }
+      ],
+      "maximo_ms": 0.935,
+      "minimo_ms": 0.84,
+      "excedidos_200ms": 0,
+      "escenario": "grupos"
+    },
+    {
+      "id_cripta": "sintetica-bench",
+      "version": "sintetica-1",
+      "salas": 161,
+      "salidas": 320,
+      "llaves": 80,
+      "ubicaciones": 80,
+      "resoluble": false,
+      "grupos": 80,
+      "sondeos": 1073,
+      "texto_incluido": true,
+      "coinciden": true,
+      "muestras": [
+        {
+          "preparacion_ms": 2.9052,
+          "cierre_ms": 0.0837,
+          "resultado_ms": 0.0527,
+          "diagnostico_ms": 0.9457,
+          "texto_ms": 0.6604,
+          "total_ms": 4.6477,
+          "referencia_cierre_ms": 0.0536,
+          "operaciones_incremental": 321,
+          "operaciones_referencia": 482
+        },
+        {
+          "preparacion_ms": 2.6693,
+          "cierre_ms": 0.0531,
+          "resultado_ms": 0.0893,
+          "diagnostico_ms": 0.6065,
+          "texto_ms": 0.4035,
+          "total_ms": 3.8217,
+          "referencia_cierre_ms": 0.0387,
+          "operaciones_incremental": 321,
+          "operaciones_referencia": 482
+        },
+        {
+          "preparacion_ms": 2.4753,
+          "cierre_ms": 0.0968,
+          "resultado_ms": 0.0908,
+          "diagnostico_ms": 0.6362,
+          "texto_ms": 0.4721,
+          "total_ms": 3.7712,
+          "referencia_cierre_ms": 0.0386,
+          "operaciones_incremental": 321,
+          "operaciones_referencia": 482
+        }
+      ],
+      "maximo_ms": 4.6477,
+      "minimo_ms": 3.7712,
+      "excedidos_200ms": 0,
+      "escenario": "grupos"
+    },
+    {
+      "id_cripta": "sintetica-bench",
+      "version": "sintetica-1",
+      "salas": 641,
+      "salidas": 1280,
+      "llaves": 320,
+      "ubicaciones": 320,
+      "resoluble": false,
+      "grupos": 320,
+      "sondeos": 4805,
+      "texto_incluido": true,
+      "coinciden": true,
+      "muestras": [
+        {
+          "preparacion_ms": 10.9618,
+          "cierre_ms": 0.2086,
+          "resultado_ms": 0.1458,
+          "diagnostico_ms": 2.0277,
+          "texto_ms": 1.8487,
+          "total_ms": 15.1926,
+          "referencia_cierre_ms": 0.1598,
+          "operaciones_incremental": 1281,
+          "operaciones_referencia": 1922
+        },
+        {
+          "preparacion_ms": 11.1952,
+          "cierre_ms": 0.2226,
+          "resultado_ms": 0.4939,
+          "diagnostico_ms": 1.8656,
+          "texto_ms": 2.0445,
+          "total_ms": 15.8218,
+          "referencia_cierre_ms": 0.1545,
+          "operaciones_incremental": 1281,
+          "operaciones_referencia": 1922
+        },
+        {
+          "preparacion_ms": 11.088,
+          "cierre_ms": 0.213,
+          "resultado_ms": 0.3967,
+          "diagnostico_ms": 2.0819,
+          "texto_ms": 1.6174,
+          "total_ms": 15.397,
+          "referencia_cierre_ms": 0.1466,
+          "operaciones_incremental": 1281,
+          "operaciones_referencia": 1922
+        }
+      ],
+      "maximo_ms": 15.8218,
+      "minimo_ms": 15.1926,
+      "excedidos_200ms": 0,
+      "escenario": "grupos"
+    },
+    {
+      "id_cripta": "sintetica-bench",
+      "version": "sintetica-1",
+      "salas": 41,
+      "salidas": 120,
+      "llaves": 40,
+      "ubicaciones": 60,
+      "resoluble": false,
+      "grupos": 20,
+      "sondeos": 589,
+      "texto_incluido": true,
+      "coinciden": true,
+      "muestras": [
+        {
+          "preparacion_ms": 2.2301,
+          "cierre_ms": 0.0332,
+          "resultado_ms": 0.0239,
+          "diagnostico_ms": 0.2909,
+          "texto_ms": 0.3175,
+          "total_ms": 2.8956,
+          "referencia_cierre_ms": 0.0318,
+          "operaciones_incremental": 101,
+          "operaciones_referencia": 142
+        },
+        {
+          "preparacion_ms": 1.5163,
+          "cierre_ms": 0.02,
+          "resultado_ms": 0.0364,
+          "diagnostico_ms": 0.2178,
+          "texto_ms": 0.2193,
+          "total_ms": 2.0098,
+          "referencia_cierre_ms": 0.0127,
+          "operaciones_incremental": 101,
+          "operaciones_referencia": 142
+        },
+        {
+          "preparacion_ms": 1.4264,
+          "cierre_ms": 0.0276,
+          "resultado_ms": 0.032,
+          "diagnostico_ms": 0.3629,
+          "texto_ms": 0.2359,
+          "total_ms": 2.0848,
+          "referencia_cierre_ms": 0.0133,
+          "operaciones_incremental": 101,
+          "operaciones_referencia": 142
+        }
+      ],
+      "maximo_ms": 2.8956,
+      "minimo_ms": 2.0098,
+      "excedidos_200ms": 0,
+      "escenario": "alternativas"
+    },
+    {
+      "id_cripta": "sintetica-bench",
+      "version": "sintetica-1",
+      "salas": 161,
+      "salidas": 480,
+      "llaves": 160,
+      "ubicaciones": 240,
+      "resoluble": false,
+      "grupos": 80,
+      "sondeos": 1959,
+      "texto_incluido": true,
+      "coinciden": true,
+      "muestras": [
+        {
+          "preparacion_ms": 6.4451,
+          "cierre_ms": 0.1943,
+          "resultado_ms": 0.0811,
+          "diagnostico_ms": 0.7346,
+          "texto_ms": 0.807,
+          "total_ms": 8.2621,
+          "referencia_cierre_ms": 0.0443,
+          "operaciones_incremental": 401,
+          "operaciones_referencia": 562
+        },
+        {
+          "preparacion_ms": 6.5971,
+          "cierre_ms": 0.0796,
+          "resultado_ms": 0.1544,
+          "diagnostico_ms": 0.6503,
+          "texto_ms": 0.7497,
+          "total_ms": 8.2311,
+          "referencia_cierre_ms": 0.0445,
+          "operaciones_incremental": 401,
+          "operaciones_referencia": 562
+        },
+        {
+          "preparacion_ms": 6.1196,
+          "cierre_ms": 0.075,
+          "resultado_ms": 0.1183,
+          "diagnostico_ms": 0.6657,
+          "texto_ms": 0.8599,
+          "total_ms": 7.8385,
+          "referencia_cierre_ms": 0.0457,
+          "operaciones_incremental": 401,
+          "operaciones_referencia": 562
+        }
+      ],
+      "maximo_ms": 8.2621,
+      "minimo_ms": 7.8385,
+      "excedidos_200ms": 0,
+      "escenario": "alternativas"
+    },
+    {
+      "id_cripta": "sintetica-bench",
+      "version": "sintetica-1",
+      "salas": 641,
+      "salidas": 1920,
+      "llaves": 640,
+      "ubicaciones": 960,
+      "resoluble": false,
+      "grupos": 320,
+      "sondeos": 8822,
+      "texto_incluido": true,
+      "coinciden": true,
+      "muestras": [
+        {
+          "preparacion_ms": 27.7433,
+          "cierre_ms": 0.2914,
+          "resultado_ms": 0.4505,
+          "diagnostico_ms": 2.9252,
+          "texto_ms": 3.2868,
+          "total_ms": 34.6972,
+          "referencia_cierre_ms": 0.1727,
+          "operaciones_incremental": 1601,
+          "operaciones_referencia": 2242
+        },
+        {
+          "preparacion_ms": 28.0695,
+          "cierre_ms": 0.2924,
+          "resultado_ms": 0.7653,
+          "diagnostico_ms": 2.8543,
+          "texto_ms": 3.0196,
+          "total_ms": 35.0011,
+          "referencia_cierre_ms": 0.1834,
+          "operaciones_incremental": 1601,
+          "operaciones_referencia": 2242
+        },
+        {
+          "preparacion_ms": 28.1785,
+          "cierre_ms": 0.2836,
+          "resultado_ms": 0.7986,
+          "diagnostico_ms": 3.655,
+          "texto_ms": 5.2411,
+          "total_ms": 38.1568,
+          "referencia_cierre_ms": 0.2846,
+          "operaciones_incremental": 1601,
+          "operaciones_referencia": 2242
+        }
+      ],
+      "maximo_ms": 38.1568,
+      "minimo_ms": 34.6972,
+      "excedidos_200ms": 0,
+      "escenario": "alternativas"
+    }
+  ],
+  "nota": "Referencia compara cierre/veredicto; no genera certificados. El total incremental incluye preparaci\u00f3n y diagn\u00f3stico, y texto si se indica.",
+  "oficial": {
+    "id_cripta": "cripta-06",
+    "version": "f9ed9afa683d",
+    "salas": 300,
+    "salidas": 760,
+    "llaves": 4,
+    "ubicaciones": 4,
+    "resoluble": true,
+    "grupos": 0,
+    "sondeos": 1520,
+    "texto_incluido": true,
+    "coinciden": true,
+    "muestras": [
+      {
+        "preparacion_ms": 4.493,
+        "cierre_ms": 0.1897,
+        "resultado_ms": 0.0828,
+        "diagnostico_ms": 0.0003,
+        "texto_ms": 0.0092,
+        "total_ms": 4.775,
+        "referencia_cierre_ms": 0.4795,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.2446,
+        "cierre_ms": 0.1769,
+        "resultado_ms": 0.1415,
+        "diagnostico_ms": 0.0004,
+        "texto_ms": 0.0079,
+        "total_ms": 4.5713,
+        "referencia_cierre_ms": 0.4855,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.0688,
+        "cierre_ms": 0.2083,
+        "resultado_ms": 0.1639,
+        "diagnostico_ms": 0.0003,
+        "texto_ms": 0.0062,
+        "total_ms": 4.4475,
+        "referencia_cierre_ms": 0.4843,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.9165,
+        "cierre_ms": 0.2054,
+        "resultado_ms": 0.2604,
+        "diagnostico_ms": 0.0005,
+        "texto_ms": 0.0101,
+        "total_ms": 5.3929,
+        "referencia_cierre_ms": 0.8236,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 3.9709,
+        "cierre_ms": 0.1911,
+        "resultado_ms": 0.2794,
+        "diagnostico_ms": 0.0005,
+        "texto_ms": 0.0073,
+        "total_ms": 4.4492,
+        "referencia_cierre_ms": 0.7758,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 3.9811,
+        "cierre_ms": 0.2378,
+        "resultado_ms": 0.2244,
+        "diagnostico_ms": 0.0003,
+        "texto_ms": 0.0068,
+        "total_ms": 4.4504,
+        "referencia_cierre_ms": 0.6804,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.0242,
+        "cierre_ms": 0.1705,
+        "resultado_ms": 0.1476,
+        "diagnostico_ms": 0.0002,
+        "texto_ms": 0.0054,
+        "total_ms": 4.3479,
+        "referencia_cierre_ms": 0.5851,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.3692,
+        "cierre_ms": 0.1783,
+        "resultado_ms": 0.143,
+        "diagnostico_ms": 0.0002,
+        "texto_ms": 0.0053,
+        "total_ms": 4.696,
+        "referencia_cierre_ms": 0.4929,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 3.9774,
+        "cierre_ms": 0.171,
+        "resultado_ms": 0.1274,
+        "diagnostico_ms": 0.0002,
+        "texto_ms": 0.005,
+        "total_ms": 4.281,
+        "referencia_cierre_ms": 0.6013,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.3078,
+        "cierre_ms": 0.2371,
+        "resultado_ms": 0.1645,
+        "diagnostico_ms": 0.0002,
+        "texto_ms": 0.0072,
+        "total_ms": 4.7168,
+        "referencia_cierre_ms": 0.4906,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.2067,
+        "cierre_ms": 0.2483,
+        "resultado_ms": 0.1649,
+        "diagnostico_ms": 0.0002,
+        "texto_ms": 0.0063,
+        "total_ms": 4.6264,
+        "referencia_cierre_ms": 0.5355,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 3.8749,
+        "cierre_ms": 0.16,
+        "resultado_ms": 0.1361,
+        "diagnostico_ms": 0.0002,
+        "texto_ms": 0.0045,
+        "total_ms": 4.1757,
+        "referencia_cierre_ms": 0.4874,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 7.2071,
+        "cierre_ms": 0.1907,
+        "resultado_ms": 0.1836,
+        "diagnostico_ms": 0.0002,
+        "texto_ms": 0.0072,
+        "total_ms": 7.5888,
+        "referencia_cierre_ms": 0.4991,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.7167,
+        "cierre_ms": 0.204,
+        "resultado_ms": 0.1918,
+        "diagnostico_ms": 0.0003,
+        "texto_ms": 0.0079,
+        "total_ms": 5.1207,
+        "referencia_cierre_ms": 0.4945,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.3062,
+        "cierre_ms": 0.2143,
+        "resultado_ms": 0.4113,
+        "diagnostico_ms": 0.0005,
+        "texto_ms": 0.0096,
+        "total_ms": 4.9419,
+        "referencia_cierre_ms": 0.5465,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.4771,
+        "cierre_ms": 0.2437,
+        "resultado_ms": 0.1661,
+        "diagnostico_ms": 0.0001,
+        "texto_ms": 0.0059,
+        "total_ms": 4.8929,
+        "referencia_cierre_ms": 0.6936,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.1897,
+        "cierre_ms": 0.1664,
+        "resultado_ms": 0.2135,
+        "diagnostico_ms": 0.0003,
+        "texto_ms": 0.0063,
+        "total_ms": 4.5762,
+        "referencia_cierre_ms": 0.5912,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.3276,
+        "cierre_ms": 0.1865,
+        "resultado_ms": 0.2347,
+        "diagnostico_ms": 0.0003,
+        "texto_ms": 0.0068,
+        "total_ms": 4.7559,
+        "referencia_cierre_ms": 0.5382,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.6339,
+        "cierre_ms": 0.1843,
+        "resultado_ms": 0.1804,
+        "diagnostico_ms": 0.0001,
+        "texto_ms": 0.0069,
+        "total_ms": 5.0056,
+        "referencia_cierre_ms": 0.5329,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.5966,
+        "cierre_ms": 0.4159,
+        "resultado_ms": 0.2069,
+        "diagnostico_ms": 0.0003,
+        "texto_ms": 0.0132,
+        "total_ms": 5.2329,
+        "referencia_cierre_ms": 0.538,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 5.1905,
+        "cierre_ms": 0.2883,
+        "resultado_ms": 0.2836,
+        "diagnostico_ms": 0.0005,
+        "texto_ms": 0.01,
+        "total_ms": 5.7729,
+        "referencia_cierre_ms": 0.7803,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.6947,
+        "cierre_ms": 0.1931,
+        "resultado_ms": 0.2174,
+        "diagnostico_ms": 0.0003,
+        "texto_ms": 0.0069,
+        "total_ms": 5.1124,
+        "referencia_cierre_ms": 0.4867,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.4166,
+        "cierre_ms": 0.1878,
+        "resultado_ms": 0.1984,
+        "diagnostico_ms": 0.0004,
+        "texto_ms": 0.0105,
+        "total_ms": 4.8137,
+        "referencia_cierre_ms": 0.5685,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.2265,
+        "cierre_ms": 0.2019,
+        "resultado_ms": 0.1641,
+        "diagnostico_ms": 0.0004,
+        "texto_ms": 0.0074,
+        "total_ms": 4.6003,
+        "referencia_cierre_ms": 0.5704,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      },
+      {
+        "preparacion_ms": 4.2553,
+        "cierre_ms": 0.3268,
+        "resultado_ms": 0.2751,
+        "diagnostico_ms": 0.0004,
+        "texto_ms": 0.0066,
+        "total_ms": 4.8642,
+        "referencia_cierre_ms": 0.542,
+        "operaciones_incremental": 1069,
+        "operaciones_referencia": 5225
+      }
+    ],
+    "maximo_ms": 7.5888,
+    "minimo_ms": 4.1757,
+    "excedidos_200ms": 0,
+    "catalogo": [
+      {
+        "id": "cripta-02",
+        "nombre": "Catacumbas menores",
+        "salas": 20,
+        "dificultad": 2
+      },
+      {
+        "id": "cripta-03",
+        "nombre": "Catacumbas medias",
+        "salas": 40,
+        "dificultad": 3
+      },
+      {
+        "id": "cripta-04",
+        "nombre": "Catacumbas profundas",
+        "salas": 50,
+        "dificultad": 4
+      },
+      {
+        "id": "cripta-05",
+        "nombre": "Cripta sellada",
+        "salas": 24,
+        "dificultad": 3
+      },
+      {
+        "id": "cripta-06",
+        "nombre": "Cripta de referencia",
+        "salas": 300,
+        "dificultad": 5
+      }
+    ],
+    "solicitudes": 10,
+    "presupuesto": 63,
+    "contenido_descargado": false,
+    "catalogo_entidades_descargado": false,
+    "entorno": {
+      "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+      "plataforma": "Windows-11-10.0.26300-SP0",
+      "procesador": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+      "fuentes": [
+        {
+          "ruta": "modelo/verificacion.py",
+          "sha256": "ff03e490c89d38739afc5bda7c6533fca0e30af13d00d130567e035342a6815d"
+        },
+        {
+          "ruta": "modelo/indice_llaves.py",
+          "sha256": "386f59a1ba652ad2722d7004c39ad4b4206dd84820e6020873f0d4b2b4724913"
+        },
+        {
+          "ruta": "modelo/conocimiento.py",
+          "sha256": "4910810dd3db3128f7cffb6bba6e6a9119d4089be8e2b871a87807d240aaa118"
+        },
+        {
+          "ruta": "modelo/tabla_hash.py",
+          "sha256": "c7243a98a407cd0e8ab586f45ba7bbb100806cb6a9fb8ca0b4e9aa362d8ae20a"
+        },
+        {
+          "ruta": "modelo/bench_resolubilidad.py",
+          "sha256": "ad1e906470d6a0ca296e21a2d212e024481b3d50d40ac147a78dd1337083d41c"
+        },
+        {
+          "ruta": "modelo/bench_modelo.py",
+          "sha256": "c134a1cf4db5eda652033d5c07dc9e66f16d8b926ff875ae597c3fe676b39eb8"
+        },
+        {
+          "ruta": "adaptadores/servicio_cripta.py",
+          "sha256": "4666b6a1506a3d4f849c6a01457d27746f0a20a1cb27f702878e6860fce03283"
+        },
+        {
+          "ruta": "adaptadores/cliente_http.py",
+          "sha256": "ef4f5f4e86db9bca3bfcc5afff2287902d21a340cb129491f7933b2e703279cc"
+        },
+        {
+          "ruta": "adaptadores/modo_offline.py",
+          "sha256": "7f88baba603036cd3e94adc56d4d22471c9942d06d562408d702b9e0b99422d5"
+        },
+        {
+          "ruta": "controlador/cargar_partida.py",
+          "sha256": "2343310c0a73b9fa7ee3b867c714ad17872692b327ed681943d914913a1fa1d5"
+        },
+        {
+          "ruta": "main.py",
+          "sha256": "513f8c6c95e3435d265e538cbe4158c57b1a0b890c629d6810f5e90f301d2408"
+        }
+      ]
+    }
+  },
+  "cli_negativa": {
+    "codigo": 1,
+    "salida": "Cripta cripta-05 (48bfa3b75055): no resoluble.\nLlave no obtenible itm_llave_negra: 23.\nLlave no obtenible itm_llave_hierro: 24.\nFrontera puerta 8: 7 E \u2192 22; itm_llave_hierro.\nFrontera puerta 15: 12 E \u2192 24; itm_llave_negra.\nFrontera puerta 22: 19 N \u2192 20; itm_llave_negra.\nGrupo circular 0: itm_llave_negra, sala 24, itm_llave_hierro, sala 22, sala 23\nCiclo concreto de reglas: itm_llave_negra \u2192 sala 23 \u2192 sala 22 \u2192 itm_llave_hierro \u2192 sala 24 \u2192 itm_llave_negra\nAlternativa: sala 22 requiere itm_llave_hierro; puerta 8, desde sala 7 por E.\nAlternativa: sala 22 requiere sala 23; puerta 25, desde sala 23 por O.\nAlternativa: sala 23 requiere sala 22; puerta 25, desde sala 22 por N.\nAlternativa: sala 24 requiere itm_llave_negra; puerta 15, desde sala 12 por E.\nAlternativa: itm_llave_negra requiere sala 23; ubicaci\u00f3n en sala 23.\nAlternativa: itm_llave_hierro requiere sala 24; ubicaci\u00f3n en sala 24.\nSolicitudes: 4/25.\n"
+  }
+}

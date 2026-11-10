@@ -2,8 +2,7 @@
 
 **Rama Git**: `main` (actual; no se crea otra rama).
 **Creación**: 2026-11-09.
-**Estado**: Aclaraciones e interpretaciones del equipo completadas; diseño en plan.md,
-sin implementación.
+**Estado**: Implementada y verificada; trazabilidad y evidencia en tasks.md.
 **Entrada del usuario**: «Continuemos», después de confirmar resolubilidad como
 siguiente capacidad.
 
@@ -292,7 +291,7 @@ y fallos de obtención; comprobar solicitudes y resultado informado.
 
 - **SC-RS-001**: Los 20 escenarios tienen prueba automatizada o registro
   reproducible que cite los requisitos atendidos, incluidos los cuatro casos de
-  resolubilidad del apéndice B. La evidencia de ejecución está pendiente.
+  resolubilidad del apéndice B. La evidencia de ejecución está referenciada en tasks.md.
 - **SC-RS-002**: En todos los escenarios válidos, el veredicto y el orden/reportes
   cumplen los supuestos y la condición completa de victoria, y se repiten iguales
   con los mismos datos.

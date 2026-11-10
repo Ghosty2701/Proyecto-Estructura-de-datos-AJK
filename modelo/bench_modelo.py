@@ -303,6 +303,8 @@ def ejecutar_bench_completo(repeticiones=5, semilla=2026, tope_cache=25):
     resultado = medir_terreno_cazadores(repeticiones=repeticiones, semilla=semilla)
     from modelo.bench_conocimiento import medir_conocimiento
     resultado['niebla'] = medir_conocimiento(repeticiones=repeticiones, semilla=semilla)
+    from modelo.bench_resolubilidad import medir_resolubilidad
+    resultado['resolubilidad'] = medir_resolubilidad(repeticiones, semilla)
     return resultado
 
 

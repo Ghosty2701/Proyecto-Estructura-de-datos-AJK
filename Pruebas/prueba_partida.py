@@ -102,6 +102,12 @@ def test_tabla_json_conserva_resultados_y_rechaza_archivo_invalido(tmp_path):
 def test_main_gana_muestra_resumen_y_guarda_identidad_en_json(tmp_path, monkeypatch):
     import json
     import main as aplicacion
+    from Pruebas.datos_resolubilidad import datos, conectar, ubicaciones, FuenteSintetica
+    general, salas = datos(2, llave='llave-1')
+    general['id'] = 'prueba'
+    conectar(salas, 1, 2, 'llave-1')
+    fuente = FuenteSintetica(general, salas, ubicaciones(('llave-1', 1)))
+    monkeypatch.setattr(aplicacion, 'ClienteHTTP', lambda **opciones: fuente)
 
     partida = preparar_partida(enemigo=True)
     partida.sala_salida = 2
@@ -113,7 +119,7 @@ def test_main_gana_muestra_resumen_y_guarda_identidad_en_json(tmp_path, monkeypa
     salida.puerta.llave = "llave-1"
     partida.inventario.recoger(SimpleNamespace(nombre="Llave", clase="llave", id="llave-1"))
     monkeypatch.setattr(aplicacion, "CargadorPartida", lambda servicio: SimpleNamespace(
-        crear=lambda cripta, semilla: partida,
+        crear=lambda cripta, semilla, **opciones: partida,
     ))
     comandos = iter(["abrir n", "w"])
     lineas = []
@@ -624,6 +630,9 @@ def paquete_oficial_de_prueba(tmp_path):
 
     escribir("criptas.json", {"criptas": [{"id": "prueba", "nombre": "Cripta de prueba", "salas": 2}]})
     escribir("catalogo_version.json", {"version": "cat-prueba"})
+    escribir('criptas/prueba/version.json', {'version': 'v1'})
+    # Esta fixture heredada no incluye llave de salida: jugarla exige --forzar.
+    escribir('criptas/prueba/llaves.json', {'llaves': []})
     escribir("criptas/prueba/general.json", {
         "id": "prueba", "version": "v1", "paginas": 1, "salas_total": 2,
         "sala_inicial": 1, "sala_salida": 2, "llave_salida": "llave",
@@ -772,7 +781,7 @@ def test_main_registra_y_reproduce_sin_vista_ni_puntaje_adicional(paquete_oficia
     ))
     ruta = tmp_path / "partida.log"
     puntajes = tmp_path / "puntajes.json"
-    assert aplicacion.main(["--cripta", "prueba", "--bitacora", str(ruta),
+    assert aplicacion.main(["--cripta", "prueba", "--forzar", "--bitacora", str(ruta),
                             "--puntajes", str(puntajes), "--cache-dir", str(tmp_path / "cache")]) == 0
     monkeypatch.setattr(aplicacion, "VistaConsola", lambda: pytest.fail("El replay no debe crear una vista"))
     assert aplicacion.main(["--replay", str(ruta), "--sin-interfaz", "--puntajes", str(puntajes),
@@ -911,7 +920,7 @@ def test_main_permite_guardar_con_bitacora_y_reanudar_en_otra_ejecucion(paquete_
     monkeypatch.setattr(aplicacion, "VistaConsola", lambda: VistaConsola(
         entrada=lambda _: next(comandos), salida=lineas.append,
     ))
-    assert aplicacion.main(["--cripta", "prueba", "--nombre", "Kendall", "--bitacora", str(log),
+    assert aplicacion.main(["--cripta", "prueba", "--forzar", "--nombre", "Kendall", "--bitacora", str(log),
                             "--archivo-guardado", str(ruta), "--cache-dir", str(tmp_path / "cache")]) == 0
     assert ruta.exists()
     assert any("No puedes cargar mientras registras una bitacora" in linea for linea in lineas)
@@ -1211,7 +1220,7 @@ def test_main_lista_y_juega_con_componentes_reales(paquete_oficial_de_prueba, tm
     monkeypatch.setattr(aplicacion, "VistaConsola", lambda: VistaConsola(
         entrada=lambda _: next(comandos), salida=salida.append,
     ))
-    assert aplicacion.main(["--cripta", "prueba", "--cache-dir", str(tmp_path / "cache")]) == 0
+    assert aplicacion.main(["--cripta", "prueba", "--forzar", "--cache-dir", str(tmp_path / "cache")]) == 0
     assert any("reloj: 400" in linea for linea in salida)
     assert any("Derrotaste" in linea for linea in salida)
 
@@ -1230,7 +1239,7 @@ def test_main_offline_lista_juega_y_reproduce_sin_crear_cliente_http(paquete_ofi
     ))
     ruta_log = str(tmp_path / "partida.log")
     cache = str(tmp_path / "cache")
-    assert aplicacion.main(["--offline", carpeta, "--cripta", "prueba",
+    assert aplicacion.main(["--offline", carpeta, "--cripta", "prueba", "--forzar",
                             "--cache-dir", cache, "--bitacora", ruta_log]) == 0
     assert any("Solicitudes de red: 0/10" in linea for linea in lineas)
     assert any("reloj: 125" in linea for linea in lineas)

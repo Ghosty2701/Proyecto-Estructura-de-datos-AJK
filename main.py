@@ -16,6 +16,50 @@ from adaptadores.bitacora_partida import (
 from controlador.cargar_partida import CargadorPartida, ErrorDatosPartida
 from controlador.controlador import Controlador, ejecutar_accion_replay
 from vista.vista_consola import VistaConsola
+from modelo.verificacion import verificar
+
+
+def informe_verificacion(resultado):
+    """Presentación textual sin instanciar la vista; tablas sin duplicar ubicaciones."""
+    mapa = resultado.mapa
+    lineas = [f'Cripta {mapa.id_cripta} ({mapa.version}): ' +
+              ('resoluble.' if resultado.resoluble else 'no resoluble.')]
+    if resultado.resoluble:
+        lineas.append('Orden de llaves: ' + ', '.join(mapa.llaves[k].id for k in resultado.cierre.orden))
+    else:
+        for k in resultado.no_obtenibles:
+            llave = mapa.llaves[k]
+            lugares = ', '.join(str(mapa.salas[u.sala].sala_id) +
+                                (f' (enemigo {u.enemigo})' if u.enemigo else '')
+                                for u in llave.ubicaciones)
+            lineas.append(f'Llave no obtenible {llave.id}: {lugares or "sin ubicación"}.')
+        for p in resultado.frontera:
+            salida = next(s for s in mapa.puertas[p] if resultado.cierre.salas[s.origen])
+            llave = mapa.llaves[salida.llave].id if salida.llave >= 0 else 'sin llave'
+            lineas.append(f'Frontera puerta {p}: {mapa.salas[salida.origen].sala_id} '
+                          f'{salida.direccion} → {mapa.salas[salida.destino].sala_id}; {llave}.')
+        def nodo(v):
+            return ('sala ' + str(mapa.salas[v].sala_id) if v < len(mapa.salas)
+                    else mapa.llaves[v - len(mapa.salas)].id)
+        def procedencia_texto(causa):
+            if causa[0] == 'puerta':
+                return (f'puerta {causa[1]}, desde sala '
+                        f'{mapa.salas[causa[2]].sala_id} por {causa[3]}')
+            if causa[0] == 'ubicacion':
+                return ('ubicación en sala ' + str(mapa.salas[causa[2]].sala_id)
+                        + (f', enemigo {causa[3]}' if causa[3] else ''))
+            return 'sin ubicación físicamente accesible desde el inicio'
+        for i, certificado in enumerate(resultado.certificados):
+            lineas.append(f'Grupo circular {i}: ' + ', '.join(nodo(v) for v in certificado.nodos))
+            lineas.append('Ciclo concreto de reglas: ' + ' → '.join(nodo(v) for v in certificado.ciclo))
+            for a, b, procedencia in certificado.reglas:
+                lineas.append(f'Alternativa: {nodo(a)} requiere {nodo(b)}; '
+                              f'{procedencia_texto(procedencia)}.')
+        for nodo_id, causa in resultado.estructurales:
+            lineas.append(f'Imposibilidad estructural: {nodo(nodo_id)}; {procedencia_texto(causa)}.')
+    for sala_id, direccion, aviso in mapa.avisos:
+        lineas.append(f'Aviso sala {sala_id} {direccion}: {aviso}.')
+    return '\n'.join(lineas)
 
 
 def _entero_positivo(texto):
@@ -42,6 +86,8 @@ def main(argumentos=None):
     parser.add_argument("--bench", action="store_true", help="medir subsistemas y, con --cripta, ciclos reales")
     parser.add_argument("--repeticiones", type=_entero_positivo, default=5, help="repeticiones del benchmark")
     seleccion.add_argument("--cripta", help="ID de la cripta que se jugara")
+    seleccion.add_argument('--verificar', metavar='CRIPTA', help='verificar resolubilidad sin vista ni partida')
+    parser.add_argument('--forzar', action='store_true', help='iniciar una cripta no resoluble explícitamente')
     seleccion.add_argument("--cargar", metavar="ARCHIVO", help="reanudar una partida binaria sin grabar bitacora")
     parser.add_argument("--archivo-guardado", help="ruta usada por los comandos guardar y cargar")
     seleccion.add_argument("--replay", help="reproducir una bitacora sin interfaz ni interaccion")
@@ -55,10 +101,12 @@ def main(argumentos=None):
     parser.add_argument("--offline", nargs="?", const="datos_offline", metavar="CARPETA",
                         help="leer el paquete local sin HTTP; carpeta predeterminada: datos_offline")
     opciones = parser.parse_args(argumentos)
-    if not (opciones.listar or opciones.cripta or opciones.cargar or opciones.replay or opciones.bench or opciones.ver_puntajes):
+    if not (opciones.listar or opciones.cripta or opciones.cargar or opciones.replay or opciones.bench or opciones.ver_puntajes or opciones.verificar):
         parser.error("indica --listar, --cripta, --cargar, --replay, --bench o --ver-puntajes")
-    if opciones.bench and (opciones.listar or opciones.cargar or opciones.replay or opciones.bitacora or opciones.ver_puntajes):
+    if opciones.bench and (opciones.listar or opciones.cargar or opciones.replay or opciones.bitacora or opciones.ver_puntajes or opciones.verificar):
         parser.error("--bench solo se combina con --cripta para medir ciclos")
+    if opciones.forzar and (not opciones.cripta or opciones.bench):
+        parser.error('--forzar requiere --cripta en una partida nueva')
     if opciones.bitacora and not opciones.cripta:
         parser.error("--bitacora requiere --cripta")
     if opciones.sin_interfaz and not opciones.replay:
@@ -89,19 +137,45 @@ def main(argumentos=None):
             for cripta in fuente.listar_criptas()["criptas"]:
                 print(f"{cripta['id']}: {cripta['nombre']} ({cripta['salas']} salas)")
             return 0
+        if opciones.verificar:
+            servicio = ServicioCripta(fuente, None)
+            resultado = verificar(servicio.preparar_verificacion(opciones.verificar))
+            print(informe_verificacion(resultado))
+            print(f'Solicitudes: {fuente.solicitudes_realizadas}/{fuente.presupuesto_solicitudes}.')
+            return 0 if resultado.resoluble else 1
         cache = CacheCatalogo(fuente, carpeta=opciones.cache_dir, tope=opciones.cache_size)
         servicio = ServicioCripta(fuente, cache)
+        mapa = None
+        if opciones.cripta and not opciones.bench:
+            mapa = servicio.preparar_verificacion(opciones.cripta)
+            resultado = verificar(mapa)
+            print(informe_verificacion(resultado))
+            if not resultado.resoluble and not opciones.forzar:
+                print('La partida no inicia; usa --forzar para iniciar explícitamente.')
+                return 1
         cargador = CargadorPartida(servicio)
         if opciones.bench:
             from modelo.bench_modelo import medir_cripta_cargada
-            partida = cargador.crear(opciones.cripta, opciones.semilla)
+            from modelo.bench_resolubilidad import medir_entrada
+            mapa = servicio.preparar_verificacion(opciones.cripta)
+            _, generales, salas, _ = servicio._preparada
+            ubicaciones = {'llaves': [
+                {'id': llave.id, 'sala': mapa.salas[u.sala].sala_id, 'enemigo': u.enemigo}
+                for llave in mapa.llaves for u in llave.ubicaciones]}
+            resolubilidad = medir_entrada(generales, salas, ubicaciones,
+                                         opciones.repeticiones, informe_verificacion)
+            print(f"RESOLUBILIDAD OFICIAL: {mapa.id_cripta}; máximo "
+                  f"{resolubilidad['maximo_ms']:.4f} ms; "
+                  + ('CUMPLE <200 ms.' if not resolubilidad['excedidos_200ms'] else 'NO CUMPLE <200 ms.'))
+            partida = cargador.crear(opciones.cripta, opciones.semilla, datos_verificados=mapa)
             try:
                 resultado = medir_cripta_cargada(cargador, partida, opciones.repeticiones)
             except RuntimeError as error:
                 print(f"No se pudo medir el ciclo completo: {error}", file=sys.stderr)
                 return 1
             _resumen_red(fuente, cache)
-            return 0 if resultado["excedidos"] == 0 and resultado['niebla']['excedidos_5ms'] == 0 else 1
+            return 0 if (resultado["excedidos"] == 0 and resultado['niebla']['excedidos_5ms'] == 0
+                         and not resolubilidad['excedidos_200ms']) else 1
         if opciones.replay:
             encabezado, _ = leer_bitacora(opciones.replay)
             partida = cargador.crear(encabezado.id_cripta, encabezado.semilla, encabezado_log=encabezado)
@@ -118,7 +192,7 @@ def main(argumentos=None):
         if opciones.cargar:
             partida = cargador.reanudar(opciones.cargar)
         else:
-            partida = cargador.crear(opciones.cripta, opciones.semilla)
+            partida = cargador.crear(opciones.cripta, opciones.semilla, datos_verificados=mapa)
         if opciones.nombre is not None:
             partida.nombre_jugador = opciones.nombre.strip()
         if opciones.archivo_guardado is not None:
@@ -157,8 +231,8 @@ def main(argumentos=None):
                 return 1
             print(f"Resultado guardado en {opciones.puntajes}.")
     except (ErrorHTTP, PresupuestoAgotado, ErrorOffline, ErrorCatalogo, ErrorCripta, ErrorDatosPartida, ErrorBitacora, ErrorGuardado, OSError) as error:
-        print(f"No se pudo continuar la partida: {error}", file=sys.stderr)
-        return 1
+        print(f"Error: no se pudo continuar la partida o verificación: {error}", file=sys.stderr)
+        return 2 if opciones.verificar else 1
     except KeyboardInterrupt:
         print("\nPartida interrumpida.")
     return 0

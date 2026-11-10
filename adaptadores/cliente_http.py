@@ -47,6 +47,9 @@ class ClienteHTTP:
     def version_cripta(self, cripta_id):
         return self._get(f"version de {cripta_id}", f"/criptas/{cripta_id}/version")
 
+    def ubicacion_llaves(self, cripta_id):
+        return self._get(f"ubicacion de llaves de {cripta_id}", f"/criptas/{cripta_id}/llaves")
+
     def version_catalogo(self):
         return self._get("version del catalogo", "/catalogo/version")
 

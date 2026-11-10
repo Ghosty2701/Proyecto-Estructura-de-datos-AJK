@@ -16,6 +16,25 @@ class RespuestaFalsa:
         return self.cuerpo
 
 
+def test_rs_ac017_018_llaves_y_reintentos_cuentan(preparar):
+    """FR-RS-001/014: endpoint nuevo conserva cliente y presupuesto."""
+    llamadas, _ = preparar([RespuestaFalsa(429, {'reintentar_en': 0}),
+                            RespuestaFalsa(200, {'llaves': []})])
+    cliente = ClienteHTTP()
+    cliente.presupuesto_solicitudes = 2
+    assert cliente.ubicacion_llaves('nueva') == {'llaves': []}
+    assert llamadas[0][0].endswith('/criptas/nueva/llaves')
+    assert cliente.solicitudes_realizadas == 2
+    with pytest.raises(PresupuestoAgotado): cliente.ubicacion_llaves('nueva')
+    assert len(llamadas) == 2
+
+
+def test_rs_ac020_llaves_json_invalido_es_error(preparar):
+    """FR-RS-015: no convertir fallo JSON en no resoluble."""
+    preparar([RespuestaFalsa(200, ValueError('invalido'))])
+    with pytest.raises(ErrorHTTP): ClienteHTTP().ubicacion_llaves('nueva')
+
+
 @pytest.fixture
 def preparar(monkeypatch):
     def simular(respuestas):

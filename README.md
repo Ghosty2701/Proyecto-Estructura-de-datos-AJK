@@ -5,8 +5,9 @@ Proyecto de Estructuras de Datos II de Andrey, Juan y Kendall. Juego de consola 
 La primera capacidad de Parte II ya incluye terreno ponderado y cazadores: los movimientos
 usan el costo de la salida y los cazadores persiguen por costo mínimo dentro de su rango.
 La segunda capacidad incluye niebla de guerra, memoria de puertas, antorcha y viaje
-«ir a» por el mapa conocido, con retroceso, guardado y replay. Resolubilidad y línea
-de tiempo siguen pendientes.
+«ir a» por el mapa conocido, con retroceso, guardado y replay. La tercera capacidad
+verifica resolubilidad antes de iniciar, con consulta sin vista e informes de
+bloqueos/ciclos. La línea de tiempo sigue pendiente.
 
 Proceso SDD: **spec-kit 1.3.2**, agente **Codex**, configuración compartida en `.specify/`
 y habilidades en `.agents/skills/`. Los artefactos de la primera capacidad están en
@@ -15,10 +16,9 @@ y habilidades en `.agents/skills/`. Los artefactos de la primera capacidad está
 La especificación de resolubilidad está en
 [specs/003-verificar-resolubilidad](specs/003-verificar-resolubilidad/spec.md),
 con [planificación completada](specs/003-verificar-resolubilidad/plan.md) y
-[guía de validación prevista](specs/003-verificar-resolubilidad/quickstart.md).
+[guía de validación](specs/003-verificar-resolubilidad/quickstart.md).
 Las [tareas de resolubilidad](specs/003-verificar-resolubilidad/tasks.md) están
-definidas y pendientes de ejecución: `--verificar` y `--forzar` aún no están
-implementados.
+completadas: `--verificar` y `--forzar` están implementados y verificados.
 
 ## Instalación
 
@@ -35,11 +35,19 @@ En los comandos siguientes usa el Python de ese entorno, o sustituye `python` po
 
 ```powershell
 python main.py --listar
-python main.py --cripta cripta-01 --semilla 2026
+python main.py --cripta cripta-06 --semilla 2026
+python main.py --verificar cripta-06
+python main.py --cripta cripta-05 --forzar
 python main.py --help
 ```
 
-Elige un ID devuelto por `--listar`; `cripta-01` es un ejemplo cuya disponibilidad depende del servicio.
+Elige un ID devuelto por `--listar`; la disponibilidad y versiones dependen del
+servicio. En la validación de 2026-11-09, cripta-06 fue resoluble y cripta-05 no.
+`--verificar` no crea vista ni partida: devuelve 0 para resoluble, 1 para no
+resoluble y 2 para error. No se combina con otros modos ni `--forzar`.
+Un inicio normal imprime el informe y bloquea una cripta no resoluble;
+`--forzar` permite jugarla, sin cambiar las reglas ni saltar errores de datos.
+Cargar y replay mantienen sus validaciones sin repetir esta verificación.
 
 | Comando | Acción |
 | --- | --- |
@@ -92,7 +100,7 @@ python main.py --offline datos_offline --listar
 python main.py --offline datos_offline --cripta cripta-01
 ```
 
-El paquete oficial se proporciona aparte. Debe contener `criptas.json`, `catalogo_version.json`, fichas en `catalogo/ID.json` y, por cripta, `criptas/ID/general.json`, `version.json`, páginas `salas_N.json` y entradas `contenido/ID_SALA.json`. También puede combinarse con `--cargar`, `--replay` y `--bench`. La caché de fichas no sustituye ese paquete.
+El paquete oficial se proporciona aparte. Debe contener `criptas.json`, `catalogo_version.json`, fichas en `catalogo/ID.json` y, por cripta, `criptas/ID/general.json`, `version.json`, páginas `salas_N.json` y entradas `contenido/ID_SALA.json`. Verificar/iniciar requiere además `criptas/ID/llaves.json`, con la respuesta equivalente del servicio; no se infiere descargando contenido. También puede combinarse con `--cargar`, `--replay` y `--bench`. La caché de fichas no sustituye ese paquete.
 
 ## Pruebas y mediciones
 
@@ -150,6 +158,22 @@ Evidencia histórica de terreno, antes de niebla:
 [comparaciones sintéticas](documentacion/evidencia/mediciones_terreno_cazadores.json) y
 [referencia oficial](documentacion/evidencia/referencia_terreno_cazadores.json).
 Las mediciones anteriores de P1 permanecen en su documentación histórica.
+
+Resolubilidad: **556 pruebas** en la regresión completa. En la mayor cripta
+publicada al medir (cripta-06, 300 salas, versión `f9ed9afa683d`), 25 verificaciones
+locales dieron un máximo **7,5888 ms**, ninguna ≥200 ms, con **10/63 solicitudes**.
+Incluye preparación, cierre, diagnóstico cuando aplica y construcción del texto;
+excluye red e impresión/vista. No se descargó contenido ni catálogo de entidades.
+La consulta publicada de cripta-05 devolvió código 1 con grupo y ciclo concreto.
+Las cargas sintéticas incluyen cadenas, muchos grupos y alternativas; los
+contadores de cierre crecen linealmente y la cadena de 640 salas compara
+**2 557 operaciones** incrementales con **1 229 438** del cierre repetido.
+La referencia lenta solo mide cierre/veredicto, sin certificados; no se afirma
+que sea más rápida para toda carga ni se garantiza el tiempo en cualquier equipo.
+Evidencia: [pruebas](documentacion/evidencia/pruebas_resolubilidad.txt),
+[mediciones](documentacion/evidencia/mediciones_resolubilidad.json),
+[salidas de bench](documentacion/evidencia/bench_resolubilidad.txt) y
+[entrada oficial capturada](documentacion/evidencia/entrada_resolubilidad_oficial.json).
 
 ## Documentación
 

@@ -17,5 +17,8 @@ class FuenteDatos:
     def version_cripta(self, cripta_id):
         raise NotImplementedError
 
+    def ubicacion_llaves(self, cripta_id):
+        raise NotImplementedError
+
     def version_catalogo(self):
         raise NotImplementedError

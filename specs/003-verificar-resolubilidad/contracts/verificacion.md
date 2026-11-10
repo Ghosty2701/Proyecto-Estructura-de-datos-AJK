@@ -1,13 +1,13 @@
 # Contrato: Datos, consulta y comienzo de partida
 
-**Estado**: diseño previsto, todavía no implementado.
+**Estado**: contrato implementado y verificado; evidencia en [tasks.md](../tasks.md).
 Fuentes: [spec.md](../spec.md), [modelo de datos](../data-model.md) y
 [evidencia OpenAPI](../../../documentacion/evidencia/contrato_resolubilidad_openapi_2026-11-09.json).
 No se modifica el servicio remoto.
 
 ## Fuente de ubicaciones
 
-Operación local prevista: `ubicacion_llaves(cripta_id)` en FuenteDatos,
+Operación local: `ubicacion_llaves(cripta_id)` en FuenteDatos,
 ClienteHTTP y ModoOffline. HTTP: `GET /v1/criptas/{cripta_id}/llaves`, usando
 el `_get` existente, con su presupuesto, reintentos y tratamiento de errores.
 
@@ -47,7 +47,7 @@ distintas ni rechazar automáticamente una cripta válida.
 
 ## CLI
 
-| Orden | Comportamiento previsto |
+| Orden | Comportamiento implementado |
 | --- | --- |
 | `--verificar ID` | Solo prepara, verifica e imprime; sin VistaConsola, CargadorPartida interactivo, motor o simulación. |
 | `--verificar ID --offline CARPETA` | Consulta equivalente sin HTTP. |

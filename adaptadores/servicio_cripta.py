@@ -18,16 +18,52 @@ class ServicioCripta:
         self.motivo_agrupacion = None
         self.salas_al_ampliar = None
         self.lotes_contenido = 0
+        self._preparada = None
 
-    def cargar(self, cripta_id):
-        datos = self.fuente.datos_cripta(cripta_id)
+    def preparar_verificacion(self, cripta_id):
+        """FR-RS-001/014/015: una carga, sin catálogo ni contenido de salas."""
+        from modelo.verificacion import normalizar
+        self._preparada = None
+        try:
+            datos = self.fuente.datos_cripta(cripta_id)
+            if datos.get('id', cripta_id) != cripta_id:
+                raise ErrorCripta('Identidad de cripta incompatible')
+            paginas = datos['paginas']
+            if type(paginas) is not int or paginas < 1:
+                raise ErrorCripta('Cantidad de páginas inválida')
+            presupuesto = datos['presupuesto_solicitudes']
+            if type(presupuesto) is not int or presupuesto < 1:
+                raise ErrorCripta('Presupuesto inválido')
+            salas = []
+            for pagina in range(1, paginas + 1):
+                salas.extend(self.fuente.pagina_esqueleto(cripta_id, pagina)['salas'])
+            llaves = self.fuente.ubicacion_llaves(cripta_id)
+            mapa = normalizar(datos, salas, llaves)
+            version = self.fuente.version_cripta(cripta_id)
+            if (version['version'] != datos['version'] or
+                    version.get('id', cripta_id) != cripta_id):
+                raise ErrorCripta('La versión/identidad de la cripta cambió durante la carga')
+        except (KeyError, TypeError, ValueError, AttributeError) as error:
+            raise ErrorCripta(f'Datos de verificación incompatibles: {error}') from error
+        self._preparada = (cripta_id, datos, salas, mapa)
+        return mapa
+
+    def cargar(self, cripta_id, *, usar_preparada=False):
+        if usar_preparada:
+            if self._preparada is None or self._preparada[0] != cripta_id:
+                raise ErrorCripta('No hay datos verificados para esta cripta')
+            _, datos, salas, _ = self._preparada
+        else:
+            self._preparada = None
+            datos = self.fuente.datos_cripta(cripta_id)
+            salas = []
+            for pagina in range(1, datos["paginas"] + 1):
+                salas.extend(self.fuente.pagina_esqueleto(cripta_id, pagina)["salas"])
         # Publicar la nueva cripta solo cuando todas sus paginas esten completas.
         # Se mantiene la estructura AVL; los datos de otra carga no se reutilizan.
         esqueleto = ArbolAVL()
-        for pagina in range(1, datos["paginas"] + 1):
-            respuesta = self.fuente.pagina_esqueleto(cripta_id, pagina)
-            for sala in respuesta["salas"]:
-                esqueleto.insertar(sala["id"], sala)
+        for sala in salas:
+            esqueleto.insertar(sala["id"], sala)
         self.cripta_id = cripta_id
         self.esqueleto = esqueleto
         self.contenido = ArbolAVL()

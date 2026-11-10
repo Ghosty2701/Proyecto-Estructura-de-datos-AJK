@@ -36,6 +36,33 @@ FICHAS = {
 }
 
 
+def test_rs_ac017_018_carga_reutilizada_sin_contenido():
+    """FR-RS-001/014: cargar partida no repite datos ya verificados."""
+    from Pruebas.datos_resolubilidad import datos, conectar, ubicaciones, FuenteSintetica
+    general, salas = datos(2)
+    conectar(salas, 1, 2, 'K')
+    fuente = FuenteSintetica(general, salas, ubicaciones(('K', 1)))
+    servicio = ServicioCripta(fuente, None)
+    mapa = servicio.preparar_verificacion('sintetica')
+    assert mapa.version == 'v1' and servicio.esqueleto.cantidad == 0
+    assert servicio.cargar('sintetica', usar_preparada=True)['version'] == 'v1'
+    assert fuente.llamadas == ['generales', 'pagina', 'llaves', 'version']
+
+
+def test_rs_ac019_020_version_y_referencias_invalidas():
+    """FR-RS-014/015: datos viejos/invalidos nunca son veredicto."""
+    from Pruebas.datos_resolubilidad import datos, ubicaciones, FuenteSintetica
+    general, salas = datos(2)
+    fuente = FuenteSintetica(general, salas, ubicaciones(('K', 1)))
+    fuente.version = 'v2'
+    servicio = ServicioCripta(fuente, None)
+    with pytest.raises(ErrorCripta, match='versi'): servicio.preparar_verificacion('sintetica')
+    with pytest.raises(ErrorCripta): servicio.cargar('sintetica', usar_preparada=True)
+    fuente.version = 'v1'
+    fuente.llaves = ubicaciones(('K', 777))
+    with pytest.raises(ErrorCripta): servicio.preparar_verificacion('sintetica')
+
+
 class FuenteFalsa:
     def __init__(self, contenidos=CONTENIDOS):
         self.contenidos = contenidos

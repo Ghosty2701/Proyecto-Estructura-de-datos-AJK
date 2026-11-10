@@ -20,6 +20,7 @@ from modelo.inventario_reversible import InventarioReversible, CambioInventario
 from modelo.motor_eventos import ActorTurnos, MotorEventos
 from modelo.rastro import Puerta, SalaRastro, SalidaRastro
 from modelo.conocimiento import ConocimientoMapa
+from modelo.verificacion import agrupar_puertas
 
 
 class ErrorDatosPartida(Exception):
@@ -86,11 +87,17 @@ class CargadorPartida:
         self._ids_preparando = []
         self.servicio.cache.esta_en_uso = self.ficha_en_uso
 
-    def crear(self, cripta_id, semilla, *, encabezado_log=None):
+    def crear(self, cripta_id, semilla, *, encabezado_log=None, datos_verificados=None):
         if self.jugador is not None:
             raise ErrorDatosPartida("Usa un cargador nuevo para iniciar otra partida.")
         try:
-            datos = self.servicio.cargar(cripta_id)
+            if datos_verificados is not None:
+                if (self.servicio._preparada is None or
+                        self.servicio._preparada[3] is not datos_verificados):
+                    raise ErrorDatosPartida('La carga verificada no corresponde al servicio')
+                datos = self.servicio.cargar(cripta_id, usar_preparada=True)
+            else:
+                datos = self.servicio.cargar(cripta_id)
             if encabezado_log is not None:
                 # Valida versiones antes de construir entidades o ejecutar acciones.
                 self.servicio.cache.obtener_varias(())
@@ -290,23 +297,22 @@ class CargadorPartida:
                     abierta=not conexion.get("cerrada", False), llave=conexion.get("llave"),
                     cierre_automatico=conexion.get("cierre_automatico"),
                 )
-                salida = SalidaRastro(destino, puerta=puerta, costo=conexion.get("costo", 100))
+                costo = conexion.get('costo')
+                salida = SalidaRastro(destino, puerta=puerta, costo=100 if costo is None else costo)
                 salida.direccion = direccion
                 sala.salidas.append(salida)
 
-        # Una puerta fisica comparte estado en ambos sentidos, tambien al deshacer.
-        # Cada sala tiene pocas salidas: no se recorre el mapa por cada conexion.
-        for sala in _recorrer_arbol(self.salas.raiz):
-            for salida in sala.salidas:
-                for inversa in salida.destino.salidas:
-                    if inversa.destino is sala:
-                        if inversa.costo != salida.costo:
-                            raise ErrorDatosPartida("Costos distintos en los sentidos de una salida.")
-                        if (inversa.abierta != salida.abierta or
-                                inversa.puerta.llave != salida.puerta.llave or
-                                inversa.puerta.cierre_automatico != salida.puerta.cierre_automatico):
-                            raise ErrorDatosPartida("Puerta incoherente en sus dos sentidos.")
-                        inversa.puerta = salida.puerta
+        try:
+            grupos, _ = agrupar_puertas(
+                list(_recorrer_arbol(self.salas.raiz)), lambda salida: salida.destino,
+                lambda salida: (not salida.abierta, salida.puerta.llave,
+                                salida.puerta.cierre_automatico))
+        except ValueError as error:
+            raise ErrorDatosPartida(str(error)) from error
+        for grupo in grupos:
+            puerta = grupo[0].puerta
+            for salida in grupo:
+                salida.puerta = puerta
 
     def preparar_sala(self, sala):
         if sala.contenido_cargado:

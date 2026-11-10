@@ -45,6 +45,9 @@ class ModoOffline(FuenteDatos):
     def version_catalogo(self):
         return self._leer("version del catalogo", "catalogo_version.json")
 
+    def ubicacion_llaves(self, cripta_id):
+        return self._leer(f"ubicacion de llaves de {cripta_id}", "criptas", cripta_id, "llaves.json")
+
     def _leer(self, operacion, *partes):
         ruta = os.path.join(self.carpeta, *partes)
         try:
@@ -52,3 +55,5 @@ class ModoOffline(FuenteDatos):
                 return json.load(archivo)
         except FileNotFoundError as error:
             raise ErrorOffline(f"{operacion}: no existe {ruta}") from error
+        except (json.JSONDecodeError, UnicodeError) as error:
+            raise ErrorOffline(f"{operacion}: JSON invalido en {ruta}") from error

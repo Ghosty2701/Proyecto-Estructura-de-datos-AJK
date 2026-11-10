@@ -1,7 +1,7 @@
 # Guía de validación: Resolubilidad
 
-**Estado**: guía para la implementación futura. Los comandos --verificar y
---forzar todavía no existen en main.py; no se presentan como pruebas aprobadas.
+**Estado**: guía de la implementación verificada. --verificar y --forzar están
+disponibles; 556 pruebas de regresión aprobadas. Evidencia enlazada al final.
 Instalación del entorno y dependencias: [README](../../README.md).
 Contrato de resultados: [verificacion.md](contracts/verificacion.md).
 
@@ -13,7 +13,7 @@ versión y `criptas/ID/llaves.json`; para iniciar, añadir contenido y catálogo
 según el paquete offline existente. Elegir IDs del paquete o catálogo vigente;
 ningún ID de ejemplo demuestra el resultado de una cripta oficial.
 
-## Consultas previstas después de implementar
+## Consultas disponibles
 
 ```powershell
 python main.py --verificar ID --offline CARPETA
@@ -35,7 +35,7 @@ Esperado: error de uso sin red, creación de vista o inicio de otro modo.
 Comprobar cargar/replay con los comandos existentes: sin nueva verificación
 automática ni solicitud de ubicaciones de llaves.
 
-## Aceptación y regresión previstas
+## Aceptación y regresión verificadas
 
 | Casos | Evidencia que se debe obtener |
 | --- | --- |
@@ -54,8 +54,8 @@ llaves para impedir que se confundan con ciclos de desbloqueo. Sustituir la vist
 por un constructor que falle si se instancia en la consulta. Comparar con cierre
 repetido de referencia en casos pequeños deterministas. Cada prueba cita FR/AC.
 
-Los nombres de archivos nuevos están definidos en [tasks.md](tasks.md), aún
-pendientes de creación/ejecución. Ejecución general al existir código y pruebas:
+Los archivos y funciones ejecutados están referenciados en [tasks.md](tasks.md).
+Ejecución general:
 
 ```powershell
 python -m pytest -q
@@ -65,14 +65,14 @@ Revisar partidas, niebla, viajes, terreno/cazadores, guardado/replay y presupues
 afectados por carga/normalización. No dar por verificada una tarea solo por crear
 su archivo de prueba.
 
-## Mediciones previstas
+## Mediciones ejecutadas
 
 ```powershell
 python main.py --bench
 python main.py --bench --cripta ID
 ```
 
-La integración futura conserva opciones vigentes de repeticiones/semilla. Medir
+La integración conserva opciones vigentes de repeticiones/semilla. Medir
 incremental frente a recorridos repetidos en cadenas crecientes, muchos grupos,
 alternativas y varias ubicaciones. Registrar preparación, cierre, diagnóstico,
 presentación y total local; inicialización una vez, sin ocultar coste por llave
@@ -81,4 +81,17 @@ o componente. Excluir red y renderizado, no normalización ni índices.
 Para PR-RS-001 identificar la mayor cripta publicada en ese momento, sus versiones
 y solicitudes. Registrar equipo, Python, repeticiones, semilla y huellas de
 código. Criterio <200 ms; documentar cualquier incumplimiento. Las cifras de
-terreno/niebla no sustituyen esta medición. Ninguna cifra se obtuvo en esta fase.
+terreno/niebla no sustituyen esta medición.
+
+Resultado de 2026-11-09: cripta-06, 300 salas, versión f9ed9afa683d, 25
+repeticiones y máximo 7,5888 ms con texto, sin HTTP/vista en reloj; 10/63
+solicitudes y cero ≥200 ms. Cripta-05 devolvió 1 y ciclo concreto.
+Sintéticos: 9 cargas, tres repeticiones estructuradas, máximo total 38,1568 ms.
+La cadena de 640 salas tuvo cierre incremental máximo 0,5847 ms frente a
+110,9633 ms de la referencia repetida; su total incremental fue 18,9840 ms.
+La referencia solo calcula cierre/veredicto, no certificados; comparar esas
+columnas y el total por separado, sin afirmar una ventaja universal.
+
+Evidencia: [pruebas](../../documentacion/evidencia/pruebas_resolubilidad.txt),
+[mediciones](../../documentacion/evidencia/mediciones_resolubilidad.json) y
+[salida de bench](../../documentacion/evidencia/bench_resolubilidad.txt).

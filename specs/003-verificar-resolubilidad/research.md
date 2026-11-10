@@ -3,7 +3,8 @@
 **Fecha**: 2026-11-09. **Estado**: investigación completada; siete elecciones
 aprobadas y dos interpretaciones finales aceptadas por el equipo.
 El diagnóstico se justifica con el certificado de grupo descrito al final;
-implementación, pruebas ejecutadas y mediciones siguen pendientes.
+Implementación y evidencia posteriores: 556 pruebas y mediciones de referencia
+en [tasks.md](tasks.md). Los costes teóricos se distinguen de esas mediciones.
 Fuentes: [spec.md](spec.md), constitución, PDF §§3.5/4.2/5.4 y código local.
 Investigación delegada de solo lectura conforme a speckit-plan.
 Los costes siguientes son teóricos; no son mediciones del proyecto.
@@ -106,7 +107,7 @@ se reserva para la comparación lenta de bench.
 **Decisión de representación**: A, aprobada en el mismo bloque.
 **Recomendación presentada**: A.
 Atiende FR-RS-008/009 y PR-RS-002. La justificación del algoritmo se concreta
-en el cierre de investigación; las comprobaciones de ejecución siguen pendientes.
+en el cierre de investigación; las comprobaciones ejecutadas se enlazan en tasks.md.
 
 | Opción | Ventajas | Costes y riesgos |
 | --- | --- | --- |

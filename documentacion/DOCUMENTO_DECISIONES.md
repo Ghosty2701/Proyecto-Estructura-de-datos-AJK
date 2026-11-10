@@ -1,6 +1,6 @@
 # Documento de Decisiones de Diseño
 
-## Parte II — Resolubilidad: diseño aprobado, implementación pendiente (2026-11-09)
+## Parte II — Resolubilidad implementada y verificada (2026-11-09)
 
 Fuentes: [especificación](../specs/003-verificar-resolubilidad/spec.md),
 [plan](../specs/003-verificar-resolubilidad/plan.md),
@@ -8,9 +8,8 @@ Fuentes: [especificación](../specs/003-verificar-resolubilidad/spec.md),
 [modelo de datos](../specs/003-verificar-resolubilidad/data-model.md),
 [contratos](../specs/003-verificar-resolubilidad/contracts/verificacion.md) y
 [validación prevista](../specs/003-verificar-resolubilidad/quickstart.md).
-Descomposición posterior: [tareas pendientes](../specs/003-verificar-resolubilidad/tasks.md).
-El plan es el borrador de la sección conforme a P2 §2.4; no se duplica aquí
-su diseño ni se presentan resultados empíricos aún inexistentes.
+Ejecución y trazabilidad: [38 tareas verificadas](../specs/003-verificar-resolubilidad/tasks.md).
+El plan contiene el diseño conforme a P2 §2.4; aquí constan las mediciones finales.
 
 Andrey aprobó D-RS-01 a D-RS-07, todas A: arreglos/listas, índices hash propios
 con doble hashing, FIFO con cursor, agrupaciones por llave/sala, procedencia
@@ -22,10 +21,40 @@ equipo; Swagger solo identifica salidas dirigidas.
 El diseño justifica un número constante de recorridos y cierres, más análisis
 iterativo de componentes/testigos disjuntos: trabajo esperado aproximadamente
 lineal en salas, salidas, llaves, ubicaciones y longitud de identificadores,
-con límites por colisiones. La normalización se compartirá con el cargador.
-Las tareas están definidas; quedan pendientes su ejecución, código, pruebas y --bench, incluida la referencia
-oficial de <200 ms. No se acredita rendimiento con las mediciones de niebla
-o terreno. Se añadirán aquí las cifras y limitaciones finales al ejecutarlas.
+con límites por colisiones. La normalización se comparte con el cargador.
+Especificación y decisiones en 6fc5a9c y tareas en 808f200 preceden al código.
+El binario sigue en versión 5: los registros temporales del verificador no se serializan.
+
+Regresión completa: **556 pruebas aprobadas** en 5,34 s. Mayor cripta del
+catálogo al medir: cripta-06, 300 salas y cuatro llaves, versión f9ed9afa683d.
+En 25 repeticiones el máximo local fue **7,5888 ms**, cero ≥200 ms;
+**10/63 solicitudes**, sin contenido ni catálogo de entidades. El total incluye
+normalización/índices, cierre, construcción del resultado, diagnóstico cuando
+aplica y texto; no incluye HTTP, impresión ni vista. La referencia fue resoluble;
+el diagnóstico negativo se verifica en cargas sintéticas y la consulta de
+cripta-05 (48bfa3b75055): código 1, ciclo concreto y 4/25 solicitudes.
+
+| Carga sintética | Tamaño | Cierre incremental máximo | Cierre repetido máximo | Total incremental máximo |
+| --- | --- | --- | --- | --- |
+| Cadena | 40 salas, 39 llaves | 0,0409 ms | 0,8712 ms | 1,2157 ms |
+| Cadena | 160 salas, 159 llaves | 0,1214 ms | 6,8370 ms | 6,4737 ms |
+| Cadena | 640 salas, 639 llaves | 0,5847 ms | 110,9633 ms | 18,9840 ms |
+| Grupos cerrados | 641 salas, 320 llaves | 0,2226 ms | 0,1598 ms | 15,8218 ms |
+| Alternativas y ubicaciones repetidas | 641 salas, 640 llaves | 0,2924 ms | 0,2846 ms | 38,1568 ms |
+
+Tres repeticiones por carga, nueve cargas y semilla 2026. La cadena de 640
+salas registró 2 557 operaciones incrementales y 1 229 438 repetidas. En grupos
+cerrados, la referencia se detiene pronto y su cierre es más rápido; no genera
+certificados. La comparación de cierres y el total incremental se publican
+por separado. Mantener la decisión aprobada se justifica por crecimiento en
+cadenas y capacidad de producir el informe sin recorridos por llave, no por
+una promesa de menor tiempo en toda entrada.
+
+Se conservan límites: colisiones en peor caso, equipo local, tamaño de entrada,
+P1 original ausente y validación de versiones. Evidencia con entorno, huellas y
+muestras: [mediciones](evidencia/mediciones_resolubilidad.json),
+[bench](evidencia/bench_resolubilidad.txt), [pruebas](evidencia/pruebas_resolubilidad.txt)
+y [entrada de referencia](evidencia/entrada_resolubilidad_oficial.json).
 
 ## Parte II — Niebla de guerra y viaje «ir a» (2026-11-09)
 

@@ -2,7 +2,7 @@
 
 **Fecha**: 2026-11-09. **Rama real**: `main`.
 **Capacidad activa de spec-kit**: `003-verificar-resolubilidad`.
-**Entrada**: [spec.md](spec.md). **Estado**: planificación completada, sin implementación.
+**Entrada**: [spec.md](spec.md). **Estado**: planificación ejecutada y verificada.
 **Decisiones**: D-RS-01 a D-RS-07, todas A, aprobadas por el usuario; certificado
 de grupo y emparejamiento único de recíprocas también aprobados. Alternativas,
 pruebas de razonamiento y descartes: [research.md](research.md).
@@ -86,8 +86,10 @@ datos, sin repetir HTTP; ese coste no pertenece al verificador puro y se
 informará aparte si se mide. Medir toda la preparación local del verificador,
 sin esconderla detrás del temporizador del cierre.
 
-Las decisiones son teóricas hasta ejecutar --bench. No se acreditan 200 ms,
-crecimiento ni ventajas con las mediciones anteriores de terreno/niebla.
+El análisis anterior es teórico. La ejecución posterior de --bench aporta
+evidencia propia: 25 repeticiones sobre 300 salas, máximo 7,5888 ms y 10/63
+solicitudes. La complejidad esperada no es garantía de peor caso con colisiones
+ni de tiempo en cualquier equipo. Resultados detallados en tasks.md.
 
 ## Integración y estructura del proyecto
 
@@ -117,14 +119,14 @@ reglas ya aprobadas de terreno. Los cambios necesarios se expresarán en tareas.
 | III. MVC y modos sin vista | Verificador puro; HTTP en adaptadores; CLI imprime sin VistaConsola, actores o motor. |
 | IV. Datos externos | Datos de fuente HTTP/offline; ninguna respuesta por ID concreto. |
 | V. Presupuesto/versiones | _get cuenta intentos; validación de versión y carga compartida; no nueva caché persistida. |
-| VI. Rendimiento | Complejidad y límites descritos; comparaciones y evidencia previstas, ejecución pendiente. |
-| VII. Especificación anterior | Spec y aclaraciones se confirman antes del código; no hay implementación de esta capacidad. |
-| VIII. Trazabilidad | Matriz de cobertura documental abajo; tareas y enlaces de código/pruebas serán la fase siguiente. |
+| VI. Rendimiento | Comparaciones sintéticas y referencia oficial ejecutadas, con huellas y límites; evidencia en tasks.md. |
+| VII. Especificación anterior | Spec y aclaraciones en 6fc5a9c y tareas en 808f200 antes del código. |
+| VIII. Trazabilidad | Matriz ejecutada de requisitos, escenarios, tareas, código y funciones de pruebas en tasks.md. |
 | IX. Prompts | Elecciones y aclaraciones registradas por bloque con respuesta literal. |
 
 **Resultado**: controles de diseño satisfechos; investigación e interpretaciones
-cerradas. No se solicita ninguna excepción. Esto no sustituye pruebas de
-ejecución ni mediciones finales. No existe extensions.yml con hooks aplicables.
+cerradas. No se solicita ninguna excepción. La ejecución posterior registra
+556 pruebas aprobadas y mediciones finales. No existe extensions.yml con hooks aplicables.
 
 ## Cobertura para la descomposición en tareas
 
@@ -136,8 +138,8 @@ ejecución ni mediciones finales. No existe extensions.yml con hooks aplicables.
 | Modos, forzar y no mutación | FR-RS-010/011/012/013 | AC-RS-013/014/015/016 |
 | Mediciones y comparación de referencia | PR-RS-001/002/003 | SC-RS-005 y cargas de quickstart |
 
-No se marca ningún escenario como ejecutado. tasks.md deberá enlazar cada
-escenario con tareas verificables y posteriormente código y prueba/log.
+La tabla anterior nació como cobertura de diseño. tasks.md contiene ahora la
+cadena ejecutada con código y funciones de pruebas reales por escenario.
 
 ## Validación y mediciones previstas
 
@@ -161,4 +163,4 @@ Diseño: [data-model.md](data-model.md). Interfaces: [contrato](contracts/verifi
 Validación prevista: [quickstart.md](quickstart.md). El plan termina aquí.
 Sigue `$speckit-tasks`, después `$speckit-analyze` y luego implementación.
 La fase de planificación no generó código. La descomposición posterior está en
-[tasks.md](tasks.md), todavía sin tareas ejecutadas.
+[tasks.md](tasks.md), con las 38 tareas ejecutadas y su evidencia.

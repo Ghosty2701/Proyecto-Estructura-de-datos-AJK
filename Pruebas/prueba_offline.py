@@ -6,6 +6,31 @@ from adaptadores.fuente_datos import FuenteDatos
 from adaptadores.modo_offline import ModoOffline, ErrorOffline
 
 
+def test_rs_ac007_017_019_020_llaves_offline(tmp_path):
+    """FR-RS-001/014/015: ubicaciones sin HTTP ni formato nuevo de caché."""
+    import pytest
+    from Pruebas.datos_resolubilidad import datos, conectar, ubicaciones
+    from adaptadores.servicio_cripta import ServicioCripta, ErrorCripta
+    general, salas = datos(2)
+    conectar(salas, 1, 2, 'K')
+    general.update(paginas=1, presupuesto_solicitudes=20)
+    base = ['criptas', 'sintetica']
+    escribir(tmp_path, base + ['general.json'], general)
+    escribir(tmp_path, base + ['version.json'], {'version': 'v1'})
+    escribir(tmp_path, base + ['salas_1.json'], {'salas': salas})
+    respuesta = ubicaciones(('K', 1), ('K', 2))
+    respuesta['llaves'][0]['enemigo'] = None
+    escribir(tmp_path, base + ['llaves.json'], respuesta)
+    fuente = ModoOffline(str(tmp_path))
+    assert fuente.ubicacion_llaves('sintetica') == respuesta
+    servicio = ServicioCripta(fuente, None)
+    assert len(servicio.preparar_verificacion('sintetica').llaves[0].ubicaciones) == 2
+    assert fuente.solicitudes_realizadas == 0
+    escribir(tmp_path, base + ['version.json'], {'version': 'v2'})
+    with pytest.raises(ErrorCripta): servicio.preparar_verificacion('sintetica')
+    with pytest.raises(ErrorOffline): fuente.ubicacion_llaves('ausente')
+
+
 def comprobar(descripcion, condicion):
     print(("OK    " if condicion else "FALLO ") + descripcion)
     assert condicion, descripcion

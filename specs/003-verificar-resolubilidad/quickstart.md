@@ -54,8 +54,8 @@ llaves para impedir que se confundan con ciclos de desbloqueo. Sustituir la vist
 por un constructor que falle si se instancia en la consulta. Comparar con cierre
 repetido de referencia en casos pequeños deterministas. Cada prueba cita FR/AC.
 
-Los nombres de archivos nuevos se fijarán en tasks.md. Ejecución general al
-existir código y pruebas:
+Los nombres de archivos nuevos están definidos en [tasks.md](tasks.md), aún
+pendientes de creación/ejecución. Ejecución general al existir código y pruebas:
 
 ```powershell
 python -m pytest -q

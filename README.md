@@ -16,8 +16,9 @@ La especificación de resolubilidad está en
 [specs/003-verificar-resolubilidad](specs/003-verificar-resolubilidad/spec.md),
 con [planificación completada](specs/003-verificar-resolubilidad/plan.md) y
 [guía de validación prevista](specs/003-verificar-resolubilidad/quickstart.md).
-Siguen pendientes tareas e implementación: `--verificar` y `--forzar` aún no
-están implementados.
+Las [tareas de resolubilidad](specs/003-verificar-resolubilidad/tasks.md) están
+definidas y pendientes de ejecución: `--verificar` y `--forzar` aún no están
+implementados.
 
 ## Instalación
 

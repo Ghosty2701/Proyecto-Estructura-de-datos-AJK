@@ -8,6 +8,7 @@ Fuentes: [especificación](../specs/003-verificar-resolubilidad/spec.md),
 [modelo de datos](../specs/003-verificar-resolubilidad/data-model.md),
 [contratos](../specs/003-verificar-resolubilidad/contracts/verificacion.md) y
 [validación prevista](../specs/003-verificar-resolubilidad/quickstart.md).
+Descomposición posterior: [tareas pendientes](../specs/003-verificar-resolubilidad/tasks.md).
 El plan es el borrador de la sección conforme a P2 §2.4; no se duplica aquí
 su diseño ni se presentan resultados empíricos aún inexistentes.
 
@@ -22,7 +23,7 @@ El diseño justifica un número constante de recorridos y cierres, más análisi
 iterativo de componentes/testigos disjuntos: trabajo esperado aproximadamente
 lineal en salas, salidas, llaves, ubicaciones y longitud de identificadores,
 con límites por colisiones. La normalización se compartirá con el cargador.
-Quedan pendientes tareas, código, pruebas y --bench, incluida la referencia
+Las tareas están definidas; quedan pendientes su ejecución, código, pruebas y --bench, incluida la referencia
 oficial de <200 ms. No se acredita rendimiento con las mediciones de niebla
 o terreno. Se añadirán aquí las cifras y limitaciones finales al ejecutarlas.
 

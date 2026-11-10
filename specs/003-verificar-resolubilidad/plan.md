@@ -160,4 +160,5 @@ persistencia y comandos afectados.
 Diseño: [data-model.md](data-model.md). Interfaces: [contrato](contracts/verificacion.md).
 Validación prevista: [quickstart.md](quickstart.md). El plan termina aquí.
 Sigue `$speckit-tasks`, después `$speckit-analyze` y luego implementación.
-No se han generado tareas ni modificado código en esta fase.
+La fase de planificación no generó código. La descomposición posterior está en
+[tasks.md](tasks.md), todavía sin tareas ejecutadas.

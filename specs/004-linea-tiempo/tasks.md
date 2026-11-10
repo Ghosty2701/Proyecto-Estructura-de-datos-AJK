@@ -1,6 +1,6 @@
 # Tareas: Línea de tiempo y puntos de control
 
-**Fecha**: 2026-11-09. **Estado**: 23/37 tareas ejecutadas (fases 1 a 6). T018 y T020 no requirieron cambios de código: la interrupción existente y el diseño de D-LT-05 ya cubrían los casos.
+**Fecha**: 2026-11-09. **Estado**: 25/37 tareas ejecutadas (fases 1 a 7). T018 y T020 no requirieron cambios de código: la interrupción existente y el diseño de D-LT-05 ya cubrían los casos.
 **Entrada**: [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md),
 [data-model.md](data-model.md), [contrato](contracts/linea-tiempo.md) y
 [quickstart.md](quickstart.md). Rama real: `main`.
@@ -90,8 +90,8 @@ Prueba independiente: grabar, reproducir con varios T y comparar con `historia`.
 Objetivo: `--checkpoint-cada K` controla la frecuencia sin cambiar resultados.
 Prueba independiente: misma partida con varios K.
 
-- [ ] T024 [P] [US5] Escribir en Pruebas/prueba_historia_partida.py y Pruebas/prueba_partida.py: con K = 1, 2, 5 y 25 nunca hay más de un punto cada K acciones ejecutadas, ninguna consulta re-simula más de K acciones (contador instrumentado), los resúmenes son idénticos entre K y K no entero, cero o negativo es error de uso. Dep.: T016. Requisitos: FR-LT-012, FR-LT-013, FR-LT-014; PR-LT-002. Escenarios: AC-LT-019, AC-LT-020, AC-LT-021, AC-LT-022.
-- [ ] T025 [US5] Implementar en main.py `--checkpoint-cada K` (entero ≥ 1, válido con `--cripta`, `--cargar` y `--replay`) y pasarlo a la línea de la partida en controlador/cargar_partida.py; sin la opción usar `K_POR_DEFECTO` de modelo/linea_tiempo.py. Hacer pasar T024. Dep.: T024. Requisitos: FR-LT-012, FR-LT-013. Escenarios: AC-LT-019, AC-LT-022.
+- [X] T024 [P] [US5] Escribir en Pruebas/prueba_historia_partida.py y Pruebas/prueba_partida.py: con K = 1, 2, 5 y 25 nunca hay más de un punto cada K acciones ejecutadas, ninguna consulta re-simula más de K acciones (contador instrumentado), los resúmenes son idénticos entre K y K no entero, cero o negativo es error de uso. Dep.: T016. Requisitos: FR-LT-012, FR-LT-013, FR-LT-014; PR-LT-002. Escenarios: AC-LT-019, AC-LT-020, AC-LT-021, AC-LT-022.
+- [X] T025 [US5] Implementar en main.py `--checkpoint-cada K` (entero ≥ 1, válido con `--cripta`, `--cargar` y `--replay`) y pasarlo a la línea de la partida en controlador/cargar_partida.py; sin la opción usar `K_POR_DEFECTO` de modelo/linea_tiempo.py. Hacer pasar T024. Dep.: T024. Requisitos: FR-LT-012, FR-LT-013. Escenarios: AC-LT-019, AC-LT-022.
 
 ## Fase 8 — US6: Guardar y cargar con historia (P1)
 

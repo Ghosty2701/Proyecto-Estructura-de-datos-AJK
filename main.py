@@ -69,6 +69,12 @@ def _entero_positivo(texto):
     return valor
 
 
+def _entero_positivo_estricto(texto):
+    if not texto or any(c not in "0123456789" for c in texto) or int(texto) < 1:
+        raise argparse.ArgumentTypeError("debe ser un entero mayor o igual que 1")
+    return int(texto)
+
+
 def _entero_no_negativo(texto):
     if not texto or any(c not in "0123456789" for c in texto):
         raise argparse.ArgumentTypeError("debe ser un entero mayor o igual que 0")
@@ -112,6 +118,8 @@ def main(argumentos=None):
     parser.add_argument("--archivo-guardado", help="ruta usada por los comandos guardar y cargar")
     seleccion.add_argument("--replay", help="reproducir una bitacora sin interfaz ni interaccion")
     parser.add_argument("--sin-interfaz", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--checkpoint-cada", type=_entero_positivo_estricto, metavar="K",
+                        help="copia completa del estado como mucho cada K acciones (línea de tiempo)")
     parser.add_argument("--hasta", type=_entero_no_negativo, metavar="T",
                         help="con --replay: imprimir el estado en el instante T sin vista")
     parser.add_argument("--bitacora", help="ruta de una nueva bitacora; no sobrescribe archivos existentes")
@@ -131,6 +139,9 @@ def main(argumentos=None):
         parser.error('--forzar requiere --cripta en una partida nueva')
     if opciones.bitacora and not opciones.cripta:
         parser.error("--bitacora requiere --cripta")
+    if opciones.checkpoint_cada is not None and (
+            opciones.bench or not (opciones.cripta or opciones.cargar or opciones.replay)):
+        parser.error("--checkpoint-cada solo se usa con --cripta, --cargar o --replay")
     if opciones.hasta is not None and not opciones.replay:
         parser.error("--hasta requiere --replay")
     if opciones.sin_interfaz and not opciones.replay:
@@ -202,7 +213,8 @@ def main(argumentos=None):
                          and not resolubilidad['excedidos_200ms']) else 1
         if opciones.replay:
             encabezado, _ = leer_bitacora(opciones.replay)
-            partida = cargador.crear(encabezado.id_cripta, encabezado.semilla, encabezado_log=encabezado)
+            partida = cargador.crear(encabezado.id_cripta, encabezado.semilla, encabezado_log=encabezado,
+                                     checkpoint_cada=opciones.checkpoint_cada)
             partida = reproducir_bitacora(
                 opciones.replay, id_cripta_actual=partida.id_cripta,
                 version_cripta_actual=partida.version_cripta, version_catalogo_actual=cache.version,
@@ -218,7 +230,8 @@ def main(argumentos=None):
         if opciones.cargar:
             partida = cargador.reanudar(opciones.cargar)
         else:
-            partida = cargador.crear(opciones.cripta, opciones.semilla, datos_verificados=mapa)
+            partida = cargador.crear(opciones.cripta, opciones.semilla, datos_verificados=mapa,
+                                     checkpoint_cada=opciones.checkpoint_cada)
         if opciones.nombre is not None:
             partida.nombre_jugador = opciones.nombre.strip()
         if opciones.archivo_guardado is not None:

@@ -351,3 +351,83 @@ def test_pr004_recorte_trabaja_solo_sobre_lo_revertido(paquete_pergaminos, tmp_p
     controlador.procesar("retroceder")
     assert partida.linea_tiempo.trabajo_recorte - trabajo == 1
     assert partida.linea_tiempo.cantidad_acciones == 300
+
+
+# --- T024: configurar los puntos de control (US5; FR-LT-012/013/014, PR-LT-002) ---
+
+from modelo.linea_tiempo import ACCION
+
+
+def _acciones_resimuladas(linea, objetivo):
+    posicion, limite = objetivo
+    punto = linea.punto_para(posicion if limite is None else posicion - 1)
+    return sum(1 for orden in linea.ordenes_entre(punto.posicion, posicion) if orden.tipo == ACCION)
+
+
+@pytest.mark.parametrize("k", [1, 2, 5, 25])
+def test_ac019_020_un_punto_cada_k_y_consultas_acotadas(paquete_pergaminos, tmp_path, k):
+    partida, _ = crear_partida(paquete_pergaminos, tmp_path / f"cache{k}", checkpoint_cada=k)
+    grabacion = jugar(partida, ORDENES_PERGAMINO + ["s", "esperar", "w", "esperar", "esperar"])
+    linea = partida.linea_tiempo
+    puntos = linea.puntos
+    for anterior, siguiente in zip(puntos, puntos[1:]):
+        # AC-LT-019: exactamente K acciones ejecutadas entre puntos (las revertidas cuentan).
+        assert linea.acciones_ejecutadas_entre(anterior.posicion, siguiente.posicion) == k
+    reloj = partida.motor.reloj
+    objetivos = [linea.objetivo_por_k(n) for n in range(1, linea.cantidad_acciones + 1)]
+    objetivos += [linea.objetivo_por_t(t, reloj) for t, _ in grabacion.tras_evento if t < reloj]
+    # AC-LT-020: ninguna consulta re-simula más de K acciones.
+    assert max(_acciones_resimuladas(linea, o) for o in objetivos if o is not None) <= k
+
+
+def test_ac021_resumenes_identicos_con_distintos_k(paquete_pergaminos, tmp_path):
+    resumenes = []
+    for k in (1, 2, 5, 25):
+        partida, _ = crear_partida(paquete_pergaminos, tmp_path / f"cache{k}", checkpoint_cada=k)
+        jugar(partida, ORDENES_PERGAMINO)
+        resumenes.append([partida.historia(("k", n)) for n in range(1, partida.linea_tiempo.cantidad_acciones + 2)]
+                         + [partida.historia(("t", t)) for t in range(0, partida.motor.reloj, 37)])
+    assert all(r == resumenes[0] for r in resumenes)
+
+
+@pytest.mark.parametrize("valor", ["0", "-2", "abc", "2.5", "+3"])
+def test_ac022_checkpoint_cada_invalido_es_error_de_uso(valor, capsys):
+    import main as aplicacion
+
+    with pytest.raises(SystemExit) as salida:
+        aplicacion.main(["--cripta", "lt", "--checkpoint-cada", valor])
+    assert salida.value.code == 2
+    assert "--checkpoint-cada" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("modo", [["--listar"], ["--ver-puntajes"], ["--verificar", "lt"]])
+def test_ac022_checkpoint_cada_solo_con_modos_de_partida(modo, capsys):
+    import main as aplicacion
+
+    with pytest.raises(SystemExit) as salida:
+        aplicacion.main(modo + ["--checkpoint-cada", "3"])
+    assert salida.value.code == 2
+
+
+def test_ac019_022_main_aplica_k_y_el_valor_por_defecto(paquete, tmp_path, monkeypatch):
+    import main as aplicacion
+    from controlador.cargar_partida import CargadorPartida
+    from datos_linea_tiempo import CRIPTA, SEMILLA
+    from modelo.linea_tiempo import K_POR_DEFECTO
+
+    usados = []
+    original = CargadorPartida.iniciar_linea
+    monkeypatch.setattr(CargadorPartida, "iniciar_linea",
+                        lambda self, partida, k: (usados.append(k), original(self, partida, k))[1])
+    monkeypatch.setattr(aplicacion, "VistaConsola",
+                        lambda: VistaConsola(entrada=lambda _: "salir", salida=lambda texto: None))
+    base = ["--offline", str(paquete), "--cache-dir", str(tmp_path / "cache"), "--forzar",
+            "--puntajes", str(tmp_path / "p.json")]
+    assert aplicacion.main(["--cripta", CRIPTA, "--checkpoint-cada", "7"] + base) == 0
+    assert aplicacion.main(["--cripta", CRIPTA] + base) == 0
+    ruta = tmp_path / "x.log"
+    with EscritorBitacora(ruta, CRIPTA, "v1", "cat-lt", SEMILLA) as escritor:
+        escritor.registrar_accion("esperar")
+    assert aplicacion.main(["--replay", str(ruta), "--checkpoint-cada", "4", "--offline", str(paquete),
+                            "--cache-dir", str(tmp_path / "cache")]) == 0
+    assert usados == [7, K_POR_DEFECTO, 4]

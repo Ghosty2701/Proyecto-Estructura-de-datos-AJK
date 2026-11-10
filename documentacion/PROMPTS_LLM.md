@@ -566,6 +566,24 @@ pruebas o benchmarks ni se implementó código de la capacidad.
     elegir estructuras no equivale a resolverlo. Sin código, consultas HTTP,
     pruebas ejecutadas ni benchmarks. Se espera la elección del usuario.*
 
+    | Decisiones agrupadas | Respuesta literal y fecha | Acuerdo registrado |
+    | --- | --- | --- |
+    | D-RS-01 a D-RS-07: topología, índices, cola, pendientes, reglas y ubicaciones | «`1A, 2A, 3A, 4A, 5A, 6A, 7A`  ç» — 2026-11-09 | Todas A: arreglos/listas, hash de enteros y texto con doble hashing y reserva al 70 %, FIFO lista/cursor, listas agrupadas, procedencia con marcas/pila y ubicaciones solo en memoria. |
+
+    *Continuación: se registran las siete elecciones y la justificación del
+    cierre incremental. Revisión delegada de solo lectura para diagnóstico e
+    integración; no se da por demostrado el reporte de ciclos con alternativas.
+    Permanecen pendientes ese certificado y la correspondencia de puertas
+    paralelas antes de cerrar fase 0. Sin implementación ni mediciones nuevas.*
+
+    *Revisión técnica adicional: cierre incremental justificado y contrato
+    de ubicaciones contrastado con PDF §4.2, sin inventar un campo version.
+    Se rechaza la extracción de ciclos desde un árbol arbitrario mediante
+    contraejemplo con accesos alternativos. Un certificado de grupo bloqueado
+    no basta para declarar inevitable cada ciclo individual. La fase 0 queda
+    abierta; no se genera diseño final ni tareas con ese riesgo sin resolver.
+    Consulta web de OpenAPI no disponible; sin consultas de juego al servicio.*
+
 ## 🟣 Kendall
 
 1. Actúa como un arquitecto de software y líder técnico experto en Python y Estructuras de Datos.

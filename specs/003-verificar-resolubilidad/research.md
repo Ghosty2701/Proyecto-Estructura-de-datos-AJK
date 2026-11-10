@@ -1,6 +1,7 @@
 # Investigación: Verificación de resolubilidad
 
-**Fecha**: 2026-11-09. **Estado**: fase 0 en curso; ninguna estructura elegida.
+**Fecha**: 2026-11-09. **Estado**: siete elecciones aprobadas; fase 0 en curso
+por la justificación pendiente del diagnóstico de ciclos.
 Fuentes: [spec.md](spec.md), constitución, PDF §§3.5/4.2/5.4 y código local.
 Investigación delegada de solo lectura conforme a speckit-plan.
 Los costes siguientes son teóricos; no son mediciones del proyecto.
@@ -23,7 +24,8 @@ Los costes siguientes son teóricos; no son mediciones del proyecto.
 
 ## D-RS-01 — Topología independiente del juego
 
-**Decisión**: pendiente. **Recomendación**: A.
+**Decisión**: A, aprobada por el usuario el 2026-11-09 en el bloque
+«1A, 2A, 3A, 4A, 5A, 6A, 7A». **Recomendación presentada**: A.
 Atiende FR-RS-001/002/007/013 y PR-RS-002.
 
 | Opción | Ventajas | Costes y riesgos |
@@ -39,7 +41,7 @@ No se propone matriz S×S por su memoria cuadrática para este mapa disperso.
 
 ## D-RS-02 — Índice de IDs de salas
 
-**Decisión**: pendiente. **Recomendación**: A.
+**Decisión**: A, aprobada en el mismo bloque. **Recomendación presentada**: A.
 Atiende FR-RS-001/005/015 y PR-RS-002.
 
 | Opción | Ventajas | Costes y riesgos |
@@ -53,7 +55,7 @@ hasta el ID máximo. La aprobación de niebla no se transfiere automáticamente.
 
 ## D-RS-03 — Índice y registros de llaves
 
-**Decisión**: pendiente. **Recomendación**: A.
+**Decisión**: A, aprobada en el mismo bloque. **Recomendación presentada**: A.
 Atiende FR-RS-004/005/006/007/015 y PR-RS-002.
 
 | Opción | Ventajas | Costes y riesgos |
@@ -72,7 +74,7 @@ de identificadores al expresar costes, además de S, E y K.
 
 ## D-RS-04 — Salas pendientes
 
-**Decisión**: pendiente. **Recomendación**: A.
+**Decisión**: A, aprobada en el mismo bloque. **Recomendación presentada**: A.
 Atiende FR-RS-004/005/009 y PR-RS-002.
 
 | Opción | Ventajas | Costes y riesgos |
@@ -86,7 +88,7 @@ ni heap de costes: se busca alcanzabilidad, no el camino más barato.
 
 ## D-RS-05 — Llaves por sala y puertas pendientes por llave
 
-**Decisión**: pendiente. **Recomendación**: A.
+**Decisión**: A, aprobada en el mismo bloque. **Recomendación presentada**: A.
 Atiende FR-RS-002/004/005/007 y PR-RS-002.
 
 | Opción | Ventajas | Costes y riesgos |
@@ -99,7 +101,8 @@ se reserva para la comparación lenta de bench.
 
 ## D-RS-06 — Conservar alternativas para diagnosticar ciclos
 
-**Decisión**: pendiente. **Recomendación de representación**: A.
+**Decisión de representación**: A, aprobada en el mismo bloque.
+**Recomendación presentada**: A.
 Atiende FR-RS-008/009 y PR-RS-002. La corrección del algoritmo sigue pendiente.
 
 | Opción | Ventajas | Costes y riesgos |
@@ -128,7 +131,7 @@ consultar al usuario antes de elegirla.
 
 ## D-RS-07 — Ubicaciones entre ejecuciones
 
-**Decisión**: pendiente. **Recomendación**: A.
+**Decisión**: A, aprobada en el mismo bloque. **Recomendación presentada**: A.
 Atiende FR-RS-014/015 y AC-RS-017/018/019/020.
 
 | Opción | Ventajas | Costes y riesgos |
@@ -138,5 +141,96 @@ Atiende FR-RS-014/015 y AC-RS-017/018/019/020.
 
 Persistir es opcional. Ambas opciones validan identidad y versión; B no autoriza
 dict/set como índices. No modificar guardados de partida por esta elección sin
-justificación. Se consultan las siete decisiones juntas por petición del usuario.
-No se ejecutaron pruebas, benchmarks ni consultas al servidor.
+justificación. Las siete elecciones están aprobadas; no se transfiere esa
+aprobación a otras estructuras. No se ejecutaron pruebas ni benchmarks.
+
+## Integración concretada tras las elecciones
+
+- La respuesta de ubicaciones del PDF no incluye un campo `version` obligatorio.
+  Asociarla localmente con el ID y versión de los datos generales y comprobar
+  estabilidad mediante el endpoint de versión; esta comprobación también cuenta
+  en el presupuesto. No inventar un campo requerido en `/llaves`.
+- Mantener las ubicaciones validadas en memoria y compartir esa carga al iniciar;
+  no consultar otra vez esqueleto y llaves en el mismo flujo. No crear caché de
+  ubicaciones en disco con D-RS-07A.
+- El campo `enemigo` es una instancia, no un ID de ficha. No descargar contenidos
+  para confirmar una ubicación que ya entrega este endpoint.
+- No suponer unicidad de ubicación por ID si el contrato no la establece. Un
+  registro de llave puede conservar varias ubicaciones en las listas aprobadas;
+  alcanzar una ubicación basta para obtenerla. Esto conserva alternativas sin
+  introducir otra estructura. Distinguir repetición de ID de referencia inválida.
+- Offline usará el equivalente `criptas/ID/llaves.json`; ausencia o JSON inválido
+  será error de datos, sin reinterpretarlo como resultado negativo.
+- El cargador empareja actualmente conexiones por extremos, lo que no demuestra
+  correspondencia inequívoca para puertas paralelas. Comprobar el contrato de
+  direcciones/identidad antes de fijar la normalización del verificador.
+
+## Justificación del cierre incremental aprobado
+
+Mantener estados de sala descubierta/procesada y llave obtenida en los arreglos
+aprobados. Encolar la sala inicial y marcarla antes de encolarla. Al procesar
+una sala, obtener sus llaves antes de examinar sus salidas, registrando cada
+llave por primera obtención. Obtener una llave reactiva solamente su lista de
+puertas pendientes, agregadas desde orígenes ya alcanzados. Una salida abierta
+o con llave obtenida descubre su destino; una cerrada sin llave queda pendiente.
+Cada sala se encola como máximo una vez y cada relación pendiente se activa una
+vez; no se necesita recorrer otra vez todas las salas al obtener una llave.
+
+**Invariante**: toda sala descubierta admite un recorrido bajo los supuestos
+con las llaves ya obtenidas; cada llave del orden se obtuvo en una sala
+descubierta, sin necesitar una llave posterior. **Completitud**: al vaciar la
+cola, ninguna salida transitable desde una sala alcanzada conduce a una sala
+sin descubrir, ni queda una llave obtenible en una sala alcanzada. Ese conjunto
+es el cierre de las reglas de §3.5. Mantener los registros de victoria aparte:
+alcanzar la sala de salida sin obtener la llave y sin un acceso que la requiera
+no basta. Para el informe, completar el cierre aunque la victoria se detecte antes.
+
+El cierre y las incidencias tienen trabajo O(S+E+U) con posiciones resueltas,
+donde U es el número de ubicaciones; con índices hash, la preparación tiene
+coste esperado lineal en registros y longitud de IDs, no garantía de peor caso.
+Esto todavía no demuestra la complejidad del diagnóstico de ciclos.
+
+## Límite pendiente: certificado de ciclos
+
+Un certificado de autobloqueo para un conjunto C de llaves debe distinguir
+aislamiento de dependencia circular. Como comprobación conceptual: aun
+suponiendo disponibles las llaves externas a C, ninguna C se obtiene sin alguna
+C; al permitir las de C, existen accesos hacia sus ubicaciones. Esta comprobación
+no autoriza implementar un recorrido nuevo por cada llave o candidato: todavía
+falta justificar la generación y validación del informe en el trabajo permitido.
+No registrar DFS/componentes conexas sobre dependencias simplificadas como una
+solución ya demostrada. Las elecciones de estructuras están cerradas; esta
+obligación de corrección sigue abierta antes de generar el diseño de fase 1.
+
+### Resultado de la revisión cruzada del certificado
+
+Se estudió un certificado colectivo que usa solo los arreglos, listas, índices
+y cola aprobados, sin cambiar la partida ni sus llaves reales:
+
+1. Marcar en un recorrido físico las ubicaciones conectadas al inicio al ignorar
+   cerraduras abribles con llaves válidas. Mantener barreras permanentemente
+   intransitables si el contrato las permite. Sea P la lista marcada de llaves.
+2. Ejecutar un cierre diagnóstico, hipotéticamente disponibles las llaves fuera
+   de P, que son físicamente aisladas. Sea C el grupo que aún no se obtiene.
+3. C está físicamente conectado y, aun disponibles las llaves externas a C,
+   ninguna de C puede ser la primera: el cierre ya era un punto fijo. Separa un
+   bloqueo colectivo circular de las consecuencias del aislamiento.
+
+Este certificado colectivo tiene justificación, pero no resuelve por sí solo
+el ciclo concreto requerido. Se rechazó una extracción propuesta: elegir para
+cada llave la primera llave de C que bloquea una ruta de un árbol físico y
+buscar ciclos en esa función. Puede señalar una dependencia individual falsa.
+
+**Contraejemplo de rechazo**: S conecta con X, que contiene B, por dos accesos,
+uno exige B y otro A; S conecta con Y, que contiene A, mediante A. C={A,B} es
+un grupo bloqueado, pero elegir el acceso B del árbol genera B → B pese a que
+A permite obtener B sin B. El ciclo inevitable de este ejemplo es A → A.
+El grupo no permite certificar arbitrariamente todos sus ciclos de rutas.
+
+No se adopta ese algoritmo de extracción ni se rebaja FR-RS-008 para hacerlo
+pasar. Queda identificado el trabajo pendiente: producir el ciclo concreto
+respaldado por las alternativas, sin recorridos completos por llave ni coste
+cuadrático encubierto. La revisión cruzada fue razonamiento sobre casos, no
+ejecución de pruebas ni benchmark. El acceso web al OpenAPI del servicio no
+estuvo disponible en esta revisión; la correspondencia de puertas paralelas
+sigue pendiente de contrastar con el contrato exacto.

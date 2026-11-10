@@ -233,4 +233,90 @@ respaldado por las alternativas, sin recorridos completos por llave ni coste
 cuadrático encubierto. La revisión cruzada fue razonamiento sobre casos, no
 ejecución de pruebas ni benchmark. El acceso web al OpenAPI del servicio no
 estuvo disponible en esta revisión; la correspondencia de puertas paralelas
-sigue pendiente de contrastar con el contrato exacto.
+sigue pendiente de contrastar con el contrato exacto en esa revisión histórica.
+
+## Revisión posterior: contrato verificado y propuesta de certificado con alternativas
+
+**Estado**: propuesta técnica revisada; interpretación del equipo pendiente.
+Las siete decisiones de estructuras siguen aprobadas y no se sustituyen.
+
+### Evidencia del contrato
+
+Se leyó el [OpenAPI oficial](https://cripta-api.kad06a0zhgs84.us-east-2.cs.amazonlightsail.com/openapi.json),
+API 1.1.0, y se conservó un extracto con su huella en
+[evidencia de contrato](../../documentacion/evidencia/contrato_resolubilidad_openapi_2026-11-09.json).
+SHA256 del documento completo:
+`e68e8c7a9316b60c98227c1fc47f7a8bff2cea6d65522611aa9cd67c1fb38d36`.
+
+- Exit se describe como salida dirigida, con `sala` obligatorio. No hay ID de
+  puerta, correspondencia inversa ni garantía de direcciones opuestas.
+- `costo`, `cerrada`, `llave` y `cierre_automatico` son opcionales y admiten null.
+  El esquema no prohíbe una salida cerrada sin llave; no declararla inválida
+  solo por esa ausencia. Bajo §3.5, una salida cerrada sin llave obtenible no
+  aporta un paso habilitable. No atravesarla hipotéticamente como si tuviera llave.
+- KeyLocation requiere id/sala, admite enemigo nulo y no impone una sola
+  ubicación por llave. LlavesResponse no contiene versión.
+- La interpretación de identidad física de salidas recíprocas necesita una
+  regla del equipo o P1; no deducirla del Swagger. La detección de ambigüedad
+  no autoriza fusionar puertas distintas ni modifica por sí sola la partida.
+
+Las consultas fueron a documentación pública, no a endpoints de datos de una
+cripta. El acceso por socket requirió autorización automática de solo lectura;
+la lectura terminó correctamente. No se cambió el cliente del juego.
+
+### Propuesta de certificado circular de reglas
+
+Esta propuesta conserva los antecedentes conjuntos y todas las alternativas;
+no demuestra que cada flecha comprimida entre llaves sea individualmente
+inevitable. Esa distinción se consulta al equipo antes de fijarla en spec.md.
+
+1. Mantener el cierre real y su informe, sin modificarlo. Para el diagnóstico,
+   usar la conectividad física y el cierre hipotético con llaves aisladas ya
+   descritos. No sembrar esas llaves en la partida ni mostrarlas como obtenidas.
+2. Construir, con las incidencias ya registradas, un grafo de justificación
+   negativa de salas y llaves aún no obtenibles pero físicamente accesibles.
+   Para CADA alternativa entrante de una sala: si su origen no es alcanzado,
+   enlazar a ese origen; si el origen sí fue alcanzado, enlazar a la llave que
+   falta. Cada llave enlaza a TODAS sus ubicaciones físicamente accesibles.
+   Conservar los antecedentes y la puerta de procedencia en los registros.
+3. Una alternativa desde un origen físicamente inaccesible, una ubicación
+   físicamente aislada o una barrera sin llave permanece documentada como
+   imposibilidad estructural. No convertirla en una dependencia circular ni
+   omitirla del razonamiento sobre alternativas por carecer de nodo activo.
+4. Estudiar componentes fuertemente conexas sin enlaces salientes del grafo
+   residual. La propuesta es obtenerlas con recorridos iterativos propios,
+   listas de incidencias directas/inversas y pilas/arreglos ya aprobados.
+   Conservar todas las reglas que justifican el cierre de cada componente.
+5. Para una componente con una llave k, elegir determinísticamente una de sus
+   ubicaciones r dentro de la componente y buscar un camino r → k restringido
+   a ella. La arista k → r completa un ciclo concreto que incluye una llave,
+   evitando presentar únicamente un ciclo físico de pasillos recíprocos.
+
+**Justificación del certificado**: cada alternativa de producir un nodo del
+grupo tiene al menos un antecedente no satisfecho dentro del mismo grupo, o
+una imposibilidad estructural explícita. Por tanto no existe un primer nodo
+del grupo que pueda obtenerse. La extracción del camino se apoya en la
+conectividad fuerte. El informe debe mostrar grupo, alternativas y ciclo de
+reglas con puertas identificadas, no afirmar exclusividad individual de sus
+aristas entre llaves.
+
+**Coste previsto**: número constante de recorridos globales y cierres, no uno
+por llave. Incidencias y sus inversas tienen O(S+E+U) registros. Las búsquedas
+de testigos quedan limitadas a componentes disjuntas; inicializar arreglos una
+vez, no por componente. El trabajo esperado incluye índices y longitud de
+IDs; falta contrastarlo con pruebas y bench. Una propuesta y su razonamiento
+no se registran como funcionalidad implementada o verificada.
+
+### Dos interpretaciones pendientes del equipo
+
+1. Aceptar el certificado de grupo con alternativas y un ciclo concreto de
+   reglas, o exigir que cada flecha entre llaves sea individualmente inevitable
+   en todas las rutas. Recomendada la primera lectura; no se aplica todavía.
+2. Conservar el convenio heredado de puerta compartida cuando las salidas
+   recíprocas admiten un emparejamiento único y compatible, informando la
+   ambigüedad sin fusionar conexiones; o considerar cada salida dirigida una
+   unidad independiente. Recomendada la primera interpretación del equipo;
+   Swagger por sí solo no la establece. No se aplica todavía.
+
+Se presentan juntas por preferencia del usuario. Las respuestas se integrarán
+antes de cerrar investigación y producir artefactos de diseño final.

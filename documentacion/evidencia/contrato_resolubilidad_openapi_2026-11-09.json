@@ -1,0 +1,242 @@
+{
+  "source": "https://cripta-api.kad06a0zhgs84.us-east-2.cs.amazonlightsail.com/openapi.json",
+  "review_date": "2026-11-09",
+  "sha256": "e68e8c7a9316b60c98227c1fc47f7a8bff2cea6d65522611aa9cd67c1fb38d36",
+  "info": {
+    "title": "Cripta API",
+    "description": "Read-only retrieval of reusable Cripta dungeon definitions.",
+    "version": "1.1.0"
+  },
+  "schemas": {
+    "Exit": {
+      "properties": {
+        "sala": {
+          "type": "integer",
+          "title": "Sala"
+        },
+        "costo": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1.0
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Costo"
+        },
+        "cerrada": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cerrada"
+        },
+        "llave": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Llave"
+        },
+        "cierre_automatico": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "exclusiveMinimum": 0.0
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cierre Automatico"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "sala"
+      ],
+      "title": "Exit",
+      "description": "One directed exit from a room. Initial definition state, not live state."
+    },
+    "Key": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "nombre": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Nombre"
+        },
+        "clase": {
+          "type": "string",
+          "const": "llave",
+          "title": "Clase"
+        },
+        "peso": {
+          "type": "integer",
+          "title": "Peso"
+        },
+        "valor": {
+          "type": "integer",
+          "title": "Valor"
+        },
+        "abre": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Abre"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "nombre",
+        "clase",
+        "peso",
+        "valor"
+      ],
+      "title": "Key"
+    },
+    "KeyLocation": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "Id"
+        },
+        "sala": {
+          "type": "integer",
+          "title": "Sala"
+        },
+        "enemigo": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Enemigo"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "sala"
+      ],
+      "title": "KeyLocation",
+      "description": "Where one key can be obtained (P2 \u00a74.2).\n\nWith ``enemigo`` the key is in the ``suelta`` of that enemy instance's type and\n``sala`` is the room where the enemy starts; otherwise it lies on the floor."
+    },
+    "LlavesResponse": {
+      "properties": {
+        "llaves": {
+          "items": {
+            "$ref": "#/components/schemas/KeyLocation"
+          },
+          "type": "array",
+          "title": "Llaves"
+        }
+      },
+      "type": "object",
+      "required": [
+        "llaves"
+      ],
+      "title": "LlavesResponse"
+    },
+    "Room": {
+      "properties": {
+        "id": {
+          "type": "integer",
+          "title": "Id"
+        },
+        "nombre": {
+          "type": "string",
+          "title": "Nombre"
+        },
+        "salidas": {
+          "additionalProperties": {
+            "$ref": "#/components/schemas/Exit"
+          },
+          "propertyNames": {
+            "enum": [
+              "N",
+              "S",
+              "E",
+              "O"
+            ]
+          },
+          "type": "object",
+          "title": "Salidas"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "nombre"
+      ],
+      "title": "Room"
+    },
+    "RoomContentEntry": {
+      "properties": {
+        "sala": {
+          "type": "integer",
+          "title": "Sala"
+        },
+        "enemigos": {
+          "items": {
+            "$ref": "#/components/schemas/EnemyPlacement"
+          },
+          "type": "array",
+          "title": "Enemigos"
+        },
+        "objetos": {
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": "array",
+          "title": "Objetos"
+        },
+        "trampas": {
+          "items": {
+            "$ref": "#/components/schemas/TrapPlacement"
+          },
+          "type": "array",
+          "title": "Trampas"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "sala"
+      ],
+      "title": "RoomContentEntry"
+    }
+  },
+  "note": "Extract of public OpenAPI; no game data requested."
+}

@@ -584,6 +584,28 @@ pruebas o benchmarks ni se implementó código de la capacidad.
     abierta; no se genera diseño final ni tareas con ese riesgo sin resolver.
     Consulta web de OpenAPI no disponible; sin consultas de juego al servicio.*
 
+68. continua
+
+    *Fecha: 2026-11-09*
+
+    *Agente: Codex. Modelo exacto: no registrado.*
+
+    *Contexto: continuación de `$speckit-plan`, sin cambiar las siete opciones A.
+    Revisión delegada de ciclo con alternativas y contrato público de puertas.
+    OpenAPI 1.1.0 leído y extracto con SHA256 conservado en evidencia; define
+    salidas dirigidas sin ID de puerta ni garantía de reciprocidad. Se documenta
+    propuesta de certificado de grupo cerrado con alternativas y ciclo concreto
+    de reglas; no se confunde con exclusividad individual de cada flecha entre
+    llaves. Se consultan juntas ambas interpretaciones al equipo. No se aplican
+    recomendaciones sin respuesta ni se cierra fase 0. Sin implementación,
+    ejecución de pruebas o benchmarks; solo consultas a documentación pública,
+    sin consultar datos de criptas ni modificar el cliente del juego.*
+
+    | Aclaración agrupada | Respuesta | Estado |
+    | --- | --- | --- |
+    | Certificado circular del grupo y ciclo concreto, o exclusividad de cada flecha | Pendiente | Recomendación: grupo con todas las alternativas; no aplicada. |
+    | Identidad física de salidas recíprocas | Pendiente | Recomendación: convenio heredado con emparejamiento único compatible e informe de ambigüedad; no aplicada. |
+
 ## 🟣 Kendall
 
 1. Actúa como un arquitecto de software y líder técnico experto en Python y Estructuras de Datos.

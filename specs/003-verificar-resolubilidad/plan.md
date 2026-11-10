@@ -52,6 +52,12 @@ normalización inequívoca de puertas. Elecciones del usuario completadas.
 No generar diseño final, contratos ni tareas todavía.
 No se solicitan excepciones a la constitución.
 
+La revisión posterior aporta una propuesta de certificado circular con todas
+las alternativas y un ciclo de reglas, más evidencia del OpenAPI oficial.
+Se consultan al equipo la interpretación de ese informe y la identidad de
+salidas recíprocas, que Swagger no define como una puerta física compartida.
+Las respuestas están pendientes; las siete elecciones técnicas siguen vigentes.
+
 ## Áreas de integración examinadas
 
 - `modelo/`: verificador puro y auxiliares propios, ubicación concreta pendiente.

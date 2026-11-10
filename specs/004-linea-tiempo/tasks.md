@@ -1,6 +1,6 @@
 # Tareas: Línea de tiempo y puntos de control
 
-**Fecha**: 2026-11-09. **Estado**: 25/37 tareas ejecutadas (fases 1 a 7). T018 y T020 no requirieron cambios de código: la interrupción existente y el diseño de D-LT-05 ya cubrían los casos.
+**Fecha**: 2026-11-09. **Estado**: 28/37 tareas ejecutadas (fases 1 a 8). T018 y T020 no requirieron cambios de código: la interrupción existente y el diseño de D-LT-05 ya cubrían los casos.
 **Entrada**: [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md),
 [data-model.md](data-model.md), [contrato](contracts/linea-tiempo.md) y
 [quickstart.md](quickstart.md). Rama real: `main`.
@@ -98,9 +98,9 @@ Prueba independiente: misma partida con varios K.
 Objetivo: persistir la línea completa y rechazar formatos anteriores.
 Prueba independiente: guardar, cargar en otra ejecución y comparar consultas.
 
-- [ ] T026 [P] [US6] Escribir en Pruebas/prueba_estado_binario.py: guardar y cargar conserva órdenes, acciones, tramos y puntos; `historia` da los mismos resúmenes antes y después para todos los instantes desde 0; la línea sigue registrando; cargar con otro `--checkpoint-cada` empieza un tramo nuevo sin alterar los puntos previos, y sin la opción conserva el K guardado; un archivo de versión 5 o de la primera parte se rechaza con «formato de guardado incompatible (versión X; se requiere 6)» sin cargar nada. Dep.: T016, T025. Requisitos: FR-LT-015, FR-LT-016. Escenarios: AC-LT-023, AC-LT-024, AC-LT-025.
-- [ ] T027 [US6] Ampliar en adaptadores/estado_binario.py el esquema a la versión 6 con los registros de la línea (orden, acción vigente, punto, tramo, línea) y la copia de cada punto como raíz adicional; actualizar `VERSION_MODELO`, la validación del modelo y el mensaje de rechazo. Dep.: T026. Requisitos: FR-LT-015, FR-LT-016.
-- [ ] T028 [US6] Conectar la persistencia en controlador/cargar_partida.py (`guardar_sesion`, `leer_sesion`, `aplicar_sesion`, `reanudar`) incluyendo la línea en la sesión, el nuevo tramo si cambia K y el reenlace de los puntos cargados. Hacer pasar T026 y la regresión de guardado. Dep.: T027. Requisitos: FR-LT-015, FR-LT-016. Escenarios: AC-LT-023, AC-LT-024, AC-LT-025.
+- [X] T026 [P] [US6] Escribir en Pruebas/prueba_estado_binario.py: guardar y cargar conserva órdenes, acciones, tramos y puntos; `historia` da los mismos resúmenes antes y después para todos los instantes desde 0; la línea sigue registrando; cargar con otro `--checkpoint-cada` empieza un tramo nuevo sin alterar los puntos previos, y sin la opción conserva el K guardado; un archivo de versión 5 o de la primera parte se rechaza con «formato de guardado incompatible (versión X; se requiere 6)» sin cargar nada. Dep.: T016, T025. Requisitos: FR-LT-015, FR-LT-016. Escenarios: AC-LT-023, AC-LT-024, AC-LT-025.
+- [X] T027 [US6] Ampliar en adaptadores/estado_binario.py el esquema a la versión 6 con los registros de la línea (orden, acción vigente, punto, tramo, línea) y la copia de cada punto como raíz adicional; actualizar `VERSION_MODELO`, la validación del modelo y el mensaje de rechazo. Dep.: T026. Requisitos: FR-LT-015, FR-LT-016.
+- [X] T028 [US6] Conectar la persistencia en controlador/cargar_partida.py (`guardar_sesion`, `leer_sesion`, `aplicar_sesion`, `reanudar`) incluyendo la línea en la sesión, el nuevo tramo si cambia K y el reenlace de los puntos cargados. Hacer pasar T026 y la regresión de guardado. Dep.: T027. Requisitos: FR-LT-015, FR-LT-016. Escenarios: AC-LT-023, AC-LT-024, AC-LT-025.
 
 ## Fase 9 — Mediciones, decisión de K y cierre
 

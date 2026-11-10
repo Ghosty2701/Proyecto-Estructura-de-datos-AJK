@@ -199,7 +199,7 @@ def test_version_de_esquema_binario_incompatible(tmp_path):
     datos = bytearray(globales)
     struct.pack_into("<H", datos, 4, codec.VERSION_MODELO + 1)
     contenedor.escribir_guardado(ruta, bytes(datos), salas)
-    with pytest.raises(ErrorGuardado, match="version de modelo incompatible"):
+    with pytest.raises(ErrorGuardado, match="formato de guardado incompatible"):
         cargar_partida(ruta)
 
 
@@ -333,5 +333,138 @@ def test_guardado_de_modelo_anterior_se_rechaza(tmp_path, monkeypatch):
     monkeypatch.setattr(codec, "VERSION_MODELO", 4)
     guardar(ruta, motor, jugador, salas)
     monkeypatch.setattr(codec, "VERSION_MODELO", 5)
-    with pytest.raises(ErrorGuardado, match="version de modelo incompatible"):
+    with pytest.raises(ErrorGuardado, match="formato de guardado incompatible"):
         cargar_partida(ruta)
+
+
+# --- T026: guardar y cargar con historia (US6; FR-LT-015/016, AC-LT-023 a 025) ---
+
+def _partida_linea(tmp_path, k=3, **opciones):
+    from datos_linea_tiempo import crear_partida, escribir_paquete
+
+    carpeta = escribir_paquete(tmp_path / "datos", objetos_entrada=[
+        "pergamino", "pergamino", "pergamino", "daga", "antorcha"])
+    partida, cargador = crear_partida(carpeta, tmp_path / "cache", checkpoint_cada=k, **opciones)
+    return carpeta, partida, cargador
+
+
+def _reanudar(carpeta, tmp_path, ruta, checkpoint_cada=None):
+    from adaptadores.cache_catalogo import CacheCatalogo
+    from adaptadores.modo_offline import ModoOffline
+    from adaptadores.servicio_cripta import ServicioCripta
+    from controlador.cargar_partida import CargadorPartida
+
+    fuente = ModoOffline(str(carpeta))
+    cargador = CargadorPartida(ServicioCripta(fuente, CacheCatalogo(fuente, carpeta=str(tmp_path / "otra"), tope=25)))
+    return cargador.reanudar(ruta, checkpoint_cada=checkpoint_cada), cargador
+
+
+ORDENES_GUARDADO = ["recoger 1", "recoger 1", "w", "retroceder", "w", "w", "atacar",
+                    "atacar", "retroceder", "s", "d", "esperar", "a"]
+
+
+def _historias(partida):
+    linea = partida.linea_tiempo
+    return ([partida.historia(("k", n)) for n in range(1, linea.cantidad_acciones + 2)]
+            + [partida.historia(("t", t)) for t in range(0, partida.motor.reloj + 1, 23)])
+
+
+def test_ac023_guardar_y_cargar_conserva_la_linea_completa(tmp_path):
+    from datos_linea_tiempo import jugar
+
+    carpeta, partida, _ = _partida_linea(tmp_path, k=3)
+    jugar(partida, ORDENES_GUARDADO)
+    partida.ruta_guardado = str(tmp_path / "partida.bin")
+    partida.guardar()
+    antes = _historias(partida)
+    linea = partida.linea_tiempo
+    estructura = ([(o.texto, o.tipo, o.reloj) for o in linea.ordenes],
+                  [(a.reloj, a.posicion) for a in linea.acciones],
+                  [(p.posicion, p.acciones, p.reloj, p.k) for p in linea.puntos],
+                  [(t.k, t.posicion) for t in linea.tramos], linea.acciones_en_tramo)
+    cargada, _ = _reanudar(carpeta, tmp_path, partida.ruta_guardado)
+    nueva = cargada.linea_tiempo
+    assert ([(o.texto, o.tipo, o.reloj) for o in nueva.ordenes],
+            [(a.reloj, a.posicion) for a in nueva.acciones],
+            [(p.posicion, p.acciones, p.reloj, p.k) for p in nueva.puntos],
+            [(t.k, t.posicion) for t in nueva.tramos], nueva.acciones_en_tramo) == estructura
+    assert _historias(cargada) == antes
+    # La partida cargada sigue registrando y consultando.
+    acciones = cargada.acciones_ejecutadas
+    cargada.esperar()
+    cargada.registrar_orden("esperar")
+    assert cargada.linea_tiempo.cantidad_acciones == acciones + 1
+    from dataclasses import replace
+    despues = cargada.historia(("k", acciones + 1))
+    assert despues.titulo == f"antes de la acción #{acciones + 1}"
+    assert replace(despues, titulo="") == replace(antes[acciones], titulo="")
+
+
+def test_ac025_cargar_con_otro_k_empieza_tramo_y_sin_opcion_conserva(tmp_path):
+    from datos_linea_tiempo import jugar
+
+    carpeta, partida, _ = _partida_linea(tmp_path, k=4)
+    jugar(partida, ORDENES_GUARDADO)
+    partida.ruta_guardado = str(tmp_path / "partida.bin")
+    partida.guardar()
+    puntos = [(p.posicion, p.acciones) for p in partida.linea_tiempo.puntos]
+    misma, _ = _reanudar(carpeta, tmp_path, partida.ruta_guardado)
+    assert misma.linea_tiempo.k == 4 and len(misma.linea_tiempo.tramos) == 1
+    otra, _ = _reanudar(carpeta, tmp_path, partida.ruta_guardado, checkpoint_cada=2)
+    linea = otra.linea_tiempo
+    assert [(t.k) for t in linea.tramos] == [4, 2]
+    assert [(p.posicion, p.acciones) for p in linea.puntos][:len(puntos)] == puntos
+    assert _historias(otra) == _historias(misma)
+
+
+def test_ac024_formatos_anteriores_se_rechazan_sin_cargar(tmp_path, monkeypatch):
+    from datos_linea_tiempo import jugar
+    from controlador.controlador import AccionInvalida
+
+    carpeta, partida, _ = _partida_linea(tmp_path)
+    jugar(partida, ORDENES_GUARDADO[:3])
+    vieja = tmp_path / "v5.bin"
+    partida.ruta_guardado = str(vieja)
+    monkeypatch.setattr(codec, "VERSION_MODELO", 5)
+    partida.guardar()
+    monkeypatch.setattr(codec, "VERSION_MODELO", 6)
+    with pytest.raises(ErrorGuardado, match=r"formato de guardado incompatible \(versión 5; se requiere 6\)"):
+        _reanudar(carpeta, tmp_path, vieja)
+    # Desde la partida en curso: se rechaza y nada cambia.
+    antes = (partida.motor.reloj, partida.acciones_ejecutadas, len(partida.linea_tiempo.ordenes))
+    with pytest.raises(AccionInvalida, match="incompatible"):
+        partida.cargar()
+    assert (partida.motor.reloj, partida.acciones_ejecutadas, len(partida.linea_tiempo.ordenes)) == antes
+
+
+def test_ac024_archivo_ajeno_o_de_otra_parte_se_rechaza(tmp_path):
+    carpeta, partida, _ = _partida_linea(tmp_path)
+    ruta = tmp_path / "p1.bin"
+    ruta.write_bytes(b"CRIPTA P1\x00" + bytes(64))
+    with pytest.raises(ErrorGuardado):
+        _reanudar(carpeta, tmp_path, ruta)
+
+
+def test_ac025_main_cargar_aplica_checkpoint_cada(tmp_path, monkeypatch):
+    import main as aplicacion
+    from datos_linea_tiempo import jugar
+    from vista.vista_consola import VistaConsola
+
+    carpeta, partida, _ = _partida_linea(tmp_path, k=4)
+    jugar(partida, ORDENES_GUARDADO)
+    ruta = tmp_path / "partida.bin"
+    partida.ruta_guardado = str(ruta)
+    partida.guardar()
+    cargadas = []
+    original = aplicacion.CargadorPartida.reanudar
+
+    def espiar(self, *argumentos, **opciones):
+        cargadas.append(original(self, *argumentos, **opciones))
+        return cargadas[-1]
+
+    monkeypatch.setattr(aplicacion.CargadorPartida, "reanudar", espiar)
+    monkeypatch.setattr(aplicacion, "VistaConsola",
+                        lambda: VistaConsola(entrada=lambda _: "salir", salida=lambda texto: None))
+    assert aplicacion.main(["--cargar", str(ruta), "--checkpoint-cada", "2", "--offline", str(carpeta),
+                            "--cache-dir", str(tmp_path / "c2")]) == 0
+    assert [t.k for t in cargadas[-1].linea_tiempo.tramos] == [4, 2]

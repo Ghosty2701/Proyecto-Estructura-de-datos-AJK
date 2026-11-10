@@ -29,7 +29,7 @@ from modelo.rastro import Puerta, SalaRastro, SalidaRastro
 from modelo.retroceso import CambiosAccion, HistorialRetroceso
 from modelo.conocimiento import ConocimientoMapa, SalaConocida, SalidaConocida, RecuerdoPuerta
 
-VERSION_MODELO = 5
+VERSION_MODELO = 6  # 6: línea de tiempo con puntos de control (P2 §3.6)
 MAGIC_MODELO = b"MDLO"
 MAGIC_SALA = b"SALA"
 
@@ -284,7 +284,8 @@ def _cabecera(entrada, magic):
         raise ErrorGuardado("el bloque no contiene el esquema binario del modelo")
     version = entrada.numero("<H")
     if version != VERSION_MODELO:
-        raise ErrorGuardado(f"version de modelo incompatible: {version}")
+        raise ErrorGuardado(
+            f"formato de guardado incompatible (versión {version}; se requiere {VERSION_MODELO})")
 
 
 def _iniciar(salida, magic):
@@ -406,6 +407,27 @@ def _escribir_registros(salida, registros):
 def guardar_partida(ruta, motor, jugador, salas, *, id_cripta, version_cripta,
                     version_catalogo, datos_extra=None):
     """Guarda sin alterar el modelo. Publica el archivo completo con os.replace."""
+    globales, bloques = codificar_modelo(motor, jugador, salas, id_cripta=id_cripta,
+                                         version_cripta=version_cripta,
+                                         version_catalogo=version_catalogo, datos_extra=datos_extra)
+    destino = Path(ruta)
+    temporal = None
+    try:
+        with tempfile.NamedTemporaryFile(prefix=destino.name + ".", suffix=".tmp",
+                                         dir=destino.parent, delete=False) as archivo:
+            temporal = Path(archivo.name)
+        escribir_guardado(temporal, globales, bloques)
+        os.replace(temporal, destino)
+    except OSError as error:
+        raise ErrorGuardado(f"no se pudo guardar {ruta}: {error}") from error
+    finally:
+        if temporal is not None:
+            temporal.unlink(missing_ok=True)
+
+
+def codificar_modelo(motor, jugador, salas, *, id_cripta, version_cripta,
+                     version_catalogo, datos_extra=None):
+    """Bloque global y bloques por sala, sin escribir archivos ni alterar el modelo."""
     if type(motor) is not MotorEventos or type(jugador) is not ActorTurnos:
         raise ErrorGuardado("se requieren MotorEventos y ActorTurnos reales")
     if not salas:
@@ -447,20 +469,35 @@ def guardar_partida(ruta, motor, jugador, salas, *, id_cripta, version_cripta,
         _escribir_valor(salida, _resumen_sala(sala, actores_por_sala.buscar(sala.sala_id), jugador))
         _escribir_registros(salida, registro.por_sala.buscar(sala.sala_id))
         bloques.append((sala.sala_id, bytes(salida.datos)))
+    return bytes(globales.datos), bloques
 
-    destino = Path(ruta)
-    temporal = None
-    try:
-        with tempfile.NamedTemporaryFile(prefix=destino.name + ".", suffix=".tmp",
-                                         dir=destino.parent, delete=False) as archivo:
-            temporal = Path(archivo.name)
-        escribir_guardado(temporal, bytes(globales.datos), bloques)
-        os.replace(temporal, destino)
-    except OSError as error:
-        raise ErrorGuardado(f"no se pudo guardar {ruta}: {error}") from error
-    finally:
-        if temporal is not None:
-            temporal.unlink(missing_ok=True)
+
+def codificar_punto(motor, jugador, salas, identidad, datos_extra):
+    """Un punto de control como bytes autocontenidos: el mismo esquema y validación."""
+    globales, bloques = codificar_modelo(
+        motor, jugador, salas, id_cripta=identidad.id_cripta,
+        version_cripta=identidad.version_cripta, version_catalogo=identidad.version_catalogo,
+        datos_extra=datos_extra)
+    salida = _Escritor()
+    salida.bloque(globales)
+    salida.numero("<I", len(bloques))
+    for id_sala, bloque in bloques:
+        salida.numero("<I", id_sala)
+        salida.bloque(bloque)
+    return bytes(salida.datos)
+
+
+def decodificar_punto(datos, identidad):
+    """Inverso de codificar_punto; valida identidad y versión del formato."""
+    if type(datos) is not bytes:
+        raise ErrorGuardado("punto de control sin datos binarios")
+    entrada = _Lector(datos)
+    globales = entrada.bloque()
+    bloques = [(entrada.numero("<I"), entrada.bloque()) for _ in range(entrada.cantidad())]
+    entrada.terminar()
+    return decodificar_modelo(globales, bloques, id_cripta=identidad.id_cripta,
+                              version_cripta=identidad.version_cripta,
+                              version_catalogo=identidad.version_catalogo)
 
 
 def _validar_identidad(identidad):
@@ -573,6 +610,11 @@ def cargar_partida(ruta, *, id_cripta=None, version_cripta=None, version_catalog
         globales, bloques = leer_guardado(ruta)
     except OSError as error:
         raise ErrorGuardado(f"no se pudo cargar {ruta}: {error}") from error
+    return decodificar_modelo(globales, bloques, id_cripta=id_cripta,
+                              version_cripta=version_cripta, version_catalogo=version_catalogo)
+
+
+def decodificar_modelo(globales, bloques, *, id_cripta=None, version_cripta=None, version_catalogo=None):
     identidad, raices, raices_salas, datos = _leer_globales_modelo(globales)
     for nombre, esperado in (("id_cripta", id_cripta), ("version_cripta", version_cripta),
                              ("version_catalogo", version_catalogo)):

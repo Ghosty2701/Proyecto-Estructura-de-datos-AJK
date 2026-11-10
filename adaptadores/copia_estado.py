@@ -104,7 +104,7 @@ def _completar_no_persistentes(original, copia):
         copia._mensajes = []
         copia._inicio_pendiente = False
         copia._ataque_pendiente = None
-        copia.ruta_guardado = original.ruta_guardado
+        copia.ruta_guardado = getattr(original, "ruta_guardado", "partida.bin")
         copia.bitacora_activa = False
         copia.linea_tiempo = None
         copia.gestor_linea = None

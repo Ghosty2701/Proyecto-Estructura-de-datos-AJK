@@ -1114,7 +1114,7 @@ original y resume su resultado, sin convertir recomendaciones en decisiones.
 | 92 | si, prosigue | speckit-implement, fases 1 y 2 (T001–T011): copiador propio, línea de tiempo, límite de tiempo del motor, preparador sin red y registro de órdenes; equivalencia verificada con K = 1, 3 y 10; 585 pruebas aprobadas. |
 | 93 | de acuerdo, prosigue con el siguiente paso | speckit-implement, fase 3 (US1, T012–T016): órdenes `historia <t>` e `historia #k`, resumen histórico y presentación en consola; 594 pruebas aprobadas. |
 | 94 | si | speckit-implement, US2 y US3 (T017–T020): pruebas de no alteración (reloj, azar, retroceso, línea, log, caché, solicitudes), «historia» durante «ir a» y coherencia con pergaminos consecutivos y efectos que no se deshacen; sin cambios de código necesarios. |
-| 95 | proceed with next steps | speckit-implement, US4 (T021–T023): `--replay LOG --hasta T` con el mismo resumen que `historia`, sin vista; aviso de fin anticipado y errores de uso; luego US5. |
+| 95 | proceed with next steps | speckit-implement, US4 (T021–T023): `--replay LOG --hasta T` con el mismo resumen que `historia`, sin vista; aviso de fin anticipado y errores de uso. Después US5 (T024–T025, `--checkpoint-cada`) y US6 (T026–T028, formato 6 con todos los puntos codificados y rechazo de versiones anteriores); 630 pruebas aprobadas. |
 
 Detalle en [especificación](../specs/004-linea-tiempo/spec.md) e
 [investigación de la línea de tiempo](../specs/004-linea-tiempo/research.md).

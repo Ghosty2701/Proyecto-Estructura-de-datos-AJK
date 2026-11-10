@@ -12,7 +12,8 @@ from adaptadores.cliente_http import ErrorHTTP, PresupuestoAgotado
 from adaptadores.modo_offline import ErrorOffline
 from adaptadores.servicio_cripta import ErrorCripta
 from adaptadores.estado_binario import (
-    ObjetoPartida, guardar_partida, cargar_partida, leer_identidad_guardada,
+    IdentidadGuardado, ObjetoPartida, cargar_partida, codificar_punto, decodificar_punto,
+    guardar_partida, leer_identidad_guardada,
 )
 from adaptadores.guardado_binario import ErrorGuardado
 from adaptadores.bitacora_partida import verificar_compatibilidad
@@ -23,7 +24,9 @@ from modelo.inventario_reversible import InventarioReversible, CambioInventario
 from modelo.motor_eventos import ActorTurnos, MotorEventos
 from modelo.rastro import Puerta, SalaRastro, SalidaRastro
 from modelo.conocimiento import ConocimientoMapa
-from modelo.linea_tiempo import K_POR_DEFECTO, ErrorReconstruccion, LineaTiempo
+from modelo.linea_tiempo import (
+    K_POR_DEFECTO, AccionVigente, ErrorReconstruccion, LineaTiempo, OrdenEjecutada, PuntoControl, TramoK,
+)
 from modelo.verificacion import agrupar_puertas
 
 
@@ -223,6 +226,48 @@ class CargadorPartida:
         partida._reloj_linea = partida.motor.reloj
         partida._acciones_linea = partida.acciones_ejecutadas
 
+    def _identidad(self, partida):
+        return IdentidadGuardado(partida.id_cripta, partida.version_cripta, self.servicio.cache.version)
+
+    def _linea_a_datos(self, partida):
+        """Línea completa como tuplas de valores y puntos codificados (D-LT-06)."""
+        linea = getattr(partida, "linea_tiempo", None)
+        if linea is None:
+            return None
+        identidad = self._identidad(partida)
+        puntos = tuple(
+            (p.posicion, p.acciones, p.reloj, p.k,
+             codificar_punto(p.estado[0].motor, p.estado[0].jugador, p.estado[1], identidad,
+                             {"partida": p.estado[0]}))
+            for p in linea.puntos)
+        return (
+            tuple((t.k, t.posicion) for t in linea.tramos),
+            tuple((o.texto, o.tipo, o.reloj) for o in linea.ordenes),
+            tuple((a.reloj, a.posicion) for a in linea.acciones),
+            linea.acciones_en_tramo, partida._reloj_linea, partida._acciones_linea, puntos,
+        )
+
+    def _datos_a_linea(self, datos, identidad):
+        """Restaura la línea guardada; los puntos se decodifican una vez al cargar."""
+        try:
+            tramos, ordenes, acciones, en_tramo, reloj_linea, acciones_linea, puntos = datos
+            linea = LineaTiempo(tramos[0][0], copiar_estado)
+            linea.tramos = [TramoK(k, posicion) for k, posicion in tramos]
+            linea.ordenes = [OrdenEjecutada(texto, tipo, reloj) for texto, tipo, reloj in ordenes]
+            linea.acciones = [AccionVigente(reloj, posicion) for reloj, posicion in acciones]
+            linea.acciones_en_tramo = en_tramo
+            for posicion, cantidad, reloj, k, bloque in puntos:
+                cargado = decodificar_punto(bloque, identidad)
+                copia = cargado.datos_extra["partida"]
+                if copia.motor is not cargado.motor or copia.jugador is not cargado.jugador:
+                    raise ErrorGuardado("punto de control con raíces inconsistentes")
+                linea.puntos.append(PuntoControl(posicion, cantidad, reloj, (copia, cargado.salas), k))
+        except (TypeError, ValueError, KeyError, IndexError, AttributeError) as error:
+            raise ErrorGuardado(f"línea de tiempo guardada inválida: {error}") from error
+        if not linea.puntos or linea.puntos[0].posicion != 0:
+            raise ErrorGuardado("línea de tiempo guardada sin punto inicial")
+        return linea, reloj_linea, acciones_linea
+
     def copia_de_trabajo(self, punto):
         """Copia independiente de un punto, conectada a datos de solo lectura."""
         referencias = []
@@ -290,6 +335,7 @@ class CargadorPartida:
                 "partida": partida,
                 "contenido": list(_recorrer_arbol(self.servicio.contenido.raiz)),
                 "fichas": list(_recorrer_arbol(fichas.raiz)),
+                "linea": self._linea_a_datos(partida),
             },
         )
 
@@ -319,6 +365,11 @@ class CargadorPartida:
         for campo in ("contenido", "fichas"):
             if type(extra.get(campo)) is not list:
                 raise ErrorGuardado(f"Falta la lista de {campo} del guardado.")
+        if extra.get("linea") is not None and type(extra["linea"]) is not tuple:
+            raise ErrorGuardado("La línea de tiempo del guardado es inválida.")
+        if extra.get("linea") is not None:
+            # Se decodifica antes de tocar la partida en curso: un error no la altera.
+            extra["linea"] = self._datos_a_linea(extra["linea"], cargada.identidad)
         for datos in extra["contenido"]:
             if type(datos) is not dict or self.servicio.esqueleto.buscar(datos.get("sala")) is None:
                 raise ErrorGuardado("Contenido guardado incompatible con el esqueleto.")
@@ -367,6 +418,16 @@ class CargadorPartida:
         actual.preparar_sala = self.preparar_destino
         actual.fuente = self.servicio.fuente
         actual.gestor_guardado = self
+        if cargada.datos_extra.get("linea") is not None:
+            linea, reloj_linea, acciones_linea = cargada.datos_extra["linea"]
+            linea.obtener_raiz = lambda: (actual, self.salas_ordenadas())
+            actual.linea_tiempo = linea
+            actual.gestor_linea = self
+            actual._reloj_linea = reloj_linea
+            actual._acciones_linea = acciones_linea
+        else:
+            # Sesión sin línea guardada: la historia consultable empieza en la carga.
+            actual.linea_tiempo = None
         actual._mensajes = []
         actual._inicio_pendiente = False
         actual._ataque_pendiente = None
@@ -375,7 +436,7 @@ class CargadorPartida:
         self.jugador = actual.jugador
         self.servicio.cache.esta_en_uso = self.ficha_en_uso
 
-    def reanudar(self, ruta):
+    def reanudar(self, ruta, checkpoint_cada=None):
         if self.jugador is not None:
             raise ErrorGuardado("Usa un cargador nuevo para reanudar otra partida.")
         identidad = leer_identidad_guardada(ruta)
@@ -385,6 +446,11 @@ class CargadorPartida:
         partida.ruta_guardado = str(ruta)
         partida.bitacora_activa = False
         self.aplicar_sesion(partida, cargada)
+        if partida.linea_tiempo is None:
+            self.iniciar_linea(partida, K_POR_DEFECTO if checkpoint_cada is None else checkpoint_cada)
+        elif checkpoint_cada is not None:
+            # AC-LT-025: los puntos guardados se conservan; el nuevo K rige desde aquí.
+            partida.linea_tiempo.cambiar_k(checkpoint_cada, partida.motor.reloj)
         return partida
 
     def _construir_esqueleto(self):

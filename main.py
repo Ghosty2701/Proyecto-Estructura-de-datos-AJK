@@ -228,7 +228,7 @@ def main(argumentos=None):
             _resumen_red(fuente, cache)
             return 0
         if opciones.cargar:
-            partida = cargador.reanudar(opciones.cargar)
+            partida = cargador.reanudar(opciones.cargar, checkpoint_cada=opciones.checkpoint_cada)
         else:
             partida = cargador.crear(opciones.cripta, opciones.semilla, datos_verificados=mapa,
                                      checkpoint_cada=opciones.checkpoint_cada)

@@ -1,0 +1,48 @@
+CONSULTAS: 5000 acciones, 200 salas, 0 cazadores, K=10
+  mediana 15.352 ms; p95 22.378 ms; max 22.378 ms; >=50 ms: 0/12; reaplica hasta 9 acciones
+CONSULTAS: 5000 acciones, 200 salas, 0 cazadores, K=25
+  mediana 12.882 ms; p95 21.753 ms; max 21.753 ms; >=50 ms: 0/12; reaplica hasta 24 acciones
+CONSULTAS: 5000 acciones, 200 salas, 0 cazadores, K=50
+  mediana 20.421 ms; p95 30.317 ms; max 30.317 ms; >=50 ms: 0/12; reaplica hasta 49 acciones
+CONSULTAS: 5000 acciones, 200 salas, 0 cazadores, K=100
+  mediana 14.999 ms; p95 31.032 ms; max 31.032 ms; >=50 ms: 0/12; reaplica hasta 99 acciones
+CONSULTAS: 5000 acciones, 200 salas, 0 cazadores, K=solo inicial
+  mediana 111.704 ms; p95 342.641 ms; max 342.641 ms; >=50 ms: 8/12; reaplica hasta 4999 acciones
+CONSULTAS: 5000 acciones, 200 salas, 32 cazadores, K=10
+  mediana 50.777 ms; p95 104.241 ms; max 104.241 ms; >=50 ms: 6/12; reaplica hasta 9 acciones
+CONSULTAS: 5000 acciones, 200 salas, 32 cazadores, K=25
+  mediana 41.177 ms; p95 50.181 ms; max 50.181 ms; >=50 ms: 1/12; reaplica hasta 24 acciones
+CONSULTAS: 5000 acciones, 200 salas, 32 cazadores, K=50
+  mediana 52.644 ms; p95 65.830 ms; max 65.830 ms; >=50 ms: 6/12; reaplica hasta 49 acciones
+CONSULTAS: 5000 acciones, 200 salas, 32 cazadores, K=100
+  mediana 73.197 ms; p95 151.917 ms; max 151.917 ms; >=50 ms: 8/12; reaplica hasta 99 acciones
+CONSULTAS: 5000 acciones, 200 salas, 32 cazadores, K=solo inicial
+  mediana 1780.387 ms; p95 5631.822 ms; max 5631.822 ms; >=50 ms: 9/12; reaplica hasta 4999 acciones
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 0 cazadores, K=10
+  retenida 205.37 MiB; pico 205.91 MiB; punto max 136.269 ms; ciclo max 136.384 ms; >=20 ms: 35/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 0 cazadores, K=25
+  retenida 83.22 MiB; pico 84.26 MiB; punto max 83.976 ms; ciclo max 84.052 ms; >=20 ms: 4/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 0 cazadores, K=50
+  retenida 42.50 MiB; pico 43.23 MiB; punto max 53.590 ms; ciclo max 53.673 ms; >=20 ms: 1/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 0 cazadores, K=100
+  retenida 22.14 MiB; pico 22.88 MiB; punto max 20.338 ms; ciclo max 20.498 ms; >=20 ms: 1/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 0 cazadores, K=None
+  retenida 1.88 MiB; pico 1.91 MiB; punto max 0.000 ms; ciclo max 2.349 ms; >=20 ms: 0/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 32 cazadores, K=10
+  retenida 338.90 MiB; pico 341.90 MiB; punto max 657.169 ms; ciclo max 658.116 ms; >=20 ms: 503/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 32 cazadores, K=25
+  retenida 136.83 MiB; pico 139.15 MiB; punto max 265.829 ms; ciclo max 266.430 ms; >=20 ms: 200/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 32 cazadores, K=50
+  retenida 69.45 MiB; pico 70.23 MiB; punto max 253.405 ms; ciclo max 253.764 ms; >=20 ms: 101/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 32 cazadores, K=100
+  retenida 35.75 MiB; pico 37.45 MiB; punto max 146.990 ms; ciclo max 148.976 ms; >=20 ms: 52/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 32 cazadores, K=None
+  retenida 2.20 MiB; pico 2.24 MiB; punto max 0.000 ms; ciclo max 110.378 ms; >=20 ms: 1/5001
+PERSISTENCIA: preparando 5000 acciones, 200 salas, K=10
+  501 puntos; 62595238 bytes; guardar max 26691.127 ms; cargar max 36907.307 ms; copia max 13.586 ms; codec max 96.957 ms
+PERSISTENCIA: preparando 5000 acciones, 200 salas, K=25
+  201 puntos; 25344449 bytes; guardar max 10328.938 ms; cargar max 14394.280 ms; copia max 15.174 ms; codec max 95.146 ms
+PERSISTENCIA: preparando 5000 acciones, 200 salas, K=50
+  101 puntos; 12928115 bytes; guardar max 4558.534 ms; cargar max 8990.512 ms; copia max 16.333 ms; codec max 140.428 ms
+PERSISTENCIA: preparando 5000 acciones, 200 salas, K=100
+  51 puntos; 6720237 bytes; guardar max 3442.368 ms; cargar max 4263.462 ms; copia max 16.508 ms; codec max 105.800 ms

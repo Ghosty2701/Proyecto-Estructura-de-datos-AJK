@@ -1,0 +1,412 @@
+{
+  "fecha_revision_cliente": "2026-11-11",
+  "zona_horaria_cliente": "America/Costa_Rica",
+  "comando": "python -X utf8 -u main.py --bench --bench-linea-tiempo --repeticiones 1",
+  "codigo_salida": 0,
+  "python": "3.13.2 (tags/v3.13.2:4f8bb39, Feb  4 2025, 15:23:48) [MSC v.1942 64 bit (AMD64)]",
+  "plataforma": "Windows-11-10.0.26200-SP0",
+  "semilla": 2026,
+  "rondas": 1,
+  "k_provisional": 25,
+  "validacion_datos": "aprobada; no certifica presupuestos de tiempo",
+  "archivos_codigo": [
+    {
+      "ruta": "Pruebas/datos_linea_tiempo.py",
+      "sha256": "35d37cc98b19febef2b093fc14a7c71b49ab2e5dd34a73a861b3d681c74fe8aa"
+    },
+    {
+      "ruta": "Pruebas/datos_resolubilidad.py",
+      "sha256": "16a9c476180b7eb9bf83c323016d0d9c3f61c1199b22d23111a30e5ed0461e0c"
+    },
+    {
+      "ruta": "Pruebas/prueba_agenda_automatica.py",
+      "sha256": "ab5a89e8900feecfab29607ca7c6a3118978339839213d262ecf4427ef6cbe5a"
+    },
+    {
+      "ruta": "Pruebas/prueba_archivo_binario.py",
+      "sha256": "c8f18178379a5942ae4cdaa4ed1227487381ad14d7eb33fc6a0fa95ed86bc2f6"
+    },
+    {
+      "ruta": "Pruebas/prueba_azar_reversible.py",
+      "sha256": "495a757aee5e7e91cf264cf5b23adda68c78d74ce07e6201035b5cc200a7ee57"
+    },
+    {
+      "ruta": "Pruebas/prueba_bench_adaptadores.py",
+      "sha256": "0457d54fbd903120e099c3beabab132474add6dc78a51f58eb9ffd5193ed4bf3"
+    },
+    {
+      "ruta": "Pruebas/prueba_bench_decisiones.py",
+      "sha256": "90c0f410dd2cd2df26c8273209d55d095df35e894f419b61cff6c9989b95c58a"
+    },
+    {
+      "ruta": "Pruebas/prueba_bench_linea_tiempo.py",
+      "sha256": "ebfbcec4fab1c706cea9ef6d2d82a0d5e310c61cadb9ad94141230c8d01697ea"
+    },
+    {
+      "ruta": "Pruebas/prueba_bench_memoria.py",
+      "sha256": "9048ef86077edc2361bac1533c6bcfecb8a1f1d5325b09b50986a52b8fd405a0"
+    },
+    {
+      "ruta": "Pruebas/prueba_bench_persistencia.py",
+      "sha256": "0fa8d9514ca7e0b1ce3c5c262d099664de1762d0a50ec32325ab08b45d369a61"
+    },
+    {
+      "ruta": "Pruebas/prueba_bench_resolubilidad.py",
+      "sha256": "c1b043f5ea4f11d6192866022fa0059e35c99debe5fb57e59aec2f526424e872"
+    },
+    {
+      "ruta": "Pruebas/prueba_bitacora_pantalla.py",
+      "sha256": "ea6ed471c4cfcb0522a1fd2c891ebdca5de9fcfad313fe4d48769bcd90805b0f"
+    },
+    {
+      "ruta": "Pruebas/prueba_bitacora_partida.py",
+      "sha256": "e08522751d5a1cf5d5b907fd19194788945c6dc995408503cb90b8798ecff6b9"
+    },
+    {
+      "ruta": "Pruebas/prueba_cache_catalogo.py",
+      "sha256": "fe569a1f109720226ed0db87572859e4e325b59e9994c2c44503abfc89aa01df"
+    },
+    {
+      "ruta": "Pruebas/prueba_certificados_resolubilidad.py",
+      "sha256": "f4f7eb21fe37ca56668de12a27ef4aaae8d7b3ec92d86cc772d9b844f05d40ff"
+    },
+    {
+      "ruta": "Pruebas/prueba_cli_resolubilidad.py",
+      "sha256": "53e1898b01201ec1f37f28bbbb12c73ce2b5b9aa799a8b3243703d293fbce540"
+    },
+    {
+      "ruta": "Pruebas/prueba_cliente.py",
+      "sha256": "240f74cbf9ead7c58f8217de427ae1ae38a68594b43da985a12b44526884235f"
+    },
+    {
+      "ruta": "Pruebas/prueba_comandos.py",
+      "sha256": "8d07bb80e94c576bf0035d2ccb62761d72da26c167190fcbd036995f45dd09e0"
+    },
+    {
+      "ruta": "Pruebas/prueba_combate.py",
+      "sha256": "aa3f287313573501bfa191def9f1b78d75cbcddfb43ab8d8e96cba3f4920db19"
+    },
+    {
+      "ruta": "Pruebas/prueba_conocimiento.py",
+      "sha256": "5ea1b0c06aa612f2474c79deee5ada07e1d3206d242581a8e3ad03529d3e52a1"
+    },
+    {
+      "ruta": "Pruebas/prueba_controlador.py",
+      "sha256": "4f4182178731f5e0539a377a62718792d79f70dd576f662b2cbb4c33502a8e54"
+    },
+    {
+      "ruta": "Pruebas/prueba_copia_estado.py",
+      "sha256": "bce4f086d3bfcf893388d8f394167c67d9140aac31b30829f857309fa33f21ee"
+    },
+    {
+      "ruta": "Pruebas/prueba_estado_binario.py",
+      "sha256": "c2bb594a64111a003e75a5a7126f58f11a76121fc57db62476842af7b21dac89"
+    },
+    {
+      "ruta": "Pruebas/prueba_estado_compartido.py",
+      "sha256": "764ef0ec4fb9ac3d3d67d6d87ec1d26169a73227703d4483057a5fe2c6895dfe"
+    },
+    {
+      "ruta": "Pruebas/prueba_heap_rutas.py",
+      "sha256": "dc5bfd1cade906f8a33e3e559b6036c4a735062810f99b4cd7329170af0fabd9"
+    },
+    {
+      "ruta": "Pruebas/prueba_historia_partida.py",
+      "sha256": "6142f1b758fb4af4322ec96a7b996bced2962441386c8d022fec433b1f6172a6"
+    },
+    {
+      "ruta": "Pruebas/prueba_indice_llaves.py",
+      "sha256": "2deda7ed8f066cc3118a7f42d070f07993547b104141d10c7a8ffd8d869231bb"
+    },
+    {
+      "ruta": "Pruebas/prueba_integracion_pergamino.py",
+      "sha256": "2cf17b0f63ef34fbd5ccdf1755671357cdc1ce78d23cef1bd9862a3077e8ad12"
+    },
+    {
+      "ruta": "Pruebas/prueba_inventario.py",
+      "sha256": "5c272a172357d6be1f7237f7edab5981cb3e8d8f79600dc3a96f77280b99d32d"
+    },
+    {
+      "ruta": "Pruebas/prueba_limite_tiempo.py",
+      "sha256": "e513272420610491d3ac141173b101f2ab1d1644f0b7f370b62cc8e5176e8a8b"
+    },
+    {
+      "ruta": "Pruebas/prueba_linea_tiempo.py",
+      "sha256": "68335e7afd5bc5d701182e09d88255283f8db6c6cad2a751c68619d1b83f326e"
+    },
+    {
+      "ruta": "Pruebas/prueba_motor_eventos.py",
+      "sha256": "9db798b844368e6da9a7f6b416e98b2dba8f9887f0f88b82ddb37e15f8659b0a"
+    },
+    {
+      "ruta": "Pruebas/prueba_motor_retroceso.py",
+      "sha256": "c14994d88302c5d1ec9e2568324b1807cde9ea43e2e044b8153d985248e9b27d"
+    },
+    {
+      "ruta": "Pruebas/prueba_niebla_partida.py",
+      "sha256": "a5d57d66779b7e49d4ffd4f1068ad16670d206edd25324595170018b8a3da30f"
+    },
+    {
+      "ruta": "Pruebas/prueba_normalizacion_resolubilidad.py",
+      "sha256": "1063cbcc117a1afb26167d718a56728fb038e3f59a60a2b76aa5524e81d5b23b"
+    },
+    {
+      "ruta": "Pruebas/prueba_offline.py",
+      "sha256": "9a9bb0721e87ee11f5e680298f737de9d943ef0a3c2e5e36a51bd78b9da5a7f4"
+    },
+    {
+      "ruta": "Pruebas/prueba_ordenamiento.py",
+      "sha256": "88f32a4e6e1259edd3289e5069e9174e65471f6cca3a7afa019531692fb76b97"
+    },
+    {
+      "ruta": "Pruebas/prueba_partida.py",
+      "sha256": "72bd4dafa8dc9506537345edd8a3ae558e81dd1c68404c067f4da1e40dc02fb6"
+    },
+    {
+      "ruta": "Pruebas/prueba_pergaminos_no_reversibles.py",
+      "sha256": "29f255248cc93604f4d79cb71c297d9079dba161525cd982907608f70f03650e"
+    },
+    {
+      "ruta": "Pruebas/prueba_prefetch.py",
+      "sha256": "51660b2da26a2664f5f4b6ef013866514f8c586c7d0cd6ebb02dc2a9cdcc65d1"
+    },
+    {
+      "ruta": "Pruebas/prueba_puntajes.py",
+      "sha256": "1bf4cc9a4e046c9c4f162707c0e6dc2aac86643179eb0ca970814034e04f647c"
+    },
+    {
+      "ruta": "Pruebas/prueba_rastro_automatico.py",
+      "sha256": "a09c50d6efc4e808f6a3917db7b3f2981ecce763546c0e06e23f52f7523ac691"
+    },
+    {
+      "ruta": "Pruebas/prueba_resolubilidad.py",
+      "sha256": "68602aa9a2f28bcc0a9061fd3b553b3dce56de1f2bf943f7aca773afaf894927"
+    },
+    {
+      "ruta": "Pruebas/prueba_retroceso_eventos.py",
+      "sha256": "8a3ce52646e45d544d222bb66126889564ae3d4e73e8fc93028809543ff0d994"
+    },
+    {
+      "ruta": "Pruebas/prueba_rutas.py",
+      "sha256": "cd2cb9398dee9d13efd085808bf29695fb50a1f3cc811c52b11e0ecf45c77e9b"
+    },
+    {
+      "ruta": "Pruebas/prueba_rutas_conocidas.py",
+      "sha256": "ccbbf32c62b6c1e65153ab48ce9a35efaf84b8e28f3263d7e680d07b68cc8389"
+    },
+    {
+      "ruta": "Pruebas/prueba_servicio_cripta.py",
+      "sha256": "80c75503098723be1e1fed253b610747d8754fddebf5b2784715f0f280c192d2"
+    },
+    {
+      "ruta": "Pruebas/prueba_tabla_hash.py",
+      "sha256": "1a06af51ae7d93c69c29698adcca2883f4079f14155e1d784fd7dbcd41554908"
+    },
+    {
+      "ruta": "Pruebas/prueba_terreno.py",
+      "sha256": "4632aa9348736fdad4813f3148b5a7579b8d3a7a766634430d7d4cec82a8e924"
+    },
+    {
+      "ruta": "Pruebas/prueba_uso_pergamino.py",
+      "sha256": "b8836534f9a4f126a1fc11e385e3fc3407a4866591ecb65ba1cacd93ae799210"
+    },
+    {
+      "ruta": "adaptadores/bench_adaptadores.py",
+      "sha256": "43db3c1b2e676466d9879954f05b7571ad22a5a34fd5203ad3841c36d1b7c9ce"
+    },
+    {
+      "ruta": "adaptadores/bench_persistencia.py",
+      "sha256": "d4d438a3c38a160944826fbd624718486573dcfc2ba5ce1fbef71a49e3dc8521"
+    },
+    {
+      "ruta": "adaptadores/bitacora_partida.py",
+      "sha256": "2d3d4905d626374bd73d898a026c82f0bbd48c7bf2c780340828416e489e52ec"
+    },
+    {
+      "ruta": "adaptadores/cache_catalogo.py",
+      "sha256": "bf7a7f886379b19f2f306330383d58d828d0d8a956976b202ed608ae2d7713ed"
+    },
+    {
+      "ruta": "adaptadores/cliente_http.py",
+      "sha256": "92323326c43af7ad56ca9742e0ab22b5078baa66b7f6be503081a048287b2dcc"
+    },
+    {
+      "ruta": "adaptadores/copia_estado.py",
+      "sha256": "610aaa9b579ff01b69c994078842a892cadbd11da33564fa558aa0675521f37a"
+    },
+    {
+      "ruta": "adaptadores/estado_binario.py",
+      "sha256": "6d1e8856716024991eadf9345c3f75e8feaf405bb85bd806147911a549522a9a"
+    },
+    {
+      "ruta": "adaptadores/estado_compartido.py",
+      "sha256": "0b52be688458d120d36a5f6d6cd09192a8504e30228769d14834a66a632aaeea"
+    },
+    {
+      "ruta": "adaptadores/fuente_datos.py",
+      "sha256": "41c15b3da4786c699f8a36cc69615bf0e77202f814ed45f9768d469ebef40cd7"
+    },
+    {
+      "ruta": "adaptadores/guardado_binario.py",
+      "sha256": "85a5f7f470935530fe165a3c9a752a8d90b048bd9b57d9e794ff0d37fb1856f8"
+    },
+    {
+      "ruta": "adaptadores/modo_offline.py",
+      "sha256": "be9a2b27e1cade387d7ad5b07f17f50c3301ae539bda48abc74ff1b158a313ee"
+    },
+    {
+      "ruta": "adaptadores/prefetch.py",
+      "sha256": "866c6c1964af122616ed1a95840a2cfc8a47fa8f91926755e70042b9c6ec00a8"
+    },
+    {
+      "ruta": "adaptadores/puntajes.py",
+      "sha256": "0b078c8a5791a50f2b4c43055f4683c1829cf8bb5e5b3f7504930be60e3cf151"
+    },
+    {
+      "ruta": "adaptadores/servicio_cripta.py",
+      "sha256": "6b526c36837d57dd609cf7b8d81db0281dc5ab1e473a0f503dc59f6ef08c6440"
+    },
+    {
+      "ruta": "comun/ordenamiento.py",
+      "sha256": "163a0b670cb23b51cc54b2b5b66e22a892967cd914412aebec2f569703671dee"
+    },
+    {
+      "ruta": "controlador/cargar_partida.py",
+      "sha256": "5cab07fffdfebcb043039fda852e4fe20a639dd804bff14553fdf296e5b3fada"
+    },
+    {
+      "ruta": "controlador/comandos.py",
+      "sha256": "a4dd4b9f943936df40f2cf3eb96ce2254cb0eec587183b1b66247336ad552258"
+    },
+    {
+      "ruta": "controlador/controlador.py",
+      "sha256": "3ac53b092d8c85cb01073f0ff78bd562b4cfeedea80ab0cd642625ea643e8ddc"
+    },
+    {
+      "ruta": "controlador/partida.py",
+      "sha256": "7ce82d4461c83b96845cdbe187e1e798d3a5131a7161a13e66cca52304ec62ee"
+    },
+    {
+      "ruta": "main.py",
+      "sha256": "a6a3f4001de54af8052821c371320a5e00fa4d3ed15866eca4efed7f84915c5f"
+    },
+    {
+      "ruta": "modelo/agenda_eventos.py",
+      "sha256": "7c70aa4391be26c11aa2be9319dc88104ff847c01e1ad0dd4cade44561881401"
+    },
+    {
+      "ruta": "modelo/bench_cierre.py",
+      "sha256": "6a9a937ec37f50ab4b4d7e363fb118359a08ae76d56b112e7a8490e1087b49a1"
+    },
+    {
+      "ruta": "modelo/bench_conocimiento.py",
+      "sha256": "c6e0929faf3846cd320e2d99f9b7021397eb6473ae057dd9bb315a6bcc2efa46"
+    },
+    {
+      "ruta": "modelo/bench_decisiones.py",
+      "sha256": "8f7e8b34a8dc634d8a8b39b3167012861992271b06bdc3b814ec693e8731cdf0"
+    },
+    {
+      "ruta": "modelo/bench_linea_tiempo.py",
+      "sha256": "0a6a24a2b3e93058c327a956217cb98a76ec72739161576d447e3dbadff44a96"
+    },
+    {
+      "ruta": "modelo/bench_memoria.py",
+      "sha256": "f81ccafca38ed69734542312a23fad003d668981d44a456fe6b07f3a0868b095"
+    },
+    {
+      "ruta": "modelo/bench_modelo.py",
+      "sha256": "5971718bea80cf788c8e459c7e36b5590e1a2c513a8a10e28ed8991a25fe8eda"
+    },
+    {
+      "ruta": "modelo/bench_resolubilidad.py",
+      "sha256": "ad1e906470d6a0ca296e21a2d212e024481b3d50d40ac147a78dd1337083d41c"
+    },
+    {
+      "ruta": "modelo/bench_rutas.py",
+      "sha256": "97e5d82f80c2f4c16dcb17d5d46aee62764585b92302d0d0b2ec785d53da0dd1"
+    },
+    {
+      "ruta": "modelo/conocimiento.py",
+      "sha256": "4910810dd3db3128f7cffb6bba6e6a9119d4089be8e2b871a87807d240aaa118"
+    },
+    {
+      "ruta": "modelo/efectos.py",
+      "sha256": "da50c4cabe618bbdc44f035058be407bf2586e7a21c4dece82570eaa16337041"
+    },
+    {
+      "ruta": "modelo/evento.py",
+      "sha256": "883363dcf36bd9731d81bb1693abd6ce31957b94df592e1ce32142170d2a2471"
+    },
+    {
+      "ruta": "modelo/heap_rutas.py",
+      "sha256": "89d75a748db012be2ee5802538c56014c9eafeb2d3c3b7a3c9912d7577b82abf"
+    },
+    {
+      "ruta": "modelo/indice_llaves.py",
+      "sha256": "386f59a1ba652ad2722d7004c39ad4b4206dd84820e6020873f0d4b2b4724913"
+    },
+    {
+      "ruta": "modelo/inventario.py",
+      "sha256": "9d316965a11e011d00ed40871da43bb2735ead32d2b82b50722187e73653966e"
+    },
+    {
+      "ruta": "modelo/inventario_reversible.py",
+      "sha256": "2ea988a10d335f7c0d79bd3019cba78eb21b7e24d01fc02dc948aa0a8d222b13"
+    },
+    {
+      "ruta": "modelo/linea_tiempo.py",
+      "sha256": "bb55da998255c4e869e90c880b2f20ad9ac54d82392ea99c3923ba53330bc754"
+    },
+    {
+      "ruta": "modelo/motor_eventos.py",
+      "sha256": "0fd1390ff2f6e60a23f56b50c5ecffb3f7cd728a4c3895e2394115bb552db2d3"
+    },
+    {
+      "ruta": "modelo/rastro.py",
+      "sha256": "3e897e8bc1dbadc2e8bc78ac99716fd20495374eff1167c253da6ed7f7c9eb0d"
+    },
+    {
+      "ruta": "modelo/retroceso.py",
+      "sha256": "eecbcc394cdd7ea7623ed5b8ce990bf71275dcab0d019fa93197907b68062c21"
+    },
+    {
+      "ruta": "modelo/rutas.py",
+      "sha256": "fd6bea206d3df186d6ae5626791e956583052ff3217223dd5be3c26e6b2b8168"
+    },
+    {
+      "ruta": "modelo/tabla_hash.py",
+      "sha256": "c7243a98a407cd0e8ab586f45ba7bbb100806cb6a9fb8ca0b4e9aa362d8ae20a"
+    },
+    {
+      "ruta": "modelo/verificacion.py",
+      "sha256": "ff03e490c89d38739afc5bda7c6533fca0e30af13d00d130567e035342a6815d"
+    },
+    {
+      "ruta": "vista/bitacora_pantalla.py",
+      "sha256": "ff4c769ec5d6e34a3a19c4f9a7d7e63d6b9521fa6214afc73910eedd485b6cd1"
+    },
+    {
+      "ruta": "vista/vista_consola.py",
+      "sha256": "16aec677c7e60e931fe9356dbe2fa4bb25c17efa2bd5ad425799b3eef3328a8a"
+    }
+  ],
+  "evidencia": [
+    {
+      "ruta": "documentacion\\evidencia\\mediciones_linea_tiempo.json",
+      "sha256": "d6c23ad23618ad090054d1381532d6e23a294fbf2018e4d82af2187a3bc49959",
+      "bytes": 1048401
+    },
+    {
+      "ruta": "documentacion\\evidencia\\bench_linea_tiempo.txt",
+      "sha256": "8f9a960c29f1c26939f9770165600aa9b20edee92926389089fda46f3c889a2d",
+      "bytes": 3868
+    }
+  ],
+  "regresion": {
+    "comando": "python -m pytest -q",
+    "resultado": "663 passed in 25.44s",
+    "ruta": "documentacion\\evidencia\\pruebas_linea_tiempo.txt",
+    "sha256": "e140b514dc75e0ed4b247768c7532597354b77bc9c0b2dda8efb3ae597677882"
+  }
+}

@@ -1,0 +1,190 @@
+Python 3.13.2; plataforma win32; semilla 2026
+Repeticiones: 1; menor tiempo observado, sin garantia de rendimiento.
+
+AGENDA: 2000 inserciones, 500 cancelaciones
+Eventos activos extraidos: 1500
+Heap propio: 6.335 ms
+Lista ordenada: 236.144 ms
+
+RETROCESO: 2000 deltas de vida y rastro
+Deshacer un intervalo: 0.214 ms
+Contenedores del registro (estimacion parcial): 144528 bytes
+
+RASTRO: mapa de 4000 salas; 4 salidas abiertas por rastreador
+1 rastreadores; 100 decisiones: 0.205 ms
+Promedio de esta carga: 2.047 us/decision
+100 rastreadores; 10000 decisiones: 12.486 ms
+Promedio de esta carga: 1.249 us/decision
+
+INVENTARIO: 1000 inserciones, recorrido al centro, equipar y 1000 retiros
+Carga completa: 1.758 ms
+
+ORDENAMIENTOS: milisegundos por lista; clave costosa sintetica de 20 sumas
+  n=16; mezclados
+    insertion_sort: 0.013 ms
+    merge_sort: 0.029 ms
+    Seleccion automatica (insertion_sort): 0.011 ms
+  n=16; casi ordenados
+    insertion_sort: 0.003 ms
+    merge_sort: 0.129 ms
+    Seleccion automatica (insertion_sort): 0.040 ms
+  n=16; clave costosa
+    insertion_sort: 0.067 ms
+    merge_sort: 0.078 ms
+    Seleccion automatica (merge_sort): 0.150 ms
+  n=256; mezclados
+    insertion_sort: 4.300 ms
+    merge_sort: 0.533 ms
+    Seleccion automatica (merge_sort): 2.032 ms
+  n=256; casi ordenados
+    insertion_sort: 0.036 ms
+    merge_sort: 2.502 ms
+    Seleccion automatica (insertion_sort): 0.169 ms
+  n=256; clave costosa
+    insertion_sort: 17.500 ms
+    merge_sort: 5.091 ms
+    Seleccion automatica (merge_sort): 2.707 ms
+Python 3.13.2 | Windows | semilla 2026
+Tiempo reportado: menor promedio de 1 rondas; validaciones fuera del cronometro.
+Cargas sinteticas locales; no validan una partida completa ni el limite de 20 ms.
+
+Indice: AVL vs arbol simple (tiempos en us/ficha)
+  n      orden       altura AVL/simple   buscar AVL/simple      construir AVL/simple
+  25     ordenados   5 / 25              0.256 / 0.925          1.839 / 1.260
+  25     mezclados   6 / 10              0.318 / 0.243          1.739 / 0.612
+  100    ordenados   7 / 100             0.357 / 2.859          2.348 / 15.173
+  100    mezclados   8 / 12              2.029 / 5.495          3.542 / 1.025
+  1000   ordenados   10 / 1000           0.448 / 28.927         4.876 / 60.671
+  1000   mezclados   12 / 22             0.759 / 1.149          6.514 / 2.492
+
+CacheCatalogo real: capacidad 25, fuente local sin HTTP
+  Acierto en memoria, incluye AVL y LRU                   0.871 us/operacion
+  Ficha liberada: leer JSON, reinsertar y desalojar     2083.828 us/operacion
+  Recuperaciones cronometradas: 100; solicitudes HTTP: 0
+  Disco con cache del sistema operativo; no se fuerza una lectura fisica fria.
+
+Guardado/carga: 200 salas sinteticas
+  Mismos datos: contenedor binario existente con bloques JSON UTF-8 vs JSON compacto.
+  Comparacion del contenedor original; el codec por campos se mide despues.
+  Guardar completo, binario                            2708.400 us/operacion
+  Guardar completo, JSON                               1801.800 us/operacion
+  Cargar completo, binario (una apertura)              6506.750 us/operacion
+  Cargar completo, JSON                                6982.700 us/operacion
+  Recuperar una sala, binario con indice                401.920 us/operacion
+  Recuperar una sala, JSON completo y recorrido         656.070 us/operacion
+  Tamano binario: 35843 bytes; JSON: 32848 bytes
+  Incluye codificacion/decodificacion. Carga completa con una apertura del archivo.
+  Escrituras con cierre de archivo, sin fsync; lecturas con cache del sistema operativo.
+
+Modelo real: esquema explicito binario, 200 salas e historial de dos acciones
+  Guardar modelo completo (captura, valida y publica)    22726.900 us/operacion
+  Restaurar modelo completo y sus referencias         35716.000 us/operacion
+  Comparacion de escritura con ambas representaciones ya preparadas:
+  Escribir bloques binarios preparados                 4488.950 us/operacion
+  Escribir JSON completo preparado                     1011.850 us/operacion
+  Lectura/decodificacion al mismo esquema de datos; sin reconstruir entidades:
+  Binario por campos -> registros comparables         29829.050 us/operacion
+  JSON equivalente -> registros comparables           11257.150 us/operacion
+  Vista de una sala sin cargar el modelo                188.660 us/operacion
+  Tamano modelo binario: 58208 bytes; JSON equivalente: 140200 bytes
+  JSON es la alternativa de medicion: incluye entidades, IDs, eventos, azar e historial.
+  Restaurar entidades es una medicion adicional, distinta de leer/decodificar registros.
+
+Comprobaciones funcionales: OK
+
+TERRENO Y CAZADORES: 16 cargas sinteticas, alternativas verificadas
+Individual / compartida / reutilizacion, ms por lote (minimos):
+  salas=80, cazadores=1, rango=100, inestables=False: 0.0248 / 0.0283 / 0.0010
+  salas=80, cazadores=1, rango=100, inestables=True: 0.0216 / 0.0471 / 0.0278
+  salas=80, cazadores=1, rango=2000, inestables=False: 0.1766 / 0.3800 / 0.0005
+  salas=80, cazadores=1, rango=2000, inestables=True: 0.1342 / 0.3324 / 0.2092
+  salas=80, cazadores=32, rango=100, inestables=False: 1.5480 / 0.0502 / 0.0039
+  salas=80, cazadores=32, rango=100, inestables=True: 0.5176 / 0.0460 / 0.5420
+  salas=80, cazadores=32, rango=2000, inestables=False: 10.5227 / 0.5789 / 0.0040
+  salas=80, cazadores=32, rango=2000, inestables=True: 5.0849 / 0.6084 / 7.2427
+  salas=800, cazadores=1, rango=100, inestables=False: 0.0173 / 0.0225 / 0.0005
+  salas=800, cazadores=1, rango=100, inestables=True: 0.0132 / 0.0198 / 0.0136
+  salas=800, cazadores=1, rango=2000, inestables=False: 0.2322 / 0.6105 / 0.0009
+  salas=800, cazadores=1, rango=2000, inestables=True: 0.7149 / 0.7701 / 0.1781
+  salas=800, cazadores=32, rango=100, inestables=False: 0.9671 / 0.0482 / 0.0047
+  salas=800, cazadores=32, rango=100, inestables=True: 0.6560 / 0.0474 / 0.9441
+  salas=800, cazadores=32, rango=2000, inestables=False: 9.7229 / 1.4262 / 0.0057
+  salas=800, cazadores=32, rango=2000, inestables=True: 9.2270 / 0.7711 / 5.5280
+Ciclo completo sintetico, 32 cazadores: 100 ciclos; maximo 28.6376 ms; >=20 ms: 4
+Sin HTTP ni vista. Referencia oficial pendiente; no certifica su limite.
+IR A: 160 calculos sobre 80 salas conocidas; maximo 0.3644 ms; >=5 ms: 0
+NIEBLA: consultas, revelacion e inversion; sin vista ni HTTP.
+  salas=80; trabajo=8; revelacion maxima=0.0168 ms
+  salas=8000; trabajo=8; revelacion maxima=0.0147 ms
+  reserva70; salas=80; capacidad=128; construccion maxima=0.2564 ms; ampliaciones=0
+  reserva50; salas=80; capacidad=256; construccion maxima=0.1304 ms; ampliaciones=0
+  gradual70; salas=80; capacidad=128; construccion maxima=0.3159 ms; ampliaciones=2
+  reserva70; salas=8000; capacidad=16384; construccion maxima=17.3969 ms; ampliaciones=0
+  reserva50; salas=8000; capacidad=16384; construccion maxima=16.6008 ms; ampliaciones=0
+  gradual70; salas=8000; capacidad=16384; construccion maxima=44.7028 ms; ampliaciones=9
+RESOLUBILIDAD cadena: 40 salas, 39 llaves; total máximo 0.9263 ms; cierre repetido máximo 0.2915 ms.
+RESOLUBILIDAD cadena: 160 salas, 159 llaves; total máximo 3.6981 ms; cierre repetido máximo 7.6461 ms.
+RESOLUBILIDAD cadena: 640 salas, 639 llaves; total máximo 17.2580 ms; cierre repetido máximo 101.0652 ms.
+RESOLUBILIDAD grupos: 41 salas, 20 llaves; total máximo 1.8297 ms; cierre repetido máximo 0.0110 ms.
+RESOLUBILIDAD grupos: 161 salas, 80 llaves; total máximo 3.8153 ms; cierre repetido máximo 0.0269 ms.
+RESOLUBILIDAD grupos: 641 salas, 320 llaves; total máximo 17.3311 ms; cierre repetido máximo 0.1175 ms.
+RESOLUBILIDAD alternativas: 41 salas, 40 llaves; total máximo 1.8093 ms; cierre repetido máximo 0.0093 ms.
+RESOLUBILIDAD alternativas: 161 salas, 160 llaves; total máximo 9.1755 ms; cierre repetido máximo 0.0494 ms.
+RESOLUBILIDAD alternativas: 641 salas, 640 llaves; total máximo 36.3614 ms; cierre repetido máximo 0.1868 ms.
+DECISIONES: 200 salas, 0 cazadores
+DECISIONES: 200 salas, 8 cazadores
+DECISIONES: 200 salas, 32 cazadores
+DECISIONES: 300 salas, 0 cazadores
+DECISIONES: 300 salas, 8 cazadores
+DECISIONES: 300 salas, 32 cazadores
+DECISIONES: 1000 salas, 0 cazadores
+DECISIONES: 1000 salas, 8 cazadores
+DECISIONES: 1000 salas, 32 cazadores
+CONSULTAS: 5000 acciones, 200 salas, 0 cazadores, K=10
+  mediana 15.352 ms; p95 22.378 ms; max 22.378 ms; >=50 ms: 0/12; reaplica hasta 9 acciones
+CONSULTAS: 5000 acciones, 200 salas, 0 cazadores, K=25
+  mediana 12.882 ms; p95 21.753 ms; max 21.753 ms; >=50 ms: 0/12; reaplica hasta 24 acciones
+CONSULTAS: 5000 acciones, 200 salas, 0 cazadores, K=50
+  mediana 20.421 ms; p95 30.317 ms; max 30.317 ms; >=50 ms: 0/12; reaplica hasta 49 acciones
+CONSULTAS: 5000 acciones, 200 salas, 0 cazadores, K=100
+  mediana 14.999 ms; p95 31.032 ms; max 31.032 ms; >=50 ms: 0/12; reaplica hasta 99 acciones
+CONSULTAS: 5000 acciones, 200 salas, 0 cazadores, K=solo inicial
+  mediana 111.704 ms; p95 342.641 ms; max 342.641 ms; >=50 ms: 8/12; reaplica hasta 4999 acciones
+CONSULTAS: 5000 acciones, 200 salas, 32 cazadores, K=10
+  mediana 50.777 ms; p95 104.241 ms; max 104.241 ms; >=50 ms: 6/12; reaplica hasta 9 acciones
+CONSULTAS: 5000 acciones, 200 salas, 32 cazadores, K=25
+  mediana 41.177 ms; p95 50.181 ms; max 50.181 ms; >=50 ms: 1/12; reaplica hasta 24 acciones
+CONSULTAS: 5000 acciones, 200 salas, 32 cazadores, K=50
+  mediana 52.644 ms; p95 65.830 ms; max 65.830 ms; >=50 ms: 6/12; reaplica hasta 49 acciones
+CONSULTAS: 5000 acciones, 200 salas, 32 cazadores, K=100
+  mediana 73.197 ms; p95 151.917 ms; max 151.917 ms; >=50 ms: 8/12; reaplica hasta 99 acciones
+CONSULTAS: 5000 acciones, 200 salas, 32 cazadores, K=solo inicial
+  mediana 1780.387 ms; p95 5631.822 ms; max 5631.822 ms; >=50 ms: 9/12; reaplica hasta 4999 acciones
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 0 cazadores, K=10
+  retenida 205.37 MiB; pico 205.91 MiB; punto max 136.269 ms; ciclo max 136.384 ms; >=20 ms: 35/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 0 cazadores, K=25
+  retenida 83.22 MiB; pico 84.26 MiB; punto max 83.976 ms; ciclo max 84.052 ms; >=20 ms: 4/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 0 cazadores, K=50
+  retenida 42.50 MiB; pico 43.23 MiB; punto max 53.590 ms; ciclo max 53.673 ms; >=20 ms: 1/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 0 cazadores, K=100
+  retenida 22.14 MiB; pico 22.88 MiB; punto max 20.338 ms; ciclo max 20.498 ms; >=20 ms: 1/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 0 cazadores, K=None
+  retenida 1.88 MiB; pico 1.91 MiB; punto max 0.000 ms; ciclo max 2.349 ms; >=20 ms: 0/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 32 cazadores, K=10
+  retenida 338.90 MiB; pico 341.90 MiB; punto max 657.169 ms; ciclo max 658.116 ms; >=20 ms: 503/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 32 cazadores, K=25
+  retenida 136.83 MiB; pico 139.15 MiB; punto max 265.829 ms; ciclo max 266.430 ms; >=20 ms: 200/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 32 cazadores, K=50
+  retenida 69.45 MiB; pico 70.23 MiB; punto max 253.405 ms; ciclo max 253.764 ms; >=20 ms: 101/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 32 cazadores, K=100
+  retenida 35.75 MiB; pico 37.45 MiB; punto max 146.990 ms; ciclo max 148.976 ms; >=20 ms: 52/5001
+MEMORIA/PUNTOS: 5000 acciones, 200 salas, 32 cazadores, K=None
+  retenida 2.20 MiB; pico 2.24 MiB; punto max 0.000 ms; ciclo max 110.378 ms; >=20 ms: 1/5001
+PERSISTENCIA: preparando 5000 acciones, 200 salas, K=10
+  501 puntos; 62595238 bytes; guardar max 26691.127 ms; cargar max 36907.307 ms; copia max 13.586 ms; codec max 96.957 ms
+PERSISTENCIA: preparando 5000 acciones, 200 salas, K=25
+  201 puntos; 25344449 bytes; guardar max 10328.938 ms; cargar max 14394.280 ms; copia max 15.174 ms; codec max 95.146 ms
+PERSISTENCIA: preparando 5000 acciones, 200 salas, K=50
+  101 puntos; 12928115 bytes; guardar max 4558.534 ms; cargar max 8990.512 ms; copia max 16.333 ms; codec max 140.428 ms
+PERSISTENCIA: preparando 5000 acciones, 200 salas, K=100
+  51 puntos; 6720237 bytes; guardar max 3442.368 ms; cargar max 4263.462 ms; copia max 16.508 ms; codec max 105.800 ms

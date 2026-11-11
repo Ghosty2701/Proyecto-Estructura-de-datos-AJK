@@ -1,0 +1,2 @@
+CONSULTAS SERVICIO: cripta-06, version f9ed9afa683d, K=25, cazadores activos iniciales=32
+  5000 acciones; 36 consultas; max 363.654 ms; >=50 ms: 28

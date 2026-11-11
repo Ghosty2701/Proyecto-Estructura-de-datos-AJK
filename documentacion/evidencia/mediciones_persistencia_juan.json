@@ -1,0 +1,136 @@
+{
+  "semilla": 2026,
+  "rondas": 3,
+  "python": "3.13.2",
+  "plataforma": "Windows-11-10.0.26200-SP0",
+  "version_modelo": 6,
+  "acciones_vigentes": 5000,
+  "salas": 200,
+  "cazadores": 0,
+  "http": 0,
+  "vista": false,
+  "carga_equivalente_entre_k": true,
+  "filas": [
+    {
+      "k": 10,
+      "puntos": 501,
+      "ordenes": 5002,
+      "acciones_ejecutadas": 5001,
+      "archivo_bytes": 62595238,
+      "guardar_ms": [
+        16241.5237,
+        15818.5058,
+        14602.8203
+      ],
+      "cargar_ms": [
+        22995.0996,
+        25483.9991,
+        21384.2753
+      ],
+      "copiador_ms": [
+        19.6293,
+        12.4023,
+        12.2218
+      ],
+      "codec_ida_vuelta_ms": [
+        67.3715,
+        65.6137,
+        69.9426
+      ],
+      "historia_equivalente": true,
+      "continuacion_equivalente": true,
+      "copias_equivalentes": true
+    },
+    {
+      "k": 25,
+      "puntos": 201,
+      "ordenes": 5002,
+      "acciones_ejecutadas": 5001,
+      "archivo_bytes": 25344449,
+      "guardar_ms": [
+        6128.9526,
+        6032.6215,
+        6562.6912
+      ],
+      "cargar_ms": [
+        11206.7336,
+        9411.3205,
+        8645.6992
+      ],
+      "copiador_ms": [
+        14.2904,
+        13.7424,
+        13.0178
+      ],
+      "codec_ida_vuelta_ms": [
+        70.7246,
+        64.9127,
+        81.7343
+      ],
+      "historia_equivalente": true,
+      "continuacion_equivalente": true,
+      "copias_equivalentes": true
+    },
+    {
+      "k": 50,
+      "puntos": 101,
+      "ordenes": 5002,
+      "acciones_ejecutadas": 5001,
+      "archivo_bytes": 12928115,
+      "guardar_ms": [
+        2812.1955,
+        3777.1888,
+        2989.4342
+      ],
+      "cargar_ms": [
+        4657.1605,
+        4770.6845,
+        4357.7009
+      ],
+      "copiador_ms": [
+        13.473,
+        16.1145,
+        17.3058
+      ],
+      "codec_ida_vuelta_ms": [
+        65.5571,
+        76.0531,
+        84.4731
+      ],
+      "historia_equivalente": true,
+      "continuacion_equivalente": true,
+      "copias_equivalentes": true
+    },
+    {
+      "k": 100,
+      "puntos": 51,
+      "ordenes": 5002,
+      "acciones_ejecutadas": 5001,
+      "archivo_bytes": 6720237,
+      "guardar_ms": [
+        1484.9928,
+        1518.7865,
+        1480.9261
+      ],
+      "cargar_ms": [
+        2059.6237,
+        2112.6688,
+        3092.4662
+      ],
+      "copiador_ms": [
+        14.0249,
+        13.0458,
+        13.5483
+      ],
+      "codec_ida_vuelta_ms": [
+        69.5065,
+        67.847,
+        70.4408
+      ],
+      "historia_equivalente": true,
+      "continuacion_equivalente": true,
+      "copias_equivalentes": true
+    }
+  ],
+  "alcance": "Persistencia y copia con movimiento ponderado y un pergamino; sin cazadores. No certifica 20 ms de ciclo ni 50 ms de historia. Disco con cache del sistema, sin fsync; sin medir memoria residente."
+}

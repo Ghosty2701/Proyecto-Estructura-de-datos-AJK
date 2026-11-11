@@ -1,5 +1,159 @@
 # Documento de Decisiones de Diseño
 
+**Estado actual (2026-11-11):** corrida conjunta ejecutada y documentación
+independiente de K revisada. El [informe consolidado](CIERRE_MEDICIONES_P2.md)
+enlaza las muestras, entorno, pruebas y pendientes. Las secciones fechadas
+siguientes conservan la evidencia histórica; no son una declaración de
+cumplimiento de tiempos ni una elección definitiva de K.
+
+El trabajo de esta sesión se trasladó después al repositorio original sobre
+`4c34c88`, que estaba limpio. Los ensayos conservan sus hashes originales;
+el [manifiesto de traslado](evidencia/traslado_repositorio_juan.json) verifica
+equivalencia del código normalizando CRLF/LF. La regresión en el repositorio
+original también aprobó [663 pruebas](evidencia/pruebas_traslado_juan.txt).
+
+## Parte II — Juan: consultas históricas medidas (2026-11-11)
+
+**Problema:** comprobar el costo completo de `historia`, la cota de K acciones
+y el límite de 50 ms, incluida la copia y construcción del resumen. Fuentes:
+[especificación](../specs/004-linea-tiempo/spec.md),
+[plan](../specs/004-linea-tiempo/plan.md) y
+[T029/T033](../specs/004-linea-tiempo/tasks.md). Se mantienen D-LT-01 a 06;
+el ensayo no incorpora estructuras nuevas ni elige el K predeterminado.
+
+**Alternativas medidas:** K = 10/25/50/100 frente a conservar únicamente el punto
+inicial (K mayor que las acciones ejecutadas, sin cambiar el código del juego).
+Esta última alternativa re-simula desde el inicio. Se reutilizan las estructuras
+aprobadas y el mismo ejecutor del replay; no se mide reconstrucción hacia atrás
+en este tramo. La complejidad prevista de consulta es O(log A + log P + S + K·C),
+con A acciones, P puntos, S estado copiado/resumido y C costo de una acción
+re-simulada; con solo el punto inicial pueden re-simularse O(A) acciones.
+
+**Método sintético:** Python 3.13.2/Windows, semilla 2026, 200 salas, 5 000
+acciones vigentes, movimiento ponderado, esperas y un pergamino. Diez escenarios:
+los cinco valores/modos de K con 0 y 32 cazadores activos. Cada escenario mide
+12 destinos en tres rondas con orden rotado: 36 consultas, 360 en total. Incluye
+`#k`, t exacto, t intermedio y estado actual; no se consulta solo en puntos.
+El mínimo incluye consultas al estado actual que no necesitan copia.
+
+El cronómetro incluye la llamada completa a `historia`; excluye preparación y
+comprobaciones extra. No hay red ni renderizado; GC permanece habilitado.
+Se publican todas las muestras y p95 por rango más cercano (ceil(0,95·n)).
+Nueve destinos por escenario se contrastan con resúmenes capturados en vivo;
+los tres intermedios se contrastan entre K y contra solo el punto inicial.
+No se guardan estados completos por acción para producir el oráculo.
+
+| K, con 32 cazadores | Mediana (ms) | p95 (ms) | Máximo (ms) | Consultas ≥50 ms |
+| --- | --- | --- | --- | --- |
+| 10 | 34,041 | 44,205 | 44,587 | 0/36 |
+| 25 | 39,690 | 62,142 | 63,502 | 6/36 |
+| 50 | 51,904 | 125,801 | 147,408 | 19/36 |
+| 100 | 57,993 | 103,262 | 148,601 | 23/36 |
+| Solo inicial | 1 251,091 | 3 105,909 | 3 121,560 | 28/36 |
+
+Sin cazadores, los máximos fueron 22,099/22,362/33,401/34,380 ms para
+K = 10/25/50/100, sin muestras ≥50 ms. Con solo el inicial, máximo 240,617 ms
+y 22/36 muestras ≥50 ms. Todos los resúmenes fueron equivalentes. Los puntos
+periódicos requirieron como máximo 9/24/49/99 acciones por consulta; la
+alternativa inicial, 4 999. Las comparaciones al buscar el punto no superaron
+bit_length(P). La firma persistible del modelo (incluidos azar y retroceso),
+registro histórico y contadores de caché/red permanecieron iguales.
+
+**Referencia publicada:** `cripta-06` (mayor publicada en la consulta de esta
+sesión: 300 salas), versión `f9ed9afa683d`, catálogo `4b9e75a42be5`, semilla
+2026. Se precargaron los datos, se activaron 32 de sus 36 cazadores con sus
+posiciones/estadísticas originales y se aumentó experimentalmente la vida del
+jugador a 10^9. Alternó esperas y movimientos por salidas abiertas, evitando
+la sala de salida, hasta completar **5 000 acciones**. Con K provisional 25:
+
+| Consultas | Mínimo (ms) | Mediana (ms) | p95 (ms) | Máximo (ms) | ≥50 ms |
+| --- | --- | --- | --- | --- | --- |
+| 36 | 0,041 | 90,112 | 170,406 | 195,992 | 27/36 |
+
+**El límite de 50 ms no se cumple en la carga medida.** Se preservó el estado y
+no hubo HTTP durante las consultas; la preparación usó 46/63 solicitudes.
+La re-simulación aplicó como máximo 23 acciones por consulta. La referencia
+contrasta las decisiones con capturas en vivo; sus intermedios no tienen un
+oráculo independiente en ese ensayo. Las pruebas automatizadas sí cubren
+instantes intermedios y eventos simultáneos por separado.
+
+**Decisión y límites:** K = 25 sigue provisional y PR-LT-001 queda pendiente de
+resolver. Que K = 10 haya cumplido en la carga sintética no prueba que cumpla
+en la cripta de referencia, ni justifica seleccionarlo sin memoria y ciclo.
+La mejora frente a re-simular desde el inicio respalda usar puntos periódicos,
+pero no demuestra un presupuesto general de tiempo. No se midieron memoria,
+costo de creación de puntos, agenda/retroceso con la carga completa ni la
+alternativa hacia atrás; T029/T030/T031/T032 siguen abiertas.
+
+Regresión actual: **654 pruebas aprobadas**, incluidas equivalencia, cota K,
+estadísticas y detección de una consulta que modifica deliberadamente el azar.
+Evidencia: [muestras sintéticas](evidencia/mediciones_consultas_juan.json),
+[salida sintética](evidencia/bench_consultas_juan.txt),
+[muestras de referencia](evidencia/mediciones_consultas_referencia_juan.json),
+[salida de referencia](evidencia/bench_consultas_referencia_juan.txt) y
+[regresión](evidencia/pruebas_consultas_juan.txt).
+
+## Parte II — Juan: persistencia de historia y copia de puntos (2026-11-11)
+
+**Alcance:** tramo de T029/T030 de la
+[especificación](../specs/004-linea-tiempo/spec.md),
+[plan](../specs/004-linea-tiempo/plan.md) y
+[tareas](../specs/004-linea-tiempo/tasks.md). Atiende FR-LT-015 y aporta evidencia
+a PR-LT-005/006. No cierra las mediciones de memoria/consulta o adelante/atrás.
+
+**Problema y alternativas:** conservar la historia completa al guardar/cargar y
+cuantificar el costo de D-LT-06. Persistir todos los puntos evita regenerarlos al
+cargar, pero aumenta tamaño y E/S al reducir K. Guardar solo el inicial o parte
+de los puntos son las alternativas ya consideradas en
+[research.md](../specs/004-linea-tiempo/research.md); no se implementaron ni se
+presentan como alternativas medidas aquí. Para copiar el estado base sí se
+comparan copiador propio e ida y vuelta con el codec binario existente.
+
+**Decisión y correspondencia con el plan:** se mantienen D-LT-04 (copiador
+propio) y D-LT-06 (todos los puntos en formato 6), sin estructuras nuevas.
+El módulo `adaptadores/bench_persistencia.py` aporta el tramo de adaptadores al
+bench previsto. K = 25 sigue provisional: estos resultados de E/S no bastan
+para resolver D-LT-07. La decisión heredada de guardado por bloques se conserva;
+la ampliación de P2 agrega el costo de persistir P estados, no una mejora
+afirmada de velocidad respecto de P1.
+
+**Complejidad:** con A órdenes, P puntos y B bytes del estado base serializado,
+el archivo necesita O(A + P·B), además de los datos de infraestructura de la
+sesión. Guardar/cargar procesa todos esos registros y reconstruye cada punto
+con los auxiliares del codec. Reducir K aumenta P; la lectura selectiva del
+contenedor mantiene su índice existente. El tamaño del archivo no mide la
+memoria residente de la partida.
+
+**Medición:** Python 3.13.2, Windows, semilla 2026; 200 salas, 5 000 acciones
+vigentes, 5 001 ejecutadas y 5 002 órdenes (un pergamino). Tres rondas por K,
+sin cazadores, HTTP ni vista. Se prepara el servicio local antes del cronómetro;
+guardar captura/codifica/escribe toda la sesión y cargar decodifica todos los
+puntos, valida y reenlaza la sesión. Las comprobaciones extra de equivalencia
+se hacen fuera del cronómetro. Se conservan todas las muestras.
+
+| K | Puntos, incluido el inicial | Archivo (MB decimales) | Guardar máximo (s) | Cargar máximo (s) |
+| --- | --- | --- | --- | --- |
+| 10 | 501 | 62,60 | 16,242 | 25,484 |
+| 25 | 201 | 25,34 | 6,563 | 11,207 |
+| 50 | 101 | 12,93 | 3,777 | 4,771 |
+| 100 | 51 | 6,72 | 1,519 | 3,092 |
+
+En las 12 muestras, copiar el estado base mediante el copiador propio dio
+12,222–19,629 ms; codificar y decodificarlo en memoria dio 64,913–84,473 ms.
+Ambas alternativas conservan el resumen, las salas y el estado del generador.
+Las cargas completas también conservan el registro entero, cinco consultas
+históricas repartidas y la continuación. La regresión completa dio **641 pruebas
+aprobadas**, incluidas pruebas que detectan pérdida deliberada del registro.
+
+**Límites:** persistir todos los puntos puede tardar decenas de segundos incluso
+sin cazadores; se publica ese costo. Estas muestras no certifican 20 ms por
+ciclo ni 50 ms por consulta, no miden memoria total y no justifican K por sí
+solas. E/S con caché del sistema, sin `fsync`; las cifras dependen del equipo y
+la carga. La revisión completa de agenda/retroceso bajo la carga nueva (§5.6)
+sigue en T031. Evidencia: [muestras y entorno](evidencia/mediciones_persistencia_juan.json),
+[salida del bench](evidencia/bench_persistencia_juan.txt) y
+[regresión](evidencia/pruebas_persistencia_juan.txt).
+
 ## Parte II — Resolubilidad implementada y verificada (2026-11-09)
 
 Fuentes: [especificación](../specs/003-verificar-resolubilidad/spec.md),

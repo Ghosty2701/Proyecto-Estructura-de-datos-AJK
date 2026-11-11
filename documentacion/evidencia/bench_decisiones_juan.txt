@@ -1,0 +1,9 @@
+DECISIONES: 200 salas, 0 cazadores
+DECISIONES: 200 salas, 8 cazadores
+DECISIONES: 200 salas, 32 cazadores
+DECISIONES: 300 salas, 0 cazadores
+DECISIONES: 300 salas, 8 cazadores
+DECISIONES: 300 salas, 32 cazadores
+DECISIONES: 1000 salas, 0 cazadores
+DECISIONES: 1000 salas, 8 cazadores
+DECISIONES: 1000 salas, 32 cazadores

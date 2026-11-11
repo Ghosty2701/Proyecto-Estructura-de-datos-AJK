@@ -1261,3 +1261,129 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
 26. Las pruebas se pueden simplificar?, son demasiadas, dime si realmente todas son necesarias, o si se pueden acortar, ademas revisa si todas las pruebas estan en pytest
 
     *Fecha: no registrada*
+
+27. Continua con mi parte, yo soy juan. Si necesitas un nuevo spec para continuar algo avisame
+
+    *Fecha: 2026-11-11. Agente: Codex; modelo exacto no registrado.*
+
+    Continuación del rol B bajo `specs/004-linea-tiempo`, sin capacidad nueva
+    ni decisiones nuevas de estructuras. Tramo de T029/T030: benchmark optativo
+    de persistencia de toda la historia con K = 10/25/50/100 y 5 000 acciones,
+    tamaño y tiempos de guardar/cargar y copia propia frente al codec binario.
+    Pruebas de equivalencia, pérdida deliberada de registro, CLI y validación
+    de parámetros. La carga sintética incluye costos variables y un pergamino,
+    sin cazadores ni red. README y guía corregidos para reflejar los comandos
+    existentes y el formato 6; K = 25 continúa provisional.
+    Evidencia en `documentacion/evidencia/mediciones_persistencia_juan.json` y
+    `bench_persistencia_juan.txt`. No se declara cerrado T029/T030 ni se
+    sustituye la medición de consultas/memoria, cazadores o adelante/atrás.
+    Regresión final: 641 pruebas aprobadas. Medición: 200 salas, tres rondas
+    por K; todos los registros históricos y las continuaciones equivalentes.
+    Se publican los tiempos elevados de carga de D-LT-06 como límite conocido.
+
+28. Continua con las mediciones de consultas, de nuevo, si necesitas un nuevo spec, o preguntarme algo importante hazlo
+
+    *Fecha: 2026-11-11. Agente: Codex; modelo exacto no registrado.*
+
+    Continuación de T029 y ensayo de T033 dentro de `004-linea-tiempo`; no se
+    necesita una capacidad nueva ni se eligen estructuras. Benchmark de
+    `historia` completo con 5 000 acciones, K = 10/25/50/100 y solo punto
+    inicial, cargas sintéticas sin cazadores y con 32 activos. Registra todas
+    las muestras, mínimo/mediana/p95/máximo, consultas ≥50 ms, cota K y búsqueda
+    del punto. Contrasta decisiones con capturas en vivo y destinos entre K
+    y con la reconstrucción desde el inicio; verifica que consultar no altere
+    el estado persistible, retroceso, azar, línea ni contadores de caché/red.
+    Se añade un modo con datos del servicio, K provisional, vida experimental
+    del jugador y activación anticipada de cazadores con datos originales.
+    Pruebas creadas antes del módulo; incluye detección de alteración deliberada
+    del azar. No se cambia K y siguen pendientes memoria, ciclos y adelante/atrás.
+    Resultado: 360 consultas sintéticas y 36 de referencia. Con K = 25 y 32
+    cazadores sintéticos hubo 6/36 consultas ≥50 ms; en `cripta-06`, 300 salas,
+    versión `f9ed9afa683d`, 27/36 y máximo 195,992 ms. Se declara el límite
+    incumplido. Referencia: 5 000 acciones, 32 cazadores activos iniciales,
+    46/63 solicitudes al preparar, cero al consultar. Regresión: 654 pruebas.
+
+
+29. Continua con medir memoria y la creacion de puntos
+
+    *Fecha: 2026-11-11. Agente: Codex; modelo exacto no registrado.*
+
+    T029 bajo 004-linea-tiempo, sin nuevas estructuras ni elección de K.
+    Memoria trazada separada de tiempos; mismos escenarios sint?ticos que
+    consultas, 5 000 acciones, 200 salas, K = 10/25/50/100 y solo inicial,
+    0/32 cazadores. Registra mitad/final/pico, tiempos de copias periídicas
+    y ciclos completos con registro. Se verifica equivalencia entre ejecuciones.
+
+    Ejecuci?n completada: diez escenarios. Los ciclos exceden 20 ms; K sigue
+    provisional. Resultados y límites en el Documento de Decisiones.
+
+30. Ok entonces continua y mejoremos costos para elegir un buen valor de K
+
+    *Fecha: 2026-11-11. Agente: Codex; modelo exacto no registrado.*
+
+    Perfilado del copiador. Segundo hash diferido y reutilizaci?n de casilla,
+    conservando estructuras aprobadas. Comparaci?n pareada y nueva referencia:
+    mejora local pero siguen consultas >=50 ms. 655 pruebas pasan; K sin cambiar.
+    Compartir datos inmutables o compactar puntos solo se presentan como
+    alternativas pendientes de elección expl?cita.
+
+31. Compartir datos inmutables y copiar solo el estado mutable (recomendado para investigar)
+
+    *Fecha: 2026-11-11. Agente: Codex; modelo exacto no registrado.*
+
+    Elecci?n expl?cita de investigación. Prototipo aislado con plantilla de
+    escalares/enlaces, tokens y estado mutable separado. Comparaci?n exploratoria
+    de 20 capturas sobre 300 salas/32 cazadores/500 acciones. Reduce memoria
+    13,7 %, sin demostrar mejora suficiente de latencia; no integrado a partidas.
+    Regresi?n completa: 658 pruebas. K y formato se conservan.
+
+32. Continua con eso
+
+    *Fecha: 2026-11-11. Agente: Codex; modelo exacto no registrado.*
+
+    Perfilado de validación y reconstrucción del prototipo. Comparaci?n directa
+    de plantilla, reserva en la tabla propia y evitar memoizaci?n innecesaria
+    de tuplas inmutables. Pruebas de enlaces/costos e historia experimental.
+    Ensayo completo: 5 000 acciones, 300 salas, 32 cazadores, K=25, 36 consultas
+    por modo. No mejora suficiente frente al modo normal; permanece aislado.
+
+33. Todo lo que queda es para cumplir 50ms? Si no es el caso, primero continuemos con lo demas y por ultimo dejamos eso
+
+    *Fecha: 2026-11-11. Agente: Codex; modelo exacto no registrado.*
+
+    Se pospone optimizar consultas. T030/T031: adelante/atr?s, deltas, codec
+    y trazas reales de agenda, nueve escenarios y tres rondas, equivalentes.
+    T032: integración optativa y exportación probadas, corrida larga pendiente.
+    T035-T037: actualizaci?n parcial y matriz de trazabilidad; K y presupuestos
+    pendientes expl?citos, sin marcar aceptación completa ni modificar estructuras.
+
+34. Completa los primeros dos apartados, una vez eso este hecho vamos por las consultas y K
+
+    *Fecha: 2026-11-11. Agente: Codex; modelo exacto no registrado.*
+
+    Corrida conjunta real con una ronda, semilla 2026: consultas, memoria,
+    persistencia y decisiones; logs, JSON y hashes nuevos. T032 completada.
+    Documentacion independiente de K revisada: estado de entrega, contrato,
+    especificacion/plan/modelo, decisiones, comandos, matriz de 16 FR/7 PR y
+    enlaces locales. 663 pruebas pasan. Se conservan fallos de tiempos; K=25
+    provisional. No se optimiza ni se elige K durante estos dos apartados.
+
+35. Antes de continuar trabajando, tu puedes hacer los commits de los cambios al repositorio?
+
+    *Fecha: 2026-11-11. Agente: Codex; modelo exacto no registrado.*
+
+    Se verifica que la copia de trabajo no tiene Git. Se solicita la ruta
+    del repositorio original antes de registrar cambios; no se inicializa uno nuevo.
+
+36. C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK
+
+    Esa seria la ruta, deberias estar trabajando en esa ruta pero te puse fue en una copia descargada
+
+    *Fecha: 2026-11-11. Agente: Codex; modelo exacto no registrado.*
+
+    Repositorio original en main, limpio, base 4c34c88. Traslado de cambios de
+    contenido y archivos nuevos; se omiten diferencias exclusivas CRLF/LF y
+    entornos/caches. Commits separados de specs, codigo/pruebas y evidencia.
+    Regresion en esta ruta: 663 pruebas aprobadas. No se hace push ni se
+    reconstruye el historial perdido. Manifiesto de traslado y hashes normalizados
+    para distinguir mediciones originales de pruebas en el repositorio actual.

@@ -1,0 +1,392 @@
+{
+  "id_cripta": "cripta-06",
+  "version_cripta": "f9ed9afa683d",
+  "version_catalogo": "4b9e75a42be5",
+  "salas": 300,
+  "k": 25,
+  "acciones_objetivo": 5000,
+  "acciones_vigentes": 5000,
+  "semilla": 2026,
+  "rondas": 3,
+  "cazadores_totales": 36,
+  "cazadores_activos_inicio": 32,
+  "estadisticas": {
+    "cantidad": 36,
+    "minimo_ms": 0.041,
+    "mediana_ms": 90.11205000000001,
+    "p95_ms": 170.4063,
+    "maximo_ms": 195.9916,
+    "excedidos_50ms": 27
+  },
+  "muestras": [
+    {
+      "ronda": 1,
+      "argumento": [
+        "k",
+        1
+      ],
+      "tiempo_ms": 28.5804,
+      "acciones_reaplicadas": 0,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 1,
+      "argumento": [
+        "t",
+        200
+      ],
+      "tiempo_ms": 31.7117,
+      "acciones_reaplicadas": 1,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 1,
+      "argumento": [
+        "t",
+        62241
+      ],
+      "tiempo_ms": 66.6643,
+      "acciones_reaplicadas": 5,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 1,
+      "argumento": [
+        "k",
+        1110
+      ],
+      "tiempo_ms": 86.9266,
+      "acciones_reaplicadas": 9,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 1,
+      "argumento": [
+        "t",
+        187340
+      ],
+      "tiempo_ms": 103.8456,
+      "acciones_reaplicadas": 15,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 1,
+      "argumento": [
+        "t",
+        249741
+      ],
+      "tiempo_ms": 123.077,
+      "acciones_reaplicadas": 21,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 1,
+      "argumento": [
+        "k",
+        2777
+      ],
+      "tiempo_ms": 61.0436,
+      "acciones_reaplicadas": 1,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 1,
+      "argumento": [
+        "t",
+        374690
+      ],
+      "tiempo_ms": 82.9233,
+      "acciones_reaplicadas": 6,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 1,
+      "argumento": [
+        "t",
+        437241
+      ],
+      "tiempo_ms": 101.6186,
+      "acciones_reaplicadas": 13,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 1,
+      "argumento": [
+        "k",
+        4443
+      ],
+      "tiempo_ms": 123.8102,
+      "acciones_reaplicadas": 17,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 1,
+      "argumento": [
+        "t",
+        562240
+      ],
+      "tiempo_ms": 140.174,
+      "acciones_reaplicadas": 23,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 1,
+      "argumento": [
+        "t",
+        562490
+      ],
+      "tiempo_ms": 0.041,
+      "acciones_reaplicadas": 0,
+      "comparaciones_puntos": 0
+    },
+    {
+      "ronda": 2,
+      "argumento": [
+        "t",
+        200
+      ],
+      "tiempo_ms": 33.8456,
+      "acciones_reaplicadas": 1,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 2,
+      "argumento": [
+        "t",
+        62241
+      ],
+      "tiempo_ms": 70.4088,
+      "acciones_reaplicadas": 5,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 2,
+      "argumento": [
+        "k",
+        1110
+      ],
+      "tiempo_ms": 89.2809,
+      "acciones_reaplicadas": 9,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 2,
+      "argumento": [
+        "t",
+        187340
+      ],
+      "tiempo_ms": 111.5265,
+      "acciones_reaplicadas": 15,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 2,
+      "argumento": [
+        "t",
+        249741
+      ],
+      "tiempo_ms": 132.3095,
+      "acciones_reaplicadas": 21,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 2,
+      "argumento": [
+        "k",
+        2777
+      ],
+      "tiempo_ms": 65.5091,
+      "acciones_reaplicadas": 1,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 2,
+      "argumento": [
+        "t",
+        374690
+      ],
+      "tiempo_ms": 82.939,
+      "acciones_reaplicadas": 6,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 2,
+      "argumento": [
+        "t",
+        437241
+      ],
+      "tiempo_ms": 103.3225,
+      "acciones_reaplicadas": 13,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 2,
+      "argumento": [
+        "k",
+        4443
+      ],
+      "tiempo_ms": 170.4063,
+      "acciones_reaplicadas": 17,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 2,
+      "argumento": [
+        "t",
+        562240
+      ],
+      "tiempo_ms": 195.9916,
+      "acciones_reaplicadas": 23,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 2,
+      "argumento": [
+        "t",
+        562490
+      ],
+      "tiempo_ms": 0.0417,
+      "acciones_reaplicadas": 0,
+      "comparaciones_puntos": 0
+    },
+    {
+      "ronda": 2,
+      "argumento": [
+        "k",
+        1
+      ],
+      "tiempo_ms": 27.798,
+      "acciones_reaplicadas": 0,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 3,
+      "argumento": [
+        "t",
+        62241
+      ],
+      "tiempo_ms": 96.4367,
+      "acciones_reaplicadas": 5,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 3,
+      "argumento": [
+        "k",
+        1110
+      ],
+      "tiempo_ms": 98.1452,
+      "acciones_reaplicadas": 9,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 3,
+      "argumento": [
+        "t",
+        187340
+      ],
+      "tiempo_ms": 119.5284,
+      "acciones_reaplicadas": 15,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 3,
+      "argumento": [
+        "t",
+        249741
+      ],
+      "tiempo_ms": 120.4444,
+      "acciones_reaplicadas": 21,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 3,
+      "argumento": [
+        "k",
+        2777
+      ],
+      "tiempo_ms": 53.7176,
+      "acciones_reaplicadas": 1,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 3,
+      "argumento": [
+        "t",
+        374690
+      ],
+      "tiempo_ms": 90.9432,
+      "acciones_reaplicadas": 6,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 3,
+      "argumento": [
+        "t",
+        437241
+      ],
+      "tiempo_ms": 99.0846,
+      "acciones_reaplicadas": 13,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 3,
+      "argumento": [
+        "k",
+        4443
+      ],
+      "tiempo_ms": 112.0431,
+      "acciones_reaplicadas": 17,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 3,
+      "argumento": [
+        "t",
+        562240
+      ],
+      "tiempo_ms": 157.4296,
+      "acciones_reaplicadas": 23,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 3,
+      "argumento": [
+        "t",
+        562490
+      ],
+      "tiempo_ms": 0.0431,
+      "acciones_reaplicadas": 0,
+      "comparaciones_puntos": 0
+    },
+    {
+      "ronda": 3,
+      "argumento": [
+        "k",
+        1
+      ],
+      "tiempo_ms": 33.6307,
+      "acciones_reaplicadas": 0,
+      "comparaciones_puntos": 8
+    },
+    {
+      "ronda": 3,
+      "argumento": [
+        "t",
+        200
+      ],
+      "tiempo_ms": 41.5344,
+      "acciones_reaplicadas": 1,
+      "comparaciones_puntos": 8
+    }
+  ],
+  "maximo_acciones_reaplicadas": 23,
+  "partida_intacta": true,
+  "http_consultas": 0,
+  "vista": false,
+  "solicitudes": 46,
+  "presupuesto": 63,
+  "python": "3.13.2",
+  "plataforma": "Windows-11-10.0.26200-SP0",
+  "alcance": "K provisional; vida experimental del jugador 10^9; movimiento por salidas abiertas evitando la salida, alternado con esperas. Enemigos originales sin alterar estadisticas/posiciones. Solo certifica las consultas muestreadas; no mide memoria ni ciclos. Intermedios sin oraculo independiente en este ensayo."
+}

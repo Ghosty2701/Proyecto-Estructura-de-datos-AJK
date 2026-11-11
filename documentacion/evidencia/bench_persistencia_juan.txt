@@ -1,0 +1,9 @@
+PERSISTENCIA: preparando 5000 acciones, 200 salas, K=10
+  501 puntos; 62595238 bytes; guardar max 16241.524 ms; cargar max 25483.999 ms; copia max 19.629 ms; codec max 69.943 ms
+PERSISTENCIA: preparando 5000 acciones, 200 salas, K=25
+  201 puntos; 25344449 bytes; guardar max 6562.691 ms; cargar max 11206.734 ms; copia max 14.290 ms; codec max 81.734 ms
+PERSISTENCIA: preparando 5000 acciones, 200 salas, K=50
+  101 puntos; 12928115 bytes; guardar max 3777.189 ms; cargar max 4770.685 ms; copia max 17.306 ms; codec max 84.473 ms
+PERSISTENCIA: preparando 5000 acciones, 200 salas, K=100
+  51 puntos; 6720237 bytes; guardar max 1518.786 ms; cargar max 3092.466 ms; copia max 14.025 ms; codec max 70.441 ms
+Comprobaciones funcionales de persistencia: OK

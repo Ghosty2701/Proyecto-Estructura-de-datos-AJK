@@ -1,0 +1,57 @@
+{
+  "fecha_revision_cliente": "2026-11-11",
+  "documentos": [
+    {
+      "ruta": "README.md",
+      "sha256": "ab67ee3e538c075324a2f82a3fca35b7ebbfa4c82c23b54bdecb30f8942d6f08"
+    },
+    {
+      "ruta": "documentacion\\ESTADO_ENTREGA_P2.md",
+      "sha256": "b12876abfe86bf6cb3a26faf60745fa52caaaecc9115c2d42c869aa8d7e66ad0"
+    },
+    {
+      "ruta": "documentacion\\CIERRE_MEDICIONES_P2.md",
+      "sha256": "511e67d5d1a733e47af57df69bffe20923f4880365086f7717760163168d54a4"
+    },
+    {
+      "ruta": "documentacion\\DOCUMENTO_DECISIONES.md",
+      "sha256": "47c2f2a22e1c37fd6832519190a04c0939adcb1618e458a36d77f0d124e87716"
+    },
+    {
+      "ruta": "specs\\004-linea-tiempo\\data-model.md",
+      "sha256": "054b9748774c600a26713b641f23181d5530cb3ea2baf8af3bfe052939ad3ac4"
+    },
+    {
+      "ruta": "specs\\004-linea-tiempo\\plan.md",
+      "sha256": "41c8f2370d48ea9d45da2ad60d130f732fb77c4b7a6a0a14cdaa0928d46448f3"
+    },
+    {
+      "ruta": "specs\\004-linea-tiempo\\quickstart.md",
+      "sha256": "6062f57fbcb6e6f0255ffa84c0f0dd8e292817e97f503b7f3409ca57d2504013"
+    },
+    {
+      "ruta": "specs\\004-linea-tiempo\\research.md",
+      "sha256": "b22cb6b41e75e072e25fa582299bcf41135b6426705de6fbd5efb4c980a5ba11"
+    },
+    {
+      "ruta": "specs\\004-linea-tiempo\\spec.md",
+      "sha256": "364c05b7f1b1475b8e165defe29a3be20b47d98c3ffed06236fcaa2d88239f67"
+    },
+    {
+      "ruta": "specs\\004-linea-tiempo\\tasks.md",
+      "sha256": "00257d6d487be0cf8c5ec426f3418e606262b2f0494ffccbe6bf38405203118e"
+    },
+    {
+      "ruta": "specs\\004-linea-tiempo\\trazabilidad.md",
+      "sha256": "3e22d9bcf9e4e83d7972e4a9dd2b132ad58d59dfc71fa2ae171da23c72adb60d"
+    },
+    {
+      "ruta": "specs\\004-linea-tiempo\\contracts\\linea-tiempo.md",
+      "sha256": "17513dd980fec4cdc9f1740e0cdc961f647574ee73999330af02431ac5859514"
+    }
+  ],
+  "enlaces_rotos": [],
+  "fr": 16,
+  "pr": 7,
+  "estado": "documentacion independiente de K cerrada; aceptacion de tiempos y K pendiente"
+}

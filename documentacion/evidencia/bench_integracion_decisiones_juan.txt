@@ -1,0 +1,142 @@
+Python 3.13.2; plataforma win32; semilla 2026
+Repeticiones: 1; menor tiempo observado, sin garantia de rendimiento.
+
+AGENDA: 2000 inserciones, 500 cancelaciones
+Eventos activos extraidos: 1500
+Heap propio: 6.583 ms
+Lista ordenada: 172.775 ms
+
+RETROCESO: 2000 deltas de vida y rastro
+Deshacer un intervalo: 0.205 ms
+Contenedores del registro (estimacion parcial): 144528 bytes
+
+RASTRO: mapa de 4000 salas; 4 salidas abiertas por rastreador
+1 rastreadores; 100 decisiones: 0.124 ms
+Promedio de esta carga: 1.236 us/decision
+100 rastreadores; 10000 decisiones: 55.309 ms
+Promedio de esta carga: 5.531 us/decision
+
+INVENTARIO: 1000 inserciones, recorrido al centro, equipar y 1000 retiros
+Carga completa: 1.611 ms
+
+ORDENAMIENTOS: milisegundos por lista; clave costosa sintetica de 20 sumas
+  n=16; mezclados
+    insertion_sort: 0.014 ms
+    merge_sort: 0.028 ms
+    Seleccion automatica (insertion_sort): 0.011 ms
+  n=16; casi ordenados
+    insertion_sort: 0.003 ms
+    merge_sort: 0.017 ms
+    Seleccion automatica (insertion_sort): 0.003 ms
+  n=16; clave costosa
+    insertion_sort: 0.070 ms
+    merge_sort: 0.067 ms
+    Seleccion automatica (merge_sort): 0.056 ms
+  n=256; mezclados
+    insertion_sort: 3.558 ms
+    merge_sort: 0.690 ms
+    Seleccion automatica (merge_sort): 0.636 ms
+  n=256; casi ordenados
+    insertion_sort: 0.032 ms
+    merge_sort: 0.538 ms
+    Seleccion automatica (insertion_sort): 0.053 ms
+  n=256; clave costosa
+    insertion_sort: 32.054 ms
+    merge_sort: 4.617 ms
+    Seleccion automatica (merge_sort): 6.334 ms
+Python 3.13.2 | Windows | semilla 2026
+Tiempo reportado: menor promedio de 1 rondas; validaciones fuera del cronometro.
+Cargas sinteticas locales; no validan una partida completa ni el limite de 20 ms.
+
+Indice: AVL vs arbol simple (tiempos en us/ficha)
+  n      orden       altura AVL/simple   buscar AVL/simple      construir AVL/simple
+  25     ordenados   5 / 25              0.243 / 0.766          2.257 / 1.136
+  25     mezclados   6 / 10              0.418 / 0.308          1.795 / 0.520
+  100    ordenados   7 / 100             0.425 / 3.040          3.130 / 4.420
+  100    mezclados   8 / 12              0.382 / 0.521          3.266 / 1.400
+  1000   ordenados   10 / 1000           0.950 / 33.804         6.783 / 43.438
+  1000   mezclados   12 / 22             0.756 / 1.406          5.222 / 1.798
+
+CacheCatalogo real: capacidad 25, fuente local sin HTTP
+  Acierto en memoria, incluye AVL y LRU                   0.987 us/operacion
+  Ficha liberada: leer JSON, reinsertar y desalojar     4089.433 us/operacion
+  Recuperaciones cronometradas: 100; solicitudes HTTP: 0
+  Disco con cache del sistema operativo; no se fuerza una lectura fisica fria.
+
+Guardado/carga: 200 salas sinteticas
+  Mismos datos: contenedor binario existente con bloques JSON UTF-8 vs JSON compacto.
+  Comparacion del contenedor original; el codec por campos se mide despues.
+  Guardar completo, binario                            2116.600 us/operacion
+  Guardar completo, JSON                               1254.600 us/operacion
+  Cargar completo, binario (una apertura)              6876.850 us/operacion
+  Cargar completo, JSON                                9045.750 us/operacion
+  Recuperar una sala, binario con indice                273.340 us/operacion
+  Recuperar una sala, JSON completo y recorrido         873.130 us/operacion
+  Tamano binario: 35843 bytes; JSON: 32848 bytes
+  Incluye codificacion/decodificacion. Carga completa con una apertura del archivo.
+  Escrituras con cierre de archivo, sin fsync; lecturas con cache del sistema operativo.
+
+Modelo real: esquema explicito binario, 200 salas e historial de dos acciones
+  Guardar modelo completo (captura, valida y publica)    26948.600 us/operacion
+  Restaurar modelo completo y sus referencias         49490.800 us/operacion
+  Comparacion de escritura con ambas representaciones ya preparadas:
+  Escribir bloques binarios preparados                 1706.500 us/operacion
+  Escribir JSON completo preparado                      868.600 us/operacion
+  Lectura/decodificacion al mismo esquema de datos; sin reconstruir entidades:
+  Binario por campos -> registros comparables         40645.450 us/operacion
+  JSON equivalente -> registros comparables           20158.050 us/operacion
+  Vista de una sala sin cargar el modelo                949.910 us/operacion
+  Tamano modelo binario: 58208 bytes; JSON equivalente: 140200 bytes
+  JSON es la alternativa de medicion: incluye entidades, IDs, eventos, azar e historial.
+  Restaurar entidades es una medicion adicional, distinta de leer/decodificar registros.
+
+Comprobaciones funcionales: OK
+
+TERRENO Y CAZADORES: 16 cargas sinteticas, alternativas verificadas
+Individual / compartida / reutilizacion, ms por lote (minimos):
+  salas=80, cazadores=1, rango=100, inestables=False: 0.0321 / 0.0392 / 0.0009
+  salas=80, cazadores=1, rango=100, inestables=True: 0.0253 / 0.0373 / 0.0218
+  salas=80, cazadores=1, rango=2000, inestables=False: 0.4651 / 0.7036 / 0.0011
+  salas=80, cazadores=1, rango=2000, inestables=True: 0.1767 / 0.4426 / 0.1679
+  salas=80, cazadores=32, rango=100, inestables=False: 0.8870 / 0.0837 / 0.0061
+  salas=80, cazadores=32, rango=100, inestables=True: 1.5856 / 0.0811 / 4.0353
+  salas=80, cazadores=32, rango=2000, inestables=False: 17.5758 / 1.4362 / 0.0065
+  salas=80, cazadores=32, rango=2000, inestables=True: 13.4877 / 0.9487 / 11.8183
+  salas=800, cazadores=1, rango=100, inestables=False: 0.0236 / 0.0320 / 0.0007
+  salas=800, cazadores=1, rango=100, inestables=True: 0.0227 / 0.0326 / 0.0187
+  salas=800, cazadores=1, rango=2000, inestables=False: 0.5659 / 1.3266 / 0.0010
+  salas=800, cazadores=1, rango=2000, inestables=True: 0.2989 / 5.0845 / 0.3577
+  salas=800, cazadores=32, rango=100, inestables=False: 1.3980 / 0.1576 / 0.0057
+  salas=800, cazadores=32, rango=100, inestables=True: 2.2401 / 0.0881 / 8.6408
+  salas=800, cazadores=32, rango=2000, inestables=False: 28.7754 / 35.2007 / 0.0058
+  salas=800, cazadores=32, rango=2000, inestables=True: 13.5899 / 1.0513 / 10.3112
+Ciclo completo sintetico, 32 cazadores: 100 ciclos; maximo 46.2173 ms; >=20 ms: 6
+Sin HTTP ni vista. Referencia oficial pendiente; no certifica su limite.
+IR A: 160 calculos sobre 80 salas conocidas; maximo 4.2817 ms; >=5 ms: 0
+NIEBLA: consultas, revelacion e inversion; sin vista ni HTTP.
+  salas=80; trabajo=8; revelacion maxima=0.0388 ms
+  salas=8000; trabajo=8; revelacion maxima=0.0144 ms
+  reserva70; salas=80; capacidad=128; construccion maxima=0.1835 ms; ampliaciones=0
+  reserva50; salas=80; capacidad=256; construccion maxima=0.1405 ms; ampliaciones=0
+  gradual70; salas=80; capacidad=128; construccion maxima=0.3248 ms; ampliaciones=2
+  reserva70; salas=8000; capacidad=16384; construccion maxima=20.6405 ms; ampliaciones=0
+  reserva50; salas=8000; capacidad=16384; construccion maxima=20.2248 ms; ampliaciones=0
+  gradual70; salas=8000; capacidad=16384; construccion maxima=63.9240 ms; ampliaciones=9
+RESOLUBILIDAD cadena: 40 salas, 39 llaves; total máximo 1.7595 ms; cierre repetido máximo 0.5681 ms.
+RESOLUBILIDAD cadena: 160 salas, 159 llaves; total máximo 9.8279 ms; cierre repetido máximo 9.4027 ms.
+RESOLUBILIDAD cadena: 640 salas, 639 llaves; total máximo 28.1816 ms; cierre repetido máximo 139.9190 ms.
+RESOLUBILIDAD grupos: 41 salas, 20 llaves; total máximo 1.2064 ms; cierre repetido máximo 0.0119 ms.
+RESOLUBILIDAD grupos: 161 salas, 80 llaves; total máximo 4.1905 ms; cierre repetido máximo 0.0255 ms.
+RESOLUBILIDAD grupos: 641 salas, 320 llaves; total máximo 23.6585 ms; cierre repetido máximo 0.1490 ms.
+RESOLUBILIDAD alternativas: 41 salas, 40 llaves; total máximo 2.1589 ms; cierre repetido máximo 0.0135 ms.
+RESOLUBILIDAD alternativas: 161 salas, 160 llaves; total máximo 10.3695 ms; cierre repetido máximo 0.0517 ms.
+RESOLUBILIDAD alternativas: 641 salas, 640 llaves; total máximo 44.5015 ms; cierre repetido máximo 0.1727 ms.
+DECISIONES: 200 salas, 0 cazadores
+DECISIONES: 200 salas, 8 cazadores
+DECISIONES: 200 salas, 32 cazadores
+DECISIONES: 300 salas, 0 cazadores
+DECISIONES: 300 salas, 8 cazadores
+DECISIONES: 300 salas, 32 cazadores
+DECISIONES: 1000 salas, 0 cazadores
+DECISIONES: 1000 salas, 8 cazadores
+DECISIONES: 1000 salas, 32 cazadores

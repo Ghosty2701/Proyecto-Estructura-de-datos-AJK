@@ -1,0 +1,21 @@
+CONSULTAS: 5000 acciones, 200 salas, 0 cazadores, K=10
+  mediana 16.605 ms; p95 21.461 ms; max 22.099 ms; >=50 ms: 0/36; reaplica hasta 9 acciones
+CONSULTAS: 5000 acciones, 200 salas, 0 cazadores, K=25
+  mediana 16.022 ms; p95 21.139 ms; max 22.362 ms; >=50 ms: 0/36; reaplica hasta 24 acciones
+CONSULTAS: 5000 acciones, 200 salas, 0 cazadores, K=50
+  mediana 16.599 ms; p95 28.883 ms; max 33.401 ms; >=50 ms: 0/36; reaplica hasta 49 acciones
+CONSULTAS: 5000 acciones, 200 salas, 0 cazadores, K=100
+  mediana 18.554 ms; p95 25.555 ms; max 34.380 ms; >=50 ms: 0/36; reaplica hasta 99 acciones
+CONSULTAS: 5000 acciones, 200 salas, 0 cazadores, K=solo inicial
+  mediana 74.959 ms; p95 188.651 ms; max 240.617 ms; >=50 ms: 22/36; reaplica hasta 4999 acciones
+CONSULTAS: 5000 acciones, 200 salas, 32 cazadores, K=10
+  mediana 34.041 ms; p95 44.205 ms; max 44.587 ms; >=50 ms: 0/36; reaplica hasta 9 acciones
+CONSULTAS: 5000 acciones, 200 salas, 32 cazadores, K=25
+  mediana 39.690 ms; p95 62.142 ms; max 63.502 ms; >=50 ms: 6/36; reaplica hasta 24 acciones
+CONSULTAS: 5000 acciones, 200 salas, 32 cazadores, K=50
+  mediana 51.904 ms; p95 125.801 ms; max 147.408 ms; >=50 ms: 19/36; reaplica hasta 49 acciones
+CONSULTAS: 5000 acciones, 200 salas, 32 cazadores, K=100
+  mediana 57.993 ms; p95 103.262 ms; max 148.601 ms; >=50 ms: 23/36; reaplica hasta 99 acciones
+CONSULTAS: 5000 acciones, 200 salas, 32 cazadores, K=solo inicial
+  mediana 1251.091 ms; p95 3105.909 ms; max 3121.560 ms; >=50 ms: 28/36; reaplica hasta 4999 acciones
+Comprobaciones funcionales de consultas: OK

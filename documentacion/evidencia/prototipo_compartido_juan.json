@@ -1,0 +1,113 @@
+{
+  "semilla": 2026,
+  "acciones": 500,
+  "salas": 300,
+  "cazadores": 32,
+  "repeticiones": 20,
+  "tiempos": {
+    "normal": {
+      "cantidad": 20,
+      "minimo_ms": 38.193,
+      "mediana_ms": 46.5433,
+      "p95_ms": 71.7372,
+      "maximo_ms": 94.956,
+      "excedidos_50ms": 6
+    },
+    "captura_compartida": {
+      "cantidad": 20,
+      "minimo_ms": 41.9098,
+      "mediana_ms": 49.612700000000004,
+      "p95_ms": 62.4593,
+      "maximo_ms": 65.9439,
+      "excedidos_50ms": 9
+    },
+    "restauracion_compartida": {
+      "cantidad": 20,
+      "minimo_ms": 40.8127,
+      "mediana_ms": 47.2765,
+      "p95_ms": 74.0653,
+      "maximo_ms": 90.8745,
+      "excedidos_50ms": 7
+    }
+  },
+  "muestras_ms": {
+    "normal": [
+      51.9158,
+      47.6805,
+      44.8568,
+      45.491,
+      38.3355,
+      57.0082,
+      45.7193,
+      55.9268,
+      44.8347,
+      53.0947,
+      39.985,
+      49.7794,
+      43.8782,
+      94.956,
+      38.193,
+      44.409,
+      47.3673,
+      43.1119,
+      47.8656,
+      71.7372
+    ],
+    "captura_compartida": [
+      62.4593,
+      62.1162,
+      42.445,
+      45.4989,
+      49.1795,
+      47.9043,
+      47.4988,
+      52.0311,
+      51.4637,
+      45.3378,
+      52.1543,
+      45.3467,
+      47.9603,
+      41.9098,
+      53.9767,
+      49.8646,
+      65.9439,
+      49.3608,
+      54.6226,
+      57.7571
+    ],
+    "restauracion_compartida": [
+      90.8745,
+      47.3263,
+      47.2267,
+      42.2967,
+      41.5117,
+      42.4133,
+      40.8127,
+      51.4775,
+      51.128,
+      42.0271,
+      48.332,
+      43.1308,
+      42.0756,
+      42.334,
+      41.9117,
+      62.4067,
+      53.0155,
+      57.5298,
+      48.6839,
+      74.0653
+    ]
+  },
+  "memoria": {
+    "normal": {
+      "retenida_bytes": 10202088,
+      "pico_bytes": 12107800
+    },
+    "compartido": {
+      "retenida_bytes": 8807652,
+      "pico_bytes": 10079608
+    }
+  },
+  "equivalentes": true,
+  "alcance": "Prototipo sin integraci?n en checkpoints/replay/guardado; no elige K. Memoria incremental de capturas de un mismo estado; incluye una plantilla nueva en modo compartido. No RSS. Tiempos rotados, GC habilitado, sin trazado; no certifica l?mites."
+}

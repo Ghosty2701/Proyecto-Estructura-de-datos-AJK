@@ -80,6 +80,13 @@ def positivo(valor):
     return numero
 
 
+def no_negativo(valor):
+    numero = int(valor)
+    if numero < 0:
+        raise argparse.ArgumentTypeError("debe ser un entero no negativo")
+    return numero
+
+
 def medir(funcion, repeticiones, rondas=5):
     if type(repeticiones) is not int or repeticiones <= 0:
         raise ValueError("repeticiones debe ser un entero positivo")
@@ -404,11 +411,38 @@ def bench_estado_real(rondas=5, cantidad_salas=200, semilla=SEMILLA_BENCH):
 
 
 def ejecutar_bench(rondas=5, semilla=SEMILLA_BENCH, tope=25, cantidad_salas=200,
-                   solo="todos", tamanos=(25, 100, 1000)):
+                   solo="todos", tamanos=(25, 100, 1000), acciones=5000,
+                   valores_k=(10, 25, 50, 100), cazadores=(0, 32), muestras=12, cripta=None):
     if rondas <= 0 or tope <= 0 or cantidad_salas <= 0 or any(n <= 0 for n in tamanos):
         raise ValueError("las cantidades del benchmark deben ser positivas")
-    if solo not in ("todos", "indice", "cache", "guardado"):
+    if solo not in ("todos", "indice", "cache", "guardado", "persistencia", "consultas", "memoria"):
         raise ValueError("subsistema desconocido")
+    if solo == "memoria":
+        from modelo.bench_memoria import medir_memoria
+        return medir_memoria(acciones, cantidad_salas, valores_k, cazadores, rondas, semilla)
+    if solo == "consultas":
+        if cripta is not None:
+            from adaptadores.cliente_http import ClienteHTTP
+            from adaptadores.servicio_cripta import ServicioCripta
+            from controlador.cargar_partida import CargadorPartida
+            from modelo.bench_linea_tiempo import medir_cripta_consultas
+            with tempfile.TemporaryDirectory(prefix="cripta-bench-consultas-servicio-") as carpeta:
+                fuente = ClienteHTTP(reservar_imprevistos=True)
+                cache = CacheCatalogo(fuente, carpeta=carpeta, tope=tope)
+                cargador = CargadorPartida(ServicioCripta(fuente, cache))
+                partida = cargador.crear(cripta, semilla)
+                return medir_cripta_consultas(cargador, partida, acciones, muestras, rondas)
+        from modelo.bench_linea_tiempo import medir_consultas
+        resultado = medir_consultas(acciones, cantidad_salas, valores_k, cazadores,
+                                    muestras, rondas, semilla)
+        print("Comprobaciones funcionales de consultas: OK")
+        return resultado
+    if solo == "persistencia":
+        # Optativo hasta integrar el cierre completo de T032; conserva los benches de P1.
+        from adaptadores.bench_persistencia import medir_persistencia
+        resultado = medir_persistencia(acciones, cantidad_salas, valores_k, rondas, semilla)
+        print("Comprobaciones funcionales de persistencia: OK")
+        return resultado
     print(f"Python {platform.python_version()} | {platform.system()} | semilla {semilla}")
     print(f"Tiempo reportado: menor promedio de {rondas} rondas; validaciones fuera del cronometro.")
     print("Cargas sinteticas locales; no validan una partida completa ni el limite de 20 ms.")
@@ -429,9 +463,32 @@ def main():
     parser.add_argument("--cache-size", type=positivo, default=25)
     parser.add_argument("--salas", type=positivo, default=200)
     parser.add_argument("--tamanos", type=positivo, nargs="+", default=[25, 100, 1000])
-    parser.add_argument("--solo", choices=("todos", "indice", "cache", "guardado"), default="todos")
+    parser.add_argument("--solo", choices=("todos", "indice", "cache", "guardado", "persistencia", "consultas", "memoria"), default="todos")
+    parser.add_argument("--acciones", type=positivo, default=5000,
+                        help="acciones vigentes para persistencia/consultas/memoria (minimo 3)")
+    parser.add_argument("--valores-k", type=positivo, nargs="+", default=[10, 25, 50, 100],
+                        help="intervalos de puntos para persistencia/consultas/memoria")
+    parser.add_argument("--cazadores", type=no_negativo, nargs="+", default=[0, 32],
+                        help="cargas de consultas/memoria (0 para carga sin cazadores)")
+    parser.add_argument("--muestras", type=positivo, default=12,
+                        help="destinos historicos por ronda de consultas (minimo 6)")
+    parser.add_argument("--cripta", help="con --solo consultas: medir K provisional en datos del servicio")
+    parser.add_argument("--salida-json", help="guardar resultados de persistencia/consultas/memoria")
     args = parser.parse_args()
-    ejecutar_bench(args.rondas, args.semilla, args.cache_size, args.salas, args.solo, args.tamanos)
+    if args.salida_json and args.solo not in ("persistencia", "consultas", "memoria"):
+        parser.error("--salida-json requiere --solo persistencia, consultas o memoria")
+    if args.solo in ("persistencia", "consultas", "memoria") and (args.acciones < 3 or args.salas < 3):
+        parser.error("persistencia/consultas/memoria requieren al menos 3 acciones y 3 salas")
+    if args.solo == "consultas" and args.muestras < 6:
+        parser.error("consultas requiere al menos 6 muestras")
+    if args.cripta is not None and args.solo != "consultas":
+        parser.error("--cripta requiere --solo consultas")
+    resultado = ejecutar_bench(args.rondas, args.semilla, args.cache_size, args.salas,
+                              args.solo, args.tamanos, args.acciones, args.valores_k,
+                              args.cazadores, args.muestras, args.cripta)
+    if args.salida_json:
+        with open(args.salida_json, "w", encoding="utf-8") as archivo:
+            json.dump(resultado, archivo, ensure_ascii=False, indent=2)
 
 
 if __name__ == "__main__":

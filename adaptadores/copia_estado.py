@@ -41,20 +41,28 @@ class TablaIdentidades:
         numero = id(clave)
         mascara = self.capacidad - 1
         indice = _mezclar(numero) & mascara
-        paso = (_mezclar(numero ^ 0x5bd1e995) & mascara) | 1
         claves = self.claves
+        actual = claves[indice]
+        if actual is _VACIA or actual is clave:
+            return indice
+        # El segundo hash solo hace falta si la primera casilla colisionó.
+        # Se conserva exactamente la misma secuencia de doble hashing.
+        paso = (_mezclar(numero ^ 0x5bd1e995) & mascara) | 1
         while True:
+            indice = (indice + paso) & mascara
             actual = claves[indice]
             if actual is _VACIA or actual is clave:
                 return indice
-            indice = (indice + paso) & mascara
 
     def buscar(self, clave, defecto=None):
         indice = self._localizar(clave)
         return defecto if self.claves[indice] is _VACIA else self.valores[indice]
 
-    def insertar(self, clave, valor):
-        indice = self._localizar(clave)
+    def insertar(self, clave, valor, *, indice=None):
+        # El copiador puede reutilizar una casilla recién localizada si no
+        # insertó otros objetos entre ambas operaciones.
+        if indice is None:
+            indice = self._localizar(clave)
         if self.claves[indice] is _VACIA:
             if (self.cantidad + 1) * 10 > self.capacidad * 7:
                 self._crecer()
@@ -112,13 +120,16 @@ def _completar_no_persistentes(original, copia):
         copia._acciones_linea = 0
 
 
-def copiar_estado(raiz, referencias=None):
+def copiar_estado(raiz, referencias=None, *, sustituciones=(), reconstruir=True, capacidad=1024):
     """Devuelve una copia independiente del grafo alcanzable desde raiz.
 
     Si se pasa la lista referencias, recibe las ReferenciaFicha copiadas para que
     el llamador complete sus datos sin red antes de re-simular.
     """
-    copias = TablaIdentidades(1024)
+    copias = TablaIdentidades(capacidad)
+    # Uso experimental: sustituir enlaces por tokens o resolverlos al restaurar.
+    for original, sustituto in sustituciones:
+        copias.insertar(original, sustituto)
     pendientes = []
     conocimientos = []
     campos = _CAMPOS
@@ -127,9 +138,9 @@ def copiar_estado(raiz, referencias=None):
         tipo = type(valor)
         if tipo in _INMUTABLES:
             return valor
-        existente = copias.buscar(valor, _VACIA)
-        if existente is not _VACIA:
-            return existente
+        indice = copias._localizar(valor)
+        if copias.claves[indice] is not _VACIA:
+            return copias.valores[indice]
         if tipo is tuple:
             elementos = [copia_de(elemento) for elemento in valor]
             # Una tupla de inmutables se comparte: su contenido no puede cambiar.
@@ -138,7 +149,11 @@ def copiar_estado(raiz, referencias=None):
                     nueva = tuple(elementos)
                     break
             else:
-                nueva = valor
+                # Una tupla que no cambió conserva su identidad sin registrarla:
+                # volver a encontrarla devolverá el mismo objeto inmutable.
+                return valor
+            # La recursión de tuplas sí pudo insertar otros objetos o ampliar
+            # la tabla: en ese caso se vuelve a localizar la casilla.
             copias.insertar(valor, nueva)
             return nueva
         if tipo is list:
@@ -148,7 +163,7 @@ def copiar_estado(raiz, referencias=None):
         elif tipo is random.Random:
             nueva = random.Random(0)
             nueva.setstate(valor.getstate())
-            copias.insertar(valor, nueva)
+            copias.insertar(valor, nueva, indice=indice)
             return nueva
         else:
             if campos.buscar(tipo) is None:
@@ -158,7 +173,7 @@ def copiar_estado(raiz, referencias=None):
                 conocimientos.append(nueva)
             elif tipo is ReferenciaFicha and referencias is not None:
                 referencias.append(nueva)
-        copias.insertar(valor, nueva)
+        copias.insertar(valor, nueva, indice=indice)
         pendientes.append((valor, nueva))
         return nueva
 
@@ -180,6 +195,7 @@ def copiar_estado(raiz, referencias=None):
                 if valor is not _VACIA:
                     setattr(copia, nombre, copia_de(valor))
             _completar_no_persistentes(original, copia)
-    for conocimiento in conocimientos:
-        conocimiento.reconstruir()
+    if reconstruir:
+        for conocimiento in conocimientos:
+            conocimiento.reconstruir()
     return resultado

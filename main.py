@@ -110,6 +110,8 @@ def main(argumentos=None):
     parser.add_argument("--orden-puntajes", choices=("tiempo", "acciones", "enemigos", "nombre"),
                         default="tiempo", help="criterio para --ver-puntajes")
     parser.add_argument("--bench", action="store_true", help="medir subsistemas y, con --cripta, ciclos reales")
+    parser.add_argument('--bench-linea-tiempo', action='store_true',
+                        help='con --bench: ejecutar y exportar todas las mediciones historicas (varios minutos)')
     parser.add_argument("--repeticiones", type=_entero_positivo, default=5, help="repeticiones del benchmark")
     seleccion.add_argument("--cripta", help="ID de la cripta que se jugara")
     seleccion.add_argument('--verificar', metavar='CRIPTA', help='verificar resolubilidad sin vista ni partida')
@@ -131,6 +133,8 @@ def main(argumentos=None):
     parser.add_argument("--offline", nargs="?", const="datos_offline", metavar="CARPETA",
                         help="leer el paquete local sin HTTP; carpeta predeterminada: datos_offline")
     opciones = parser.parse_args(argumentos)
+    if opciones.bench_linea_tiempo and not opciones.bench:
+        parser.error('--bench-linea-tiempo requiere --bench')
     if not (opciones.listar or opciones.cripta or opciones.cargar or opciones.replay or opciones.bench or opciones.ver_puntajes or opciones.verificar):
         parser.error("indica --listar, --cripta, --cargar, --replay, --bench o --ver-puntajes")
     if opciones.bench and (opciones.listar or opciones.cargar or opciones.replay or opciones.bitacora or opciones.ver_puntajes or opciones.verificar):
@@ -163,7 +167,11 @@ def main(argumentos=None):
         return 0
     if opciones.bench:
         from modelo.bench_modelo import ejecutar_bench_completo
-        ejecutar_bench_completo(opciones.repeticiones, opciones.semilla, opciones.cache_size)
+        subsistemas = ejecutar_bench_completo(opciones.repeticiones, opciones.semilla, opciones.cache_size)
+        if opciones.bench_linea_tiempo:
+            from modelo.bench_cierre import ejecutar_cierre
+            ejecutar_cierre(opciones.repeticiones, opciones.semilla,
+                           decisiones=subsistemas.get('decisiones_linea_tiempo'))
         if not opciones.cripta:
             return 0
     fuente = ModoOffline(opciones.offline) if opciones.offline is not None else ClienteHTTP(reservar_imprevistos=True)

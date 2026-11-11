@@ -305,6 +305,8 @@ def ejecutar_bench_completo(repeticiones=5, semilla=2026, tope_cache=25):
     resultado['niebla'] = medir_conocimiento(repeticiones=repeticiones, semilla=semilla)
     from modelo.bench_resolubilidad import medir_resolubilidad
     resultado['resolubilidad'] = medir_resolubilidad(repeticiones, semilla)
+    from modelo.bench_decisiones import medir_decisiones
+    resultado['decisiones_linea_tiempo'] = medir_decisiones(rondas=repeticiones, semilla=semilla)
     return resultado
 
 

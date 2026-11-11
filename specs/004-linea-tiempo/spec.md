@@ -2,7 +2,7 @@
 
 **Rama Git**: `main` (actual; no se crea otra rama).
 **Creación**: 2026-11-09.
-**Estado**: Aclarada; preparada para el plan.
+**Estado**: funcionalidad implementada y probada; cierre de rendimiento y elección de K pendientes.
 **Entrada del usuario**: «Línea de tiempo de Cripta Parte II (P2 §3.6, §5.5, §6.1,
 §6.3, §7.3 y apéndice B, casos de línea de tiempo). Consultar sin modificar la
 partida el estado en cualquier instante desde el inicio: comandos historia <t> e

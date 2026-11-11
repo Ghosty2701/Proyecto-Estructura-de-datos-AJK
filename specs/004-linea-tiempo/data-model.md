@@ -1,7 +1,7 @@
 # Modelo de datos: Línea de tiempo y puntos de control
 
-**Estado**: diseño planificado; estructuras aprobadas en [research.md](research.md).
-Los nombres describen registros previstos; no amplían reglas de [spec.md](spec.md).
+**Estado**: diseño implementado; estructuras aprobadas en [research.md](research.md).
+Los registros no amplían reglas de [spec.md](spec.md). El prototipo compartido sigue fuera del formato de producción.
 
 ## Registros
 
@@ -9,7 +9,7 @@ Los nombres describen registros previstos; no amplían reglas de [spec.md](spec.
 | --- | --- | --- |
 | Orden ejecutada | texto normalizado como en `partida.log`; tipo (acción, pergamino, navegación); instante de decisión al ejecutarla | Solo órdenes aceptadas y reproducibles. El arreglo solo crece; su posición es estable. |
 | Acción vigente | instante de decisión; posición de su orden | La posición k − 1 es la acción k. Instantes estrictamente crecientes. El pergamino trunca el final. |
-| Punto de control | posición de orden (la siguiente por re-ejecutar); número de acciones vigentes; instante; copia completa del estado; K del tramo | Arreglo creciente en posición, acción e instante. El punto 0 está en la posición 0, en el instante 0. Dos puntos consecutivos están separados por exactamente K acciones ejecutadas del tramo (incluidas las revertidas después; el pergamino no cuenta). Nunca se borra. |
+| Punto de control | posición de orden (la siguiente por re-ejecutar); número de acciones vigentes; instante; copia completa del estado; K del tramo | Arreglo creciente en posición de orden; reloj y acciones vigentes pueden retroceder tras un pergamino. El punto 0 está en posición 0 e instante 0. Dentro de un tramo de K constante se crea cada K acciones ejecutadas, incluidas las revertidas después; el pergamino no cuenta. Los puntos anteriores se conservan al cambiar K. |
 | Tramo de K | K vigente; posición donde empieza | Un tramo nuevo empieza solo al cargar con un `--checkpoint-cada` distinto. |
 | Línea de tiempo | arreglo de órdenes, arreglo de acciones, arreglo de puntos, tramos, acciones del tramo en curso, instante pendiente | Pertenece a la partida y se persiste con ella. No usa `dict`/`set` como índice. |
 | Objetivo de consulta | posición final; límite de tiempo opcional | Lo calculan `#k` o t; nunca está más allá de la última orden. |

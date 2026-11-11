@@ -127,6 +127,31 @@ probar).
 
 ## D-LT-07 — K por defecto — Pendiente de medición
 
+Consultas medidas el 2026-11-11: con 5 000 acciones, 200 salas sintéticas y
+32 cazadores, K = 25 dio 6/36 consultas ≥50 ms (máximo 63,502 ms). K = 10 dio
+0/36 (máximo 44,587 ms); K = 50 y 100 dieron 19/36 y 23/36. Solo el inicial
+dio máximo 3 121,560 ms. Los resúmenes son equivalentes y las consultas no
+alteraron el estado. En `cripta-06` (300 salas, `f9ed9afa683d`), con 32 cazadores
+activos iniciales, 5 000 acciones y K = 25, hubo 27/36 consultas ≥50 ms,
+máximo 195,992 ms: PR-LT-001 no se cumple en esta carga. No se extrapola el
+resultado sintético de K = 10 a la referencia. Faltan memoria, creación de
+puntos/ciclo y la elección del usuario; K permanece provisional. Evidencia y
+método en el [Documento de Decisiones](../../documentacion/DOCUMENTO_DECISIONES.md),
+[JSON sintético](../../documentacion/evidencia/mediciones_consultas_juan.json) y
+[JSON de referencia](../../documentacion/evidencia/mediciones_consultas_referencia_juan.json).
+
+Evidencia parcial de Juan, 2026-11-11: tres rondas por K, 5 000 acciones
+vigentes y 200 salas, costos variables/pergamino, sin cazadores. Guardar todos
+los puntos produjo 62,60 MB y carga máxima 25,484 s con K = 10; 25,34 MB y
+11,207 s con K = 25; 12,93 MB y 4,771 s con K = 50; 6,72 MB y 3,092 s con
+K = 100. El copiador propio tardó 12,222–19,629 ms por estado base frente a
+64,913–84,473 ms de ida y vuelta binaria. Son mediciones finales de este tramo,
+distintas de las exploraciones anteriores: no certifican el ciclo con cazadores,
+las consultas ni la memoria total. Se mantienen D-LT-04/06; D-LT-07 sigue
+pendiente. Muestras, entorno y alcance en
+[mediciones_persistencia_juan.json](../../documentacion/evidencia/mediciones_persistencia_juan.json)
+y análisis en el [Documento de Decisiones](../../documentacion/DOCUMENTO_DECISIONES.md).
+
 Candidatos que medirá `--bench`: K = 10, 25, 50 y 100, además de la alternativa
 sin puntos de control (re-simular desde el inicio). Los criterios son el tiempo
 máximo de consulta < 50 ms con ≥ 5 000 acciones (PR-LT-001), la memoria total
@@ -149,3 +174,29 @@ con 300 salas: 5 000 / K puntos × ≈343 KiB, es decir ≈170 MB con K = 10 y
   presupuesto.
 - **Tipo de orden**: se deduce al registrar comparando el contador de acciones
   antes y después (+1 acción; −1 pergamino; 0 navegación), sin duplicar reglas.
+
+
+## Investigación aprobada: compartir metadatos inmutables (2026-11-11)
+
+El usuario elige investigar compartir datos inmutables y copiar el estado
+mutable. No equivale a elegir K ni a aprobar un nuevo formato de guardado.
+Prototipo aislado: plantilla inmutable de enlaces f?sicos y metadatos de salas,
+con tokens por identidad. Cada captura copia el grafo mutable y sus alias,
+sustituyendo nodos est?ticos por tokens; reconstruir crea nodos independientes
+y resuelve los tokens antes de reconstruir ?ndices. Estado de puertas, rastro,
+contenido y conocimiento siguen siendo mutables e independientes. Los campos
+supuestamente est?ticos se verifican en cada captura; una modificaci?n invalida
+el contexto experimental explícitamente. No compartir objetos mutables vivos.
+Se comparar? equivalencia, alias, tiempos y asignaciones antes de integrar en
+partidas/replay/persistencia. Mientras tanto producción conserva formato 6 y K.
+
+
+### Resultado de perfilar el prototipo compartido
+
+Validación directa por identidad/metadatos, tipos precalculados y reserva de
+capacidad de la tabla existente seg?n cantidad de nodos. El copiador evita
+registrar tuplas que permanecen inmutables; conserva sustituciones y alias.
+Ensayo de 500 acciones: restauraci?n mediana 31,795 ms frente a copia normal
+39,830 ms. Sin embargo, en historia completa de 5 000 acciones/300 salas/32
+cazadores/K=25: normal 16/36 consultas >=50 ms, compartido 17/36. No justifica
+integración; sigue experimental, sin cambios de formato ni elección de K.

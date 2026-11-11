@@ -1,6 +1,12 @@
 # Tareas: Línea de tiempo y puntos de control
 
-**Fecha**: 2026-11-09. **Estado**: 28/37 tareas ejecutadas (fases 1 a 8). T018 y T020 no requirieron cambios de código: la interrupción existente y el diseño de D-LT-05 ya cubrían los casos.
+**Traslado al repositorio original:** el trabajo posterior a T028 se realizó
+en una copia descargada sin `.git` y se trasladó sobre la base `4c34c88` del
+repositorio original. Las referencias históricas a ausencia de Git describen
+esa copia; no describen el repositorio actual. Los commits del traslado son
+nuevos y no reconstruyen el historial perdido de la copia.
+
+**Fecha**: 2026-11-09. **Estado**: 32/37 tareas ejecutadas (fases 1 a 8 y parte de fase 9). T018 y T020 no requirieron cambios de código: la interrupción existente y el diseño de D-LT-05 ya cubrían los casos.
 **Entrada**: [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md),
 [data-model.md](data-model.md), [contrato](contracts/linea-tiempo.md) y
 [quickstart.md](quickstart.md). Rama real: `main`.
@@ -107,15 +113,73 @@ Prueba independiente: guardar, cargar en otra ejecución y comparar consultas.
 Objetivo: evidencia de §5.5, §5.6, §6.1 y §6.3, el K por defecto elegido por el
 usuario y la documentación y trazabilidad finales.
 
-- [ ] T029 [P] Crear en modelo/bench_linea_tiempo.py una partida sintética determinista de ≥ 5 000 acciones (con y sin decenas de cazadores, con pergaminos) y medir, para K = 10, 25, 50 y 100 y la alternativa sin puntos: memoria total (tracemalloc), tiempo de consulta (mínimo, mediana, p95, máximo) sobre instantes repartidos, costo de crear un punto y ciclo máximo con registro activo. Medir también, por K, el tamaño del archivo de guardado y el tiempo de guardar y cargar con todos los puntos (riesgo de D-LT-06; analyze G1), para informarlo como límite conocido. Dep.: T028. Requisitos: PR-LT-001, PR-LT-003, PR-LT-005, PR-LT-007; FR-LT-015.
-- [ ] T030 [P] Añadir a modelo/bench_linea_tiempo.py las comparaciones adelante frente a atrás (costo por acción re-simulada frente a deshecha y memoria de deltas registrados) y copiador propio frente al serializador binario, con las cargas de research.md. Dep.: T028. Requisitos: PR-LT-006; D-LT-01, D-LT-04.
-- [ ] T031 Repetir en el bench existente (modelo/bench_modelo.py, adaptadores/bench_adaptadores.py) las mediciones de agenda de eventos e historial de retroceso de P1 con la carga nueva (cazadores, costos variables y registro de la línea) y comparar con la evidencia de P1. Dep.: T028. Requisitos: PR-LT-007; §5.6.
-- [ ] T032 Integrar T029–T031 en `python main.py --bench` (sin vista) y guardar las salidas en documentacion/evidencia/bench_linea_tiempo.txt y documentacion/evidencia/mediciones_linea_tiempo.json, con entorno, semilla y repeticiones. Dep.: T029, T030, T031. Requisitos: PR-LT-001 a PR-LT-007; SC-LT-004, SC-LT-005.
+- [X] T029 [P] Crear en modelo/bench_linea_tiempo.py una partida sintética determinista de ≥ 5 000 acciones (con y sin decenas de cazadores, con pergaminos) y medir, para K = 10, 25, 50 y 100 y la alternativa sin puntos: memoria total (tracemalloc), tiempo de consulta (mínimo, mediana, p95, máximo) sobre instantes repartidos, costo de crear un punto y ciclo máximo con registro activo. Medir también, por K, el tamaño del archivo de guardado y el tiempo de guardar y cargar con todos los puntos (riesgo de D-LT-06; analyze G1), para informarlo como límite conocido. Dep.: T028. Requisitos: PR-LT-001, PR-LT-003, PR-LT-005, PR-LT-007; FR-LT-015.
+- [X] T030 [P] Añadir a modelo/bench_linea_tiempo.py las comparaciones adelante frente a atrás (costo por acción re-simulada frente a deshecha y memoria de deltas registrados) y copiador propio frente al serializador binario, con las cargas de research.md. Dep.: T028. Requisitos: PR-LT-006; D-LT-01, D-LT-04.
+- [X] T031 Repetir en el bench existente (modelo/bench_modelo.py, adaptadores/bench_adaptadores.py) las mediciones de agenda de eventos e historial de retroceso de P1 con la carga nueva (cazadores, costos variables y registro de la línea) y comparar con la evidencia de P1. Dep.: T028. Requisitos: PR-LT-007; §5.6.
+- [X] T032 Integrar T029–T031 en `python main.py --bench` (sin vista) y guardar las salidas en documentacion/evidencia/bench_linea_tiempo.txt y documentacion/evidencia/mediciones_linea_tiempo.json, con entorno, semilla y repeticiones. Dep.: T029, T030, T031. Requisitos: PR-LT-001 a PR-LT-007; SC-LT-004, SC-LT-005.
 - [ ] T033 Ejecutar la consulta con el K provisional en la cripta de referencia o en la mayor disponible, con ≥ 5 000 acciones, y registrar si el 100 % de las consultas termina en < 50 ms. Para obtener esas acciones, reutilizar la estrategia de `medir_cripta_cargada` (modelo/bench_modelo.py): datos precargados sin red dentro del cronómetro, un jugador con vida suficiente que alterna esperar y moverse por salidas abiertas sin entrar a la sala de salida, y cazadores activos con sus estadísticas originales como carga experimental declarada; si la partida termina antes, informarlo con la cantidad alcanzada. Si no se cumple, informarlo sin ocultarlo. Dep.: T032. Requisitos: PR-LT-001; SC-LT-004.
 - [ ] T034 Presentar al usuario la tabla de T032/T033 (memoria, consulta y creación de punto por K) con una recomendación justificada, y esperar su elección del K por defecto (D-LT-07). Fijarlo en modelo/linea_tiempo.py y registrar la decisión en research.md. Dep.: T033. Requisitos: FR-LT-012; PR-LT-005.
 - [ ] T035 Actualizar documentacion/DOCUMENTO_DECISIONES.md con la sección de §5.5 (problema, alternativas, decisión, complejidad, evidencia y límites; enlaces a spec.md y plan.md; diferencias respecto del plan y la medición que las motivó) y la de §5.6 (antes y después, o la evidencia de que las decisiones de P1 siguen siendo adecuadas). Dep.: T034. Requisitos: PR-LT-005, PR-LT-006, PR-LT-007; P2 §7.1.
 - [ ] T036 Actualizar README.md (comandos `historia`, `--checkpoint-cada`, `--replay … --hasta`, K por defecto, formato 6, cómo ejecutar las pruebas de aceptación de la línea de tiempo) y registrar las entradas en documentacion/PROMPTS_LLM.md. Dep.: T034. Requisitos: P2 §2.6, §7.2.
 - [ ] T037 Ejecutar `python -m pytest -q` completo y guardar la salida en documentacion/evidencia/pruebas_linea_tiempo.txt; completar en este archivo la matriz requisito → escenario → tarea → código → prueba para FR-LT-001 a 016 y PR-LT-001 a 007; marcar el estado de spec.md como implementado. Dep.: T035, T036. Requisitos: SC-LT-001 a SC-LT-005; constitución VIII.
+
+## Avance de Juan — persistencia y copiado (2026-11-11)
+
+Tramo de T029/T030, reutilizando D-LT-04/06, sin una capacidad ni estructura nueva:
+
+- `adaptadores/bench_persistencia.py`: carga offline con 5 000 acciones vigentes,
+  costos variables y un pergamino; K = 10/25/50/100. Registra todas las muestras
+  de guardar/cargar la sesión completa y el tamaño del archivo; compara copia
+  propia con codificación/decodificación binaria del mismo estado base.
+- `adaptadores/bench_adaptadores.py --solo persistencia`: ejecución optativa y
+  salida JSON para reutilizar en T032. La carga se prepara fuera del cronómetro;
+  la carga medida incluye validación y reenlace, sin red ni vista.
+- `Pruebas/prueba_bench_persistencia.py`: equivalencia de registro, consultas,
+  azar y continuación, carga idéntica entre K y rechazo de entradas inválidas.
+  Incluye una carga alterada intencionalmente para comprobar que el benchmark
+  detecta la pérdida del registro. Pruebas creadas antes de implementar el módulo.
+- README actualizado con historia, formato 6 y opciones de replay/guardado.
+
+Ejecución verificada: 200 salas, 5 000 acciones vigentes, semilla 2026, tres
+rondas por K; sin cazadores. Archivos de 62,60/25,34/12,93/6,72 MB para
+K = 10/25/50/100; carga máxima de 25,484/11,207/4,771/3,092 s. Evidencia en
+[JSON](../../documentacion/evidencia/mediciones_persistencia_juan.json),
+[salida](../../documentacion/evidencia/bench_persistencia_juan.txt) y
+[641 pruebas aprobadas](../../documentacion/evidencia/pruebas_persistencia_juan.txt).
+Resultados y límites incorporados al Documento de Decisiones; no se cambia K.
+
+T029 y T030 permanecen abiertas: faltan memoria, creación de puntos/ciclos con
+registro y comparación adelante/atrás. Las consultas se detallan a continuación.
+T031–T037 también conservan
+su estado: estos resultados parciales no sustituyen sus dependencias ni fijan K.
+No se pueden crear commits en esta copia descargada porque no contiene `.git`.
+
+## Avance de Juan — consultas (2026-11-11)
+
+- T029 (tramo ejecutado): `modelo/bench_linea_tiempo.py` mide consultas completas
+  en cargas sintéticas de 5 000 acciones, 200 salas, K = 10/25/50/100 y solo
+  el punto inicial, con 0/32 cazadores. Tres rondas × 12 destinos por escenario;
+  360 consultas. Capturas de decisiones en vivo; intermedios contrastados entre K
+  y con la alternativa inicial. Todas las muestras y mínimo/mediana/p95/máximo,
+  excedidos de 50 ms, cota K, búsqueda logarítmica y firma de estado intacta.
+- T033 (ensayo anticipado, integración T032 pendiente): `cripta-06`, 300 salas,
+  versión `f9ed9afa683d`, catálogo `4b9e75a42be5`, K provisional 25, 32 cazadores
+  activados con datos originales, vida experimental del jugador 10^9. Se
+  completaron 5 000 acciones y 36 consultas: 27 ≥50 ms, máximo 195,992 ms.
+  No cumple PR-LT-001 en esta carga; no se modifica K ni se declara cerrada la
+  aceptación. Se usaron 46/63 solicitudes al preparar, cero al consultar.
+- CLI optativa: `adaptadores.bench_adaptadores --solo consultas`; `--cripta`
+  selecciona datos externos y K provisional. Falta integrarlo al modo general
+  `main.py --bench` junto con las mediciones restantes de T032.
+- `Pruebas/prueba_bench_linea_tiempo.py` (creadas antes del módulo): PR-LT-001/002/005,
+  FR-LT-003/006/013/014; equivalencia, no vista, cota K, estadísticas, CLI,
+  parámetros y fallo ante modificación deliberada del azar. Regresión: 654 pasan.
+
+Evidencia: [sintética](../../documentacion/evidencia/mediciones_consultas_juan.json),
+[referencia](../../documentacion/evidencia/mediciones_consultas_referencia_juan.json)
+y [pruebas](../../documentacion/evidencia/pruebas_consultas_juan.txt).
+El Documento de Decisiones registra el incumplimiento y los límites. No se
+necesitó un spec nuevo ni se eligieron estructuras o K por defecto.
 
 ## Dependencias y orden
 
@@ -159,3 +223,65 @@ Cierre: T028 → T029, T030, T031 → T032 → T033 → T034 → T035, T036 → 
 Confirmar cada fase en Git por separado. Si durante la implementación la
 especificación resulta incorrecta, corregir y confirmar primero spec.md y después
 el código (P2 §2.6).
+
+
+## Juan: cierre de mediciones de T029 (2026-11-11)
+
+Memoria/creación en `modelo/bench_memoria.py`, modo optativo `--solo memoria`.
+5 000 acciones, 200 salas, 0/32 cazadores, cuatro K y solo inicial. Memoria
+mitad/final/pico separada de tiempos; equivalencia verificada. Junto con los
+ensayos de consultas y persistencia cubre T029, distribuida entre los módulos
+de benchmark. Resultados y límites en el Documento de Decisiones y evidencia
+`mediciones_memoria_juan.json`. Los presupuestos de tiempo no se cumplen en
+las cargas medidas: completar la medición no equivale a cumplir PR-LT-001/007.
+T030/T031/T032 y la selección de K siguen pendientes. Las menciones anteriores
+a memoria pendiente describen avances históricos y quedan superadas aqu?.
+
+
+## Investigación elegida por el usuario: plantilla compartida
+
+Prototipo aislado en `adaptadores/estado_compartido.py`, con investigación y
+resultados en research.md y Documento de Decisiones. Tres pruebas nuevas;
+regresión 658/658. Ahorro exploratorio 13,7 % de memoria, sin mejora suficiente
+de latencia. No se marca cerrada la aceptación ni se integra sin validar
+replay/persistencia y medir 5 000 acciones. K y formato 6 no cambian.
+
+
+### Investigación compartida: ensayo completo
+
+Validación directa, tipos precalculados y reserva de tabla existente; tuplas
+inmutables sin registro redundante. Historia experimental de 5 000 acciones,
+300 salas, 32 cazadores y K=25: normal 16/36 consultas >=50 ms, compartido 17/36;
+no demuestra mejora suficiente. Continúa aislado; no se marca aceptación ni
+se cambia K. Evidencia `historia_compartida_5000_juan.json` y regresión en
+`pruebas_compartido_optimizado_juan.txt`. Los documentos previos son históricos.
+
+
+## Prioridad indicada por Juan (2026-11-11)
+
+Se pospone optimizar los 50 ms hasta terminar el resto. T030/T031 medidas y
+verificadas en nueve escenarios (200/300/1000 salas; 0/8/32 cazadores), tres
+rondas. Re-simulación/deshacer de 1/3/5 esperas, memoria real de contenedores
+de deltas (no proceso total), copiador/codec y reproducción de trazas reales de
+agenda con registro histórico activo. Se conservan estructuras aprobadas.
+T032: ruta conjunta `main.py --bench --bench-linea-tiempo` implementada y
+verificada con pruebas de exportación. No ejecutada la corrida conjunta larga
+para respetar la prioridad; siguen disponibles todas las evidencias individuales.
+T035/T036: documentos y comandos actualizados parcialmente; K definitivo pendiente.
+T037: matriz de trazabilidad en [trazabilidad.md](trazabilidad.md); no se declara
+aceptación final mientras K y los presupuestos sigan pendientes. El historial
+Git no es verificable en esta copia descargada.
+
+
+## Cierre solicitado de los dos primeros apartados (2026-11-11)
+
+T032 ejecutada con `python main.py --bench --bench-linea-tiempo --repeticiones 1`:
+JSON, log y entorno nuevos. Se verificaron 10 escenarios de consultas, 10 de
+memoria, 4 de persistencia y 9 de decisiones; semilla 2026 y una ronda general.
+Regresion posterior: 663 pruebas aprobadas, salida en `pruebas_linea_tiempo.txt`.
+En `documentacion/CIERRE_MEDICIONES_P2.md` consta el cierre de ejecucion y de la
+documentacion independiente de K. Las menciones anteriores a corrida conjunta
+pendiente son historicas y quedan superadas por este registro.
+T035/T036: parte independiente de K completa; falta incorporar K definitivo.
+T037: matriz revisada y regresion ejecutada; declaracion final de aceptacion
+pendiente por los presupuestos y K. No se certifica 20/50 ms ni se modifica K.

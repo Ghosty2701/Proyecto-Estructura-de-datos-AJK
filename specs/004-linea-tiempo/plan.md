@@ -2,7 +2,7 @@
 
 **Fecha**: 2026-11-09. **Rama real**: `main`.
 **Capacidad activa de spec-kit**: `004-linea-tiempo`.
-**Entrada**: [spec.md](spec.md). **Estado**: planificación ejecutada; sin código.
+**Entrada**: [spec.md](spec.md). **Estado**: diseño implementado; mediciones y documentación en cierre, con presupuestos incumplidos y K pendiente.
 **Decisiones**: D-LT-01 a D-LT-06 elegidas por el usuario. D-LT-07 (K por
 defecto) se elegirá con mediciones. Alternativas, mediciones previas y descartes
 en [research.md](research.md).
@@ -111,6 +111,8 @@ caso de cualquier carga.
 | `adaptadores/bitacora_partida.py`, `main.py` | `--hasta`, `--checkpoint-cada`, validación de combinaciones, impresión sin vista. | FR-LT-010/011/012 |
 | `vista/vista_consola.py` | Presentar el resumen histórico y los rechazos. | FR-LT-002/007 |
 | `modelo/bench_linea_tiempo.py` (nuevo), bench existente | K = 10/25/50/100 y sin puntos; adelante frente a atrás; copia propia frente a serializador; repetición de mediciones de P1. | PR-LT-001 a 007 |
+| `modelo/bench_linea_tiempo.py`, `adaptadores/bench_adaptadores.py --solo consultas` | Tramo ejecutado de T029: tiempos completos para K = 10/25/50/100 y solo punto inicial, con 0/32 cazadores; resúmenes capturados en vivo, equivalencia y cota K. Tramo de T033 con `--cripta`: datos reales precargados y K provisional. Sin cambiar reglas/estructuras; integración general aún en T032. | FR-LT-003/006/013/014; PR-LT-001/002/005 |
+| `adaptadores/bench_persistencia.py`, `adaptadores/bench_adaptadores.py` | Tramo de Juan en T029/T030: sesión completa de 5 000 acciones para K = 10/25/50/100, tamaño y tiempos de guardar/cargar, equivalencia y copiador frente a ida y vuelta binaria. Carga sin cazadores, optativa hasta T032. No incorpora estructuras nuevas ni cambia reglas. | FR-LT-015; PR-LT-005/006 |
 | `Pruebas/` | Aceptación AC-LT-001 a 025 y regresión de partida, replay, guardado, niebla y retroceso. | SC-LT-001 a 005 |
 
 ## Comprobación de la constitución antes y después del diseño
@@ -158,3 +160,10 @@ historial de retroceso de P1 con la carga nueva (§5.6).
 Diseño: [data-model.md](data-model.md). Interfaces: [contrato](contracts/linea-tiempo.md).
 Validación: [quickstart.md](quickstart.md). El plan termina aquí. Sigue
 `/speckit-tasks`, después `/speckit-analyze` y luego la implementación.
+
+
+Medición de memoria/puntos de T029: `modelo/bench_memoria.py`, accesible con
+`adaptadores.bench_adaptadores --solo memoria`, reutiliza la carga de consultas.
+Separa trazado de asignaciones Python y tiempos para evitar contaminar estos;
+registra mitad/final/pico, copias periídicas y ciclos con registro en ejecuciones
+que deben producir el mismo estado. No introduce decisiones de estructuras.

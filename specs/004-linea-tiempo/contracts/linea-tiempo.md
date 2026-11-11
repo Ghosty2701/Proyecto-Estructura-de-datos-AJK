@@ -1,6 +1,6 @@
 # Contrato: Línea de tiempo
 
-**Estado**: contrato planificado. Reglas en [spec.md](../spec.md); diseño en
+**Estado**: contrato funcional implementado y probado; no certifica los presupuestos de tiempo. Reglas en [spec.md](../spec.md); diseño en
 [data-model.md](../data-model.md).
 
 ## Orden en partida

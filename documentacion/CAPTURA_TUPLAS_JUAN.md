@@ -187,3 +187,48 @@ máximo aún desfavorables. Pico trazado 1 991 096 frente a 1 728 952 bytes:
 punto (1 405 512 bytes en ambas variantes). No se extrapola a garantía de 20 ms.
 [Resumen](evidencia/captura_reserva64_juan.json).
 Reproducir con `--revision c0050ba --rondas 20 --exigir-registros-iguales --alternar`.
+
+### Historias completas para decidir la reserva
+
+Primera corrida con K=5/10/25: ciclos máximos 153,695/69,130/64,370 ms y
+486/232/83 ciclos >=20 ms; consultas máximas 33,968/20,480/63,581 ms con
+0/0/3 excedidos de 50 ms. No cierra los presupuestos ni permite atribuir
+diferencias respecto de otra fecha únicamente a la reserva.
+[Resumen](evidencia/presupuestos_captura_reserva64_juan.json).
+
+Por eso se añadió una comparación ABBA de **historias completas**, cada una
+con 5 000 acciones, K=25, 300 salas, 32 cazadores y semilla 2026. La variante
+anterior se carga de `c0050ba`; ambas usan la reconstrucción vigente y la misma
+codificación de registros. Cada historia verifica consultas contra capturas
+en vivo, partida intacta y cero HTTP. Se restaura el capturador al terminar,
+también ante error (comprobado con fallo controlado).
+
+| Bloque | Reserva | Punto mediano (ms) | Ciclo máximo (ms) | Ciclos ≥20 ms | Consulta máxima (ms) |
+|---|---:|---:|---:|---:|---:|
+| A1 | 32 por sala | 23,671 | 56,875 | 166/5 001 | 26,609 |
+| B1 | 64 por sala | 17,326 | 39,628 | 57/5 001 | 30,775 |
+| B2 | 64 por sala | 18,372 | 51,198 | 74/5 001 | 28,114 |
+| A2 | 32 por sala | 16,062 | 125,552 | 61/5 001 | 14,042 |
+
+Todos los bloques tuvieron 0/36 consultas >=50 ms. La reserva mayor favorece
+el conjunto de la muestra (131 ciclos excedidos frente a 227 en dos historias
+por variante), pero la variación entre bloques sigue siendo grande: A2 tiene
+mejor mediana que ambos B y un pico mayor. No se declara un porcentaje causal
+de mejora del ciclo ni se excluye ese pico. Se conserva 64 como ajuste medido,
+sin dar por cumplido 20 ms ni elegir K definitivo.
+[ABBA completo](evidencia/historias_reserva64_abba_juan.json).
+
+```powershell
+python -X utf8 -u -m modelo.bench_presupuestos --comparar-captura c0050ba --k 25 --salida-json resultado.json
+```
+
+Primitivos y reserva pasaron **688 pruebas** completas:
+[primitivos](evidencia/pruebas_captura_primitivos_juan.txt),
+[reserva](evidencia/pruebas_captura_reserva64_juan.txt).
+No se repitió el ensayo oficial en esta continuación; no se certifica su límite
+de consultas con estos ensayos sintéticos. Avance global estimado: **93 %**.
+
+El siguiente candidato propuesto es un catálogo inmutable y acotado de tuplas
+de ID, compartido entre puntos. Requiere un índice adicional y está pendiente
+de elección explícita según AGENTS.md; **no está implementado**. Se conserva
+la representación de tuplas elegida por el usuario, sin empaquetado en bytes.

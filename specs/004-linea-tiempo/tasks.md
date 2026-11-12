@@ -334,3 +334,15 @@ No se cierran PR-LT-001/007, elección definitiva de K ni aceptación final.
 Contraste oficial posterior K=25: 5 000 acciones, 36 consultas, mediana
 59,345 ms, máximo 97,483 ms y 21 excedidos; partida intacta y cero HTTP.
 La mejora aislada de captura no demuestra mejora de consulta oficial completa.
+
+## Continuación de captura: primitivos y reserva (2026-11-12)
+
+Inserción directa descartada por falta de beneficio. Implementados clasificación
+rápida de None/primitivos y reserva temporal de 64 posiciones estimadas por sala.
+Registros completos y bytes v6 iguales en comparaciones intercaladas; 688 pruebas
+tras cada cambio, incluyendo crecimientos, alias/ciclos y tipos exactos.
+Reserva 64: 256 KiB temporales más, sin aumentar memoria retenida del punto.
+ABBA de historias completas K=25: 166/57/74/61 ciclos >=20 ms en A/B/B/A;
+0/36 consultas >=50 ms por bloque. No cierra presupuestos ni elección de K.
+Reproducción y resultados en `documentacion/CAPTURA_TUPLAS_JUAN.md`.
+Catálogo acotado de tuplas de ID propuesto y pendiente de elección; no implementado.

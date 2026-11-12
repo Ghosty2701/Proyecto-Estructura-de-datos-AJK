@@ -2,7 +2,10 @@
 import gc
 import platform
 import tempfile
+import subprocess
+import sys
 from pathlib import Path
+from types import ModuleType
 
 from adaptadores.bench_persistencia import _paquete, _cargador, _ejecutar, _cronometrar
 from modelo.bench_linea_tiempo import _preparar, _indices, _consultas, _medir, _firma, estadisticas
@@ -82,10 +85,48 @@ def medir_presupuestos(acciones=5000, salas=300, valores_k=(5, 10, 25), cazadore
                        'No elige K ni certifica referencia oficial. Se incluyen todos los picos.'}
 
 
+def comparar_captura(revision, k=25):
+    """ABBA de historias completas con capturas de la misma codificación de tuplas."""
+    from controlador import cargar_partida as modulo
+    ruta = 'adaptadores/instantanea_inmutable.py'
+    codigo = subprocess.check_output(['git', 'show', f'{revision}:{ruta}'], encoding='utf-8')
+    anterior = ModuleType('_captura_historia_referencia')
+    sys.modules[anterior.__name__] = anterior
+    original = modulo.capturar_estado
+    try:
+        exec(compile(codigo, f'{revision}:{ruta}', 'exec'), anterior.__dict__)
+        # Misma codificación: solo comparar algoritmos de captura. Las copias
+        # de trabajo usan la reconstrucción vigente en ambas variantes.
+        anterior.InstantaneaInmutable = modulo.InstantaneaInmutable
+        filas = []
+        resultado = None
+        for nombre, capturar in (('anterior', anterior.capturar_estado), ('actual', original),
+                                 ('actual', original), ('anterior', anterior.capturar_estado)):
+            modulo.capturar_estado = capturar
+            print(f'HISTORIA COMPLETA: captura {nombre}, K={k}', flush=True)
+            resultado = medir_presupuestos(valores_k=(k,))
+            fila = resultado['escenarios'][0]
+            fila['variante_captura'] = nombre
+            filas.append(fila)
+        resultado['escenarios'] = filas
+        resultado['referencia_git_captura'] = revision
+        resultado['orden'] = 'ABBA de historias completas independientes'
+        resultado['alcance'] += (' Misma reconstruccion vigente y codificacion de puntos; '
+                                 'cuatro preparaciones desde semilla, sin cambiar K del juego.')
+        return resultado
+    finally:
+        modulo.capturar_estado = original
+        sys.modules.pop(anterior.__name__, None)
+
+
 if __name__ == '__main__':
     import argparse
     import json
     parser = argparse.ArgumentParser()
     parser.add_argument('--salida-json', required=True)
+    parser.add_argument('--comparar-captura', help='revision Git con la misma codificacion de puntos')
+    parser.add_argument('--k', type=int, default=25, help='K experimental de la comparacion ABBA')
     args = parser.parse_args()
-    Path(args.salida_json).write_text(json.dumps(medir_presupuestos(), ensure_ascii=False, indent=2), encoding='utf-8')
+    resultado = (comparar_captura(args.comparar_captura, args.k) if args.comparar_captura
+                 else medir_presupuestos())
+    Path(args.salida_json).write_text(json.dumps(resultado, ensure_ascii=False, indent=2), encoding='utf-8')

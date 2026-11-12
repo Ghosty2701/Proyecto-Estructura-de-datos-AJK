@@ -1,5 +1,12 @@
 # Documento de Decisiones de Diseño
 
+**Continuación de captura (2026-11-12):** clasificación de primitivos y mayor
+reserva temporal de identidades, con 688 pruebas. Misma representación, registros
+y bytes v6. Se descarta la inserción directa sin beneficio demostrado. ABBA de
+historias completas K=25: 166/57/74/61 ciclos excedidos para reserva anterior/
+mayor/mayor/anterior; sigue incumplido 20 ms. Memoria retenida idéntica y 256 KiB
+temporales adicionales. [Método, datos y límites](CAPTURA_TUPLAS_JUAN.md).
+
 **Captura conservando tuplas (2026-11-12):** elección explícita del usuario;
 sin empaquetado. Tres refinamientos con 686 pruebas por cambio, registros
 completos y bytes v6 equivalentes. Ensayo intercalado acumulado: mediana

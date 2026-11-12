@@ -1456,3 +1456,17 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     K=5/10/25: 482/101/27 ciclos excedidos; consultas 0/36 excedidas por K.
     Oficial K=25: 21/36 excedidas, máximo 97,483 ms. Se conservan fallos y
     resúmenes compactos en CAPTURA_TUPLAS_JUAN.md; K y aceptación pendientes.
+
+43. Continua
+
+    *Fecha: 2026-11-12. Agente: Codex; modelo exacto no registrado.*
+
+    Se conserva la elección de tuplas. Perfilada captura; inserción directa
+    descartada al no demostrar beneficio. Clasificación de primitivos publicada
+    en c0050ba y reserva temporal mayor en 790579f, con 688 pruebas tras cada
+    cambio. ABBA de capturas valida todos los registros y bytes v6; reserva
+    64 mejora la mediana del ensayo 11,3 %, con 256 KiB temporales adicionales
+    y memoria retenida idéntica. ABBA de historias completas: 166/57/74/61
+    ciclos excedidos para A/B/B/A con K=25; presupuestos y K pendientes.
+    Solicitada elección de catálogo acotado de tuplas de ID según AGENTS.md;
+    no se implementa mientras no haya elección. Commits separados y publicados.

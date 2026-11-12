@@ -220,3 +220,13 @@ acotada para compartir rutas equivalentes entre cazadores. Detalles y garantías
 en `001-terreno-cazadores/research.md`. Es derivada y se reconstruye vacía al
 copiar/cargar, sin cambiar el formato v6 ni los registros inmutables. Medir
 consultas completas contra caché individual, no solo búsquedas aisladas.
+
+## Captura conservando tuplas: elección 2026-11-12
+
+El usuario elige «Conservar las tuplas y optimizar su captura», frente a
+empaquetar los registros por ID en bytes. No se implementa empaquetado.
+Se conserva D-LT-08 y su codificación: mismas referencias numéricas, orden y
+tuplas de campos. Investigar búsquedas redundantes de esquema, llamadas y
+contenedores temporales; comparar ABBA contra la revisión anterior sobre el
+mismo estado y comprobar igualdad de registros y bytes v6. Medir ciclos con
+GC habilitado y puntos incluidos, sin dar por cumplido un límite por la mediana.

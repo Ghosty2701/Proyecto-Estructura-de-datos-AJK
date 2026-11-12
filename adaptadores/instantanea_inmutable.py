@@ -123,27 +123,28 @@ def capturar_estado(raiz):
     while pendientes:
         numero, original, esquema = pendientes.pop()
         tipo = type(original)
-        if tipo in (tuple, list):
+        if tipo is tuple or tipo is list:
             codigo = 0 if tipo is tuple else 18
-            datos = tuple(referencia(v) for v in original)
+            # La comprensión evita suspender/reanudar un generador por campo.
+            # La lista temporal solo vive hasta construir esta tupla.
+            datos = tuple([referencia(v) for v in original])
         elif tipo is dict:
             codigo = 19
-            datos = tuple((referencia(k), referencia(v)) for k, v in original.items())
+            datos = tuple([(referencia(k), referencia(v)) for k, v in original.items()])
         elif tipo is random.Random:
             codigo, datos = 20, original.getstate()
         else:
             codigo, _, obligatorios, opcionales = esquema
             # Una sola tupla de campos evita retener contenedores separados
             # para requeridos/opcionales en cada objeto de cada punto.
-            valores = [0]
-            valores.extend([referencia(getattr(original, n)) for n in obligatorios])
+            valores = [referencia(getattr(original, n)) for n in obligatorios]
             mascara = 0
             for bit, nombre in enumerate(opcionales):
                 valor = getattr(original, nombre, _VACIA)
                 if valor is not _VACIA:
                     mascara |= 1 << bit
                     valores.append(referencia(valor))
-            valores[0] = mascara
+            valores.insert(0, mascara)
             datos = tuple(valores)
         registros[numero] = (codigo, datos)
     return InstantaneaInmutable(resultado, tuple(registros))

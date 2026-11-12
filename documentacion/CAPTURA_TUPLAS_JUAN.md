@@ -37,3 +37,24 @@ python -X utf8 -u -m modelo.bench_registros --revision 18ffce1 --rondas 15 --exi
 
 Avance global estimado: **93 %**. Próximo: reducir generadores y contenedores
 temporales, medir de nuevo y verificar los ciclos incluyendo la creación del punto.
+
+## Construcción sin generadores
+
+Se usan comprensiones temporales para construir las tuplas de contenedores,
+se evita una tupla de clasificación por registro y se añade la máscara al
+vector de campos ya construido, sin otra lista que luego se copie. La lista
+temporal se descarta inmediatamente; no se añade una estructura retenida.
+
+Comparación intercalada contra `cce218d`, mismas condiciones y 30 capturas por
+variante, con igualdad completa de registros y bytes v6:
+
+| Variante | Mediana (ms) | p95 (ms) | Máximo (ms) | Capturas ≥20 ms |
+|---|---:|---:|---:|---:|
+| anterior | 19,425 | 28,988 | 51,780 | 14/30 |
+| sin generadores | 18,530 | 26,607 | 28,874 | 10/30 |
+
+La mediana baja aproximadamente 4,6 % en este ensayo; quedan diez capturas
+fuera del límite. Memoria retenida idéntica (1 405 512 bytes); pico trazado
+1 728 368 frente a 1 749 800 bytes. Estos tiempos son de captura aislada,
+no de un ciclo completo. [Resumen](evidencia/captura_sin_generadores_juan.json).
+Reproducir cambiando `--revision cce218d` en el comando anterior.

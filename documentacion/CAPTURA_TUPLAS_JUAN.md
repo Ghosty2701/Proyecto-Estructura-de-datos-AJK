@@ -135,3 +135,33 @@ la diferencia exclusivamente al código o al entorno. **No hay mejora oficial
 demostrada**, aunque la captura aislada sí reduce trabajo y sus registros son
 idénticos. Sigue pendiente reducir los picos de creación y el costo de consultas
 antes de fijar K. Se conserva la elección de tuplas. Avance estimado: **93 %**.
+
+## Registro de identidades y primitivos: continuación
+
+Se investigó insertar directamente en una casilla ya localizada, dejando el
+método general para crecer. ABBA intercalado contra `a31a869`, 40 capturas por
+variante: mediana 21,711 ms anterior y 22,793 ms candidata; máximos 36,694 y
+64,954 ms. Registros/bytes iguales y misma memoria. **No mostró beneficio y se
+retiró el cambio de producción**. Se conserva una prueba que fuerza varios
+crecimientos y comprueba IDs, alias y ciclos.
+[Alternativa descartada](evidencia/captura_insercion_directa_juan.json).
+
+Se conserva la inserción de la tabla existente y se optimiza la clasificación
+de valores: None vuelve directamente y los otros cinco tipos exactos se
+comprueban en una tupla ordenada por su frecuencia en esta carga. No se
+aceptan subclases sin esquema ni se convierte bool a int. Una prueba adicional
+cubre todos los tipos primitivos, enteros grandes y rechazo de subclases.
+
+ABBA intercalado contra `a31a869`, 40 capturas por variante, registros completos
+y bytes v6 idénticos:
+
+| Variante | Mediana (ms) | p95 (ms) | Máximo (ms) | Capturas ≥20 ms |
+|---|---:|---:|---:|---:|
+| anterior | 18,003 | 34,411 | 173,072 | 10/40 |
+| clasificación de primitivos | 17,653 | 28,493 | 39,631 | 11/40 |
+
+La diferencia de mediana es pequeña (1,9 %); no demuestra cumplimiento de
+20 ms ni se oculta el aumento de capturas excedidas. Memoria retenida y pico
+idénticos: 1 405 512/1 728 952 bytes. El pico anterior de 173,072 ms se conserva.
+[Resumen](evidencia/captura_primitivos_juan.json).
+Reproducir con `--revision a31a869 --rondas 20 --exigir-registros-iguales --alternar`.

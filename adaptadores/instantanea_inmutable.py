@@ -10,12 +10,16 @@ from operator import attrgetter
 
 from adaptadores.estado_binario import _ESQUEMAS
 from adaptadores.copia_estado import (
-    TablaIdentidades, _VACIA, _INMUTABLES, _completar_no_persistentes,
+    TablaIdentidades, _VACIA, _completar_no_persistentes,
 )
 from adaptadores.cache_catalogo import ReferenciaFicha
 from modelo.conocimiento import ConocimientoMapa
 from modelo.rastro import SalaRastro
 
+
+# Tipos exactos: None se resuelve antes, sin calcular su tipo. Los valores más
+# frecuentes de los campos van primero; no se aceptan subclases sin esquema.
+_VALORES_INMUTABLES = (int, str, bool, float, bytes)
 
 _TIPOS = TablaIdentidades(64)
 _POR_ID = [None] * (max(e[0] for e in _ESQUEMAS) + 1)
@@ -101,8 +105,10 @@ def capturar_estado(raiz):
     registros, pendientes = [], []
 
     def referencia(valor):
+        if valor is None:
+            return None
         tipo = type(valor)
-        if tipo in _INMUTABLES:
+        if tipo in _VALORES_INMUTABLES:
             return valor
         indice = identidades._localizar(valor)
         if identidades.claves[indice] is not _VACIA:

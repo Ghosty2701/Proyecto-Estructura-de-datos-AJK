@@ -7,7 +7,44 @@ import pytest
 
 from adaptadores.instantanea_inmutable import capturar_estado, InstantaneaInmutable
 from modelo.rastro import SalaRastro
+from modelo.rastro import SalidaRastro
 from datos_linea_tiempo import escribir_paquete, crear_partida, jugar, instantanea
+
+
+def test_captura_con_varios_crecimientos_conserva_ids_alias_y_ciclos(monkeypatch):
+    from adaptadores import instantanea_inmutable as modulo
+    crecimientos = []
+
+    class TablaContada(modulo.TablaIdentidades):
+        def _crecer(self):
+            crecimientos.append(self.capacidad)
+            super()._crecer()
+
+    monkeypatch.setattr(modulo, 'TablaIdentidades', TablaContada)
+    salas = [SalaRastro(i) for i in range(500)]
+    salas[0].salidas.append(SalidaRastro(salas[-1]))
+    salas[-1].salidas.append(SalidaRastro(salas[0]))
+    # Raíz genérica: empieza con 1024 posiciones, sin reserva por salas.
+    punto = capturar_estado([salas, salas])
+    assert len(crecimientos) >= 2
+    copia = punto.reconstruir()
+    assert copia[0] is copia[1]
+    assert [s.sala_id for s in copia[0]] == list(range(500))
+    assert copia[0][0].salidas[0].destino is copia[0][-1]
+    assert copia[0][-1].salidas[0].destino is copia[0][0]
+
+
+def test_valores_primitivos_conservan_tipo_y_subclases_no_se_convierten():
+    valores = (None, False, True, 0, -1, 2**100, 1.25, '', 'texto', b'')
+    copia = capturar_estado(valores).reconstruir()
+    assert copia == valores
+    assert tuple(type(v) for v in copia) == tuple(type(v) for v in valores)
+
+    class EnteroConEstado(int):
+        pass
+
+    with pytest.raises(TypeError, match='tipo sin esquema'):
+        capturar_estado(EnteroConEstado(1))
 
 
 def test_registros_no_retienen_modelos_y_preservan_ciclos():

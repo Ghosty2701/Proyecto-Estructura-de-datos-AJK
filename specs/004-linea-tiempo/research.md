@@ -230,3 +230,20 @@ tuplas de campos. Investigar búsquedas redundantes de esquema, llamadas y
 contenedores temporales; comparar ABBA contra la revisión anterior sobre el
 mismo estado y comprobar igualdad de registros y bytes v6. Medir ciclos con
 GC habilitado y puntos incluidos, sin dar por cumplido un límite por la mediana.
+
+## Catálogo acotado de tuplas de ID: elección 2026-11-12
+
+El usuario elige compartir las tuplas de ID con un catálogo acotado, frente a
+mantener tokens propios y optimizar solo recorridos. Se conserva D-LT-08: cada
+ID sigue refiriéndose exclusivamente a los registros de su punto.
+
+Catálogo estático e inmutable de 16 384 tokens `(ID,)`, indexado mediante arreglo
+de tuplas, compartido entre capturas. Se construye al importar el módulo y no
+crece ni guarda modelos. IDs superiores crean un token propio como antes.
+La capacidad es un parámetro inicial de implementación, distinto de K. El
+catálogo inmutable permite capturas simultáneas sin mutaciones compartidas.
+
+Verificar independencia entre puntos/capturas concurrentes, alias/ciclos, límite
+y fallback, liberación de modelos y bytes v6. Comparar contra ed4b505, separando
+memoria marginal de cada punto del costo fijo del catálogo; después medir
+historias completas, consultas oficiales y RSS antes de declarar aceptación.

@@ -72,13 +72,13 @@ class InstantaneaInmutable:
                         nuevo[resolver(clave)] = resolver(valor)
                 elif codigo != 20:
                     _, _, obligatorios, opcionales = _POR_ID[codigo]
-                    requeridos, mascara, adicionales = datos
-                    for nombre, valor in zip(obligatorios, requeridos):
-                        setattr(nuevo, nombre, resolver(valor))
-                    posicion = 0
+                    mascara = datos[0]
+                    for posicion, nombre in enumerate(obligatorios, 1):
+                        setattr(nuevo, nombre, resolver(datos[posicion]))
+                    posicion = len(obligatorios) + 1
                     for bit, nombre in enumerate(opcionales):
                         if mascara & (1 << bit):
-                            setattr(nuevo, nombre, resolver(adicionales[posicion]))
+                            setattr(nuevo, nombre, resolver(datos[posicion]))
                             posicion += 1
                     _completar_no_persistentes(nuevo, nuevo)
             for conocimiento in conocimientos:
@@ -128,13 +128,17 @@ def capturar_estado(raiz):
             codigo, datos = 20, original.getstate()
         else:
             codigo, _, obligatorios, opcionales = esquema
-            requeridos = tuple(referencia(getattr(original, n)) for n in obligatorios)
-            mascara, adicionales = 0, []
+            # Una sola tupla de campos evita retener contenedores separados
+            # para requeridos/opcionales en cada objeto de cada punto.
+            valores = [0]
+            valores.extend([referencia(getattr(original, n)) for n in obligatorios])
+            mascara = 0
             for bit, nombre in enumerate(opcionales):
                 valor = getattr(original, nombre, _VACIA)
                 if valor is not _VACIA:
                     mascara |= 1 << bit
-                    adicionales.append(referencia(valor))
-            datos = (requeridos, mascara, tuple(adicionales))
+                    valores.append(referencia(valor))
+            valores[0] = mascara
+            datos = tuple(valores)
         registros[numero] = (codigo, datos)
     return InstantaneaInmutable(resultado, tuple(registros))

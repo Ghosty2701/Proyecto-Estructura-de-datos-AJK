@@ -1414,3 +1414,13 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     Resultado sintético favorable en consultas; referencia oficial y ciclos aún
     exceden límites. Perfil adicional identifica replay de rutas de cazadores.
     Resúmenes compactos, comandos y pendientes en REGISTROS_INMUTABLES_JUAN.md.
+
+40. Continua, siempre has commit y push, que esten divididos entre cambios unicos, para que por si algo llegara a pasar se pueda revertir el estado del repositorio sin complicaciones
+
+    *Fecha: 2026-11-12. Agente: Codex; modelo exacto no registrado.*
+
+    Publicados los tres commits locales previos hasta de2b408. Cambios separados
+    para hash secundario diferido y compactación de campos inmutables, con
+    mediciones ABBA y 674 pruebas. El push nuevo vuelve a solicitar autenticación;
+    se reintenta por la vía normal y se consulta al usuario mientras siguen las
+    mediciones. Ahorro de memoria por punto 9,7 %; los límites siguen pendientes.

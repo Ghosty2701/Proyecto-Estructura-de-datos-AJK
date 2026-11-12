@@ -1,0 +1,102 @@
+{
+  "referencia_git": "de2b408",
+  "acciones": 5000,
+  "salas": 300,
+  "cazadores": 32,
+  "semilla": 2026,
+  "rondas_por_bloque": 5,
+  "python": "3.13.2",
+  "plataforma": "Windows-11-10.0.26200-SP0",
+  "gc_habilitado": true,
+  "resultados": [
+    {
+      "variante": "anterior",
+      "captura": {
+        "cantidad": 5,
+        "minimo_ms": 21.2048,
+        "mediana_ms": 22.4803,
+        "p95_ms": 35.3346,
+        "maximo_ms": 35.3346,
+        "excedidos_50ms": 0
+      },
+      "restauracion": {
+        "cantidad": 5,
+        "minimo_ms": 9.3046,
+        "mediana_ms": 10.4309,
+        "p95_ms": 14.6873,
+        "maximo_ms": 14.6873,
+        "excedidos_50ms": 0
+      },
+      "retenida_bytes": 1557264,
+      "pico_bytes": 1899544,
+      "registros": 6760
+    },
+    {
+      "variante": "compacto",
+      "captura": {
+        "cantidad": 5,
+        "minimo_ms": 19.1075,
+        "mediana_ms": 22.1092,
+        "p95_ms": 25.9989,
+        "maximo_ms": 25.9989,
+        "excedidos_50ms": 0
+      },
+      "restauracion": {
+        "cantidad": 5,
+        "minimo_ms": 8.3356,
+        "mediana_ms": 8.6472,
+        "p95_ms": 10.7348,
+        "maximo_ms": 10.7348,
+        "excedidos_50ms": 0
+      },
+      "retenida_bytes": 1405680,
+      "pico_bytes": 1750040,
+      "registros": 6760
+    },
+    {
+      "variante": "compacto",
+      "captura": {
+        "cantidad": 5,
+        "minimo_ms": 18.7476,
+        "mediana_ms": 21.432,
+        "p95_ms": 33.6854,
+        "maximo_ms": 33.6854,
+        "excedidos_50ms": 0
+      },
+      "restauracion": {
+        "cantidad": 5,
+        "minimo_ms": 8.2432,
+        "mediana_ms": 9.0859,
+        "p95_ms": 34.4465,
+        "maximo_ms": 34.4465,
+        "excedidos_50ms": 0
+      },
+      "retenida_bytes": 1405624,
+      "pico_bytes": 1749928,
+      "registros": 6760
+    },
+    {
+      "variante": "anterior",
+      "captura": {
+        "cantidad": 5,
+        "minimo_ms": 25.9474,
+        "mediana_ms": 29.6311,
+        "p95_ms": 36.6132,
+        "maximo_ms": 36.6132,
+        "excedidos_50ms": 0
+      },
+      "restauracion": {
+        "cantidad": 5,
+        "minimo_ms": 9.241,
+        "mediana_ms": 11.9603,
+        "p95_ms": 12.8446,
+        "maximo_ms": 12.8446,
+        "excedidos_50ms": 0
+      },
+      "retenida_bytes": 1557208,
+      "pico_bytes": 1899360,
+      "registros": 6760
+    }
+  ],
+  "alcance": "ABBA; un punto de la misma partida sintetica, fuente excluida del trazado; memoria Python, no RSS ni historia completa. Tiempos sin tracemalloc; restauracion sin replay/liberacion. Bytes v6 equivalentes en todas las restauraciones."
+}

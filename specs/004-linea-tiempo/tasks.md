@@ -297,3 +297,12 @@ oficial K=25: 23/36 excedidos; creación de puntos sigue excediendo 20 ms.
 Perfil diagnóstico: domina el replay de cazadores, en particular sus rutas.
 No se cierran PR-LT-001/007, T034 ni aceptación; memoria nueva pendiente.
 Detalles y comandos en `documentacion/REGISTROS_INMUTABLES_JUAN.md`.
+
+## Optimizaciones conservadoras de costos (2026-11-12)
+
+Segundo hash diferido en la tabla ya aprobada: comparación oficial ABBA sobre
+los mismos puntos y consultas. Compactación de campos de registros por ID:
+9,7 % menos memoria por punto en el ensayo controlado; bytes v6 equivalentes.
+Regresión: 674 pruebas. Corrida conjunta posterior de K=5/10/25 conserva picos
+superiores a 20/50 ms y no prueba mejora de latencia. Resultados y comandos en
+`documentacion/OPTIMIZACION_COSTOS_JUAN.md`. T034/aceptación siguen pendientes.

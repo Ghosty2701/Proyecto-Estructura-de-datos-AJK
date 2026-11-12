@@ -200,3 +200,15 @@ Ensayo de 500 acciones: restauraci?n mediana 31,795 ms frente a copia normal
 39,830 ms. Sin embargo, en historia completa de 5 000 acciones/300 salas/32
 cazadores/K=25: normal 16/36 consultas >=50 ms, compartido 17/36. No justifica
 integración; sigue experimental, sin cambios de formato ni elección de K.
+
+
+## D-LT-08: registros inmutables por ID (eleccion 2026-11-12)
+
+El usuario elige extender el prototipo a registros inmutables por ID. Cada
+punto conserva valores y referencias numericas en tuplas sin enlaces al grafo
+vivo. Se reutilizan esquema explicito, arreglos y tabla de identidades propia;
+las referencias compartidas y ciclos se restauran al crear una copia de trabajo.
+Captura y consultas deben medirse antes de integrarlo. Se intenta conservar
+formato 6 materializando los puntos para el codec existente al guardar y
+compactandolos al cargar; si esto exige cambiar el contrato, se revisa antes.
+K permanece provisional. No se deshabilita GC ni se excluye del ciclo el registro.

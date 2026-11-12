@@ -11,100 +11,104 @@
       "retroceso": [
         {
           "acciones": 1,
-          "adelante_ms": [
-            1.0357,
-            0.0422,
-            0.0886
-          ],
-          "atras_ms": [
-            0.0265,
-            0.0189,
-            0.0198
-          ],
+          "adelante_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.0422,
+            "promedio_ms": 0.38883333333333336,
+            "mediana_ms": 0.0886,
+            "p95_ms": 1.0357,
+            "maximo_ms": 1.0357,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.0189,
+            "promedio_ms": 0.021733333333333337,
+            "mediana_ms": 0.0198,
+            "p95_ms": 0.0265,
+            "maximo_ms": 0.0265,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 12,
           "contenedores_deltas_bytes": 1088,
           "restaura_estado": true
         },
         {
           "acciones": 3,
-          "adelante_ms": [
-            0.0415,
-            0.0292,
-            0.0243,
-            0.0514,
-            0.0227,
-            0.0274,
-            0.063,
-            0.0296,
-            0.0229
-          ],
-          "atras_ms": [
-            0.0146,
-            0.0096,
-            0.0088,
-            0.0142,
-            0.0093,
-            0.0087,
-            0.0197,
-            0.0138,
-            0.0116
-          ],
+          "adelante_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.0227,
+            "promedio_ms": 0.034666666666666665,
+            "mediana_ms": 0.0292,
+            "p95_ms": 0.063,
+            "maximo_ms": 0.063,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.0087,
+            "promedio_ms": 0.012255555555555554,
+            "mediana_ms": 0.0116,
+            "p95_ms": 0.0197,
+            "maximo_ms": 0.0197,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 36,
           "contenedores_deltas_bytes": 3264,
           "restaura_estado": true
         },
         {
           "acciones": 5,
-          "adelante_ms": [
-            0.0405,
-            0.0208,
-            0.0181,
-            0.0254,
-            0.0192,
-            0.057,
-            0.0428,
-            0.0264,
-            0.0252,
-            0.0301,
-            0.0654,
-            0.032,
-            0.0232,
-            0.0171,
-            0.0206
-          ],
-          "atras_ms": [
-            0.0149,
-            0.0097,
-            0.0086,
-            0.008,
-            0.0079,
-            0.0226,
-            0.0144,
-            0.014,
-            0.013,
-            0.0128,
-            0.0151,
-            0.0095,
-            0.0111,
-            0.0107,
-            0.0115
-          ],
+          "adelante_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.0171,
+            "promedio_ms": 0.03092,
+            "mediana_ms": 0.0254,
+            "p95_ms": 0.0654,
+            "maximo_ms": 0.0654,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.0079,
+            "promedio_ms": 0.012253333333333333,
+            "mediana_ms": 0.0115,
+            "p95_ms": 0.0226,
+            "maximo_ms": 0.0226,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 60,
           "contenedores_deltas_bytes": 5440,
           "restaura_estado": true
         }
       ],
       "codec": {
-        "copia_ms": [
-          11.8038,
-          13.4662,
-          10.9915
-        ],
-        "ida_vuelta_ms": [
-          87.5554,
-          86.3418,
-          86.1019
-        ],
+        "copia_ms": {
+          "cantidad": 3,
+          "minimo_ms": 10.9915,
+          "promedio_ms": 12.087166666666667,
+          "mediana_ms": 11.8038,
+          "p95_ms": 13.4662,
+          "maximo_ms": 13.4662,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
+        "ida_vuelta_ms": {
+          "cantidad": 3,
+          "minimo_ms": 86.1019,
+          "promedio_ms": 86.66636666666666,
+          "mediana_ms": 86.3418,
+          "p95_ms": 87.5554,
+          "maximo_ms": 87.5554,
+          "muestras_ge20ms": 3,
+          "muestras_ge50ms": 3
+        },
         "equivalentes": true
       },
       "agenda": {
@@ -113,16 +117,26 @@
         "insertar": 100,
         "cancelar": 0,
         "extraer": 100,
-        "heap_ms": [
-          0.0383,
-          0.0328,
-          0.032
-        ],
-        "lista_ms": [
-          0.0276,
-          0.0247,
-          0.0245
-        ],
+        "heap_ms": {
+          "cantidad": 3,
+          "minimo_ms": 0.032,
+          "promedio_ms": 0.03436666666666666,
+          "mediana_ms": 0.0328,
+          "p95_ms": 0.0383,
+          "maximo_ms": 0.0383,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
+        "lista_ms": {
+          "cantidad": 3,
+          "minimo_ms": 0.0245,
+          "promedio_ms": 0.0256,
+          "mediana_ms": 0.0247,
+          "p95_ms": 0.0276,
+          "maximo_ms": 0.0276,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
         "equivalentes": true,
         "alcance": "Traza real, claves y cancelaciones; sin reglas ni copiado dentro del cronometro."
       }
@@ -133,100 +147,104 @@
       "retroceso": [
         {
           "acciones": 1,
-          "adelante_ms": [
-            0.151,
-            0.1165,
-            0.1199
-          ],
-          "atras_ms": [
-            0.0378,
-            0.0358,
-            0.0347
-          ],
+          "adelante_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.1165,
+            "promedio_ms": 0.12913333333333335,
+            "mediana_ms": 0.1199,
+            "p95_ms": 0.151,
+            "maximo_ms": 0.151,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.0347,
+            "promedio_ms": 0.0361,
+            "mediana_ms": 0.0358,
+            "p95_ms": 0.0378,
+            "maximo_ms": 0.0378,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 92,
           "contenedores_deltas_bytes": 6816,
           "restaura_estado": true
         },
         {
           "acciones": 3,
-          "adelante_ms": [
-            0.1091,
-            0.0896,
-            0.0861,
-            0.1453,
-            0.3987,
-            0.1049,
-            0.1065,
-            0.073,
-            0.0691
-          ],
-          "atras_ms": [
-            0.0414,
-            0.0285,
-            0.0281,
-            0.0438,
-            0.0581,
-            0.0557,
-            0.0351,
-            0.0281,
-            0.0272
-          ],
+          "adelante_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.0691,
+            "promedio_ms": 0.13136666666666666,
+            "mediana_ms": 0.1049,
+            "p95_ms": 0.3987,
+            "maximo_ms": 0.3987,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.0272,
+            "promedio_ms": 0.03844444444444444,
+            "mediana_ms": 0.0351,
+            "p95_ms": 0.0581,
+            "maximo_ms": 0.0581,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 276,
           "contenedores_deltas_bytes": 20448,
           "restaura_estado": true
         },
         {
           "acciones": 5,
-          "adelante_ms": [
-            0.1352,
-            0.1019,
-            0.0936,
-            0.1083,
-            0.1142,
-            0.1147,
-            0.0797,
-            0.0729,
-            0.1273,
-            0.0867,
-            0.119,
-            0.0892,
-            0.0774,
-            0.0917,
-            0.0739
-          ],
-          "atras_ms": [
-            0.0467,
-            0.0437,
-            0.0375,
-            0.0362,
-            0.0354,
-            0.0621,
-            0.0543,
-            0.0441,
-            0.0409,
-            0.0409,
-            0.0372,
-            0.0281,
-            0.0281,
-            0.028,
-            0.0274
-          ],
+          "adelante_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.0729,
+            "promedio_ms": 0.09904666666666667,
+            "mediana_ms": 0.0936,
+            "p95_ms": 0.1352,
+            "maximo_ms": 0.1352,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.0274,
+            "promedio_ms": 0.03937333333333334,
+            "mediana_ms": 0.0375,
+            "p95_ms": 0.0621,
+            "maximo_ms": 0.0621,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 460,
           "contenedores_deltas_bytes": 34080,
           "restaura_estado": true
         }
       ],
       "codec": {
-        "copia_ms": [
-          16.9988,
-          19.3289,
-          17.7223
-        ],
-        "ida_vuelta_ms": [
-          101.8238,
-          106.0893,
-          94.6208
-        ],
+        "copia_ms": {
+          "cantidad": 3,
+          "minimo_ms": 16.9988,
+          "promedio_ms": 18.016666666666666,
+          "mediana_ms": 17.7223,
+          "p95_ms": 19.3289,
+          "maximo_ms": 19.3289,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
+        "ida_vuelta_ms": {
+          "cantidad": 3,
+          "minimo_ms": 94.6208,
+          "promedio_ms": 100.84463333333333,
+          "mediana_ms": 101.8238,
+          "p95_ms": 106.0893,
+          "maximo_ms": 106.0893,
+          "muestras_ge20ms": 3,
+          "muestras_ge50ms": 3
+        },
         "equivalentes": true
       },
       "agenda": {
@@ -235,16 +253,26 @@
         "insertar": 900,
         "cancelar": 0,
         "extraer": 900,
-        "heap_ms": [
-          1.2618,
-          0.9071,
-          0.71
-        ],
-        "lista_ms": [
-          0.3464,
-          0.4427,
-          0.4089
-        ],
+        "heap_ms": {
+          "cantidad": 3,
+          "minimo_ms": 0.71,
+          "promedio_ms": 0.9596333333333332,
+          "mediana_ms": 0.9071,
+          "p95_ms": 1.2618,
+          "maximo_ms": 1.2618,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
+        "lista_ms": {
+          "cantidad": 3,
+          "minimo_ms": 0.3464,
+          "promedio_ms": 0.3993333333333333,
+          "mediana_ms": 0.4089,
+          "p95_ms": 0.4427,
+          "maximo_ms": 0.4427,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
         "equivalentes": true,
         "alcance": "Traza real, claves y cancelaciones; sin reglas ni copiado dentro del cronometro."
       }
@@ -255,100 +283,104 @@
       "retroceso": [
         {
           "acciones": 1,
-          "adelante_ms": [
-            0.277,
-            1.0384,
-            0.342
-          ],
-          "atras_ms": [
-            0.0907,
-            0.1448,
-            0.0934
-          ],
+          "adelante_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.277,
+            "promedio_ms": 0.5524666666666667,
+            "mediana_ms": 0.342,
+            "p95_ms": 1.0384,
+            "maximo_ms": 1.0384,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.0907,
+            "promedio_ms": 0.10963333333333335,
+            "mediana_ms": 0.0934,
+            "p95_ms": 0.1448,
+            "maximo_ms": 0.1448,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 332,
           "contenedores_deltas_bytes": 24256,
           "restaura_estado": true
         },
         {
           "acciones": 3,
-          "adelante_ms": [
-            0.3701,
-            0.3622,
-            0.2779,
-            0.3388,
-            0.7415,
-            0.254,
-            0.9081,
-            0.2545,
-            0.6483
-          ],
-          "atras_ms": [
-            0.1881,
-            0.1066,
-            0.1041,
-            0.0911,
-            0.0852,
-            0.0848,
-            0.1127,
-            0.0859,
-            0.241
-          ],
+          "adelante_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.254,
+            "promedio_ms": 0.4617111111111111,
+            "mediana_ms": 0.3622,
+            "p95_ms": 0.9081,
+            "maximo_ms": 0.9081,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.0848,
+            "promedio_ms": 0.12216666666666666,
+            "mediana_ms": 0.1041,
+            "p95_ms": 0.241,
+            "maximo_ms": 0.241,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 996,
           "contenedores_deltas_bytes": 72768,
           "restaura_estado": true
         },
         {
           "acciones": 5,
-          "adelante_ms": [
-            0.5215,
-            0.8441,
-            1.4444,
-            0.4122,
-            0.4766,
-            0.445,
-            0.5441,
-            0.3749,
-            0.9939,
-            0.3404,
-            0.4193,
-            6.9723,
-            0.4337,
-            0.411,
-            0.3365
-          ],
-          "atras_ms": [
-            0.1203,
-            0.1344,
-            0.0931,
-            0.1202,
-            0.109,
-            0.3979,
-            0.1571,
-            0.2708,
-            0.1105,
-            0.0906,
-            0.8061,
-            0.1691,
-            0.1598,
-            0.1647,
-            0.1564
-          ],
+          "adelante_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.3365,
+            "promedio_ms": 0.9979933333333333,
+            "mediana_ms": 0.445,
+            "p95_ms": 6.9723,
+            "maximo_ms": 6.9723,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.0906,
+            "promedio_ms": 0.20400000000000001,
+            "mediana_ms": 0.1564,
+            "p95_ms": 0.8061,
+            "maximo_ms": 0.8061,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 1660,
           "contenedores_deltas_bytes": 121280,
           "restaura_estado": true
         }
       ],
       "codec": {
-        "copia_ms": [
-          28.7995,
-          34.3121,
-          28.8738
-        ],
-        "ida_vuelta_ms": [
-          171.6949,
-          138.191,
-          130.3055
-        ],
+        "copia_ms": {
+          "cantidad": 3,
+          "minimo_ms": 28.7995,
+          "promedio_ms": 30.6618,
+          "mediana_ms": 28.8738,
+          "p95_ms": 34.3121,
+          "maximo_ms": 34.3121,
+          "muestras_ge20ms": 3,
+          "muestras_ge50ms": 0
+        },
+        "ida_vuelta_ms": {
+          "cantidad": 3,
+          "minimo_ms": 130.3055,
+          "promedio_ms": 146.73046666666667,
+          "mediana_ms": 138.191,
+          "p95_ms": 171.6949,
+          "maximo_ms": 171.6949,
+          "muestras_ge20ms": 3,
+          "muestras_ge50ms": 3
+        },
         "equivalentes": true
       },
       "agenda": {
@@ -357,16 +389,26 @@
         "insertar": 3300,
         "cancelar": 0,
         "extraer": 3300,
-        "heap_ms": [
-          6.0503,
-          4.627,
-          4.1129
-        ],
-        "lista_ms": [
-          2.7086,
-          2.0812,
-          1.9976
-        ],
+        "heap_ms": {
+          "cantidad": 3,
+          "minimo_ms": 4.1129,
+          "promedio_ms": 4.930066666666666,
+          "mediana_ms": 4.627,
+          "p95_ms": 6.0503,
+          "maximo_ms": 6.0503,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
+        "lista_ms": {
+          "cantidad": 3,
+          "minimo_ms": 1.9976,
+          "promedio_ms": 2.2624666666666666,
+          "mediana_ms": 2.0812,
+          "p95_ms": 2.7086,
+          "maximo_ms": 2.7086,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
         "equivalentes": true,
         "alcance": "Traza real, claves y cancelaciones; sin reglas ni copiado dentro del cronometro."
       }
@@ -377,100 +419,104 @@
       "retroceso": [
         {
           "acciones": 1,
-          "adelante_ms": [
-            0.0812,
-            0.0654,
-            0.051
-          ],
-          "atras_ms": [
-            0.0144,
-            0.021,
-            0.0174
-          ],
+          "adelante_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.051,
+            "promedio_ms": 0.06586666666666667,
+            "mediana_ms": 0.0654,
+            "p95_ms": 0.0812,
+            "maximo_ms": 0.0812,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.0144,
+            "promedio_ms": 0.0176,
+            "mediana_ms": 0.0174,
+            "p95_ms": 0.021,
+            "maximo_ms": 0.021,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 12,
           "contenedores_deltas_bytes": 1088,
           "restaura_estado": true
         },
         {
           "acciones": 3,
-          "adelante_ms": [
-            0.0426,
-            0.022,
-            0.0176,
-            0.0562,
-            0.0269,
-            0.0242,
-            0.0441,
-            0.0211,
-            0.0189
-          ],
-          "atras_ms": [
-            0.0169,
-            0.0129,
-            0.0228,
-            0.0176,
-            0.0114,
-            0.0104,
-            0.0142,
-            0.0095,
-            0.0089
-          ],
+          "adelante_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.0176,
+            "promedio_ms": 0.0304,
+            "mediana_ms": 0.0242,
+            "p95_ms": 0.0562,
+            "maximo_ms": 0.0562,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.0089,
+            "promedio_ms": 0.013844444444444444,
+            "mediana_ms": 0.0129,
+            "p95_ms": 0.0228,
+            "maximo_ms": 0.0228,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 36,
           "contenedores_deltas_bytes": 3264,
           "restaura_estado": true
         },
         {
           "acciones": 5,
-          "adelante_ms": [
-            0.0585,
-            0.0327,
-            0.0278,
-            0.0338,
-            0.0325,
-            0.0461,
-            0.0214,
-            0.019,
-            0.0205,
-            0.0245,
-            0.0657,
-            0.0351,
-            0.0278,
-            0.0269,
-            0.0252
-          ],
-          "atras_ms": [
-            0.0201,
-            0.0171,
-            0.0163,
-            0.0131,
-            0.0128,
-            0.0148,
-            0.0095,
-            0.0093,
-            0.0086,
-            0.0081,
-            0.0214,
-            0.0145,
-            0.0144,
-            0.0132,
-            0.0123
-          ],
+          "adelante_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.019,
+            "promedio_ms": 0.033166666666666664,
+            "mediana_ms": 0.0278,
+            "p95_ms": 0.0657,
+            "maximo_ms": 0.0657,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.0081,
+            "promedio_ms": 0.013699999999999999,
+            "mediana_ms": 0.0132,
+            "p95_ms": 0.0214,
+            "maximo_ms": 0.0214,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 60,
           "contenedores_deltas_bytes": 5440,
           "restaura_estado": true
         }
       ],
       "codec": {
-        "copia_ms": [
-          21.613,
-          18.7164,
-          22.6139
-        ],
-        "ida_vuelta_ms": [
-          143.644,
-          131.3631,
-          148.4995
-        ],
+        "copia_ms": {
+          "cantidad": 3,
+          "minimo_ms": 18.7164,
+          "promedio_ms": 20.9811,
+          "mediana_ms": 21.613,
+          "p95_ms": 22.6139,
+          "maximo_ms": 22.6139,
+          "muestras_ge20ms": 2,
+          "muestras_ge50ms": 0
+        },
+        "ida_vuelta_ms": {
+          "cantidad": 3,
+          "minimo_ms": 131.3631,
+          "promedio_ms": 141.16886666666667,
+          "mediana_ms": 143.644,
+          "p95_ms": 148.4995,
+          "maximo_ms": 148.4995,
+          "muestras_ge20ms": 3,
+          "muestras_ge50ms": 3
+        },
         "equivalentes": true
       },
       "agenda": {
@@ -479,16 +525,26 @@
         "insertar": 100,
         "cancelar": 0,
         "extraer": 100,
-        "heap_ms": [
-          0.0371,
-          0.0317,
-          0.058
-        ],
-        "lista_ms": [
-          0.0279,
-          0.0263,
-          0.0267
-        ],
+        "heap_ms": {
+          "cantidad": 3,
+          "minimo_ms": 0.0317,
+          "promedio_ms": 0.04226666666666667,
+          "mediana_ms": 0.0371,
+          "p95_ms": 0.058,
+          "maximo_ms": 0.058,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
+        "lista_ms": {
+          "cantidad": 3,
+          "minimo_ms": 0.0263,
+          "promedio_ms": 0.026966666666666667,
+          "mediana_ms": 0.0267,
+          "p95_ms": 0.0279,
+          "maximo_ms": 0.0279,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
         "equivalentes": true,
         "alcance": "Traza real, claves y cancelaciones; sin reglas ni copiado dentro del cronometro."
       }
@@ -499,100 +555,104 @@
       "retroceso": [
         {
           "acciones": 1,
-          "adelante_ms": [
-            0.3606,
-            0.3321,
-            0.1642
-          ],
-          "atras_ms": [
-            0.4036,
-            0.0605,
-            0.0644
-          ],
+          "adelante_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.1642,
+            "promedio_ms": 0.28563333333333335,
+            "mediana_ms": 0.3321,
+            "p95_ms": 0.3606,
+            "maximo_ms": 0.3606,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.0605,
+            "promedio_ms": 0.17616666666666667,
+            "mediana_ms": 0.0644,
+            "p95_ms": 0.4036,
+            "maximo_ms": 0.4036,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 92,
           "contenedores_deltas_bytes": 6816,
           "restaura_estado": true
         },
         {
           "acciones": 3,
-          "adelante_ms": [
-            0.108,
-            0.0772,
-            0.2787,
-            0.1708,
-            0.1324,
-            0.1311,
-            0.3347,
-            0.1441,
-            0.1623
-          ],
-          "atras_ms": [
-            0.0546,
-            0.0435,
-            0.0463,
-            0.0631,
-            0.0505,
-            0.0494,
-            0.0601,
-            0.0389,
-            0.0419
-          ],
+          "adelante_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.0772,
+            "promedio_ms": 0.17103333333333332,
+            "mediana_ms": 0.1441,
+            "p95_ms": 0.3347,
+            "maximo_ms": 0.3347,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.0389,
+            "promedio_ms": 0.04981111111111111,
+            "mediana_ms": 0.0494,
+            "p95_ms": 0.0631,
+            "maximo_ms": 0.0631,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 276,
           "contenedores_deltas_bytes": 20448,
           "restaura_estado": true
         },
         {
           "acciones": 5,
-          "adelante_ms": [
-            0.1576,
-            0.1245,
-            0.123,
-            0.123,
-            0.1163,
-            0.3029,
-            0.1335,
-            0.1026,
-            0.0756,
-            0.0743,
-            0.1713,
-            0.1167,
-            0.0837,
-            0.112,
-            0.1326
-          ],
-          "atras_ms": [
-            0.0617,
-            0.0527,
-            0.0425,
-            0.0399,
-            0.0393,
-            0.0368,
-            0.0278,
-            0.0272,
-            0.029,
-            0.1089,
-            0.056,
-            0.0465,
-            0.0415,
-            0.0422,
-            0.0469
-          ],
+          "adelante_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.0743,
+            "promedio_ms": 0.12997333333333333,
+            "mediana_ms": 0.123,
+            "p95_ms": 0.3029,
+            "maximo_ms": 0.3029,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.0272,
+            "promedio_ms": 0.046593333333333334,
+            "mediana_ms": 0.0422,
+            "p95_ms": 0.1089,
+            "maximo_ms": 0.1089,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 460,
           "contenedores_deltas_bytes": 34080,
           "restaura_estado": true
         }
       ],
       "codec": {
-        "copia_ms": [
-          34.8702,
-          27.6451,
-          26.9754
-        ],
-        "ida_vuelta_ms": [
-          152.9076,
-          156.3994,
-          183.7514
-        ],
+        "copia_ms": {
+          "cantidad": 3,
+          "minimo_ms": 26.9754,
+          "promedio_ms": 29.830233333333336,
+          "mediana_ms": 27.6451,
+          "p95_ms": 34.8702,
+          "maximo_ms": 34.8702,
+          "muestras_ge20ms": 3,
+          "muestras_ge50ms": 0
+        },
+        "ida_vuelta_ms": {
+          "cantidad": 3,
+          "minimo_ms": 152.9076,
+          "promedio_ms": 164.3528,
+          "mediana_ms": 156.3994,
+          "p95_ms": 183.7514,
+          "maximo_ms": 183.7514,
+          "muestras_ge20ms": 3,
+          "muestras_ge50ms": 3
+        },
         "equivalentes": true
       },
       "agenda": {
@@ -601,16 +661,26 @@
         "insertar": 900,
         "cancelar": 0,
         "extraer": 900,
-        "heap_ms": [
-          1.8706,
-          1.7185,
-          2.9263
-        ],
-        "lista_ms": [
-          0.6134,
-          0.7278,
-          0.4148
-        ],
+        "heap_ms": {
+          "cantidad": 3,
+          "minimo_ms": 1.7185,
+          "promedio_ms": 2.1717999999999997,
+          "mediana_ms": 1.8706,
+          "p95_ms": 2.9263,
+          "maximo_ms": 2.9263,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
+        "lista_ms": {
+          "cantidad": 3,
+          "minimo_ms": 0.4148,
+          "promedio_ms": 0.5853333333333334,
+          "mediana_ms": 0.6134,
+          "p95_ms": 0.7278,
+          "maximo_ms": 0.7278,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
         "equivalentes": true,
         "alcance": "Traza real, claves y cancelaciones; sin reglas ni copiado dentro del cronometro."
       }
@@ -621,100 +691,104 @@
       "retroceso": [
         {
           "acciones": 1,
-          "adelante_ms": [
-            0.2685,
-            0.7732,
-            0.3757
-          ],
-          "atras_ms": [
-            0.0999,
-            0.1781,
-            0.2305
-          ],
+          "adelante_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.2685,
+            "promedio_ms": 0.47246666666666665,
+            "mediana_ms": 0.3757,
+            "p95_ms": 0.7732,
+            "maximo_ms": 0.7732,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.0999,
+            "promedio_ms": 0.1695,
+            "mediana_ms": 0.1781,
+            "p95_ms": 0.2305,
+            "maximo_ms": 0.2305,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 332,
           "contenedores_deltas_bytes": 24256,
           "restaura_estado": true
         },
         {
           "acciones": 3,
-          "adelante_ms": [
-            1.1853,
-            0.666,
-            0.3283,
-            2.6562,
-            0.4057,
-            0.3496,
-            1.6822,
-            0.3711,
-            0.3755
-          ],
-          "atras_ms": [
-            0.1004,
-            0.0879,
-            0.086,
-            0.0962,
-            0.094,
-            0.1184,
-            0.1395,
-            0.1221,
-            0.1356
-          ],
+          "adelante_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.3283,
+            "promedio_ms": 0.8911,
+            "mediana_ms": 0.4057,
+            "p95_ms": 2.6562,
+            "maximo_ms": 2.6562,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.086,
+            "promedio_ms": 0.1089,
+            "mediana_ms": 0.1004,
+            "p95_ms": 0.1395,
+            "maximo_ms": 0.1395,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 996,
           "contenedores_deltas_bytes": 72768,
           "restaura_estado": true
         },
         {
           "acciones": 5,
-          "adelante_ms": [
-            0.3742,
-            0.245,
-            0.2244,
-            0.5603,
-            0.3771,
-            0.3267,
-            0.2436,
-            1.136,
-            0.7934,
-            0.4169,
-            0.2954,
-            0.8898,
-            0.5481,
-            1.5992,
-            1.3527
-          ],
-          "atras_ms": [
-            0.1538,
-            1.3976,
-            0.2011,
-            0.1054,
-            0.0951,
-            0.1565,
-            0.2099,
-            0.1257,
-            0.1084,
-            0.1048,
-            0.1159,
-            0.1094,
-            0.1072,
-            0.1204,
-            0.1179
-          ],
+          "adelante_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.2244,
+            "promedio_ms": 0.62552,
+            "mediana_ms": 0.4169,
+            "p95_ms": 1.5992,
+            "maximo_ms": 1.5992,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.0951,
+            "promedio_ms": 0.21527333333333332,
+            "mediana_ms": 0.1179,
+            "p95_ms": 1.3976,
+            "maximo_ms": 1.3976,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 1660,
           "contenedores_deltas_bytes": 121280,
           "restaura_estado": true
         }
       ],
       "codec": {
-        "copia_ms": [
-          59.8498,
-          65.8692,
-          53.5075
-        ],
-        "ida_vuelta_ms": [
-          301.1276,
-          229.6461,
-          252.3566
-        ],
+        "copia_ms": {
+          "cantidad": 3,
+          "minimo_ms": 53.5075,
+          "promedio_ms": 59.74216666666667,
+          "mediana_ms": 59.8498,
+          "p95_ms": 65.8692,
+          "maximo_ms": 65.8692,
+          "muestras_ge20ms": 3,
+          "muestras_ge50ms": 3
+        },
+        "ida_vuelta_ms": {
+          "cantidad": 3,
+          "minimo_ms": 229.6461,
+          "promedio_ms": 261.0434333333333,
+          "mediana_ms": 252.3566,
+          "p95_ms": 301.1276,
+          "maximo_ms": 301.1276,
+          "muestras_ge20ms": 3,
+          "muestras_ge50ms": 3
+        },
         "equivalentes": true
       },
       "agenda": {
@@ -723,16 +797,26 @@
         "insertar": 3300,
         "cancelar": 0,
         "extraer": 3300,
-        "heap_ms": [
-          4.5382,
-          5.2162,
-          4.6731
-        ],
-        "lista_ms": [
-          2.6304,
-          3.7953,
-          1.7392
-        ],
+        "heap_ms": {
+          "cantidad": 3,
+          "minimo_ms": 4.5382,
+          "promedio_ms": 4.809166666666666,
+          "mediana_ms": 4.6731,
+          "p95_ms": 5.2162,
+          "maximo_ms": 5.2162,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
+        "lista_ms": {
+          "cantidad": 3,
+          "minimo_ms": 1.7392,
+          "promedio_ms": 2.721633333333333,
+          "mediana_ms": 2.6304,
+          "p95_ms": 3.7953,
+          "maximo_ms": 3.7953,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
         "equivalentes": true,
         "alcance": "Traza real, claves y cancelaciones; sin reglas ni copiado dentro del cronometro."
       }
@@ -743,100 +827,104 @@
       "retroceso": [
         {
           "acciones": 1,
-          "adelante_ms": [
-            0.2741,
-            0.0504,
-            0.067
-          ],
-          "atras_ms": [
-            0.0203,
-            0.0177,
-            0.0306
-          ],
+          "adelante_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.0504,
+            "promedio_ms": 0.1305,
+            "mediana_ms": 0.067,
+            "p95_ms": 0.2741,
+            "maximo_ms": 0.2741,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.0177,
+            "promedio_ms": 0.022866666666666664,
+            "mediana_ms": 0.0203,
+            "p95_ms": 0.0306,
+            "maximo_ms": 0.0306,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 12,
           "contenedores_deltas_bytes": 1088,
           "restaura_estado": true
         },
         {
           "acciones": 3,
-          "adelante_ms": [
-            0.0687,
-            0.0343,
-            0.0295,
-            0.0815,
-            0.1704,
-            0.545,
-            0.0431,
-            0.0332,
-            0.0232
-          ],
-          "atras_ms": [
-            0.0242,
-            0.0134,
-            0.0123,
-            0.0232,
-            0.0162,
-            0.015,
-            0.0152,
-            0.0098,
-            0.0111
-          ],
+          "adelante_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.0232,
+            "promedio_ms": 0.11432222222222221,
+            "mediana_ms": 0.0431,
+            "p95_ms": 0.545,
+            "maximo_ms": 0.545,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.0098,
+            "promedio_ms": 0.0156,
+            "mediana_ms": 0.015,
+            "p95_ms": 0.0242,
+            "maximo_ms": 0.0242,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 36,
           "contenedores_deltas_bytes": 3264,
           "restaura_estado": true
         },
         {
           "acciones": 5,
-          "adelante_ms": [
-            0.0665,
-            0.042,
-            0.0291,
-            0.0242,
-            0.0268,
-            0.0674,
-            0.0392,
-            0.0291,
-            0.0297,
-            0.0278,
-            0.0428,
-            0.0235,
-            0.0223,
-            0.0183,
-            0.018
-          ],
-          "atras_ms": [
-            0.0154,
-            0.0103,
-            0.0099,
-            0.0149,
-            0.0124,
-            0.0224,
-            0.014,
-            0.0127,
-            0.0138,
-            0.0134,
-            0.0149,
-            0.0096,
-            0.0091,
-            0.0085,
-            0.009
-          ],
+          "adelante_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.018,
+            "promedio_ms": 0.033780000000000004,
+            "mediana_ms": 0.0291,
+            "p95_ms": 0.0674,
+            "maximo_ms": 0.0674,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.0085,
+            "promedio_ms": 0.012686666666666667,
+            "mediana_ms": 0.0127,
+            "p95_ms": 0.0224,
+            "maximo_ms": 0.0224,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 60,
           "contenedores_deltas_bytes": 5440,
           "restaura_estado": true
         }
       ],
       "codec": {
-        "copia_ms": [
-          95.1939,
-          61.6693,
-          63.2124
-        ],
-        "ida_vuelta_ms": [
-          530.3524,
-          575.5863,
-          460.8484
-        ],
+        "copia_ms": {
+          "cantidad": 3,
+          "minimo_ms": 61.6693,
+          "promedio_ms": 73.35853333333334,
+          "mediana_ms": 63.2124,
+          "p95_ms": 95.1939,
+          "maximo_ms": 95.1939,
+          "muestras_ge20ms": 3,
+          "muestras_ge50ms": 3
+        },
+        "ida_vuelta_ms": {
+          "cantidad": 3,
+          "minimo_ms": 460.8484,
+          "promedio_ms": 522.2623666666667,
+          "mediana_ms": 530.3524,
+          "p95_ms": 575.5863,
+          "maximo_ms": 575.5863,
+          "muestras_ge20ms": 3,
+          "muestras_ge50ms": 3
+        },
         "equivalentes": true
       },
       "agenda": {
@@ -845,16 +933,26 @@
         "insertar": 100,
         "cancelar": 0,
         "extraer": 100,
-        "heap_ms": [
-          0.0415,
-          0.0324,
-          0.0313
-        ],
-        "lista_ms": [
-          0.0254,
-          0.0246,
-          0.0247
-        ],
+        "heap_ms": {
+          "cantidad": 3,
+          "minimo_ms": 0.0313,
+          "promedio_ms": 0.03506666666666667,
+          "mediana_ms": 0.0324,
+          "p95_ms": 0.0415,
+          "maximo_ms": 0.0415,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
+        "lista_ms": {
+          "cantidad": 3,
+          "minimo_ms": 0.0246,
+          "promedio_ms": 0.024900000000000002,
+          "mediana_ms": 0.0247,
+          "p95_ms": 0.0254,
+          "maximo_ms": 0.0254,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
         "equivalentes": true,
         "alcance": "Traza real, claves y cancelaciones; sin reglas ni copiado dentro del cronometro."
       }
@@ -865,100 +963,104 @@
       "retroceso": [
         {
           "acciones": 1,
-          "adelante_ms": [
-            0.1927,
-            0.3151,
-            0.1628
-          ],
-          "atras_ms": [
-            0.0412,
-            0.0434,
-            0.0384
-          ],
+          "adelante_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.1628,
+            "promedio_ms": 0.22353333333333333,
+            "mediana_ms": 0.1927,
+            "p95_ms": 0.3151,
+            "maximo_ms": 0.3151,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.0384,
+            "promedio_ms": 0.041,
+            "mediana_ms": 0.0412,
+            "p95_ms": 0.0434,
+            "maximo_ms": 0.0434,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 92,
           "contenedores_deltas_bytes": 6816,
           "restaura_estado": true
         },
         {
           "acciones": 3,
-          "adelante_ms": [
-            0.1681,
-            0.1053,
-            0.0827,
-            0.169,
-            0.131,
-            0.1255,
-            0.1219,
-            0.7134,
-            0.1621
-          ],
-          "atras_ms": [
-            0.0372,
-            0.028,
-            0.0285,
-            0.0699,
-            0.0479,
-            0.0463,
-            0.1332,
-            0.0758,
-            0.0514
-          ],
+          "adelante_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.0827,
+            "promedio_ms": 0.19766666666666668,
+            "mediana_ms": 0.131,
+            "p95_ms": 0.7134,
+            "maximo_ms": 0.7134,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.028,
+            "promedio_ms": 0.057577777777777776,
+            "mediana_ms": 0.0479,
+            "p95_ms": 0.1332,
+            "maximo_ms": 0.1332,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 276,
           "contenedores_deltas_bytes": 20448,
           "restaura_estado": true
         },
         {
           "acciones": 5,
-          "adelante_ms": [
-            0.2171,
-            0.1478,
-            0.1228,
-            0.1283,
-            0.1491,
-            0.4579,
-            0.1092,
-            0.089,
-            0.0915,
-            0.0906,
-            2.1425,
-            0.2639,
-            0.4048,
-            0.3873,
-            0.2595
-          ],
-          "atras_ms": [
-            0.0533,
-            0.0408,
-            0.0383,
-            0.0394,
-            0.0448,
-            0.0456,
-            0.0334,
-            0.0324,
-            0.0335,
-            0.037,
-            0.6978,
-            0.0782,
-            0.1424,
-            0.3932,
-            0.0489
-          ],
+          "adelante_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.089,
+            "promedio_ms": 0.33742,
+            "mediana_ms": 0.1491,
+            "p95_ms": 2.1425,
+            "maximo_ms": 2.1425,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.0324,
+            "promedio_ms": 0.11726666666666666,
+            "mediana_ms": 0.0448,
+            "p95_ms": 0.6978,
+            "maximo_ms": 0.6978,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 460,
           "contenedores_deltas_bytes": 34080,
           "restaura_estado": true
         }
       ],
       "codec": {
-        "copia_ms": [
-          121.0174,
-          110.0016,
-          81.5223
-        ],
-        "ida_vuelta_ms": [
-          595.179,
-          587.1592,
-          511.2063
-        ],
+        "copia_ms": {
+          "cantidad": 3,
+          "minimo_ms": 81.5223,
+          "promedio_ms": 104.18043333333333,
+          "mediana_ms": 110.0016,
+          "p95_ms": 121.0174,
+          "maximo_ms": 121.0174,
+          "muestras_ge20ms": 3,
+          "muestras_ge50ms": 3
+        },
+        "ida_vuelta_ms": {
+          "cantidad": 3,
+          "minimo_ms": 511.2063,
+          "promedio_ms": 564.5148333333333,
+          "mediana_ms": 587.1592,
+          "p95_ms": 595.179,
+          "maximo_ms": 595.179,
+          "muestras_ge20ms": 3,
+          "muestras_ge50ms": 3
+        },
         "equivalentes": true
       },
       "agenda": {
@@ -967,16 +1069,26 @@
         "insertar": 900,
         "cancelar": 0,
         "extraer": 900,
-        "heap_ms": [
-          1.2837,
-          4.6002,
-          5.0213
-        ],
-        "lista_ms": [
-          0.7569,
-          0.8187,
-          0.5785
-        ],
+        "heap_ms": {
+          "cantidad": 3,
+          "minimo_ms": 1.2837,
+          "promedio_ms": 3.635066666666667,
+          "mediana_ms": 4.6002,
+          "p95_ms": 5.0213,
+          "maximo_ms": 5.0213,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
+        "lista_ms": {
+          "cantidad": 3,
+          "minimo_ms": 0.5785,
+          "promedio_ms": 0.7180333333333334,
+          "mediana_ms": 0.7569,
+          "p95_ms": 0.8187,
+          "maximo_ms": 0.8187,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
         "equivalentes": true,
         "alcance": "Traza real, claves y cancelaciones; sin reglas ni copiado dentro del cronometro."
       }
@@ -987,100 +1099,104 @@
       "retroceso": [
         {
           "acciones": 1,
-          "adelante_ms": [
-            0.8006,
-            0.3173,
-            0.3542
-          ],
-          "atras_ms": [
-            0.2384,
-            0.1121,
-            0.109
-          ],
+          "adelante_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.3173,
+            "promedio_ms": 0.49069999999999997,
+            "mediana_ms": 0.3542,
+            "p95_ms": 0.8006,
+            "maximo_ms": 0.8006,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 3,
+            "minimo_ms": 0.109,
+            "promedio_ms": 0.15316666666666667,
+            "mediana_ms": 0.1121,
+            "p95_ms": 0.2384,
+            "maximo_ms": 0.2384,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 332,
           "contenedores_deltas_bytes": 24256,
           "restaura_estado": true
         },
         {
           "acciones": 3,
-          "adelante_ms": [
-            0.7447,
-            2.7023,
-            0.2785,
-            0.4733,
-            12.3378,
-            0.3996,
-            1.8747,
-            3.4382,
-            0.4401
-          ],
-          "atras_ms": [
-            0.0929,
-            0.1187,
-            0.1532,
-            0.4072,
-            0.1377,
-            0.1271,
-            0.1416,
-            1.0991,
-            0.1427
-          ],
+          "adelante_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.2785,
+            "promedio_ms": 2.5210222222222223,
+            "mediana_ms": 0.7447,
+            "p95_ms": 12.3378,
+            "maximo_ms": 12.3378,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 9,
+            "minimo_ms": 0.0929,
+            "promedio_ms": 0.2689111111111111,
+            "mediana_ms": 0.1416,
+            "p95_ms": 1.0991,
+            "maximo_ms": 1.0991,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 996,
           "contenedores_deltas_bytes": 72768,
           "restaura_estado": true
         },
         {
           "acciones": 5,
-          "adelante_ms": [
-            0.3518,
-            0.3206,
-            0.4151,
-            2.3301,
-            0.3852,
-            1.481,
-            0.5936,
-            0.5466,
-            3.8142,
-            0.7409,
-            0.4256,
-            1.9837,
-            0.278,
-            0.4838,
-            0.7841
-          ],
-          "atras_ms": [
-            0.1757,
-            0.2487,
-            0.3936,
-            0.385,
-            0.2005,
-            0.1592,
-            0.3745,
-            0.1339,
-            0.1627,
-            0.5489,
-            0.0989,
-            0.0948,
-            0.0875,
-            0.0876,
-            0.0945
-          ],
+          "adelante_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.278,
+            "promedio_ms": 0.9956200000000001,
+            "mediana_ms": 0.5466,
+            "p95_ms": 3.8142,
+            "maximo_ms": 3.8142,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
+          "atras_ms": {
+            "cantidad": 15,
+            "minimo_ms": 0.0875,
+            "promedio_ms": 0.2164,
+            "mediana_ms": 0.1627,
+            "p95_ms": 0.5489,
+            "maximo_ms": 0.5489,
+            "muestras_ge20ms": 0,
+            "muestras_ge50ms": 0
+          },
           "deltas": 1660,
           "contenedores_deltas_bytes": 121280,
           "restaura_estado": true
         }
       ],
       "codec": {
-        "copia_ms": [
-          111.0892,
-          107.9149,
-          140.8898
-        ],
-        "ida_vuelta_ms": [
-          738.1083,
-          643.008,
-          863.2709
-        ],
+        "copia_ms": {
+          "cantidad": 3,
+          "minimo_ms": 107.9149,
+          "promedio_ms": 119.96463333333334,
+          "mediana_ms": 111.0892,
+          "p95_ms": 140.8898,
+          "maximo_ms": 140.8898,
+          "muestras_ge20ms": 3,
+          "muestras_ge50ms": 3
+        },
+        "ida_vuelta_ms": {
+          "cantidad": 3,
+          "minimo_ms": 643.008,
+          "promedio_ms": 748.1290666666667,
+          "mediana_ms": 738.1083,
+          "p95_ms": 863.2709,
+          "maximo_ms": 863.2709,
+          "muestras_ge20ms": 3,
+          "muestras_ge50ms": 3
+        },
         "equivalentes": true
       },
       "agenda": {
@@ -1089,16 +1205,26 @@
         "insertar": 3300,
         "cancelar": 0,
         "extraer": 3300,
-        "heap_ms": [
-          7.7097,
-          6.3925,
-          6.5478
-        ],
-        "lista_ms": [
-          2.2257,
-          1.8264,
-          2.4174
-        ],
+        "heap_ms": {
+          "cantidad": 3,
+          "minimo_ms": 6.3925,
+          "promedio_ms": 6.883333333333333,
+          "mediana_ms": 6.5478,
+          "p95_ms": 7.7097,
+          "maximo_ms": 7.7097,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
+        "lista_ms": {
+          "cantidad": 3,
+          "minimo_ms": 1.8264,
+          "promedio_ms": 2.1565,
+          "mediana_ms": 2.2257,
+          "p95_ms": 2.4174,
+          "maximo_ms": 2.4174,
+          "muestras_ge20ms": 0,
+          "muestras_ge50ms": 0
+        },
         "equivalentes": true,
         "alcance": "Traza real, claves y cancelaciones; sin reglas ni copiado dentro del cronometro."
       }

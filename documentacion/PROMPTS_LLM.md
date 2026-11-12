@@ -1387,3 +1387,12 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     Regresion en esta ruta: 663 pruebas aprobadas. No se hace push ni se
     reconstruye el historial perdido. Manifiesto de traslado y hashes normalizados
     para distinguir mediciones originales de pruebas en el repositorio actual.
+
+37. Es todo eso obligatorio? Basado en el documento del proyecto, si no lo es, seria mejor omitir esos archivos
+
+    *Fecha: 2026-11-12. Agente: Codex; modelo exacto no registrado.*
+
+    Revision de P2 5.5/6.3/7.1: mediciones y evidencia son obligatorias, no
+    muestras individuales ni manifiestos de hashes. Se omiten estos y se
+    conservan resumenes, condiciones, resultados fallidos y benchmarks reproducibles.
+    La exportacion predeterminada produce resumenes. Regresion: 665 pruebas.

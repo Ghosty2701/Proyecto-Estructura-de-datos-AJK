@@ -17,26 +17,46 @@
       "ordenes": 5002,
       "acciones_ejecutadas": 5001,
       "archivo_bytes": 62595238,
-      "guardar_ms": [
-        16241.5237,
-        15818.5058,
-        14602.8203
-      ],
-      "cargar_ms": [
-        22995.0996,
-        25483.9991,
-        21384.2753
-      ],
-      "copiador_ms": [
-        19.6293,
-        12.4023,
-        12.2218
-      ],
-      "codec_ida_vuelta_ms": [
-        67.3715,
-        65.6137,
-        69.9426
-      ],
+      "guardar_ms": {
+        "cantidad": 3,
+        "minimo_ms": 14602.8203,
+        "promedio_ms": 15554.283266666665,
+        "mediana_ms": 15818.5058,
+        "p95_ms": 16241.5237,
+        "maximo_ms": 16241.5237,
+        "muestras_ge20ms": 3,
+        "muestras_ge50ms": 3
+      },
+      "cargar_ms": {
+        "cantidad": 3,
+        "minimo_ms": 21384.2753,
+        "promedio_ms": 23287.791333333338,
+        "mediana_ms": 22995.0996,
+        "p95_ms": 25483.9991,
+        "maximo_ms": 25483.9991,
+        "muestras_ge20ms": 3,
+        "muestras_ge50ms": 3
+      },
+      "copiador_ms": {
+        "cantidad": 3,
+        "minimo_ms": 12.2218,
+        "promedio_ms": 14.751133333333334,
+        "mediana_ms": 12.4023,
+        "p95_ms": 19.6293,
+        "maximo_ms": 19.6293,
+        "muestras_ge20ms": 0,
+        "muestras_ge50ms": 0
+      },
+      "codec_ida_vuelta_ms": {
+        "cantidad": 3,
+        "minimo_ms": 65.6137,
+        "promedio_ms": 67.6426,
+        "mediana_ms": 67.3715,
+        "p95_ms": 69.9426,
+        "maximo_ms": 69.9426,
+        "muestras_ge20ms": 3,
+        "muestras_ge50ms": 3
+      },
       "historia_equivalente": true,
       "continuacion_equivalente": true,
       "copias_equivalentes": true
@@ -47,26 +67,46 @@
       "ordenes": 5002,
       "acciones_ejecutadas": 5001,
       "archivo_bytes": 25344449,
-      "guardar_ms": [
-        6128.9526,
-        6032.6215,
-        6562.6912
-      ],
-      "cargar_ms": [
-        11206.7336,
-        9411.3205,
-        8645.6992
-      ],
-      "copiador_ms": [
-        14.2904,
-        13.7424,
-        13.0178
-      ],
-      "codec_ida_vuelta_ms": [
-        70.7246,
-        64.9127,
-        81.7343
-      ],
+      "guardar_ms": {
+        "cantidad": 3,
+        "minimo_ms": 6032.6215,
+        "promedio_ms": 6241.421766666666,
+        "mediana_ms": 6128.9526,
+        "p95_ms": 6562.6912,
+        "maximo_ms": 6562.6912,
+        "muestras_ge20ms": 3,
+        "muestras_ge50ms": 3
+      },
+      "cargar_ms": {
+        "cantidad": 3,
+        "minimo_ms": 8645.6992,
+        "promedio_ms": 9754.584433333332,
+        "mediana_ms": 9411.3205,
+        "p95_ms": 11206.7336,
+        "maximo_ms": 11206.7336,
+        "muestras_ge20ms": 3,
+        "muestras_ge50ms": 3
+      },
+      "copiador_ms": {
+        "cantidad": 3,
+        "minimo_ms": 13.0178,
+        "promedio_ms": 13.683533333333335,
+        "mediana_ms": 13.7424,
+        "p95_ms": 14.2904,
+        "maximo_ms": 14.2904,
+        "muestras_ge20ms": 0,
+        "muestras_ge50ms": 0
+      },
+      "codec_ida_vuelta_ms": {
+        "cantidad": 3,
+        "minimo_ms": 64.9127,
+        "promedio_ms": 72.4572,
+        "mediana_ms": 70.7246,
+        "p95_ms": 81.7343,
+        "maximo_ms": 81.7343,
+        "muestras_ge20ms": 3,
+        "muestras_ge50ms": 3
+      },
       "historia_equivalente": true,
       "continuacion_equivalente": true,
       "copias_equivalentes": true
@@ -77,26 +117,46 @@
       "ordenes": 5002,
       "acciones_ejecutadas": 5001,
       "archivo_bytes": 12928115,
-      "guardar_ms": [
-        2812.1955,
-        3777.1888,
-        2989.4342
-      ],
-      "cargar_ms": [
-        4657.1605,
-        4770.6845,
-        4357.7009
-      ],
-      "copiador_ms": [
-        13.473,
-        16.1145,
-        17.3058
-      ],
-      "codec_ida_vuelta_ms": [
-        65.5571,
-        76.0531,
-        84.4731
-      ],
+      "guardar_ms": {
+        "cantidad": 3,
+        "minimo_ms": 2812.1955,
+        "promedio_ms": 3192.9395,
+        "mediana_ms": 2989.4342,
+        "p95_ms": 3777.1888,
+        "maximo_ms": 3777.1888,
+        "muestras_ge20ms": 3,
+        "muestras_ge50ms": 3
+      },
+      "cargar_ms": {
+        "cantidad": 3,
+        "minimo_ms": 4357.7009,
+        "promedio_ms": 4595.181966666667,
+        "mediana_ms": 4657.1605,
+        "p95_ms": 4770.6845,
+        "maximo_ms": 4770.6845,
+        "muestras_ge20ms": 3,
+        "muestras_ge50ms": 3
+      },
+      "copiador_ms": {
+        "cantidad": 3,
+        "minimo_ms": 13.473,
+        "promedio_ms": 15.631100000000002,
+        "mediana_ms": 16.1145,
+        "p95_ms": 17.3058,
+        "maximo_ms": 17.3058,
+        "muestras_ge20ms": 0,
+        "muestras_ge50ms": 0
+      },
+      "codec_ida_vuelta_ms": {
+        "cantidad": 3,
+        "minimo_ms": 65.5571,
+        "promedio_ms": 75.36110000000001,
+        "mediana_ms": 76.0531,
+        "p95_ms": 84.4731,
+        "maximo_ms": 84.4731,
+        "muestras_ge20ms": 3,
+        "muestras_ge50ms": 3
+      },
       "historia_equivalente": true,
       "continuacion_equivalente": true,
       "copias_equivalentes": true
@@ -107,26 +167,46 @@
       "ordenes": 5002,
       "acciones_ejecutadas": 5001,
       "archivo_bytes": 6720237,
-      "guardar_ms": [
-        1484.9928,
-        1518.7865,
-        1480.9261
-      ],
-      "cargar_ms": [
-        2059.6237,
-        2112.6688,
-        3092.4662
-      ],
-      "copiador_ms": [
-        14.0249,
-        13.0458,
-        13.5483
-      ],
-      "codec_ida_vuelta_ms": [
-        69.5065,
-        67.847,
-        70.4408
-      ],
+      "guardar_ms": {
+        "cantidad": 3,
+        "minimo_ms": 1480.9261,
+        "promedio_ms": 1494.9017999999999,
+        "mediana_ms": 1484.9928,
+        "p95_ms": 1518.7865,
+        "maximo_ms": 1518.7865,
+        "muestras_ge20ms": 3,
+        "muestras_ge50ms": 3
+      },
+      "cargar_ms": {
+        "cantidad": 3,
+        "minimo_ms": 2059.6237,
+        "promedio_ms": 2421.5862333333334,
+        "mediana_ms": 2112.6688,
+        "p95_ms": 3092.4662,
+        "maximo_ms": 3092.4662,
+        "muestras_ge20ms": 3,
+        "muestras_ge50ms": 3
+      },
+      "copiador_ms": {
+        "cantidad": 3,
+        "minimo_ms": 13.0458,
+        "promedio_ms": 13.539666666666667,
+        "mediana_ms": 13.5483,
+        "p95_ms": 14.0249,
+        "maximo_ms": 14.0249,
+        "muestras_ge20ms": 0,
+        "muestras_ge50ms": 0
+      },
+      "codec_ida_vuelta_ms": {
+        "cantidad": 3,
+        "minimo_ms": 67.847,
+        "promedio_ms": 69.26476666666666,
+        "mediana_ms": 69.5065,
+        "p95_ms": 70.4408,
+        "maximo_ms": 70.4408,
+        "muestras_ge20ms": 3,
+        "muestras_ge50ms": 3
+      },
       "historia_equivalente": true,
       "continuacion_equivalente": true,
       "copias_equivalentes": true

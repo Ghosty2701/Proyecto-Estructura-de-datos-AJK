@@ -35,7 +35,7 @@ adelante/atrás y agenda/retroceso. Guarda datos nuevos en
 `evidencia/mediciones_linea_tiempo.json` y salida en `evidencia/bench_linea_tiempo.txt`.
 El registro completo de la invocación está en `evidencia/bench_conjunto_completo_juan.txt`.
 La memoria usa `tracemalloc` en ejecuciones separadas de los tiempos; son
-asignaciones Python, no memoria RSS. El JSON conserva las muestras y el entorno.
+asignaciones Python, no memoria RSS. El JSON conserva estadisticas y entorno, sin muestras individuales.
 
 ## Pendientes reservados para la siguiente etapa
 
@@ -55,9 +55,8 @@ sus pruebas y medidas no sustituyen la aceptación del modo de producción.
 Los ensayos se realizaron en una copia descargada sin `.git`. Los cambios se
 trasladaron después al repositorio original sobre la base `4c34c88`, que estaba
 limpia. Los commits de traslado son nuevos; no reconstruyen retrospectivamente
-el historial de implementación de esa copia. Los hashes originales se conservan
-como evidencia de las mediciones y el manifiesto de traslado documenta diferencias
-de saltos de línea y equivalencia del código.
+el historial de implementación de esa copia. La regresión del traslado se conserva;
+los manifiestos de hashes se retiraron por no ser entregables exigidos.
 
 El cierre documental independiente de K comprende contratos, comandos, formato,
 métodos, límites, evidencia y trazabilidad. La justificación del K definitivo

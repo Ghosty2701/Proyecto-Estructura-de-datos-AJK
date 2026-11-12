@@ -259,7 +259,8 @@ if __name__ == '__main__':
     if args.acciones < 3:
         parser.error('--acciones debe ser >=3')
     datos = medir_historia_compartida(args.acciones) if args.historia else medir_prototipo()
-    Path(args.salida_json).write_text(json.dumps(datos, ensure_ascii=False, indent=2), encoding='utf-8')
+    from adaptadores.resumen_mediciones import resumir_mediciones
+    Path(args.salida_json).write_text(json.dumps(resumir_mediciones(datos), ensure_ascii=False, indent=2), encoding='utf-8')
     if args.historia:
         for fila in datos['escenarios']:
             print(fila['modo'], fila['estadisticas'])

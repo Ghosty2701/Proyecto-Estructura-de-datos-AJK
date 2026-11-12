@@ -1,5 +1,12 @@
 # Cierre de mediciones conjuntas y documentación independiente de K
 
+**Depuración del 2026-11-12:** los JSON conservan resúmenes y condiciones del
+ensayo; se omitieron muestras individuales y manifiestos de hashes. El PDF
+exige mediciones reproducibles y evidencia en las decisiones (§§5.5, 6.3 y 7.1),
+pero no esos archivos voluminosos. Los resúmenes conservan los fallos observados
+y los benchmarks permiten repetir las mediciones. Los commits anteriores
+conservan el registro histórico original.
+
 Fecha de revisión: 2026-11-11. Los dos apartados solicitados por Juan están
 completados: ejecución conjunta con evidencia nueva y documentación que no
 depende de elegir K. Esto no declara terminado el proyecto ni cumplidos sus
@@ -23,7 +30,7 @@ en estas cargas sintéticas. La regresión posterior aprobó **663 pruebas**.
 - [Datos completos de esta corrida](evidencia/mediciones_linea_tiempo.json).
 - [Salida de la línea de tiempo](evidencia/bench_linea_tiempo.txt).
 - [Salida de la invocación completa](evidencia/bench_conjunto_completo_juan.txt).
-- [Entorno y SHA-256 del código y evidencia](evidencia/entorno_cierre_juan.json).
+- Entorno, semilla y repeticiones: incluidos en el JSON consolidado.
 - [Regresión completa](evidencia/pruebas_linea_tiempo.txt).
 
 Se verificaron cantidades de escenarios, equivalencia, estado intacto, ausencia

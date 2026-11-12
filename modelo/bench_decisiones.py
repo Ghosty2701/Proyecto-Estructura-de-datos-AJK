@@ -167,4 +167,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--salida-json', required=True)
     args = parser.parse_args()
-    Path(args.salida_json).write_text(json.dumps(medir_decisiones(), ensure_ascii=False, indent=2), encoding='utf-8')
+    from adaptadores.resumen_mediciones import resumir_mediciones
+    Path(args.salida_json).write_text(json.dumps(resumir_mediciones(medir_decisiones()), ensure_ascii=False, indent=2), encoding='utf-8')

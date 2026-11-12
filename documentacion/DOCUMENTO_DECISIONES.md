@@ -8,7 +8,7 @@ cumplimiento de tiempos ni una elección definitiva de K.
 
 El trabajo de esta sesión se trasladó después al repositorio original sobre
 `4c34c88`, que estaba limpio. Los ensayos conservan sus hashes originales;
-el [manifiesto de traslado](evidencia/traslado_repositorio_juan.json) verifica
+el registro de traslado descrito en esta seccion verifica
 equivalencia del código normalizando CRLF/LF. La regresión en el repositorio
 original también aprobó [663 pruebas](evidencia/pruebas_traslado_juan.txt).
 

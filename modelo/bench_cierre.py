@@ -39,6 +39,7 @@ def ejecutar_cierre(rondas=1, semilla=2026, carpeta='documentacion/evidencia', d
     ruta = raiz / 'mediciones_linea_tiempo.json'
     # Publicar solo después de completar todas las mediciones.
     temporal = ruta.with_suffix('.json.tmp')
-    temporal.write_text(json.dumps(resultado, ensure_ascii=False, indent=2), encoding='utf-8')
+    from adaptadores.resumen_mediciones import resumir_mediciones
+    temporal.write_text(json.dumps(resumir_mediciones(resultado), ensure_ascii=False, indent=2), encoding='utf-8')
     temporal.replace(ruta)
     return resultado

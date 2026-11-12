@@ -488,7 +488,8 @@ def main():
                               args.cazadores, args.muestras, args.cripta)
     if args.salida_json:
         with open(args.salida_json, "w", encoding="utf-8") as archivo:
-            json.dump(resultado, archivo, ensure_ascii=False, indent=2)
+            from adaptadores.resumen_mediciones import resumir_mediciones
+            json.dump(resumir_mediciones(resultado), archivo, ensure_ascii=False, indent=2)
 
 
 if __name__ == "__main__":

@@ -193,7 +193,7 @@ y carga con todos los puntos, y copia propia frente a ida y vuelta binaria en
 memoria. Verifica registro histórico, consultas y continuación fuera del
 cronómetro. La carga usa costos variables y un pergamino, sin cazadores ni HTTP;
 no certifica el límite de 50 ms por consulta o de 20 ms por ciclo. Conserva las
-muestras individuales y declara los límites del ensayo. Es un modo optativo;
+estadísticas resumidas y declara los límites del ensayo. Es un modo optativo;
 su integración con el benchmark completo de línea de tiempo corresponde a T032.
 Evidencia: [resultados](documentacion/evidencia/mediciones_persistencia_juan.json)
 y [salida](documentacion/evidencia/bench_persistencia_juan.txt).
@@ -209,7 +209,7 @@ python -m pytest -q Pruebas/prueba_bench_linea_tiempo.py
 El primer comando compara K = 10/25/50/100 con conservar únicamente el punto
 inicial, con 0 y 32 cazadores sintéticos activos. Alterna `historia #k`, instantes
 exactos e intermedios repartidos por la historia; incluye consultas cercanas al
-límite K y al estado actual. Guarda todas las muestras, mínimo, mediana, p95
+límite K y al estado actual. Guarda cantidad de muestras, mínimo, mediana, p95
 (rango más cercano), máximo y cantidad de consultas ≥50 ms. El cronómetro incluye
 copia, re-simulación y construcción del resumen; excluye validaciones extra,
 preparación, red y renderizado. El recolector de basura permanece habilitado.
@@ -273,7 +273,7 @@ registra a mitad/final tras GC y como pico. Incluye infraestructura y puntos;
 son asignaciones Python, no RSS del proceso. Los tiempos se miden en otra
 partida equivalente sin trazado: copias periídicas (sin el punto inicial) y
 ciclos que incluyen acción, registro y copia cuando corresponde. Se conservan
-las muestras y los ciclos ≥20 ms. No elige K ni certifica la referencia oficial.
+las estadísticas y la cantidad de ciclos ≥20 ms. No elige K ni certifica la referencia oficial.
 Resultados: [JSON](documentacion/evidencia/mediciones_memoria_juan.json) y
 [salida](documentacion/evidencia/bench_memoria_juan.txt).
 

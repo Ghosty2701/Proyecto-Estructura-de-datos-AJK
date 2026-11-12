@@ -165,3 +165,25 @@ La diferencia de mediana es pequeña (1,9 %); no demuestra cumplimiento de
 idénticos: 1 405 512/1 728 952 bytes. El pico anterior de 173,072 ms se conserva.
 [Resumen](evidencia/captura_primitivos_juan.json).
 Reproducir con `--revision a31a869 --rondas 20 --exigir-registros-iguales --alternar`.
+
+## Reserva de la tabla de identidades
+
+Se comparó reservar 64 posiciones estimadas por sala frente a 32, manteniendo
+doble hashing, potencias de dos, crecimiento y carga máxima del 70 %. Para la
+carga de 300 salas, la reserva redondea a 32 768 posiciones frente a 16 384.
+La raíz genérica sigue empezando en 1 024 y creciendo según necesita.
+
+ABBA intercalado contra `c0050ba`, 40 capturas por variante y registros/bytes
+v6 idénticos:
+
+| Reserva estimada | Mediana (ms) | p95 (ms) | Máximo (ms) | Capturas ≥20 ms |
+|---|---:|---:|---:|---:|
+| 32 por sala | 18,131 | 26,036 | 29,654 | 14/40 |
+| 64 por sala | 16,091 | 31,990 | 41,585 | 5/40 |
+
+Se adopta 64: mediana 11,3 % menor y menos excedidos en la muestra, con p95 y
+máximo aún desfavorables. Pico trazado 1 991 096 frente a 1 728 952 bytes:
+**256 KiB temporales adicionales**, sin incremento de la memoria retenida por
+punto (1 405 512 bytes en ambas variantes). No se extrapola a garantía de 20 ms.
+[Resumen](evidencia/captura_reserva64_juan.json).
+Reproducir con `--revision c0050ba --rondas 20 --exigir-registros-iguales --alternar`.

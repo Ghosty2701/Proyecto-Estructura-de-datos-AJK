@@ -100,7 +100,9 @@ def capturar_estado(raiz):
     capacidad = 1024
     if (type(raiz) is tuple and raiz and type(raiz[-1]) is list
             and raiz[-1] and type(raiz[-1][0]) is SalaRastro):
-        capacidad = max(capacidad, 32 * len(raiz[-1]))
+        # Reserva temporal medida: menor carga y menos colisiones. La tabla
+        # se libera al devolver el punto y conserva su crecimiento si hace falta.
+        capacidad = max(capacidad, 64 * len(raiz[-1]))
     identidades = TablaIdentidades(capacidad)
     registros, pendientes = [], []
 

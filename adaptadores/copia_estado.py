@@ -15,6 +15,7 @@ from controlador.partida import Partida
 from modelo.conocimiento import ConocimientoMapa
 from modelo.motor_eventos import ActorTurnos, MotorEventos
 from modelo.tabla_hash import _mezclar
+from modelo.rastro import SalaRastro
 
 _INMUTABLES = (type(None), bool, int, float, str, bytes)
 _VACIA = object()
@@ -40,7 +41,11 @@ class TablaIdentidades:
     def _localizar(self, clave):
         numero = id(clave)
         mascara = self.capacidad - 1
-        indice = _mezclar(numero) & mascara
+        # Los bits bajos de las direcciones suelen representar alineación.
+        # Plegar bits altos da un índice barato; identidad y doble hashing
+        # siguen resolviendo cualquier colisión, sin suponer IDs únicos aquí.
+        plegado = numero >> 4
+        indice = (plegado ^ (plegado >> 16) ^ (plegado >> 32)) & mascara
         claves = self.claves
         actual = claves[indice]
         if actual is _VACIA or actual is clave:
@@ -120,12 +125,20 @@ def _completar_no_persistentes(original, copia):
         copia._acciones_linea = 0
 
 
-def copiar_estado(raiz, referencias=None, *, sustituciones=(), reconstruir=True, capacidad=1024):
+def copiar_estado(raiz, referencias=None, *, sustituciones=(), reconstruir=True, capacidad=None, creados=None):
     """Devuelve una copia independiente del grafo alcanzable desde raiz.
 
     Si se pasa la lista referencias, recibe las ReferenciaFicha copiadas para que
     el llamador complete sus datos sin red antes de re-simular.
     """
+    if capacidad is None:
+        capacidad = 1024
+        # Las raíces de una partida incluyen la lista de salas. Reservar una
+        # estimación evita ampliar y reinsertar varias veces en cada punto.
+        # Es solo una reserva: la misma tabla crece si el grafo resulta mayor.
+        if (type(raiz) is tuple and raiz and type(raiz[-1]) is list
+                and raiz[-1] and type(raiz[-1][0]) is SalaRastro):
+            capacidad = max(capacidad, 32 * len(raiz[-1]))
     copias = TablaIdentidades(capacidad)
     # Uso experimental: sustituir enlaces por tokens o resolverlos al restaurar.
     for original, sustituto in sustituciones:
@@ -174,28 +187,35 @@ def copiar_estado(raiz, referencias=None, *, sustituciones=(), reconstruir=True,
             elif tipo is ReferenciaFicha and referencias is not None:
                 referencias.append(nueva)
         copias.insertar(valor, nueva, indice=indice)
+        if creados is not None:
+            creados.append(nueva)
         pendientes.append((valor, nueva))
         return nueva
 
-    resultado = copia_de(raiz)
-    while pendientes:
-        original, copia = pendientes.pop()
-        tipo = type(copia)
-        if tipo is list:
-            copia.extend([copia_de(elemento) for elemento in original])
-        elif tipo is dict:
-            for clave, elemento in original.items():
-                copia[clave] = copia_de(elemento)
-        else:
-            obligatorios, opcionales = campos.buscar(tipo)
-            for nombre in obligatorios:
-                setattr(copia, nombre, copia_de(getattr(original, nombre)))
-            for nombre in opcionales:
-                valor = getattr(original, nombre, _VACIA)
-                if valor is not _VACIA:
-                    setattr(copia, nombre, copia_de(valor))
-            _completar_no_persistentes(original, copia)
-    if reconstruir:
-        for conocimiento in conocimientos:
-            conocimiento.reconstruir()
-    return resultado
+    try:
+        resultado = copia_de(raiz)
+        while pendientes:
+            original, copia = pendientes.pop()
+            tipo = type(copia)
+            if tipo is list:
+                copia.extend([copia_de(elemento) for elemento in original])
+            elif tipo is dict:
+                for clave, elemento in original.items():
+                    copia[clave] = copia_de(elemento)
+            else:
+                obligatorios, opcionales = campos.buscar(tipo)
+                for nombre in obligatorios:
+                    setattr(copia, nombre, copia_de(getattr(original, nombre)))
+                for nombre in opcionales:
+                    valor = getattr(original, nombre, _VACIA)
+                    if valor is not _VACIA:
+                        setattr(copia, nombre, copia_de(valor))
+                _completar_no_persistentes(original, copia)
+        if reconstruir:
+            for conocimiento in conocimientos:
+                conocimiento.reconstruir()
+        return resultado
+    finally:
+        # Romper la autorreferencia de la funcion recursiva libera su tabla
+        # auxiliar al regresar, sin esperar a una recoleccion de ciclos.
+        copia_de = None

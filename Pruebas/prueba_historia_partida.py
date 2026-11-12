@@ -31,6 +31,35 @@ def _sin_red(cargador):
         setattr(fuente, nombre, prohibida)
 
 
+def test_historia_libera_grafo_temporal_sin_esperar_gc(paquete, tmp_path, monkeypatch):
+    # FR-LT-006, PR-LT-001/003: el resumen no debe conservar la simulación temporal.
+    import gc
+    import weakref
+
+    partida, cargador = crear_partida(paquete, tmp_path / 'cache', checkpoint_cada=3)
+    jugar(partida, ['recoger 1', 'esperar', 'esperar'])
+    crear = cargador.copia_de_trabajo
+    observadas = []
+
+    def observar(punto):
+        copia = crear(punto)
+        observadas.append(weakref.ref(copia))
+        return copia
+
+    monkeypatch.setattr(cargador, 'copia_de_trabajo', observar)
+    habilitado = gc.isenabled()
+    gc.disable()
+    try:
+        antes = instantanea(partida)
+        resumen = partida.historia(('k', 2))
+        assert observadas and observadas[0]() is None
+        assert resumen.reloj >= 0 and instantanea(partida) == antes
+    finally:
+        if habilitado:
+            gc.enable()
+        gc.collect()
+
+
 @pytest.mark.parametrize("k", [1, 3, 10])
 def test_t011_equivalencia_en_decisiones_e_instantes_intermedios(paquete, tmp_path, k):
     # FR-LT-003/013/014, SC-LT-002: tres valores de K, decisiones y eventos intermedios.

@@ -8,6 +8,7 @@ import json
 
 from adaptadores.cache_catalogo import ArbolAVL, ErrorCatalogo, ReferenciaFicha
 from adaptadores.copia_estado import copiar_estado
+from adaptadores.instantanea_inmutable import capturar_estado, InstantaneaInmutable
 from adaptadores.cliente_http import ErrorHTTP, PresupuestoAgotado
 from adaptadores.modo_offline import ErrorOffline
 from adaptadores.servicio_cripta import ErrorCripta
@@ -62,6 +63,19 @@ class _FichasConsulta:
 
 class _GestorConsulta:
     """Gestor de guardado inerte para copias: las fichas ya se completaron."""
+
+    def __init__(self, creados=None):
+        self.creados = [] if creados is None else creados
+
+    def liberar_copia(self):
+        # Solo objetos creados por el copiador, nunca fichas prestadas de la
+        # cache viva ni estados de los puntos de control.
+        for objeto in self.creados:
+            if type(objeto) in (list, dict):
+                objeto.clear()
+            elif hasattr(objeto, '__dict__'):
+                objeto.__dict__.clear()
+        self.creados.clear()
 
     def preparar_botin(self, enemigo):
         pass
@@ -219,7 +233,7 @@ class CargadorPartida:
 
     def iniciar_linea(self, partida, k):
         """Punto 0 en el estado actual; raíces iguales a las del guardado."""
-        linea = LineaTiempo(k, copiar_estado)
+        linea = LineaTiempo(k, capturar_estado)
         linea.iniciar(lambda: (partida, self.salas_ordenadas()), partida.motor.reloj)
         partida.linea_tiempo = linea
         partida.gestor_linea = self
@@ -235,11 +249,21 @@ class CargadorPartida:
         if linea is None:
             return None
         identidad = self._identidad(partida)
-        puntos = tuple(
-            (p.posicion, p.acciones, p.reloj, p.k,
-             codificar_punto(p.estado[0].motor, p.estado[0].jugador, p.estado[1], identidad,
-                             {"partida": p.estado[0]}))
-            for p in linea.puntos)
+        def codificar(punto):
+            creados = []
+            gestor = _GestorConsulta(creados)
+            try:
+                estado = punto.estado
+                if isinstance(estado, InstantaneaInmutable):
+                    estado = estado.reconstruir(creados=creados)
+                copia, salas = estado
+                bloque = codificar_punto(copia.motor, copia.jugador, salas, identidad,
+                                         {"partida": copia})
+                return punto.posicion, punto.acciones, punto.reloj, punto.k, bloque
+            finally:
+                gestor.liberar_copia()
+
+        puntos = tuple(codificar(p) for p in linea.puntos)
         return (
             tuple((t.k, t.posicion) for t in linea.tramos),
             tuple((o.texto, o.tipo, o.reloj) for o in linea.ordenes),
@@ -251,7 +275,7 @@ class CargadorPartida:
         """Restaura la línea guardada; los puntos se decodifican una vez al cargar."""
         try:
             tramos, ordenes, acciones, en_tramo, reloj_linea, acciones_linea, puntos = datos
-            linea = LineaTiempo(tramos[0][0], copiar_estado)
+            linea = LineaTiempo(tramos[0][0], capturar_estado)
             linea.tramos = [TramoK(k, posicion) for k, posicion in tramos]
             linea.ordenes = [OrdenEjecutada(texto, tipo, reloj) for texto, tipo, reloj in ordenes]
             linea.acciones = [AccionVigente(reloj, posicion) for reloj, posicion in acciones]
@@ -261,7 +285,8 @@ class CargadorPartida:
                 copia = cargado.datos_extra["partida"]
                 if copia.motor is not cargado.motor or copia.jugador is not cargado.jugador:
                     raise ErrorGuardado("punto de control con raíces inconsistentes")
-                linea.puntos.append(PuntoControl(posicion, cantidad, reloj, (copia, cargado.salas), k))
+                estado = capturar_estado((copia, cargado.salas))
+                linea.puntos.append(PuntoControl(posicion, cantidad, reloj, estado, k))
         except (TypeError, ValueError, KeyError, IndexError, AttributeError) as error:
             raise ErrorGuardado(f"línea de tiempo guardada inválida: {error}") from error
         if not linea.puntos or linea.puntos[0].posicion != 0:
@@ -270,15 +295,23 @@ class CargadorPartida:
 
     def copia_de_trabajo(self, punto):
         """Copia independiente de un punto, conectada a datos de solo lectura."""
-        referencias = []
-        copia, _ = copiar_estado(punto.estado, referencias)
-        fichas = _FichasConsulta(self.servicio.cache)
-        for referencia in referencias:
-            if referencia.datos is None:
-                referencia.datos = fichas.ficha(referencia.id_ficha)
-        copia.preparar_sala = PreparadorConsulta(self.servicio, copia).preparar_sala
-        copia.gestor_guardado = _GestorConsulta()
-        return copia
+        referencias, creados = [], []
+        gestor = _GestorConsulta(creados)
+        try:
+            if isinstance(punto.estado, InstantaneaInmutable):
+                copia, _ = punto.estado.reconstruir(referencias, creados=creados)
+            else:
+                copia, _ = copiar_estado(punto.estado, referencias, creados=creados)
+            fichas = _FichasConsulta(self.servicio.cache)
+            for referencia in referencias:
+                if referencia.datos is None:
+                    referencia.datos = fichas.ficha(referencia.id_ficha)
+            copia.preparar_sala = PreparadorConsulta(self.servicio, copia).preparar_sala
+            copia.gestor_guardado = gestor
+            return copia
+        except Exception:
+            gestor.liberar_copia()
+            raise
 
     def salas_ordenadas(self):
         """Salas del esqueleto en orden de ID: las mismas raíces que el guardado."""

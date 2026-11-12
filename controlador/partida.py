@@ -177,7 +177,12 @@ class Partida:
             copia = self.reconstruir(objetivo)
         except (ErrorReconstruccion, AccionInvalida, ErrorCatalogo, ValueError) as error:
             raise AccionInvalida(f"No se pudo reconstruir la historia: {error}") from error
-        return copia.resumen_historico(titulo)
+        try:
+            return copia.resumen_historico(titulo)
+        finally:
+            liberar = getattr(copia.gestor_guardado, 'liberar_copia', None)
+            if liberar is not None:
+                liberar()
 
     def reconstruir(self, objetivo):
         """Copia de trabajo en el objetivo de consulta, sin alterar esta partida.
@@ -191,10 +196,16 @@ class Partida:
         punto = linea.punto_para(posicion if limite is None else posicion - 1)
         copia = self.gestor_linea.copia_de_trabajo(punto)
         ordenes = linea.ordenes_entre(punto.posicion, posicion)
-        for numero, orden in enumerate(ordenes, 1):
-            if limite is not None and numero == len(ordenes):
-                copia.motor.tiempo_limite = limite
-            ejecutar_accion_replay(copia, orden.texto)
+        try:
+            for numero, orden in enumerate(ordenes, 1):
+                if limite is not None and numero == len(ordenes):
+                    copia.motor.tiempo_limite = limite
+                ejecutar_accion_replay(copia, orden.texto)
+        except Exception:
+            liberar = getattr(copia.gestor_guardado, 'liberar_copia', None)
+            if liberar is not None:
+                liberar()
+            raise
         return copia
 
     def _contar_accion(self):

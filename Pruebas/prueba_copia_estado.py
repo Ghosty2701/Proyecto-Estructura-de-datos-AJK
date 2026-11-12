@@ -13,6 +13,26 @@ class Clave:
     pass
 
 
+def test_copiador_no_retiene_originales_hasta_la_siguiente_recoleccion():
+    # FR-LT-013, PR-LT-003/007: la tabla auxiliar debe morir al terminar la copia.
+    import gc
+    import weakref
+
+    habilitado = gc.isenabled()
+    gc.disable()
+    try:
+        sala = SalaRastro(1)
+        original = weakref.ref(sala)
+        copia = copiar_estado([sala])
+        del sala
+        assert original() is None, 'la copia retiene el grafo original en una clausura'
+        assert copia[0].sala_id == 1
+    finally:
+        if habilitado:
+            gc.enable()
+        gc.collect()
+
+
 def test_tabla_identidades_crece_y_resuelve_colisiones():
     # FR-LT-013: tabla propia, capacidad potencia de dos y carga máxima 70 %.
     tabla = TablaIdentidades()

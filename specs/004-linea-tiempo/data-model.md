@@ -3,6 +3,15 @@
 **Estado**: diseño implementado; estructuras aprobadas en [research.md](research.md).
 Los registros no amplían reglas de [spec.md](spec.md). El prototipo compartido sigue fuera del formato de producción.
 
+**Ampliación elegida 2026-11-12:** los puntos de producción usan registros
+inmutables por ID (D-LT-08). Su catálogo fijo de 16 384 tokens `(ID,)` es un
+arreglo de tuplas inmutable, compartido entre puntos y sin modelos. Cada ID
+resuelve únicamente los registros de su punto; cada reconstrucción tiene sus
+propios objetos mutables. IDs superiores usan tokens propios. El catálogo
+cuesta memoria fija por proceso, separada de la memoria marginal del punto,
+y no se persiste: guardar/cargar sigue convirtiendo al mismo esquema v6.
+El «prototipo compartido» histórico se refiere a `estado_compartido.py`.
+
 ## Registros
 
 | Registro | Campos | Validación e invariantes |

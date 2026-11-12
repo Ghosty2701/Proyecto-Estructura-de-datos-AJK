@@ -6,6 +6,9 @@
 **Decisiones**: D-LT-01 a D-LT-06 elegidas por el usuario. D-LT-08 extiende los
 puntos a registros inmutables por ID (elección explícita del 2026-11-12), con
 reconstrucción del modelo y conversión al formato v6 al guardar/cargar.
+El usuario eligió después compartir tokens de ID mediante catálogo inmutable
+acotado de 16 384 entradas, con fallback a tokens propios y estado independiente
+por punto. Su costo fijo se contabiliza aparte de la memoria marginal.
 D-LT-07 (K por
 defecto) se elegirá con mediciones. Alternativas, mediciones previas y descartes
 en [research.md](research.md).

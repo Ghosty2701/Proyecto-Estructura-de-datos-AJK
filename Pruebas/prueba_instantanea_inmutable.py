@@ -130,3 +130,53 @@ def test_guardado_v6_identico_al_de_puntos_con_grafo_y_recarga_por_id(tmp_path):
         assert isinstance(recargado.estado, InstantaneaInmutable)
         restaurado, _ = recargado.estado.reconstruir()
         assert instantanea(restaurado) == instantanea(original.estado[0])
+
+
+def test_tokens_compartidos_no_comparten_estado_entre_puntos():
+    interior = [1]
+    raiz = [interior, interior]
+    primero = capturar_estado(raiz)
+    interior[0] = 2
+    segundo = capturar_estado(raiz)
+    assert primero.raiz is segundo.raiz
+    assert primero.registros[0][1][0] is segundo.registros[0][1][0]
+    assert primero.registros is not segundo.registros
+    a, b = primero.reconstruir(), segundo.reconstruir()
+    assert a[0] is a[1] and b[0] is b[1]
+    assert a == [[1], [1]] and b == [[2], [2]]
+    a[0][0] = 99
+    assert primero.reconstruir() == [[1], [1]]
+    assert segundo.reconstruir() == [[2], [2]]
+
+
+def test_catalogo_acotado_y_fallback_con_alias_y_ciclo():
+    from adaptadores.instantanea_inmutable import _REFERENCIAS_ID
+    catalogo = _REFERENCIAS_ID
+    raiz = [[] for _ in range(len(catalogo) + 1)]
+    raiz.extend((raiz[256], raiz))
+    a, b = capturar_estado(raiz), capturar_estado(raiz)
+    ultimo = len(catalogo)
+    ref_a, ref_b = a.registros[0][1][ultimo], b.registros[0][1][ultimo]
+    assert ref_a == ref_b == (ultimo + 1,)
+    assert ref_a is not ref_b
+    from adaptadores.instantanea_inmutable import _REFERENCIAS_ID as despues
+    assert despues is catalogo and len(despues) == 16384
+    copia = a.reconstruir()
+    assert copia[-1] is copia and copia[-2] is copia[256]
+    assert len(copia) == len(raiz)
+
+
+def test_capturas_concurrentes_conservan_ambito_local_de_ids():
+    from concurrent.futures import ThreadPoolExecutor
+
+    def capturar(numero):
+        raiz = [numero]
+        raiz.append(raiz)
+        return capturar_estado(raiz)
+
+    with ThreadPoolExecutor(max_workers=4) as ejecutor:
+        puntos = list(ejecutor.map(capturar, range(32)))
+    assert all(p.raiz is puntos[0].raiz for p in puntos)
+    for numero, punto in enumerate(puntos):
+        copia = punto.reconstruir()
+        assert copia[0] == numero and copia[1] is copia

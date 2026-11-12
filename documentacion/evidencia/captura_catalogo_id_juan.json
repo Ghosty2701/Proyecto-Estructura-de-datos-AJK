@@ -1,0 +1,68 @@
+{
+  "referencia_git": "ed4b505",
+  "acciones": 5000,
+  "salas": 300,
+  "cazadores": 32,
+  "semilla": 2026,
+  "rondas_por_bloque": 20,
+  "python": "3.13.2",
+  "plataforma": "Windows-11-10.0.26200-SP0",
+  "gc_habilitado": true,
+  "resultados": [
+    {
+      "variante": "anterior",
+      "captura": {
+        "cantidad": 40,
+        "minimo_ms": 11.11,
+        "mediana_ms": 13.2746,
+        "p95_ms": 16.1266,
+        "maximo_ms": 36.728,
+        "excedidos_50ms": 0,
+        "excedidos_20ms": 1
+      },
+      "restauracion": {
+        "cantidad": 40,
+        "minimo_ms": 5.6642,
+        "mediana_ms": 7.31405,
+        "p95_ms": 9.9628,
+        "maximo_ms": 23.1694,
+        "excedidos_50ms": 0
+      },
+      "retenida_bytes": 1405512,
+      "pico_bytes": 1991096,
+      "registros": 6760
+    },
+    {
+      "variante": "actual",
+      "captura": {
+        "cantidad": 40,
+        "minimo_ms": 10.5773,
+        "mediana_ms": 13.226849999999999,
+        "p95_ms": 17.7865,
+        "maximo_ms": 19.2611,
+        "excedidos_50ms": 0,
+        "excedidos_20ms": 0
+      },
+      "restauracion": {
+        "cantidad": 40,
+        "minimo_ms": 5.2903,
+        "mediana_ms": 6.5386500000000005,
+        "p95_ms": 9.0208,
+        "maximo_ms": 9.4672,
+        "excedidos_50ms": 0
+      },
+      "retenida_bytes": 898948,
+      "pico_bytes": 1484532,
+      "registros": 6760
+    }
+  ],
+  "registros_iguales_exigidos": true,
+  "orden": "ABBA intercalado por captura",
+  "alcance": "ABBA; un punto de la misma partida sintetica, fuente excluida del trazado; memoria Python, no RSS ni historia completa. Tiempos sin tracemalloc; restauracion sin replay/liberacion. Bytes v6 equivalentes en todas las restauraciones.",
+  "catalogo_actual": {
+    "capacidad": 16384,
+    "asignaciones_estimadas_bytes": 1433608,
+    "pico_construccion_bytes": 1458384,
+    "alcance": "Replica de la construccion fija tras el import, con GC y tracemalloc; incluye indice, tokens y enteros nuevos. No RSS. El catalogo real ya existia antes de trazar cada punto y se contabiliza aparte."
+  }
+}

@@ -21,6 +21,11 @@ from modelo.rastro import SalaRastro
 # frecuentes de los campos van primero; no se aceptan subclases sin esquema.
 _VALORES_INMUTABLES = (int, str, bool, float, bytes)
 
+# Solo números ordinales: el significado de cada ID pertenece a su punto.
+# Catálogo fijo e inmutable, sin modelos ni crecimiento durante las capturas.
+_LIMITE_REFERENCIAS_ID = 16384
+_REFERENCIAS_ID = tuple((numero,) for numero in range(_LIMITE_REFERENCIAS_ID))
+
 _TIPOS = TablaIdentidades(64)
 _POR_ID = [None] * (max(e[0] for e in _ESQUEMAS) + 1)
 for _esquema in _ESQUEMAS:
@@ -124,7 +129,11 @@ def capturar_estado(raiz):
             if esquema is None:
                 raise TypeError(f'tipo sin esquema de estado: {tipo.__name__}')
         numero = len(registros)
-        ref = (numero,)
+        if numero < _LIMITE_REFERENCIAS_ID:
+            ref = _REFERENCIAS_ID[numero]
+            numero = ref[0]  # reutilizar también el entero en la pila temporal
+        else:
+            ref = (numero,)
         identidades.insertar(valor, ref, indice=indice)
         registros.append(None)
         pendientes.append((numero, valor, esquema))

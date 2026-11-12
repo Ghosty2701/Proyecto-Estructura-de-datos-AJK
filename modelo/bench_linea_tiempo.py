@@ -223,17 +223,18 @@ def medir_consultas(acciones=5000, cantidad_salas=200, valores_k=(10, 25, 50, 10
 
 
 def medir_cripta_consultas(cargador, partida, acciones=5000, muestras=12, rondas=3,
-                          cazadores_objetivo=32):
+                          cazadores_objetivo=32, checkpoint_cada=None):
     """Tramo de T033: K provisional, datos externos precargados, sin red al consultar.
 
     No altera estadísticas/posiciones de los enemigos. La preparación experimental
     aumenta la vida del jugador y activa cazadores, según la tarea aprobada.
     El llamador elige la cripta publicada; aquí se conservan identidad y versión.
     """
-    from modelo.linea_tiempo import K_POR_DEFECTO
+    from modelo.linea_tiempo import K_POR_DEFECTO, validar_k
 
     if acciones < 3 or muestras < 6 or rondas < 1 or cazadores_objetivo < 0:
         raise ValueError("acciones >= 3, muestras >= 6, rondas >= 1 y cazadores >= 0")
+    k = K_POR_DEFECTO if checkpoint_cada is None else validar_k(checkpoint_cada)
     for sala in cargador.salas_ordenadas():
         cargador.preparar_sala(sala)
     partida.jugador.vida = partida.jugador.vida_max = 10**9
@@ -248,7 +249,7 @@ def medir_cripta_consultas(cargador, partida, acciones=5000, muestras=12, rondas
             if enemigo.regeneracion_cantidad > 0:
                 partida.motor.iniciar_regeneracion(enemigo)
             activos += 1
-    cargador.iniciar_linea(partida, K_POR_DEFECTO)
+    cargador.iniciar_linea(partida, k)
     indices = _indices(acciones, muestras)
     capturas = [None] * len(indices)
 
@@ -259,7 +260,7 @@ def medir_cripta_consultas(cargador, partida, acciones=5000, muestras=12, rondas
 
     solicitudes = partida.fuente.solicitudes_realizadas
     print(f"CONSULTAS SERVICIO: {partida.id_cripta}, version {partida.version_cripta}, "
-          f"K={K_POR_DEFECTO}, cazadores activos iniciales={activos}", flush=True)
+          f"K={k}, cazadores activos iniciales={activos}", flush=True)
     for paso in range(acciones):
         if partida.estado().terminada:
             break
@@ -276,7 +277,7 @@ def medir_cripta_consultas(cargador, partida, acciones=5000, muestras=12, rondas
     pares = [(i, c) for i, c in zip(indices, capturas) if c is not None]
     consultas = _consultas([i for i, _ in pares], [c for _, c in pares], partida.motor.reloj)
     firma = _firma(partida, cargador)
-    mediciones, _ = _medir(partida, consultas, rondas, K_POR_DEFECTO, None)
+    mediciones, _ = _medir(partida, consultas, rondas, k, None)
     _comprobar(_firma(partida, cargador) == firma, "las consultas alteraron la partida")
     _comprobar(partida.fuente.solicitudes_realizadas == solicitudes, "una consulta realizo HTTP")
     resumen = estadisticas([m["tiempo_ms"] for m in mediciones])
@@ -284,7 +285,7 @@ def medir_cripta_consultas(cargador, partida, acciones=5000, muestras=12, rondas
           f"max {resumen['maximo_ms']:.3f} ms; >=50 ms: {resumen['excedidos_50ms']}", flush=True)
     return {"id_cripta": partida.id_cripta, "version_cripta": partida.version_cripta,
             "version_catalogo": cargador.servicio.cache.version, "salas": cargador.salas.cantidad,
-            "k": K_POR_DEFECTO, "acciones_objetivo": acciones,
+            "k": k, "acciones_objetivo": acciones,
             "acciones_vigentes": partida.acciones_ejecutadas,
             "semilla": partida.motor.semilla, "rondas": rondas,
             "cazadores_totales": len(cazadores), "cazadores_activos_inicio": activos,

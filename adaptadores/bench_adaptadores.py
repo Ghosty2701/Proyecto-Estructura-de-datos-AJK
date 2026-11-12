@@ -412,7 +412,8 @@ def bench_estado_real(rondas=5, cantidad_salas=200, semilla=SEMILLA_BENCH):
 
 def ejecutar_bench(rondas=5, semilla=SEMILLA_BENCH, tope=25, cantidad_salas=200,
                    solo="todos", tamanos=(25, 100, 1000), acciones=5000,
-                   valores_k=(10, 25, 50, 100), cazadores=(0, 32), muestras=12, cripta=None):
+                   valores_k=(10, 25, 50, 100), cazadores=(0, 32), muestras=12, cripta=None,
+                   checkpoint_cada=None):
     if rondas <= 0 or tope <= 0 or cantidad_salas <= 0 or any(n <= 0 for n in tamanos):
         raise ValueError("las cantidades del benchmark deben ser positivas")
     if solo not in ("todos", "indice", "cache", "guardado", "persistencia", "consultas", "memoria"):
@@ -431,7 +432,8 @@ def ejecutar_bench(rondas=5, semilla=SEMILLA_BENCH, tope=25, cantidad_salas=200,
                 cache = CacheCatalogo(fuente, carpeta=carpeta, tope=tope)
                 cargador = CargadorPartida(ServicioCripta(fuente, cache))
                 partida = cargador.crear(cripta, semilla)
-                return medir_cripta_consultas(cargador, partida, acciones, muestras, rondas)
+                return medir_cripta_consultas(cargador, partida, acciones, muestras, rondas,
+                                             checkpoint_cada=checkpoint_cada)
         from modelo.bench_linea_tiempo import medir_consultas
         resultado = medir_consultas(acciones, cantidad_salas, valores_k, cazadores,
                                     muestras, rondas, semilla)
@@ -473,6 +475,8 @@ def main():
     parser.add_argument("--muestras", type=positivo, default=12,
                         help="destinos historicos por ronda de consultas (minimo 6)")
     parser.add_argument("--cripta", help="con --solo consultas: medir K provisional en datos del servicio")
+    parser.add_argument("--checkpoint-cada", type=positivo,
+                        help="K experimental para --solo consultas --cripta; no cambia el juego")
     parser.add_argument("--salida-json", help="guardar resultados de persistencia/consultas/memoria")
     args = parser.parse_args()
     if args.salida_json and args.solo not in ("persistencia", "consultas", "memoria"):
@@ -483,9 +487,11 @@ def main():
         parser.error("consultas requiere al menos 6 muestras")
     if args.cripta is not None and args.solo != "consultas":
         parser.error("--cripta requiere --solo consultas")
+    if args.checkpoint_cada is not None and args.cripta is None:
+        parser.error("--checkpoint-cada requiere --cripta")
     resultado = ejecutar_bench(args.rondas, args.semilla, args.cache_size, args.salas,
                               args.solo, args.tamanos, args.acciones, args.valores_k,
-                              args.cazadores, args.muestras, args.cripta)
+                              args.cazadores, args.muestras, args.cripta, args.checkpoint_cada)
     if args.salida_json:
         with open(args.salida_json, "w", encoding="utf-8") as archivo:
             from adaptadores.resumen_mediciones import resumir_mediciones

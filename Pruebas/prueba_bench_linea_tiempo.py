@@ -67,7 +67,8 @@ def test_cli_publica_muestras_de_consultas_y_alternativa_inicial(tmp_path, monke
     assert all(f["estadisticas"]["cantidad"] == 6 for f in datos["escenarios"])
 
 
-def test_medicion_de_datos_externos_conserva_versiones_y_presupuesto(tmp_path, capsys):
+@pytest.mark.parametrize('checkpoint_cada', [None, 2, 5])
+def test_medicion_de_datos_externos_conserva_versiones_y_presupuesto(tmp_path, capsys, checkpoint_cada):
     # T033, PR-LT-001: usar el cargador real sin depender de un servicio de red en pytest.
     from adaptadores.bench_persistencia import _paquete, _cargador, ID
     from modelo.bench_linea_tiempo import medir_cripta_consultas
@@ -76,13 +77,14 @@ def test_medicion_de_datos_externos_conserva_versiones_y_presupuesto(tmp_path, c
     cargador = _cargador(tmp_path / "datos", tmp_path / "cache")
     partida = cargador.crear(ID, 2026)
     datos = medir_cripta_consultas(cargador, partida, acciones=12, muestras=6, rondas=1,
-                                   cazadores_objetivo=3)
+                                   cazadores_objetivo=3, checkpoint_cada=checkpoint_cada)
     assert datos["version_cripta"] == "v1" and datos["version_catalogo"]
     assert datos["acciones_vigentes"] == 12
     assert datos["cazadores_activos_inicio"] == 3
     assert datos["estadisticas"]["cantidad"] == 6
     assert datos["http_consultas"] == 0 and datos["partida_intacta"]
     assert datos["maximo_acciones_reaplicadas"] <= datos["k"]
+    assert datos['k'] == (25 if checkpoint_cada is None else checkpoint_cada)
 
 
 @pytest.mark.parametrize("opciones", [

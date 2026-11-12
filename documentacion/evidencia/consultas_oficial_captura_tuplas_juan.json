@@ -1,0 +1,35 @@
+{
+  "id_cripta": "cripta-06",
+  "version_cripta": "f9ed9afa683d",
+  "version_catalogo": "4b9e75a42be5",
+  "salas": 300,
+  "k": 25,
+  "acciones_objetivo": 5000,
+  "acciones_vigentes": 5000,
+  "semilla": 2026,
+  "rondas": 3,
+  "cazadores_totales": 36,
+  "cazadores_activos_inicio": 32,
+  "estadisticas": {
+    "cantidad": 36,
+    "minimo_ms": 0.0671,
+    "mediana_ms": 59.3454,
+    "p95_ms": 94.0418,
+    "maximo_ms": 97.4828,
+    "excedidos_50ms": 21
+  },
+  "muestras": {
+    "cantidad": 36,
+    "maximo_acciones_reaplicadas": 23,
+    "maximo_comparaciones_puntos": 8
+  },
+  "maximo_acciones_reaplicadas": 23,
+  "partida_intacta": true,
+  "http_consultas": 0,
+  "vista": false,
+  "solicitudes": 46,
+  "presupuesto": 63,
+  "python": "3.13.2",
+  "plataforma": "Windows-11-10.0.26200-SP0",
+  "alcance": "K provisional; vida experimental del jugador 10^9; movimiento por salidas abiertas evitando la salida, alternado con esperas. Enemigos originales sin alterar estadisticas/posiciones. Solo certifica las consultas muestreadas; no mide memoria ni ciclos. Intermedios sin oraculo independiente en este ensayo."
+}

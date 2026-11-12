@@ -1,5 +1,12 @@
 # Documento de Decisiones de Diseño
 
+**Captura conservando tuplas (2026-11-12):** elección explícita del usuario;
+sin empaquetado. Tres refinamientos con 686 pruebas por cambio, registros
+completos y bytes v6 equivalentes. Ensayo intercalado acumulado: mediana
+38,125 -> 29,979 ms; sigue excediendo 20 ms. Corrida sintética K=25: 27/5 001
+ciclos excedidos; oficial: 21/36 consultas >=50 ms. No se demuestra mejora
+oficial completa ni se fija K. [Método y límites](CAPTURA_TUPLAS_JUAN.md).
+
 **D-TC-09 (2026-11-12):** caché compartida acotada elegida por el usuario,
 implementada y verificada con 684 pruebas. En la comparación oficial reduce
 43,1 % las búsquedas Dijkstra; todavía hay consultas mayores de 50 ms.

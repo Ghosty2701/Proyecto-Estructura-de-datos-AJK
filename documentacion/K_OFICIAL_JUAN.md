@@ -58,6 +58,7 @@ pendiente; 25 conserva su condición provisional**. No se propone cerrar
 PR-LT-001/007 ni aceptación. Antes de fijar K debe reducirse el costo de los
 puntos y repetirse la comparación de consultas/ciclos/memoria.
 
-Se propuso al usuario empaquetar los registros por ID en bytes frente a seguir
-optimizando las tuplas. AGENTS.md requiere su elección antes de sustituir la
-representación. No está implementado. Avance global estimado: **93 %**.
+El usuario eligió conservar las tuplas y optimizar su captura frente a la
+propuesta de empaquetar en bytes. No se implementa empaquetado. Resultados
+posteriores en [captura de tuplas](CAPTURA_TUPLAS_JUAN.md).
+Avance global estimado: **93 %**.

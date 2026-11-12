@@ -1442,3 +1442,17 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     independientes, K=5/10/25: 1/9/16 consultas excedidas y picos residentes
     de 1 833/941/407 MiB. K definitivo sigue pendiente; propuesto empaquetado
     de registros en bytes y solicitada elección, todavía sin implementarlo.
+
+42. Conservar las tuplas y optimizar su captura
+
+    *Fecha: 2026-11-12. Agente: Codex; modelo exacto no registrado.*
+
+    Elección explícita frente al empaquetado en bytes. Conservada D-LT-08;
+    eliminadas búsquedas de esquema para contenedores, reducidos generadores
+    y listas temporales, y precalculados lectores de campos. Commits separados,
+    cada uno verificado con 686 pruebas y publicado. Comparación intercalada
+    contra 18ffce1 exige registros completos y bytes v6 iguales: mediana
+    38,125 -> 29,979 ms en el ensayo acumulado, sin cerrar 20 ms. Sintético
+    K=5/10/25: 482/101/27 ciclos excedidos; consultas 0/36 excedidas por K.
+    Oficial K=25: 21/36 excedidas, máximo 97,483 ms. Se conservan fallos y
+    resúmenes compactos en CAPTURA_TUPLAS_JUAN.md; K y aceptación pendientes.

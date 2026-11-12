@@ -318,4 +318,19 @@ independientes, 5 000 acciones, 36 consultas por K y observador externo de RSS.
 Pico residente 1 833/941/407 MiB y 1/9/16 consultas >=50 ms, respectivamente.
 Regresión 686 pruebas. Detalles en `documentacion/K_OFICIAL_JUAN.md`.
 Ningún K cierra todos los límites: T034 y aceptación siguen pendientes.
-Empaquetado de registros en bytes propuesto, pendiente de elección explícita.
+El usuario eligió después conservar tuplas y optimizar captura; no se empaqueta.
+
+## Captura conservando tuplas (2026-11-12)
+
+Eliminadas búsquedas de esquema de contenedores, reducidos generadores/listas
+temporales y precalculados lectores de campos. Misma representación, raíz,
+registros completos y bytes v6 en comparación intercalada contra versiones previas.
+Regresión tras cada cambio: 686 pruebas. Comparación acumulada: mediana
+38,125 -> 29,979 ms, sin cumplir 20 ms. Sintético K=5/10/25: 482/101/27 ciclos
+>=20 ms y 0/36 consultas >=50 ms por K. K=25: todos los excedidos crearon punto.
+Detalles y comandos en `documentacion/CAPTURA_TUPLAS_JUAN.md`.
+No se cierran PR-LT-001/007, elección definitiva de K ni aceptación final.
+
+Contraste oficial posterior K=25: 5 000 acciones, 36 consultas, mediana
+59,345 ms, máximo 97,483 ms y 21 excedidos; partida intacta y cero HTTP.
+La mejora aislada de captura no demuestra mejora de consulta oficial completa.

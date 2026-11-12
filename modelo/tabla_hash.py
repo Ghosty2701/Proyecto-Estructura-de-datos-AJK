@@ -37,12 +37,14 @@ class TablaDistancias:
         if type(clave) is not int:
             raise ValueError("El ID de sala debe ser un entero")
         indice = self._inicio(clave)
-        paso = self._paso(clave)
+        paso = None
         for _ in range(self.capacidad):
             self.sondeos += 1
             actual = self.casillas[indice]
             if actual is None or actual.sala.sala_id == clave:
                 return indice, actual
+            if paso is None:
+                paso = self._paso(clave)
             indice = (indice + paso) & (self.capacidad - 1)
         raise RuntimeError("No hay casilla libre tras recorrer la tabla")
 

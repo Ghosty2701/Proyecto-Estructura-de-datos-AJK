@@ -1,0 +1,68 @@
+{
+  "id_cripta": "cripta-06",
+  "version_cripta": "f9ed9afa683d",
+  "version_catalogo": "4b9e75a42be5",
+  "salas": 300,
+  "k": 25,
+  "acciones_objetivo": 5000,
+  "acciones_vigentes": 5000,
+  "semilla": 2042,
+  "rondas": 3,
+  "cazadores_totales": 36,
+  "cazadores_activos_inicio": 32,
+  "maximo_acciones_reaplicadas": 23,
+  "partida_intacta": true,
+  "http_consultas": 0,
+  "vista": false,
+  "solicitudes": 46,
+  "presupuesto": 63,
+  "python": "3.13.2",
+  "plataforma": "Windows-11-10.0.26200-SP0",
+  "alcance": "K provisional; vida experimental del jugador 10^9; movimiento por salidas abiertas evitando la salida, alternado con esperas. Enemigos originales sin alterar estadisticas/posiciones. Solo certifica las consultas muestreadas; no mide memoria ni ciclos. Intermedios sin oraculo independiente en este ensayo. Comparacion ABBA sobre la misma partida; cada variante incluye copia/replay/resumen/liberacion, sin trazado de memoria.",
+  "comparacion_hash": [
+    {
+      "variante": "anticipado",
+      "estadisticas": {
+        "cantidad": 36,
+        "minimo_ms": 0.0612,
+        "mediana_ms": 50.233149999999995,
+        "p95_ms": 120.7692,
+        "maximo_ms": 126.804,
+        "excedidos_50ms": 18
+      }
+    },
+    {
+      "variante": "diferido",
+      "estadisticas": {
+        "cantidad": 36,
+        "minimo_ms": 0.0484,
+        "mediana_ms": 49.7265,
+        "p95_ms": 124.039,
+        "maximo_ms": 124.985,
+        "excedidos_50ms": 18
+      }
+    },
+    {
+      "variante": "diferido",
+      "estadisticas": {
+        "cantidad": 36,
+        "minimo_ms": 0.0562,
+        "mediana_ms": 46.22695,
+        "p95_ms": 103.1554,
+        "maximo_ms": 112.5081,
+        "excedidos_50ms": 17
+      }
+    },
+    {
+      "variante": "anticipado",
+      "estadisticas": {
+        "cantidad": 36,
+        "minimo_ms": 0.0524,
+        "mediana_ms": 55.593900000000005,
+        "p95_ms": 133.5533,
+        "maximo_ms": 138.9954,
+        "excedidos_50ms": 19
+      }
+    }
+  ]
+}

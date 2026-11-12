@@ -359,6 +359,24 @@ libera su espacio de trabajo; extraer del heap solo cambia el estado del registr
 
 ## Cierre de investigación
 
+### Ampliación elegida: caché compartida acotada (2026-11-12)
+
+El usuario eligió «Caché compartida acotada con tabla hash propia» frente a
+mantener solo la caché individual y medir K menores. Se conserva Dijkstra y
+el desempate vigente; se comparten únicamente resultados con el mismo origen,
+objetivo, rango y revisión del motor. Se comprueban referencias por identidad.
+
+La tabla propia usa 256 posiciones, doble hashing y salto impar. No crece:
+al superar el 70 % se vacía antes de insertar. Este límite es un parámetro
+inicial del ensayo, no una decisión sobre K. No conserva tablas ni heaps de
+Dijkstra. Aciertos y fallos no consumen azar ni reloj virtual. Apertura/cierre,
+cambio de costo y retroceso vacían la caché; carga y copia parten de una vacía.
+Es un auxiliar derivado por motor: no se persiste ni entra en deltas o puntos.
+
+Validar colisiones, límite, resultados negativos, rangos distintos, identidad,
+puertas, costo, retroceso y carga; comparar las mismas consultas oficiales
+con caché individual y compartida antes de declarar una mejora o aceptación.
+
 No quedan elecciones de estructuras pendientes para esta capacidad. El diseño detallado
 está en [data-model.md](data-model.md), los contratos en
 [contracts/terreno-cazadores.md](contracts/terreno-cazadores.md) y la validación prevista

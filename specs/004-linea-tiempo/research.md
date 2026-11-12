@@ -212,3 +212,11 @@ Captura y consultas deben medirse antes de integrarlo. Se intenta conservar
 formato 6 materializando los puntos para el codec existente al guardar y
 compactandolos al cargar; si esto exige cambiar el contrato, se revisa antes.
 K permanece provisional. No se deshabilita GC ni se excluye del ciclo el registro.
+
+## Caché compartida de rutas: elección 2026-11-12
+
+Tras el perfil oficial, el usuario aprueba investigar/medir una tabla hash propia
+acotada para compartir rutas equivalentes entre cazadores. Detalles y garantías
+en `001-terreno-cazadores/research.md`. Es derivada y se reconstruye vacía al
+copiar/cargar, sin cambiar el formato v6 ni los registros inmutables. Medir
+consultas completas contra caché individual, no solo búsquedas aisladas.

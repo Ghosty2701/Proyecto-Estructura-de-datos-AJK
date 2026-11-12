@@ -19,6 +19,7 @@ from adaptadores.guardado_binario import (
 )
 from comun.ordenamiento import vista_ordenada
 from modelo.agenda_eventos import AgendaEventos
+from modelo.cache_rutas import CacheRutas
 from modelo.efectos import EstadoEfecto, Trampa
 from modelo.evento import Evento
 from modelo.inventario import Inventario, NodoInventario
@@ -346,7 +347,7 @@ class _Registro:
                 if type(objeto) is ActorTurnos and nombre == "ultima_ruta":
                     continue
                 if type(objeto) is MotorEventos and nombre in (
-                        "revision_conexiones", "hubo_dano", "enemigos_entrada",
+                        "revision_conexiones", "cache_rutas", "hubo_dano", "enemigos_entrada",
                         "tiempo_limite", "limite_alcanzado"):
                     continue
                 if type(objeto) is ConocimientoMapa and nombre in (
@@ -653,6 +654,7 @@ def decodificar_modelo(globales, bloques, *, id_cripta=None, version_cripta=None
     extra = None if raices[2] == 0 else _resolver(_Referencia(raices[2]), objetos)
     _validar_modelo(motor, jugador, salas, [objeto for objeto, _, _ in registros])
     motor.revision_conexiones = 0
+    motor.cache_rutas = CacheRutas()
     motor.hubo_dano = motor.enemigos_entrada = False
     if motor.conocimiento is not None:
         motor.conocimiento.reconstruir()

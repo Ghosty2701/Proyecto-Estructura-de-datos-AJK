@@ -16,6 +16,7 @@ from modelo.conocimiento import ConocimientoMapa
 from modelo.motor_eventos import ActorTurnos, MotorEventos
 from modelo.tabla_hash import _mezclar
 from modelo.rastro import SalaRastro
+from modelo.cache_rutas import CacheRutas
 
 _INMUTABLES = (type(None), bool, int, float, str, bytes)
 _VACIA = object()
@@ -106,6 +107,7 @@ def _completar_no_persistentes(original, copia):
         copia.ultima_ruta = None
     elif tipo is MotorEventos:
         copia.revision_conexiones = 0
+        copia.cache_rutas = CacheRutas()
         copia.hubo_dano = False
         copia.enemigos_entrada = False
         copia.tiempo_limite = None

@@ -9,6 +9,7 @@ from modelo.retroceso import HistorialRetroceso
 from modelo.rastro import elegir_destino_rastreador
 from modelo.rastro import Puerta, SalidaRastro
 from modelo.rutas import buscar_ruta
+from modelo.cache_rutas import CacheRutas
 from comun.ordenamiento import vista_ordenada
 import random
 
@@ -76,6 +77,7 @@ class MotorEventos(MotorEfectos):
         self.semilla = semilla
         self.azar = random.Random(semilla)
         self.revision_conexiones = 0
+        self.cache_rutas = CacheRutas()
         self.conocimiento = None
         self.hubo_dano = False
         self.enemigos_entrada = False
@@ -105,6 +107,7 @@ class MotorEventos(MotorEfectos):
         if ((isinstance(objeto, Puerta) and nombre == "abierta") or
                 (isinstance(objeto, SalidaRastro) and nombre == "costo")):
             self.revision_conexiones += 1
+            self.cache_rutas.vaciar()
             if conocimiento is not None and isinstance(objeto, Puerta):
                 jugador = conocimiento.jugador
                 if jugador is not None and jugador.sala_actual is not None:
@@ -297,6 +300,7 @@ class MotorEventos(MotorEfectos):
         self.reloj = reloj_anterior
         # Es derivada y monotonica: no revalida resultados de la historia deshecha.
         self.revision_conexiones += 1
+        self.cache_rutas.vaciar()
         return True
     
     def usar_pergamino(self, jugador, es_pergamino):
@@ -712,8 +716,12 @@ class MotorEventos(MotorEfectos):
                 and previa.rango == cazador.rango
                 and previa.revision_conexiones == self.revision_conexiones):
             return previa
-        nueva = buscar_ruta(cazador.sala_actual, jugador.sala_actual, cazador.rango)
-        nueva.revision_conexiones = self.revision_conexiones
+        nueva = self.cache_rutas.obtener(cazador.sala_actual, jugador.sala_actual,
+                                        cazador.rango, self.revision_conexiones)
+        if nueva is None:
+            nueva = buscar_ruta(cazador.sala_actual, jugador.sala_actual, cazador.rango)
+            nueva.revision_conexiones = self.revision_conexiones
+            self.cache_rutas.insertar(nueva)
         cazador.ultima_ruta = nueva
         return nueva
 

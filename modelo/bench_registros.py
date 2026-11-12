@@ -20,7 +20,7 @@ from controlador.cargar_partida import _GestorConsulta
 from modelo.bench_linea_tiempo import _preparar, estadisticas
 
 
-def medir(revision='de2b408', rondas=5):
+def medir(revision='de2b408', rondas=5, exigir_registros_iguales=False, alternar=False):
     if rondas < 1 or not gc.isenabled() or tracemalloc.is_tracing():
         raise ValueError('rondas positivas, GC habilitado y sin trazado externo')
     ruta = 'adaptadores/instantanea_inmutable.py'
@@ -37,16 +37,15 @@ def medir(revision='de2b408', rondas=5):
             raiz = (p, c.salas_ordenadas())
             identidad = c._identidad(p)
             esperado = codificar_punto(p.motor, p.jugador, raiz[1], identidad, {'partida': p})
-            filas = []
-            for nombre, capturar in (('anterior', anterior.capturar_estado),
-                                     ('compacto', capturar_estado),
-                                     ('compacto', capturar_estado),
-                                     ('anterior', anterior.capturar_estado)):
-                capturas, restauraciones = [], []
-                for _ in range(rondas):
+            referencia = anterior.capturar_estado(raiz)
+            def ensayar(capturar, capturas, restauraciones, cantidad):
+                for _ in range(cantidad):
                     gc.collect()
                     punto, ms = _cronometrar(lambda: capturar(raiz))
                     capturas.append(ms)
+                    if exigir_registros_iguales:
+                        assert punto.raiz == referencia.raiz
+                        assert punto.registros == referencia.registros
                     creados = []
                     (copia, salas), ms = _cronometrar(lambda: punto.reconstruir(creados=creados))
                     restauraciones.append(ms)
@@ -56,6 +55,8 @@ def medir(revision='de2b408', rondas=5):
                     finally:
                         _GestorConsulta(creados).liberar_copia()
                     del punto, copia, salas
+
+            def medir_fila(nombre, capturar, capturas, restauraciones):
                 gc.collect()
                 tracemalloc.start()
                 try:
@@ -69,12 +70,32 @@ def medir(revision='de2b408', rondas=5):
                 fila = {'variante': nombre, 'captura': estadisticas(capturas),
                         'restauracion': estadisticas(restauraciones),
                         'retenida_bytes': retenida, 'pico_bytes': pico, 'registros': registros}
-                filas.append(fila)
+                fila['captura']['excedidos_20ms'] = sum(ms >= 20 for ms in capturas)
                 print(nombre, fila, flush=True)
+                return fila
+
+            variantes = [('anterior', anterior.capturar_estado), ('actual', capturar_estado)]
+            filas = []
+            if alternar:
+                capturas, restauraciones = [[], []], [[], []]
+                for _ in range(rondas):
+                    for i in (0, 1, 1, 0):
+                        ensayar(variantes[i][1], capturas[i], restauraciones[i], 1)
+                # Memoria después de todos los tiempos, sin intercalar trazado.
+                for i, (nombre, capturar) in enumerate(variantes):
+                    filas.append(medir_fila(nombre, capturar, capturas[i], restauraciones[i]))
+            else:
+                for i in (0, 1, 1, 0):
+                    nombre, capturar = variantes[i]
+                    capturas, restauraciones = [], []
+                    ensayar(capturar, capturas, restauraciones, rondas)
+                    filas.append(medir_fila(nombre, capturar, capturas, restauraciones))
             return {'referencia_git': revision, 'acciones': 5000, 'salas': 300,
                     'cazadores': 32, 'semilla': 2026, 'rondas_por_bloque': rondas,
                     'python': platform.python_version(), 'plataforma': platform.platform(),
                     'gc_habilitado': gc.isenabled(), 'resultados': filas,
+                    'registros_iguales_exigidos': exigir_registros_iguales,
+                    'orden': 'ABBA intercalado por captura' if alternar else 'ABBA por bloques',
                     'alcance': 'ABBA; un punto de la misma partida sintetica, fuente excluida '
                                'del trazado; memoria Python, no RSS ni historia completa. '
                                'Tiempos sin tracemalloc; restauracion sin replay/liberacion. '
@@ -87,6 +108,11 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--salida-json', required=True)
+    parser.add_argument('--revision', default='de2b408')
+    parser.add_argument('--rondas', type=int, default=5)
+    parser.add_argument('--exigir-registros-iguales', action='store_true')
+    parser.add_argument('--alternar', action='store_true')
     args = parser.parse_args()
-    Path(args.salida_json).write_text(json.dumps(medir(), ensure_ascii=False, indent=2),
+    resultado = medir(args.revision, args.rondas, args.exigir_registros_iguales, args.alternar)
+    Path(args.salida_json).write_text(json.dumps(resultado, ensure_ascii=False, indent=2),
                                      encoding='utf-8')

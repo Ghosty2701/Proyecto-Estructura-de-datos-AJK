@@ -1,0 +1,62 @@
+{
+  "referencia_git": "18ffce1",
+  "acciones": 5000,
+  "salas": 300,
+  "cazadores": 32,
+  "semilla": 2026,
+  "rondas_por_bloque": 15,
+  "python": "3.13.2",
+  "plataforma": "Windows-11-10.0.26200-SP0",
+  "gc_habilitado": true,
+  "resultados": [
+    {
+      "variante": "anterior",
+      "captura": {
+        "cantidad": 30,
+        "minimo_ms": 16.9311,
+        "mediana_ms": 20.96095,
+        "p95_ms": 32.9245,
+        "maximo_ms": 33.9886,
+        "excedidos_50ms": 0,
+        "excedidos_20ms": 18
+      },
+      "restauracion": {
+        "cantidad": 30,
+        "minimo_ms": 6.7908,
+        "mediana_ms": 9.02615,
+        "p95_ms": 13.7973,
+        "maximo_ms": 20.772,
+        "excedidos_50ms": 0
+      },
+      "retenida_bytes": 1405512,
+      "pico_bytes": 1749800,
+      "registros": 6760
+    },
+    {
+      "variante": "actual",
+      "captura": {
+        "cantidad": 30,
+        "minimo_ms": 15.93,
+        "mediana_ms": 20.768,
+        "p95_ms": 29.8433,
+        "maximo_ms": 57.0935,
+        "excedidos_50ms": 1,
+        "excedidos_20ms": 18
+      },
+      "restauracion": {
+        "cantidad": 30,
+        "minimo_ms": 6.4724,
+        "mediana_ms": 9.857,
+        "p95_ms": 14.173,
+        "maximo_ms": 16.9579,
+        "excedidos_50ms": 0
+      },
+      "retenida_bytes": 1405512,
+      "pico_bytes": 1749800,
+      "registros": 6760
+    }
+  ],
+  "registros_iguales_exigidos": true,
+  "orden": "ABBA intercalado por captura",
+  "alcance": "ABBA; un punto de la misma partida sintetica, fuente excluida del trazado; memoria Python, no RSS ni historia completa. Tiempos sin tracemalloc; restauracion sin replay/liberacion. Bytes v6 equivalentes en todas las restauraciones."
+}

@@ -104,9 +104,14 @@ def capturar_estado(raiz):
         indice = identidades._localizar(valor)
         if identidades.claves[indice] is not _VACIA:
             return identidades.valores[indice]
-        esquema = None if tipo is tuple else _TIPOS.buscar(tipo)
-        if tipo is not tuple and esquema is None:
-            raise TypeError(f'tipo sin esquema de estado: {tipo.__name__}')
+        # Los contenedores tienen una rama explícita al procesar pendientes;
+        # no utilizan campos del esquema ni necesitan buscarlo en la tabla.
+        if tipo is tuple or tipo is list or tipo is dict or tipo is random.Random:
+            esquema = None
+        else:
+            esquema = _TIPOS.buscar(tipo)
+            if esquema is None:
+                raise TypeError(f'tipo sin esquema de estado: {tipo.__name__}')
         numero = len(registros)
         ref = (numero,)
         identidades.insertar(valor, ref, indice=indice)

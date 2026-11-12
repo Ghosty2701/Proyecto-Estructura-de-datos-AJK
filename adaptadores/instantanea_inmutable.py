@@ -6,6 +6,7 @@ no se confunde con los valores del modelo. No retiene objetos del grafo vivo.
 """
 import random
 from dataclasses import dataclass
+from operator import attrgetter
 
 from adaptadores.estado_binario import _ESQUEMAS
 from adaptadores.copia_estado import (
@@ -19,7 +20,9 @@ from modelo.rastro import SalaRastro
 _TIPOS = TablaIdentidades(64)
 _POR_ID = [None] * (max(e[0] for e in _ESQUEMAS) + 1)
 for _esquema in _ESQUEMAS:
-    _TIPOS.insertar(_esquema[1], _esquema)
+    _nombres = _esquema[2]
+    _lector = attrgetter(*_nombres) if len(_nombres) > 1 else None
+    _TIPOS.insertar(_esquema[1], (*_esquema, _lector))
     _POR_ID[_esquema[0]] = _esquema
 
 
@@ -134,10 +137,13 @@ def capturar_estado(raiz):
         elif tipo is random.Random:
             codigo, datos = 20, original.getstate()
         else:
-            codigo, _, obligatorios, opcionales = esquema
+            codigo, _, obligatorios, opcionales, leer = esquema
             # Una sola tupla de campos evita retener contenedores separados
             # para requeridos/opcionales en cada objeto de cada punto.
-            valores = [referencia(getattr(original, n)) for n in obligatorios]
+            if leer is None:
+                valores = [referencia(getattr(original, n)) for n in obligatorios]
+            else:
+                valores = [referencia(v) for v in leer(original)]
             mascara = 0
             for bit, nombre in enumerate(opcionales):
                 valor = getattr(original, nombre, _VACIA)

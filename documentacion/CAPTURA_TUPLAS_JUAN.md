@@ -58,3 +58,25 @@ fuera del límite. Memoria retenida idéntica (1 405 512 bytes); pico trazado
 1 728 368 frente a 1 749 800 bytes. Estos tiempos son de captura aislada,
 no de un ciclo completo. [Resumen](evidencia/captura_sin_generadores_juan.json).
 Reproducir cambiando `--revision cce218d` en el comando anterior.
+
+## Lectores de campos precalculados
+
+La tabla de esquemas existente conserva un `operator.attrgetter` por tipo con
+varios campos requeridos. La captura obtiene esos campos en una llamada; los
+opcionales siguen comprobándose individualmente. Tipos con cero/un campo
+conservan su lectura previa. No se crea otra tabla de búsqueda ni se retienen
+objetos nuevos en los registros; el lector solo forma parte del metadato estático.
+
+Contra `4e82435`, ABBA intercalado con 30 capturas por variante y la misma
+comprobación completa de registros/bytes v6:
+
+| Variante | Mediana (ms) | p95 (ms) | Máximo (ms) | Capturas ≥20 ms |
+|---|---:|---:|---:|---:|
+| anterior | 17,056 | 31,179 | 47,548 | 4/30 |
+| lectores precalculados | 16,676 | 22,499 | 53,747 | 3/30 |
+
+La mediana mejora aproximadamente 2,2 % en esta corrida, con picos todavía
+fuera del presupuesto. Memoria retenida idéntica; pico trazado 1 728 952 bytes
+frente a 1 728 368. No se presenta como solución del límite.
+[Resumen](evidencia/captura_lectores_campos_juan.json).
+Reproducir cambiando `--revision 4e82435` en el comando anterior.

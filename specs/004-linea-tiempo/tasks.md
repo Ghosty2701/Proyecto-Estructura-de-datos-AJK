@@ -312,3 +312,10 @@ Cache compartida D-TC-09 elegida e implementada: regresión 684 pruebas;
 equivalentes. Aún hay excedidos oficiales a 50 ms. Sintético K=5/10/25:
 0/36 consultas excedidas por K, pero ciclos siguen excediendo 20 ms.
 Ver `documentacion/CACHE_RUTAS_JUAN.md`. K definitivo sigue pendiente.
+
+Comparación oficial con K experimental configurable: K=5/10/25, procesos
+independientes, 5 000 acciones, 36 consultas por K y observador externo de RSS.
+Pico residente 1 833/941/407 MiB y 1/9/16 consultas >=50 ms, respectivamente.
+Regresión 686 pruebas. Detalles en `documentacion/K_OFICIAL_JUAN.md`.
+Ningún K cierra todos los límites: T034 y aceptación siguen pendientes.
+Empaquetado de registros en bytes propuesto, pendiente de elección explícita.

@@ -5,6 +5,11 @@ implementada y verificada con 684 pruebas. En la comparación oficial reduce
 43,1 % las búsquedas Dijkstra; todavía hay consultas mayores de 50 ms.
 [Método, capacidad y resultados](CACHE_RUTAS_JUAN.md). K definitivo pendiente.
 
+Comparación posterior de K=5/10/25 en procesos oficiales independientes:
+1/9/16 consultas >=50 ms y picos residentes observados 1 833/941/407 MiB.
+[Condiciones, interpretación y límites](K_OFICIAL_JUAN.md). Ninguno cierra
+los presupuestos; 686 pruebas pasan y el valor del juego sigue provisional.
+
 **Actualización 2026-11-12 — D-LT-08:** el usuario eligió registros inmutables
 por ID para los puntos. Implementados y verificados con persistencia v6;
 [resultados y límites](REGISTROS_INMUTABLES_JUAN.md). Las consultas sintéticas

@@ -1436,3 +1436,9 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     Regresión 684 pruebas. ABBA oficial: 43,1 % menos búsquedas, resultados
     iguales; los límites siguen pendientes. Comparar capacidad 256/1024 no
     evita más búsquedas, por lo que se mantiene 256. K no cambia.
+
+    Se añadió K experimental al benchmark oficial (48a5ba9), con 686 pruebas,
+    y un observador externo optativo de memoria (4086202). En tres procesos
+    independientes, K=5/10/25: 1/9/16 consultas excedidas y picos residentes
+    de 1 833/941/407 MiB. K definitivo sigue pendiente; propuesto empaquetado
+    de registros en bytes y solicitada elección, todavía sin implementarlo.

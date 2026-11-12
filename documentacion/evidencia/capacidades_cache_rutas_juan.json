@@ -1,0 +1,88 @@
+{
+  "id_cripta": "cripta-06",
+  "version_cripta": "f9ed9afa683d",
+  "version_catalogo": "4b9e75a42be5",
+  "salas": 300,
+  "k": 25,
+  "acciones_objetivo": 5000,
+  "acciones_vigentes": 5000,
+  "semilla": 2042,
+  "rondas": 3,
+  "cazadores_totales": 36,
+  "cazadores_activos_inicio": 32,
+  "maximo_acciones_reaplicadas": 23,
+  "partida_intacta": true,
+  "http_consultas": 0,
+  "vista": false,
+  "solicitudes": 46,
+  "presupuesto": 63,
+  "python": "3.13.2",
+  "plataforma": "Windows-11-10.0.26200-SP0",
+  "alcance": "K provisional; vida experimental del jugador 10^9; movimiento por salidas abiertas evitando la salida, alternado con esperas. Enemigos originales sin alterar estadisticas/posiciones. Solo certifica las consultas muestreadas; no mide memoria ni ciclos. Intermedios sin oraculo independiente en este ensayo. ABBA sobre los mismos puntos compactos y consultas. Incluye contadores de Dijkstra y de cache; resúmenes equivalentes.",
+  "comparacion_cache": [
+    {
+      "variante": "compartida",
+      "capacidad": 256,
+      "estadisticas": {
+        "cantidad": 36,
+        "minimo_ms": 0.0449,
+        "mediana_ms": 36.27625,
+        "p95_ms": 54.9452,
+        "maximo_ms": 63.247,
+        "excedidos_50ms": 7
+      },
+      "busquedas_dijkstra": 3195,
+      "aciertos_compartidos": 2418,
+      "fallos_compartidos": 3195
+    },
+    {
+      "variante": "compartida",
+      "capacidad": 1024,
+      "estadisticas": {
+        "cantidad": 36,
+        "minimo_ms": 0.0477,
+        "mediana_ms": 35.7131,
+        "p95_ms": 48.9513,
+        "maximo_ms": 53.0857,
+        "excedidos_50ms": 1
+      },
+      "busquedas_dijkstra": 3195,
+      "aciertos_compartidos": 2418,
+      "fallos_compartidos": 3195
+    },
+    {
+      "variante": "compartida",
+      "capacidad": 1024,
+      "estadisticas": {
+        "cantidad": 36,
+        "minimo_ms": 0.0496,
+        "mediana_ms": 39.0677,
+        "p95_ms": 58.8442,
+        "maximo_ms": 60.8401,
+        "excedidos_50ms": 6
+      },
+      "busquedas_dijkstra": 3195,
+      "aciertos_compartidos": 2418,
+      "fallos_compartidos": 3195
+    },
+    {
+      "variante": "compartida",
+      "capacidad": 256,
+      "estadisticas": {
+        "cantidad": 36,
+        "minimo_ms": 0.0432,
+        "mediana_ms": 41.086600000000004,
+        "p95_ms": 73.1553,
+        "maximo_ms": 82.9237,
+        "excedidos_50ms": 7
+      },
+      "busquedas_dijkstra": 3195,
+      "aciertos_compartidos": 2418,
+      "fallos_compartidos": 3195
+    }
+  ],
+  "capacidades_comparadas": [
+    256,
+    1024
+  ]
+}

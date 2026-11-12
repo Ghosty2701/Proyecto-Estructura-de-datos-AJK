@@ -1,5 +1,10 @@
 # Documento de Decisiones de Diseño
 
+**D-TC-09 (2026-11-12):** caché compartida acotada elegida por el usuario,
+implementada y verificada con 684 pruebas. En la comparación oficial reduce
+43,1 % las búsquedas Dijkstra; todavía hay consultas mayores de 50 ms.
+[Método, capacidad y resultados](CACHE_RUTAS_JUAN.md). K definitivo pendiente.
+
 **Actualización 2026-11-12 — D-LT-08:** el usuario eligió registros inmutables
 por ID para los puntos. Implementados y verificados con persistencia v6;
 [resultados y límites](REGISTROS_INMUTABLES_JUAN.md). Las consultas sintéticas

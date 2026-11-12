@@ -285,3 +285,12 @@ PR-TC-001: [referencia oficial](../../documentacion/evidencia/referencia_terreno
 PR-TC-002/003: [comparaciones](../../documentacion/evidencia/mediciones_terreno_cazadores.json)
 y [salida completa](../../documentacion/evidencia/bench_terreno_cazadores.txt).
 [Registro de pruebas](../../documentacion/evidencia/pruebas_terreno_cazadores.txt).
+
+## D-TC-09: caché compartida elegida (2026-11-12)
+
+Tabla acotada de 256 casillas implementada, invalidación por puertas/costos y
+retroceso; vacía al cargar/copiar. Regresión 684 pruebas. ABBA oficial de las
+mismas consultas/puntos: 5 613 búsquedas individuales frente a 3 195 compartidas,
+resultados iguales. Comparación 256/1 024: sin aciertos adicionales al ampliar;
+se conservan 256 casillas. Los presupuestos aún no quedan certificados.
+Método, comandos y resúmenes en `documentacion/CACHE_RUTAS_JUAN.md`.

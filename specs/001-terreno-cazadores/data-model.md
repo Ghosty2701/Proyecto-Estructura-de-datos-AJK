@@ -79,6 +79,16 @@ hash, el heap sigue apuntando a los mismos registros. No se mezcla con AgendaEve
 
 ## ResultadoRuta — un último resultado por cazador
 
+Ampliación D-TC-09 (2026-11-12): el último resultado por actor se complementa
+con `CacheRutas` por motor. La clave es identidad de origen/objetivo, rango y
+revisión; el valor es el mismo ResultadoRuta, incluido el resultado sin ruta.
+La tabla propia de doble hashing tiene 256 casillas y máximo 179 entradas.
+Cuando otra inserción superaría el 70 %, se vacía; no crece ni retiene heap
+o tabla de una búsqueda. También se vacía al invalidar conexiones o retroceder.
+Es derivada: carga/copia crean una vacía y el esquema binario v6 la excluye.
+Los contadores de aciertos/fallos/reinicios son diagnósticos y no son estado
+reversible ni se persisten. La equivalencia con recalcular sigue siendo obligatoria.
+
 | Campo lógico | Contenido |
 | --- | --- |
 | origen / objetivo | Salas de la consulta |

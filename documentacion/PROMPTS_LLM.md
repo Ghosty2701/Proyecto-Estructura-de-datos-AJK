@@ -1424,3 +1424,15 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     mediciones ABBA y 674 pruebas. El push nuevo vuelve a solicitar autenticación;
     se reintenta por la vía normal y se consulta al usuario mientras siguen las
     mediciones. Ahorro de memoria por punto 9,7 %; los límites siguen pendientes.
+
+41. Ya completé el inicio de sesión / Caché compartida acotada con tabla hash propia (recomendado)
+
+    *Fecha: 2026-11-12. Agente: Codex; modelo exacto no registrado.*
+
+    Elección explícita de D-TC-09. Se resolvió la selección entre varias cuentas
+    de Git Credential Manager con la cuenta de Juan; preferencia local al repo,
+    sin cambio global ni acceso a secretos. Publicados cambios pendientes.
+    Spec y código de caché separados en a2737fe y 2f11121, ambos publicados.
+    Regresión 684 pruebas. ABBA oficial: 43,1 % menos búsquedas, resultados
+    iguales; los límites siguen pendientes. Comparar capacidad 256/1024 no
+    evita más búsquedas, por lo que se mantiene 256. K no cambia.

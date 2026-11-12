@@ -10,6 +10,13 @@ hasta D-TC-08 y sus variantes fueron elegidas por el usuario. Las 38 tareas de
 finales y sus límites se incorporaron a documentacion/DOCUMENTO_DECISIONES.md.
 El identificador de capacidad es `001-terreno-cazadores`; la rama Git real es `main`.
 
+**Ampliación 2026-11-12 (D-TC-09):** el usuario eligió caché compartida acotada
+con tabla hash propia. Complementa el último resultado por actor: comparte
+únicamente consultas equivalentes, sin sustituir Dijkstra. Se invalida ante
+cambios de conexiones/costos y retroceso, y se crea vacía al cargar/copiar.
+Los apartados que describen «solo el último resultado» corresponden al diseño
+anterior; esta ampliación los sustituye respecto del almacenamiento derivado.
+
 ## Summary
 
 Añadir costo a las salidas existentes y rango al cazador. Resolver cada persecución con
@@ -64,6 +71,7 @@ históricos en evidencia, y los posteriores a niebla en README.
 | D-TC-06a | Resuelta al retirar la matriz; sin índice adicional de vecinos |
 | D-TC-07 | Solo el último resultado y sus condiciones por cazador |
 | D-TC-08 | Capacidad inicial 32, duplicación, salto impar y ampliación antes de superar 70 % |
+| D-TC-09 | Caché compartida por motor, hash propio de 256 posiciones, vaciado antes de superar 70 %, sin crecimiento |
 
 La configuración de tabla es un punto de partida aprobado, no una garantía de tiempo.
 Cambiar la estructura o su política acordada exige volver a consultar al usuario.

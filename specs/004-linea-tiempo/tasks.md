@@ -306,3 +306,9 @@ los mismos puntos y consultas. Compactación de campos de registros por ID:
 Regresión: 674 pruebas. Corrida conjunta posterior de K=5/10/25 conserva picos
 superiores a 20/50 ms y no prueba mejora de latencia. Resultados y comandos en
 `documentacion/OPTIMIZACION_COSTOS_JUAN.md`. T034/aceptación siguen pendientes.
+
+Cache compartida D-TC-09 elegida e implementada: regresión 684 pruebas;
+43,1 % menos búsquedas Dijkstra en el ensayo oficial ABBA, con resultados
+equivalentes. Aún hay excedidos oficiales a 50 ms. Sintético K=5/10/25:
+0/36 consultas excedidas por K, pero ciclos siguen excediendo 20 ms.
+Ver `documentacion/CACHE_RUTAS_JUAN.md`. K definitivo sigue pendiente.

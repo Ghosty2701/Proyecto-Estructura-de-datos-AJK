@@ -1,5 +1,12 @@
 # Documento de Decisiones de Diseño
 
+**Actualización 2026-11-12 — D-LT-08:** el usuario eligió registros inmutables
+por ID para los puntos. Implementados y verificados con persistencia v6;
+[resultados y límites](REGISTROS_INMUTABLES_JUAN.md). Las consultas sintéticas
+medidas cumplen 50 ms con K=5/10/25, pero la referencia oficial K=25 y los
+ciclos con creación de puntos siguen excediendo sus límites. K definitivo,
+medición de memoria nueva y aceptación final permanecen pendientes.
+
 **Estado actual (2026-11-11):** corrida conjunta ejecutada y documentación
 independiente de K revisada. El [informe consolidado](CIERRE_MEDICIONES_P2.md)
 enlaza las muestras, entorno, pruebas y pendientes. Las secciones fechadas

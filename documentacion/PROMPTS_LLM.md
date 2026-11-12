@@ -1396,3 +1396,21 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     muestras individuales ni manifiestos de hashes. Se omiten estos y se
     conservan resumenes, condiciones, resultados fallidos y benchmarks reproducibles.
     La exportacion predeterminada produce resumenes. Regresion: 665 pruebas.
+
+38. Haz el push y continuemos con los limites de consultas y ciclos
+
+    *Fecha: 2026-11-12. Agente: Codex; modelo exacto no registrado.*
+
+    Tras «Ya inicié sesión; reintenta el push», publicado b4cd6a6 en origin/main.
+    Corregidas retenciones y medidas cargas sintéticas/oficiales. No se ocultaron
+    resultados que exceden los presupuestos ni se cambió K.
+
+39. Extender el prototipo a registros inmutables por ID (recomendado)
+
+    *Fecha: 2026-11-12. Agente: Codex; modelo exacto no registrado.*
+
+    Elección explícita ante la consulta de representación de puntos. D-LT-08:
+    registros inmutables, reconstrucción con alias/ciclos y guardado v6 compatible.
+    Resultado sintético favorable en consultas; referencia oficial y ciclos aún
+    exceden límites. Perfil adicional identifica replay de rutas de cazadores.
+    Resúmenes compactos, comandos y pendientes en REGISTROS_INMUTABLES_JUAN.md.

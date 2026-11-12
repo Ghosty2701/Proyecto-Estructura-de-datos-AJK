@@ -285,3 +285,15 @@ pendiente son historicas y quedan superadas por este registro.
 T035/T036: parte independiente de K completa; falta incorporar K definitivo.
 T037: matriz revisada y regresion ejecutada; declaracion final de aceptacion
 pendiente por los presupuestos y K. No se certifica 20/50 ms ni se modifica K.
+
+## Juan: registros inmutables por ID (2026-11-12)
+
+D-LT-08 elegida expresamente por el usuario e implementada. Captura sin
+retener modelos, reconstrucción de alias/ciclos y conversión compatible con
+guardado v6. Corregidas retenciones del copiador y de consultas temporales.
+Medidos 5 000 pasos con tres K en el mismo ensayo de ciclos/consultas.
+Resultado sintético: 0/36 consultas >=50 ms para cada K=5/10/25. Referencia
+oficial K=25: 23/36 excedidos; creación de puntos sigue excediendo 20 ms.
+Perfil diagnóstico: domina el replay de cazadores, en particular sus rutas.
+No se cierran PR-LT-001/007, T034 ni aceptación; memoria nueva pendiente.
+Detalles y comandos en `documentacion/REGISTROS_INMUTABLES_JUAN.md`.

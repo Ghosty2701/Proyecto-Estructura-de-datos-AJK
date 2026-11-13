@@ -89,3 +89,38 @@ reconstruir modelos. Inicio con crecimiento 39,630 ms y limpieza separada de
 9 000 tumbas 4,098 ms. No implica cumplimiento de ciclos/consultas.
 Detalles en `documentacion/INDICE_VERSIONADO_JUAN.md`. CI-005 sigue abierto;
 completada únicamente la subfase de estructura de CI-006, sin conexión al motor.
+
+## Contrato del capturador experimental y ciclo de vida
+
+Se desarrollará con los hashes y vectores ya elegidos, sin sustituir contenedores
+del modelo ni instalar interceptores globales. Un registro por sesión conserva
+fuertemente cada objeto y compara identidad, asignando IDs monótonos que no se
+reciclan tras una publicación. Esto evita ABA también para list/dict/tuple.
+Las marcas pendientes se deduplican en las entradas del mismo hash, fuera de undo.
+
+La primera captura descubre todo el grafo. En las siguientes se leen atributos
+solo de objetos marcados y nuevos; referenciar un objeto conocido no lo visita.
+El llamador debe marcar el contenedor al cambiar sus elementos, el objeto al
+escribir/borrar atributos y Random al consumir/restaurar azar. Una referencia
+nueva descubre recursivamente sus registros, conservando alias y ciclos.
+
+Cada publicación traza alcanzabilidad **sobre registros inmutables**, no sobre
+atributos vivos. Retira registros y referencias fuertes inalcanzables, incluso
+ciclos aislados, y recompone el hash de identidades al tamaño del grafo actual.
+Este mantenimiento O(C + E) no es O(D): se contabilizará y puede descartar el
+piloto si resulta caro. Entre puntos se retienen el último grafo y los objetos
+marcados; cerrar libera todo el registro, sin invalidar puntos anteriores.
+
+La captura prepara índices y registros temporales. Solo tras codificar, retirar
+y verificar publica la versión y limpia marcas. Un fallo conserva la versión
+previa y todas las marcas para reintentar. Los puntos contienen escalares/tuplas,
+sin capturador, objetos vivos ni cadena de antecesores. Materializar convierte
+IDs dispersos a ordinales locales y reutiliza el reconstructor ya probado.
+
+El oráculo completo estará habilitado por defecto en el piloto: captura el
+estado vivo y el reconstruido, compara tipos/bits y grafo completo antes de
+publicar y rechaza marcas omitidas. Deshabilitarlo explícitamente solo permite
+medir cargas controladas con marcas conocidas; no demuestra cobertura del juego.
+La cobertura por fronteras de la auditoría seguirá abierta hasta instrumentar
+y verificar cada escritura, navegación y undo. No se conecta este componente
+a la línea de tiempo productiva por pasar pruebas de marcas manuales.

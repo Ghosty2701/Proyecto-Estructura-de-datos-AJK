@@ -7,9 +7,12 @@ import gc
 import hashlib
 import json
 import platform
+import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from time import perf_counter_ns
+from types import ModuleType
 
 from adaptadores.bench_persistencia import _paquete, _cargador, _ejecutar, _metadatos
 from adaptadores.captura_incremental import CapturadorIncremental, PuntoIncremental
@@ -139,6 +142,12 @@ def medir(acciones=5000, salas=300, cazadores=32, valores_k=(5, 10, 25),
                         'maximo_acciones_reaplicadas': max(m['acciones_reaplicadas'] for m in medidas),
                         'objetos_codificados_min_max': [min(codificados), max(codificados)] if codificados else None,
                         'campos_leidos_min_max': [min(campos), max(campos)] if campos else None,
+                        'indices_finales': ({nombre: captura.estadisticas.get(nombre)
+                            for nombre in ('registros_vivos', 'capacidad_version',
+                                'capacidad_identidades', 'capacidad_inverso',
+                                'tumbas_identidades', 'tumbas_inverso',
+                                'recomposiciones_identidades', 'recomposiciones_inverso')}
+                            if captura else None),
                         'puntos': len(partida.linea_tiempo.puntos), 'sha256_bytes_v6_puntos': firma_puntos,
                         'partida_intacta': True, 'http': 0}
                 escenarios.append(fila)
@@ -162,13 +171,53 @@ def medir(acciones=5000, salas=300, cazadores=32, valores_k=(5, 10, 25),
             'certifica referencia oficial; conserva todos los picos en estadísticas.'}
 
 
+def comparar_indice(revision, acciones=5000, salas=300, cazadores=32, rondas=3, muestras=12):
+    """Misma historia K25, antiguo/actual/actual/antiguo, todos los puntos v6."""
+    codigo = subprocess.check_output(
+        ['git', 'show', f'{revision}:adaptadores/captura_incremental.py'], encoding='utf-8')
+    nombre = '_captura_indice_referencia'
+    anterior = ModuleType(nombre)
+    original = globals()['CapturadorIncremental']
+    sys.modules[nombre] = anterior
+    try:
+        exec(compile(codigo, f'{revision}:captura_incremental.py', 'exec'), anterior.__dict__)
+        # Mismo formato de versión: el adaptador de consultas debe reconocerlo.
+        anterior.PuntoIncremental = PuntoIncremental
+        escenarios = []
+        firma = None
+        for variante, clase in (('anterior', anterior.CapturadorIncremental),
+                                ('inverso', original), ('inverso', original),
+                                ('anterior', anterior.CapturadorIncremental)):
+            globals()['CapturadorIncremental'] = clase
+            resultado = medir(acciones=acciones, salas=salas, cazadores=cazadores,
+                             valores_k=(25,), comparar=False, rondas=rondas, muestras=muestras)
+            fila = resultado['escenarios'][0]
+            fila['variante_indice'] = variante
+            if firma is None:
+                firma = fila['sha256_bytes_v6_puntos']
+            assert fila['sha256_bytes_v6_puntos'] == firma
+            escenarios.append(fila)
+        resultado['escenarios'] = escenarios
+        resultado['revision_referencia'] = revision
+        resultado['orden'] = 'ABBA K25 contiguo, historias independientes'
+        resultado['alcance'] += (' Comparación exclusiva de índices del piloto; '
+                                 'no compara contra producción. Todos los puntos v6 '
+                                 'coinciden entre las cuatro historias.')
+        return resultado
+    finally:
+        globals()['CapturadorIncremental'] = original
+        sys.modules.pop(nombre, None)
+
+
 if __name__ == '__main__':
     import argparse
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--acciones', type=int, default=5000)
     p.add_argument('--solo-k25', action='store_true')
+    p.add_argument('--comparar-indice', help='revisión Git del piloto anterior, para ABBA K25')
     p.add_argument('--salida-json', required=True)
     args = p.parse_args()
-    Path(args.salida_json).write_text(json.dumps(medir(acciones=args.acciones,
-        valores_k=(25,) if args.solo_k25 else (5, 10, 25)), ensure_ascii=False, indent=2),
-        encoding='utf-8')
+    resultado = (comparar_indice(args.comparar_indice, acciones=args.acciones)
+                 if args.comparar_indice else medir(acciones=args.acciones,
+                     valores_k=(25,) if args.solo_k25 else (5, 10, 25)))
+    Path(args.salida_json).write_text(json.dumps(resultado, ensure_ascii=False, indent=2), encoding='utf-8')

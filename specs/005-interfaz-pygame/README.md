@@ -7,17 +7,20 @@ todavía no contiene una interfaz gráfica implementada.**
 - Base publicada: `6107b98` de `main`, sin cambiar su estado de Parte II ni EX-01.
 - [Especificación](spec.md): siete historias, 24 requisitos funcionales y 23 escenarios.
 - [Revisión de calidad](checklists/requirements.md): 16/16 criterios revisados.
+- [Plan técnico en borrador](plan.md) y [alternativas investigadas](research.md): pendientes de tres elecciones del usuario antes del diseño definitivo.
 - Carpeta de trabajo local usada: `C:/Users/pipro/Downloads/Proyecto-Estructura-de-datos-AJK-pygame`.
 
 ## Avance exclusivo de Pygame
 
-**Estimación inicial: ~10 %**, orientativa y pendiente de afinar con el plan.
-Se completaron la especificación, las aclaraciones visuales y la revisión de
-calidad. La implementación gráfica, sus pruebas y la validación visual todavía
-no han comenzado; ese 10 % corresponde a la preparación, no a funciones gráficas
-ya disponibles.
+**Estimación actual: ~15 %**, orientativa. Se completaron la especificación,
+las aclaraciones visuales y su revisión de calidad; se prepararon la arquitectura
+estándar y las alternativas de estructuras, persistencia y disposición del mapa.
+La sonda temporal del lector v6 confirmó que admite una clave primitiva opcional.
+La implementación gráfica, sus pruebas y la validación visual todavía no han
+comenzado; el porcentaje corresponde a preparación, no a funciones disponibles.
 
-El siguiente paso es planificar la integración técnica. Esta ampliación es una
+El siguiente paso es recibir las tres elecciones del usuario y completar el
+modelo de datos, contratos y guía de validación del plan. Esta ampliación es una
 exigencia personal del usuario, independiente de la nota y del avance de Parte II.
 En adelante se reporta únicamente su propio progreso. La integración en `main`
 se evaluará cuando funcione y se haya validado la compatibilidad.
@@ -56,15 +59,15 @@ plantillas compuestas y constitución. No se cambia de versión de spec-kit.
 |---|---|---|
 | Especificar (`$speckit-specify`) | Completada | Comportamiento y escenarios en `spec.md` |
 | Resolver ambigüedades | Decisiones visuales aclaradas durante la especificación | Mapa, niebla, turnos y recuerdos registrados |
-| Planificar (`$speckit-plan`) | Siguiente paso | Alternativas, decisiones aprobadas, arquitectura y contratos |
+| Planificar (`$speckit-plan`) | En curso; pendientes tres elecciones | Arquitectura y alternativas preparadas; diseño definitivo después de las respuestas |
 | Descomponer (`$speckit-tasks`) | Pendiente del plan | Tareas enlazadas a requisitos, escenarios y pruebas |
 | Analizar (`$speckit-analyze`) | Pendiente de los artefactos anteriores | Revisión de consistencia y cobertura |
 | Implementar (`$speckit-implement`) | No iniciada | Código, pruebas y validación visual por tareas |
 
-El próximo comando es `$speckit-plan` trabajando en esta rama. Debe revisar
-la integración de la vista, los turnos, los sprites y las observaciones
-recordadas, con alternativas para cualquier estructura nueva. Según AGENTS.md,
-una recomendación del agente no sustituye la elección del usuario.
+La fase activa es `$speckit-plan` en esta rama. Se presentaron las alternativas
+D-IG-05/06/07, con ventajas, desventajas y recomendación. Según AGENTS.md, una
+recomendación del agente no sustituye la elección del usuario. No iniciar
+`$speckit-tasks` antes de cerrar esas elecciones y los contratos del plan.
 
 No se introducen aquí dependencias, arte ni código gráfico. Los escenarios
 nuevos se probarán al implementar; la revisión documental no los marca aprobados.

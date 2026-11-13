@@ -1679,3 +1679,29 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     de ~10 % por especificación, aclaraciones y revisión; todavía sin código
     gráfico, pruebas ni validación visual. Planificación como siguiente fase.
     No se modifica main ni se recalcula el avance o la nota de Parte II.
+
+58. Continuar la planificación técnica y consultar solo las decisiones necesarias
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Usuario: «Continuemos con la planificacion tecnica, pregunta todo lo que
+    necesite de mi aporte, y simplemente continua con todo lo estandard o lo
+    que no consideres necesario parar a preguntar».
+
+    Aplicada la habilidad `$speckit-plan` local. Ejecutado el script
+    `.specify/scripts/powershell/setup-plan.ps1 -Json` y leídas constitución,
+    especificación, modelo, controlador, carga, serializador y cliente HTTP.
+    Revisión de lectura en paralelo conforme a la fase de investigación de la
+    habilidad, sin modificaciones de los revisores. Consultadas fuentes oficiales
+    de Pygame y PyPI; comprobada disponibilidad del wheel 2.6.1 para CPython 3.13
+    Windows x86-64, sin instalarlo. Una sonda temporal verificó carga de una clave
+    adicional primitiva en v6 y su descarte al re-guardar desde consola.
+
+    Preparados plan.md y research.md con arquitectura estándar, integración de
+    órdenes, viaje incremental y cobertura de los 23 escenarios. Se preguntaron
+    tres elecciones: índice propio/vectores frente a búsqueda lineal, datos
+    opcionales v6 frente a archivo compañero, y croquis direccional frente a
+    cuadrícula por ID. Permanecen pendientes; no se registran recomendaciones
+    como decisiones aprobadas. La puerta de diseño definitivo queda abierta
+    hasta recibir las respuestas. Sin hooks registrados ni código de interfaz.
+    Avance exclusivo de Pygame estimado en ~15 %, todavía sin implementación.

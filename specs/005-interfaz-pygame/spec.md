@@ -3,7 +3,7 @@
 **Rama**: `005-interfaz-pygame`, separada de `main`.
 **Base**: `6107b98`, versión funcional publicada de Parte II con EX-01.
 **Creación**: 2026-11-13.
-**Estado**: Especificada; decisiones visuales aclaradas con el usuario. Pendiente de planificación, tareas e implementación.
+**Estado**: Especificada; decisiones visuales aclaradas con el usuario. Planificación técnica en curso, pendiente de elecciones de diseño; tareas e implementación no iniciadas.
 **Entrada**: Adaptar el proyecto a Pygame siguiendo SDD con GitHub spec-kit, en una rama adicional que conserve la versión actual.
 **Restricción solicitada**: Pygame para la presentación gráfica. Es una elección explícita del usuario; esta especificación no elige estructuras, algoritmos, módulos ni formatos auxiliares.
 

@@ -6,8 +6,9 @@
 [quickstart.md](quickstart.md).
 **Fecha**: 2026-11-08.
 
-**Estado**: tareas generadas; ninguna ejecutada. Antes de implementar, ejecutar
-`$speckit-analyze` y confirmar la especificación en Git antes del código correspondiente.
+**Estado actual**: 38/38 tareas ejecutadas, con trazabilidad y evidencia al final.
+Las cifras anteriores a la línea de tiempo son históricas; la aceptación global
+de 20 ms con historia se sigue en `documentacion/ESTADO_ENTREGA_P2.md`.
 **Tests**: la especificación exige evidencia por escenario. Se planifican pruebas
 funcionales y de invariantes; cada caso cita sus requisitos. Los archivos de prueba
 ya están creados y sus ubicaciones verificadas figuran al final del documento.

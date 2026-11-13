@@ -1,5 +1,17 @@
 # Documento de Decisiones de Diseño
 
+**Cierre de integración y K (2026-11-13):** se recontrastó el enunciado con las
+cuatro capacidades, sin seguir los prototipos rechazados como requisitos nuevos.
+Juan eligió **K=10**, ya aplicado a nuevas partidas/replay; cargar sin opción
+conserva el K guardado. D-LT-07 y sus comparaciones están en
+[research.md](../specs/004-linea-tiempo/research.md). Producción oficial actual:
+5 000 acciones, 36 consultas, máxima 35,9904 ms, 0 excedidas, RSS 400,14 MiB.
+`--bench` incluye historia por defecto, exporta entorno y permite otra carpeta.
+751 pruebas pasan. Pendiente: ciclo de 20 ms, con 14/5 001 excedidos sintéticos,
+todos al crear punto. [Análisis y trabajo restante](REANALISIS_ENTREGA_P2.md),
+[estado vigente](ESTADO_ENTREGA_P2.md), [entrada por problema §5](../DECISIONES.md).
+Los valores siguientes son registros históricos de cada etapa.
+
 **Índice inverso evaluado (2026-11-13):** elegido por el usuario e implementado
 con bajas/tumbas atómicas. 744 pruebas, dos ABBA de cuatro historias de 5 000
 acciones, puntos v6 equivalentes. Añadidos búsqueda inicial rápida, observación

@@ -7,16 +7,19 @@ condiciones adicionales del enunciado. No se continuará su ampliación como
 dependencia de entrega. Los únicos bloqueos funcionales/documentales pendientes
 se siguen aquí y en `documentacion/REANALISIS_ENTREGA_P2.md`.
 
-- [ ] ENT-001 Corregir `main.py --bench` para incluir línea de tiempo por defecto,
+- [X] ENT-001 Corregir `main.py --bench` para incluir línea de tiempo por defecto,
   conservar alias, configurar carpeta de salida, informar fallos y entorno.
   Pruebas de CLI sin vista/red y ejecución real pequeña. PR-LT-005/008; P2 §6.3.
-- [ ] ENT-002 Incorporar entradas raíz DECISIONES.md/PROMPTS_LLM.md, corregir
+- [X] ENT-002 Incorporar entradas raíz DECISIONES.md/PROMPTS_LLM.md, corregir
   README/estado actual y distinguir cifras vigentes de históricas. P2 §7.1/7.2.
-- [ ] ENT-003 Reconciliar los 23 casos del apéndice B con especificaciones,
+- [X] ENT-003 Reconciliar los 23 casos del apéndice B con especificaciones,
   tareas, código y funciones de prueba, y verificar regresión. P2 §2.5/7.4.
 - [ ] ENT-004 Cerrar K por elección del usuario y validar presupuestos sobre
   producción. No activar ni medir más prototipos rechazados. FR-LT-012,
   PR-LT-001/007, PR-TC-001. Dep.: evidencia de producción y decisión de K.
+  - [X] K=10 elegido y aplicado; sin alterar K guardado al cargar sin opción.
+  - [X] 5 000 acciones oficiales, 36 consultas, máximo 35,9904 ms, cero excedidos.
+  - [ ] Ciclo <20 ms: persisten 14 excedidos sintéticos, todos con punto.
 
 **Traslado al repositorio original:** el trabajo posterior a T028 se realizó
 en una copia descargada sin `.git` y se trasladó sobre la base `4c34c88` del
@@ -24,7 +27,9 @@ repositorio original. Las referencias históricas a ausencia de Git describen
 esa copia; no describen el repositorio actual. Los commits del traslado son
 nuevos y no reconstruyen el historial perdido de la copia.
 
-**Fecha**: 2026-11-09. **Estado**: 32/37 tareas ejecutadas (fases 1 a 8 y parte de fase 9). T018 y T020 no requirieron cambios de código: la interrupción existente y el diseño de D-LT-05 ya cubrían los casos.
+**Revisión**: 2026-11-13. **Estado**: T001–T036 ejecutadas; T037 parcial por
+PR-LT-007 (20 ms). Regresión/matriz ejecutadas, K=10 elegido y consultas oficiales
+conformes. T018/T020 ya estaban cubiertas por el comportamiento existente.
 **Entrada**: [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md),
 [data-model.md](data-model.md), [contrato](contracts/linea-tiempo.md) y
 [quickstart.md](quickstart.md). Rama real: `main`.
@@ -35,9 +40,9 @@ arreglo de acciones vigentes por k; copiador de grafo propio con tabla de
 identidades propia; persistencia de todos los puntos en el formato 6. No elegir
 otras estructuras. Prohibidos para estos problemas: `dict`/`set` como índice,
 `bisect`, `heapq`, `collections`, `copy.deepcopy` y bibliotecas de grafos.
-D-LT-07 (K por defecto) la decide el usuario en T034 con las mediciones de T032.
-Mientras tanto se usa la constante provisional `K_POR_DEFECTO = 25`, marcada como
-pendiente de decisión.
+D-LT-07 cerrada: Juan eligió `K_POR_DEFECTO = 10` con las comparaciones de
+consultas/memoria; decisión y límites en research.md. Las menciones posteriores
+a 25 provisional pertenecen al registro histórico de las etapas anteriores.
 
 Formato: `- [ ] Tnnn [P opcional] [USn en historias] acción, archivos, dependencias y requisitos`.
 [P] indica que la tarea puede hacerse en archivos distintos una vez completas sus
@@ -135,10 +140,10 @@ usuario y la documentación y trazabilidad finales.
 - [X] T030 [P] Añadir a modelo/bench_linea_tiempo.py las comparaciones adelante frente a atrás (costo por acción re-simulada frente a deshecha y memoria de deltas registrados) y copiador propio frente al serializador binario, con las cargas de research.md. Dep.: T028. Requisitos: PR-LT-006; D-LT-01, D-LT-04.
 - [X] T031 Repetir en el bench existente (modelo/bench_modelo.py, adaptadores/bench_adaptadores.py) las mediciones de agenda de eventos e historial de retroceso de P1 con la carga nueva (cazadores, costos variables y registro de la línea) y comparar con la evidencia de P1. Dep.: T028. Requisitos: PR-LT-007; §5.6.
 - [X] T032 Integrar T029–T031 en `python main.py --bench` (sin vista) y guardar las salidas en documentacion/evidencia/bench_linea_tiempo.txt y documentacion/evidencia/mediciones_linea_tiempo.json, con entorno, semilla y repeticiones. Dep.: T029, T030, T031. Requisitos: PR-LT-001 a PR-LT-007; SC-LT-004, SC-LT-005.
-- [ ] T033 Ejecutar la consulta con el K provisional en la cripta de referencia o en la mayor disponible, con ≥ 5 000 acciones, y registrar si el 100 % de las consultas termina en < 50 ms. Para obtener esas acciones, reutilizar la estrategia de `medir_cripta_cargada` (modelo/bench_modelo.py): datos precargados sin red dentro del cronómetro, un jugador con vida suficiente que alterna esperar y moverse por salidas abiertas sin entrar a la sala de salida, y cazadores activos con sus estadísticas originales como carga experimental declarada; si la partida termina antes, informarlo con la cantidad alcanzada. Si no se cumple, informarlo sin ocultarlo. Dep.: T032. Requisitos: PR-LT-001; SC-LT-004.
-- [ ] T034 Presentar al usuario la tabla de T032/T033 (memoria, consulta y creación de punto por K) con una recomendación justificada, y esperar su elección del K por defecto (D-LT-07). Fijarlo en modelo/linea_tiempo.py y registrar la decisión en research.md. Dep.: T033. Requisitos: FR-LT-012; PR-LT-005.
-- [ ] T035 Actualizar documentacion/DOCUMENTO_DECISIONES.md con la sección de §5.5 (problema, alternativas, decisión, complejidad, evidencia y límites; enlaces a spec.md y plan.md; diferencias respecto del plan y la medición que las motivó) y la de §5.6 (antes y después, o la evidencia de que las decisiones de P1 siguen siendo adecuadas). Dep.: T034. Requisitos: PR-LT-005, PR-LT-006, PR-LT-007; P2 §7.1.
-- [ ] T036 Actualizar README.md (comandos `historia`, `--checkpoint-cada`, `--replay … --hasta`, K por defecto, formato 6, cómo ejecutar las pruebas de aceptación de la línea de tiempo) y registrar las entradas en documentacion/PROMPTS_LLM.md. Dep.: T034. Requisitos: P2 §2.6, §7.2.
+- [X] T033 Ejecutar la consulta con el K elegido en la cripta de referencia o en la mayor disponible, con ≥ 5 000 acciones, y registrar si el 100 % de las consultas termina en < 50 ms. Para obtener esas acciones, reutilizar la estrategia de `medir_cripta_cargada` (modelo/bench_modelo.py): datos precargados sin red dentro del cronómetro, un jugador con vida suficiente que alterna esperar y moverse por salidas abiertas sin entrar a la sala de salida, y cazadores activos con sus estadísticas originales como carga experimental declarada; si la partida termina antes, informarlo con la cantidad alcanzada. Si no se cumple, informarlo sin ocultarlo. Dep.: T032. Requisitos: PR-LT-001; SC-LT-004.
+- [X] T034 Presentar al usuario la tabla de T032/T033 (memoria, consulta y creación de punto por K) con una recomendación justificada, y esperar su elección del K por defecto (D-LT-07). Fijarlo en modelo/linea_tiempo.py y registrar la decisión en research.md. Dep.: T033. Requisitos: FR-LT-012; PR-LT-005.
+- [X] T035 Actualizar documentacion/DOCUMENTO_DECISIONES.md con la sección de §5.5 (problema, alternativas, decisión, complejidad, evidencia y límites; enlaces a spec.md y plan.md; diferencias respecto del plan y la medición que las motivó) y la de §5.6 (antes y después, o la evidencia de que las decisiones de P1 siguen siendo adecuadas). Dep.: T034. Requisitos: PR-LT-005, PR-LT-006, PR-LT-007; P2 §7.1.
+- [X] T036 Actualizar README.md (comandos `historia`, `--checkpoint-cada`, `--replay … --hasta`, K por defecto, formato 6, cómo ejecutar las pruebas de aceptación de la línea de tiempo) y registrar las entradas en documentacion/PROMPTS_LLM.md. Dep.: T034. Requisitos: P2 §2.6, §7.2.
 - [ ] T037 Ejecutar `python -m pytest -q` completo y guardar la salida en documentacion/evidencia/pruebas_linea_tiempo.txt; completar en este archivo la matriz requisito → escenario → tarea → código → prueba para FR-LT-001 a 016 y PR-LT-001 a 007; marcar el estado de spec.md como implementado. Dep.: T035, T036. Requisitos: SC-LT-001 a SC-LT-005; constitución VIII.
 
 ## Avance de Juan — persistencia y copiado (2026-11-11)

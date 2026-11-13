@@ -1,0 +1,65 @@
+{
+  "semilla": 2026,
+  "acciones": 5000,
+  "salas": 300,
+  "cazadores": 32,
+  "rondas_consulta": 3,
+  "rondas_ciclos": 1,
+  "gc_habilitado": true,
+  "python": "3.13.2",
+  "plataforma": "Windows-11-10.0.26200-SP0",
+  "escenarios": [
+    {
+      "k": 10,
+      "ciclos": {
+        "cantidad": 5001,
+        "minimo_ms": 0.0905,
+        "mediana_ms": 0.2895,
+        "p95_ms": 13.4819,
+        "maximo_ms": 40.3269,
+        "limite_ms": 20,
+        "excedidos": 14
+      },
+      "copias": {
+        "cantidad": 500,
+        "minimo_ms": 11.5325,
+        "mediana_ms": 13.08335,
+        "p95_ms": 16.7987,
+        "maximo_ms": 39.97,
+        "limite_ms": 20,
+        "excedidos": 13
+      },
+      "ciclos_con_punto": {
+        "cantidad": 500,
+        "minimo_ms": 12.0218,
+        "mediana_ms": 13.48195,
+        "p95_ms": 17.3451,
+        "maximo_ms": 40.3269,
+        "limite_ms": 20,
+        "excedidos": 14
+      },
+      "ciclos_sin_punto": {
+        "cantidad": 4501,
+        "minimo_ms": 0.0905,
+        "mediana_ms": 0.285,
+        "p95_ms": 0.4826,
+        "maximo_ms": 1.1315,
+        "limite_ms": 20,
+        "excedidos": 0
+      },
+      "consultas": {
+        "cantidad": 36,
+        "minimo_ms": 0.0371,
+        "mediana_ms": 7.565849999999999,
+        "p95_ms": 8.8137,
+        "maximo_ms": 9.2768,
+        "limite_ms": 50,
+        "excedidos": 0
+      },
+      "maximo_acciones_reaplicadas": 9,
+      "partida_intacta": true,
+      "http": 0
+    }
+  ],
+  "alcance": "Sintetico de produccion; ciclos incluyen accion/registro/punto; consultas incluyen copia/re-simulacion/resumen. Sin red/renderizado. No elige K ni certifica referencia oficial. Se incluyen todos los picos."
+}

@@ -1560,3 +1560,33 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     privados adicionales. Todos los puntos v6 coinciden; no integrar ni cambiar K.
     Perfil y estadísticas compactos conservan ambos resultados y los picos.
     Investigación del índice cerrada, límites/aceptación del proyecto pendientes.
+
+51. Seguimos estancado en las mismas investigaciones, no estamos avanzando.
+
+    Necesito que reanalices lo que falta por hacer segun las necesidades del enunciado del proyecto y lo indicado en los specs.
+
+    Quiero implementaciones completas y avances concretos, no investigaciones que no llevan a nada mas.
+
+    Haz un analisis profundo sobre lo que continua por hacer, evita investigaciones innecarias y concentrate en hacer implementaciones verdaderas.
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Leído el PDF completo; contraste con los cuatro specs, 62 FR del juego,
+    código, pruebas, entrega y 23 casos del apéndice B. Se separan FR-CI/PR-CI
+    como contrato histórico del prototipo, sin continuar investigación. Corregido
+    `--bench` estándar: historia por defecto, alias, carpeta/entorno y errores.
+    Entradas raíz DECISIONES/PROMPTS, README/estado/matriz reconciliados. Suite
+    completa: 751 pruebas. Ejecución real pequeña verifica los bloques integrados.
+    Solo queda corregir creación de puntos de producción y aceptar 20 ms.
+
+52. K=10: menor memoria y consultas medidas <50 ms (recomendado)
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Elección explícita de Juan al presentar tabla K5/10/25 y advertir que no
+    cierra 20 ms. D-LT-07 registrada antes del código; K=10 aplicado a inicio y
+    replay, sin cambiar el K de guardados cargados sin opción. Validación nueva
+    oficial: 5 000 acciones, 36 consultas, máxima 35,9904 ms, 0 excedidas, RSS
+    400,14 MiB, partida intacta y cero HTTP al consultar. Sintético K10: 14/5 001
+    ciclos ≥20 ms, todos con punto; ninguno de 4 501 sin punto. No se declara
+    aceptación global. Cambios separados en commits y publicados.

@@ -13,11 +13,12 @@ K10: 43,052 ms / 398,70 MiB; K25: 54,885 ms / 191,93 MiB y dos excedidos.
 [Evidencia](../../documentacion/evidencia/k_oficial_registros_reutilizados_memoria_juan.json).
 Se prefiere el equilibrio de K10 frente al mayor consumo/frecuencia de puntos
 de K5. Esto justifica la elección, no garantiza otra corrida ni cierra 20 ms.
-Se verificará de nuevo producción con el valor elegido. No se activa ningún
+La nueva validación oficial dio máximo 35,9904 ms, 0/36 excedidos y RSS 400,14 MiB;
+[resultado](../../documentacion/evidencia/validacion_k10_entrega.json). No se activa ningún
 capturador experimental. Las menciones posteriores a K pendiente son históricas.
 
 **Fecha**: 2026-11-09. **Especificación**: [spec.md](spec.md).
-**Estado**: decisiones D-LT-01 a D-LT-06 elegidas explícitamente por el usuario
+**Estado original del 2026-11-09**: decisiones D-LT-01 a D-LT-06 elegidas explícitamente por el usuario
 (Kendall) tras presentar alternativas, ventajas, desventajas y recomendación,
 conforme a AGENTS.md. El K por defecto (D-LT-07) queda pendiente de mediciones.
 

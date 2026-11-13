@@ -1,8 +1,8 @@
 # Guía de validación: Línea de tiempo
 
 **Estado**: funcionalidad implementada; mediciones de memoria, consultas,
-persistencia y decisiones ejecutables desde el modo conjunto. Quedan pendientes
-los presupuestos de tiempo y K. Estado consolidado en
+persistencia y decisiones incluidas en `--bench`. K=10 elegido, consulta oficial
+conforme; sigue pendiente cerrar 20 ms por ciclo. Estado consolidado en
 [revisión de entrega](../../documentacion/ESTADO_ENTREGA_P2.md).
 Instalación: [README](../../README.md). Contrato: [linea-tiempo.md](contracts/linea-tiempo.md).
 

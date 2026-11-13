@@ -16,25 +16,26 @@ No cambia reglas, K, estructuras ni algoritmos. PR-LT-005/008.
 **Fecha**: 2026-11-09. **Rama real**: `main`.
 **Capacidad activa de spec-kit**: `004-linea-tiempo`.
 
-**Ampliación 2026-11-13:** ruta incremental versionada elegida. FR-CI/PR-CI
-en spec.md; auditoría, alternativas de índices y piloto en [incremental.md](incremental.md).
+**Ensayo archivado 2026-11-13:** ruta incremental versionada evaluada. Su contrato
+FR-CI/PR-CI, auditoría y decisiones se conservan en [incremental.md](incremental.md),
+fuera del alcance obligatorio del juego.
 El usuario eligió hash propio con vector inmutable. Están implementados el índice,
 el registro de identidad con retiro, el capturador experimental y un observador
 explícito por orden. El piloto verifica alias/ciclos, errores, marcas omitidas,
-trazas reales, cinco undo, v6 y continuación. La evaluación de costo/integración
-sigue abierta; producción conserva captura completa y K provisional.
+trazas reales, cinco undo, v6 y continuación. Evaluación cerrada con rechazo para
+integración: producción conserva captura completa y K=10 elegido.
 Índice inverso ID → entrada elegido e implementado; bajas con tumbas y copias
 atómicas. Se optimizaron primer sondeo y observación de deltas; reserva privada
 por salas medida separadamente. Evaluación en [el informe](../../documentacion/INDICE_INVERSO_JUAN.md).
-**Entrada**: [spec.md](spec.md). **Estado**: diseño implementado; mediciones y documentación en cierre, con presupuestos incumplidos y K pendiente.
+**Entrada**: [spec.md](spec.md). **Estado**: implementado; K10 elegido y consulta
+oficial conforme. Solo queda el cierre de 20 ms y la aceptación dependiente.
 **Decisiones**: D-LT-01 a D-LT-06 elegidas por el usuario. D-LT-08 extiende los
 puntos a registros inmutables por ID (elección explícita del 2026-11-12), con
 reconstrucción del modelo y conversión al formato v6 al guardar/cargar.
 El usuario eligió después compartir tokens de ID mediante catálogo inmutable
 acotado de 16 384 entradas, con fallback a tokens propios y estado independiente
 por punto. Su costo fijo se contabiliza aparte de la memoria marginal.
-D-LT-07 (K por
-defecto) se elegirá con mediciones. Alternativas, mediciones previas y descartes
+D-LT-07 fija K=10 por elección de Juan. Alternativas, mediciones previas y descartes
 en [research.md](research.md).
 
 ## Resumen

@@ -1,63 +1,69 @@
 # Estado de entrega de Cripta Parte II
 
-Revisión del 2026-11-11. Esta página resume el estado actual; los ensayos
-fechados en el Documento de Decisiones conservan sus resultados históricos.
+Revisión vigente: **2026-11-13**. La fuente de prioridades es el
+[reanálisis del enunciado y los specs](REANALISIS_ENTREGA_P2.md).
+Las corridas anteriores se conservan como históricas, sin reemplazar este estado.
 
-La ejecución conjunta y la documentación independiente de K están completadas.
-Datos, validaciones y límites en el [informe de cierre](CIERRE_MEDICIONES_P2.md).
-Regresión posterior: **663 pruebas aprobadas**.
+## Implementado y verificado
 
-## Funcionalidad verificada
+- Las cuatro capacidades: terreno/cazadores, niebla/viaje, resolubilidad e historia.
+- **K predeterminado 10**, elegido por Juan y aplicado a nuevas partidas/replay.
+  Cargar sin opción conserva el K guardado; v6 mantiene la historia completa.
+- `--bench` incluye historia por defecto; alias anterior compatible, salida
+  configurable, entorno en JSON y errores de medición/exportación informados.
+- Entradas raíz `DECISIONES.md` y `PROMPTS_LLM.md`, README y trazabilidad actualizados.
+- **751 pruebas pasan**. Incluyen los 23 casos del apéndice B, configuración,
+  guardado/replay y la integración real del benchmark en escala pequeña.
 
-- Terreno ponderado, cazadores y decisiones ante cambios de puertas.
-- Niebla, memoria de puertas, antorcha y viaje por conocimiento del jugador.
-- Resolubilidad, informes, `--verificar` y `--forzar`.
-- `historia <t>`, `historia #k`, replay con `--hasta`, configuración de puntos,
-  interacción con pergaminos y persistencia de toda la línea en formato 6.
-- Estructuras aprobadas conservadas. El prototipo compartido no se usa en
-  partidas normales, guardados ni replay.
+## Validación con K elegido
 
-La [matriz de trazabilidad](../specs/004-linea-tiempo/trazabilidad.md) relaciona
-requisitos, escenarios, tareas, código y pruebas. La regresión y las mediciones
-son evidencias diferentes: aprobar pruebas funcionales no certifica tiempos.
+Cripta-06, versión `f9ed9afa683d`, catálogo `4b9e75a42be5`, 300 salas,
+32 cazadores activos iniciales, semilla 2026, 5 000 acciones y 36 consultas.
+Producción sin capturadores experimentales; GC habilitado, sin trazado de tiempos.
 
-## Evidencia y reproducción
+| Comprobación | Resultado |
+|---|---|
+| Consulta oficial | Máxima **35,9904 ms**, **0/36** consultas ≥50 ms |
+| Memoria de proceso observada externamente | Pico **400,14 MiB**, incluye todo el proceso |
+| Consulta sin efectos | Partida intacta; cero HTTP durante consultas |
+| Ciclos sintéticos con registro, misma escala/K | **14/5 001 ≥20 ms**; máximo **40,3269 ms** |
+| Ciclos sin crear punto | 0/4 501 excedidos; máximo **1,1315 ms** |
+| Ciclos creando punto | 14/500 excedidos; captura máxima **39,9700 ms** |
 
-Desde la carpeta que contiene `main.py`:
+[Consulta oficial](evidencia/validacion_k10_entrega.json),
+[ciclos](evidencia/ciclos_k10_entrega.json),
+[regresión](evidencia/pruebas_entrega_p2.txt).
+La vida del jugador se amplía en la carga experimental para completar acciones;
+los cazadores conservan sus datos. No se garantiza otra ejecución o secuencia.
+Resolubilidad y viaje conservan evidencia oficial previa conforme a 200/5 ms;
+no se presenta como medición nueva.
+
+## Lo que falta para cerrar
+
+1. Corregir los picos de creación de puntos en **producción**, conservando estado,
+   v6, alias, azar e independencia. No hay evidencia para reemplazar el motor
+   con ninguno de los prototipos ensayados.
+2. Validar el ciclo completo <20 ms en la referencia y repetir consultas K10
+   sobre la corrección final. No mover el costo fuera del cronómetro.
+3. Cerrar T037/aceptación y actualizar las cifras de la entrega final.
+
+K ya no es una decisión pendiente. No hacen falta nuevas capacidades ni terminar
+los contratos CI del experimento rechazado. Aprobar pruebas funcionales y cumplir
+consultas no certifica 20 ms. **Estimación global orientativa: ~95 %, no nota.**
+
+## Reproducir
 
 ```powershell
 python -m pytest -q
-python main.py --bench --bench-linea-tiempo --repeticiones 1
+python main.py --bench --repeticiones 1
+python main.py --bench --repeticiones 1 --salida-bench resultados/defensa
+python -m modelo.bench_k_oficial --valores-k 10 --salida-json resultados/k10.json
 ```
 
-La corrida conjunta mide consultas, memoria, copias, persistencia, reconstrucción
-adelante/atrás y agenda/retroceso. Guarda datos nuevos en
-`evidencia/mediciones_linea_tiempo.json` y salida en `evidencia/bench_linea_tiempo.txt`.
-El registro completo de la invocación está en `evidencia/bench_conjunto_completo_juan.txt`.
-La memoria usa `tracemalloc` en ejecuciones separadas de los tiempos; son
-asignaciones Python, no memoria RSS. El JSON conserva estadisticas y entorno, sin muestras individuales.
+El benchmark completo puede tardar varios minutos. El comando estándar deja
+resultados nuevos en `resultados/bench`, ignorado en Git. Las pruebas de CLI
+usan cargas pequeñas para comprobar integración; no sustituyen los ensayos
+largos. La evidencia de arriba sí corresponde a 5 000 acciones.
 
-## Pendientes reservados para la siguiente etapa
-
-1. Resolver y repetir la verificación de 50 ms por consulta.
-2. Resolver los ciclos de 20 ms o más con registro y cazadores.
-3. Elegir explícitamente el K definitivo con los resultados completos. El
-   valor de producción sigue siendo 25 **provisional**.
-4. Incorporar esa decisión en README, investigación y Documento de Decisiones,
-   y cerrar la aceptación. No se declara Parte II terminada mientras falte esto.
-
-Estos puntos no se resuelven cambiando los umbrales ni ocultando muestras.
-La investigación de plantilla compartida es una alternativa experimental;
-sus pruebas y medidas no sustituyen la aceptación del modo de producción.
-
-## Límite de esta revisión documental
-
-Los ensayos se realizaron en una copia descargada sin `.git`. Los cambios se
-trasladaron después al repositorio original sobre la base `4c34c88`, que estaba
-limpia. Los commits de traslado son nuevos; no reconstruyen retrospectivamente
-el historial de implementación de esa copia. La regresión del traslado se conserva;
-los manifiestos de hashes se retiraron por no ser entregables exigidos.
-
-El cierre documental independiente de K comprende contratos, comandos, formato,
-métodos, límites, evidencia y trazabilidad. La justificación del K definitivo
-y la declaración de cumplimiento de tiempos quedan pendientes deliberadamente.
+El traslado desde una copia sin Git está declarado en las tareas. No se
+reconstruye ese historial ni se afirma aceptación del proyecto mientras falte 20 ms.

@@ -247,3 +247,17 @@ Verificar independencia entre puntos/capturas concurrentes, alias/ciclos, límit
 y fallback, liberación de modelos y bytes v6. Comparar contra ed4b505, separando
 memoria marginal de cada punto del costo fijo del catálogo; después medir
 historias completas, consultas oficiales y RSS antes de declarar aceptación.
+
+## Registros completos iguales: elección 2026-11-12
+
+El usuario elige reutilizar también registros completos iguales. La captura
+acepta un punto anterior opcional y compara código y datos completos en el
+mismo ID. Solo reutiliza la tupla si es igual; conserva un arreglo propio de
+registros y resuelve cada ID en el contexto del punto actual. No añade índice
+ni referencia al punto anterior. Primer punto y captura genérica funcionan sin
+antecesor. La línea proporciona su último punto y la carga aplica el mismo
+criterio entre puntos decodificados, manteniendo v6.
+
+Verificar registros cambiados, cambios de tamaño/IDs, alias/ciclos, liberación
+del antecesor, independencia y mismos bytes. Medir memoria marginal sin
+confundirla con memoria total, y comparar historias completas contra 537db26.

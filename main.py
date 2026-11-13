@@ -109,9 +109,11 @@ def main(argumentos=None):
     seleccion.add_argument("--ver-puntajes", action="store_true", help="consultar resultados locales ordenados")
     parser.add_argument("--orden-puntajes", choices=("tiempo", "acciones", "enemigos", "nombre"),
                         default="tiempo", help="criterio para --ver-puntajes")
-    parser.add_argument("--bench", action="store_true", help="medir subsistemas y, con --cripta, ciclos reales")
+    parser.add_argument("--bench", action="store_true", help="medir todos los bloques de P2 (varios minutos); con --cripta, referencia real")
     parser.add_argument('--bench-linea-tiempo', action='store_true',
-                        help='con --bench: ejecutar y exportar todas las mediciones historicas (varios minutos)')
+                        help='alias compatible: --bench ya incluye la línea de tiempo')
+    parser.add_argument('--salida-bench', metavar='CARPETA',
+                        help='con --bench: carpeta de resultados (predeterminada: resultados/bench)')
     parser.add_argument("--repeticiones", type=_entero_positivo, default=5, help="repeticiones del benchmark")
     seleccion.add_argument("--cripta", help="ID de la cripta que se jugara")
     seleccion.add_argument('--verificar', metavar='CRIPTA', help='verificar resolubilidad sin vista ni partida')
@@ -135,6 +137,8 @@ def main(argumentos=None):
     opciones = parser.parse_args(argumentos)
     if opciones.bench_linea_tiempo and not opciones.bench:
         parser.error('--bench-linea-tiempo requiere --bench')
+    if opciones.salida_bench is not None and not opciones.bench:
+        parser.error('--salida-bench requiere --bench')
     if not (opciones.listar or opciones.cripta or opciones.cargar or opciones.replay or opciones.bench or opciones.ver_puntajes or opciones.verificar):
         parser.error("indica --listar, --cripta, --cargar, --replay, --bench o --ver-puntajes")
     if opciones.bench and (opciones.listar or opciones.cargar or opciones.replay or opciones.bitacora or opciones.ver_puntajes or opciones.verificar):
@@ -167,11 +171,15 @@ def main(argumentos=None):
         return 0
     if opciones.bench:
         from modelo.bench_modelo import ejecutar_bench_completo
-        subsistemas = ejecutar_bench_completo(opciones.repeticiones, opciones.semilla, opciones.cache_size)
-        if opciones.bench_linea_tiempo:
-            from modelo.bench_cierre import ejecutar_cierre
+        from modelo.bench_cierre import ejecutar_cierre
+        try:
+            subsistemas = ejecutar_bench_completo(opciones.repeticiones, opciones.semilla, opciones.cache_size)
             ejecutar_cierre(opciones.repeticiones, opciones.semilla,
+                           carpeta=opciones.salida_bench or 'resultados/bench',
                            decisiones=subsistemas.get('decisiones_linea_tiempo'))
+        except (OSError, ValueError, RuntimeError, AssertionError) as error:
+            print(f'No se pudo completar --bench: {error}', file=sys.stderr)
+            return 1
         if not opciones.cripta:
             return 0
     fuente = ModoOffline(opciones.offline) if opciones.offline is not None else ClienteHTTP(reservar_imprevistos=True)

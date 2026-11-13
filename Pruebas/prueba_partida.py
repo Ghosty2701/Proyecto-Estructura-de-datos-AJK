@@ -1254,7 +1254,9 @@ def test_main_bench_no_crea_cliente_http(monkeypatch):
 
     llamadas = []
     monkeypatch.setattr(aplicacion, "ClienteHTTP", lambda **opciones: pytest.fail("Bench no debe crear un cliente HTTP"))
-    monkeypatch.setattr(bench_modelo, "ejecutar_bench_completo", lambda *args: llamadas.append(args))
+    from modelo import bench_cierre
+    monkeypatch.setattr(bench_modelo, "ejecutar_bench_completo", lambda *args: (llamadas.append(args) or {}))
+    monkeypatch.setattr(bench_cierre, 'ejecutar_cierre', lambda *a, **k: None)
     assert aplicacion.main(["--bench", "--repeticiones", "1", "--semilla", "2026"]) == 0
     assert llamadas == [(1, 2026, 25)]
 
@@ -1263,7 +1265,9 @@ def test_main_bench_cripta_conecta_medicion_real_sin_vista(paquete_oficial_de_pr
     import main as aplicacion
     from modelo import bench_modelo
 
-    monkeypatch.setattr(bench_modelo, "ejecutar_bench_completo", lambda *args: None)
+    from modelo import bench_cierre
+    monkeypatch.setattr(bench_modelo, "ejecutar_bench_completo", lambda *args: {})
+    monkeypatch.setattr(bench_cierre, 'ejecutar_cierre', lambda *a, **k: None)
     monkeypatch.setattr(aplicacion, "ClienteHTTP", lambda **opciones: pytest.fail("Se pidio modo offline"))
     monkeypatch.setattr(aplicacion, "VistaConsola", lambda: pytest.fail("La medicion excluye la vista"))
     codigo = aplicacion.main([

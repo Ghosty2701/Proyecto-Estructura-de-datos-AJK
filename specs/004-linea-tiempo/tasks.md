@@ -2,6 +2,11 @@
 
 ## Cierre de entrega priorizado (2026-11-13)
 
+- [ ] ENT-005 Eliminar tuplas auxiliares de pendientes en el capturador de
+  producción reutilizando sus arreglos; verificar originales no retenidos,
+  estado/bytes idénticos, regresión y ciclos completos K10 con GC habilitado.
+  PR-LT-007, FR-LT-013/014/015. Referencia previa de producción: `4d61ebd`.
+
 Las tareas de investigación CI al final son históricas/experimentales y no
 condiciones adicionales del enunciado. No se continuará su ampliación como
 dependencia de entrega. Los únicos bloqueos funcionales/documentales pendientes

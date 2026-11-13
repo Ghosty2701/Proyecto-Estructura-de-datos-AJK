@@ -1,5 +1,14 @@
 # Plan: Línea de tiempo y puntos de control
 
+**Optimización de producción (2026-11-13, PR-LT-007):** conservar IDs locales,
+tabla de identidades y los dos arreglos existentes. Durante captura, el vector
+de registros conserva temporalmente el objeto original hasta codificar su
+casilla; la pila guarda solo el ordinal, evitando una tupla auxiliar por nodo.
+Cada casilla debe quedar codificada antes de congelar el punto, sin originales
+retenidos. No cambia esquema, orden de IDs, compartición, v6 ni K=10. Validar
+regresión y ABBA de ciclos completos, pasando el punto anterior a ambas versiones
+que lo admitan y comparando los bytes v6 de todos los puntos fuera del cronómetro.
+
 **D-LT-07 cerrada (2026-11-13):** Juan eligió K=10 para nuevas partidas/replay;
 la carga conserva el K guardado salvo opción explícita. Justificación en
 `research.md`, con mediciones de producción. Esta decisión no activa prototipos

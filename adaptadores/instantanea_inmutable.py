@@ -27,7 +27,11 @@ _VALORES_INMUTABLES = (int, str, bool, float, bytes)
 _LIMITE_REFERENCIAS_ID = 16384
 _REFERENCIAS_ID = tuple((numero,) for numero in range(_LIMITE_REFERENCIAS_ID))
 
-_TIPOS = TablaIdentidades(64)
+# Índice fijo de 29 esquemas: reserva pequeña para evitar colisiones repetidas
+# por cada entidad capturada. No guarda modelos ni crece con la historia.
+_TIPOS = TablaIdentidades(256)
+_LISTA_VACIA = (18, ())
+_DICT_VACIO = (19, ())
 _POR_ID = [None] * (max(e[0] for e in _ESQUEMAS) + 1)
 for _esquema in _ESQUEMAS:
     _nombres = _esquema[2]
@@ -68,6 +72,8 @@ class InstantaneaInmutable:
         def resolver(valor):
             if type(valor) is not tuple:
                 return valor
+            if len(valor) == 2 and valor[0] is None:
+                return valor[1]  # Tupla plana de escalares, ya inmutable.
             indice = valor[0]
             if objetos[indice] is None:
                 objetos[indice] = tuple(resolver(v) for v in self.registros[indice][1])
@@ -136,6 +142,14 @@ def capturar_estado(raiz, anterior=None):
         tipo = type(valor)
         if tipo in _VALORES_INMUTABLES:
             return valor
+        if tipo is tuple:
+            for elemento in valor:
+                if elemento is not None and type(elemento) not in _VALORES_INMUTABLES:
+                    break
+            else:
+                # No hay modelos/descendientes que registrar. La marca no se
+                # confunde con (ID,) y mantiene la identidad del valor inmutable.
+                return (None, valor)
         indice = identidades._localizar(valor)
         if identidades.claves[indice] is not _VACIA:
             return identidades.valores[indice]
@@ -162,13 +176,22 @@ def capturar_estado(raiz, anterior=None):
     while pendientes:
         numero, original, esquema = pendientes.pop()
         tipo = type(original)
-        if tipo is tuple or tipo is list:
-            codigo = 0 if tipo is tuple else 18
+        if tipo is tuple:
+            codigo = 0
+            datos = tuple([referencia(v) for v in original])
+        elif tipo is list:
+            codigo = 18
+            if not original:
+                registros[numero] = _LISTA_VACIA
+                continue
             # La comprensión evita suspender/reanudar un generador por campo.
             # La lista temporal solo vive hasta construir esta tupla.
             datos = tuple([referencia(v) for v in original])
         elif tipo is dict:
             codigo = 19
+            if not original:
+                registros[numero] = _DICT_VACIO
+                continue
             datos = tuple([(referencia(k), referencia(v)) for k, v in original.items()])
         elif tipo is random.Random:
             codigo, datos = 20, original.getstate()

@@ -109,6 +109,80 @@ def test_registros_solo_contienen_valores_inmutables_y_azar_independiente():
     assert punto.reconstruir()[0].getstate() == random.Random(2026).getstate()
 
 
+def test_tuplas_escalares_compartidas_no_retienen_modelos_y_conservan_bits():
+    # FR-LT-013/014: compartir solo inmutables transitivos; tipos exactos.
+    import struct
+    valores = (None, True, 1, 2**100, 'dato', b'dato', -0.0, float('nan'))
+    sala = SalaRastro(5)
+    ref = weakref.ref(sala)
+    raiz = [valores, valores, (sala,)]
+    punto = capturar_estado(raiz)
+    token = punto.registros[0][1][0]
+    assert token[0] is None and token[1] is valores
+    copia = punto.reconstruir()
+    assert copia[0] is copia[1]
+    assert tuple(type(v) for v in copia[0]) == tuple(type(v) for v in valores)
+    assert struct.pack('!d', copia[0][-2]) == struct.pack('!d', -0.0)
+    assert struct.pack('!d', copia[0][-1]) == struct.pack('!d', valores[-1])
+    sala.sala_id = 99
+    assert punto.reconstruir()[2][0].sala_id == 5
+    raiz.clear()
+    del sala
+    assert ref() is None
+
+
+def test_tupla_con_subclase_mutable_no_se_comparte_como_valor():
+    # FR-LT-013: un entero con atributos no es un escalar de tipo exacto permitido.
+    class Entero(int):
+        pass
+    valor = Entero(1)
+    valor.mutable = []
+    with pytest.raises(TypeError, match='sin esquema'):
+        capturar_estado((valor,))
+
+
+def test_registros_vacios_compartidos_preservan_ids_y_mutabilidad_independiente():
+    # FR-LT-013/014: identidad del registro no significa identidad del objeto.
+    a, b, c, d = [], [], {}, {}
+    punto = capturar_estado([a, b, a, c, d])
+    referencias = punto.registros[0][1]
+    assert referencias[0] != referencias[1] and referencias[0] == referencias[2]
+    assert punto.registros[referencias[0][0]] is punto.registros[referencias[1][0]]
+    assert punto.registros[referencias[3][0]] is punto.registros[referencias[4][0]]
+    copia = punto.reconstruir()
+    assert copia[0] is copia[2] and copia[0] is not copia[1]
+    assert copia[3] is not copia[4]
+    copia[0].append(7)
+    copia[3]['dato'] = 1
+    assert copia[1] == [] and copia[4] == {}
+    assert a == b == [] and c == d == {}
+
+
+def test_tupla_escalar_inline_no_se_confunde_con_referencia_y_lee_punto_anterior():
+    # FR-LT-013/014/015: None/enteros no confunden valor y enlace; compatibilidad.
+    valores = (None, 0, 1, False, -0.0)
+    nuevo = capturar_estado(valores)
+    assert nuevo.registros == ()
+    assert nuevo.raiz == (None, valores)
+    assert nuevo.reconstruir() is valores
+    viejo = InstantaneaInmutable((0,), ((0, valores),))
+    assert viejo.reconstruir() == valores
+    otro = tuple([*valores])
+    copia = capturar_estado([valores, otro, valores]).reconstruir()
+    assert copia[0] is copia[2] and copia[0] is not copia[1]
+
+
+def test_tupla_con_otra_tupla_o_lista_conserva_nodo_y_ciclo():
+    # FR-LT-014: la marca inline solo contiene escalares, nunca un objeto mutable.
+    lista = []
+    exterior = ((1, 2), lista)
+    lista.append(exterior)
+    punto = capturar_estado(exterior)
+    assert len(punto.raiz) == 1
+    copia = punto.reconstruir()
+    assert copia[1][0] is copia and copia[0] == (1, 2)
+
+
 def test_rechaza_tipos_fuera_del_esquema():
     with pytest.raises(TypeError, match='tipo sin esquema'):
         capturar_estado([object()])

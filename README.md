@@ -6,6 +6,10 @@ con mapa 2D, sprites y paneles, conservando el juego por turnos. Por ahora está
 `main` conserva la entrega actual; el estado de Parte II que sigue abajo no
 representa el avance de esta ampliación.
 
+**Avance de Pygame: ~10 % estimado**, correspondiente a especificación y
+aclaraciones; implementación gráfica aún no iniciada. Es una ampliación personal,
+independiente de la nota del proyecto. [Seguimiento](specs/005-interfaz-pygame/README.md#avance-exclusivo-de-pygame).
+
 Proyecto de Andrey, Juan y Kendall. Juego de consola con terreno ponderado,
 cazadores, niebla y viaje automático, resolubilidad y consultas históricas.
 Los datos proceden del servicio o de un paquete offline compatible.

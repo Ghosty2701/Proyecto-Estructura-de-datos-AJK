@@ -9,6 +9,19 @@ todavía no contiene una interfaz gráfica implementada.**
 - [Revisión de calidad](checklists/requirements.md): 16/16 criterios revisados.
 - Carpeta de trabajo local usada: `C:/Users/pipro/Downloads/Proyecto-Estructura-de-datos-AJK-pygame`.
 
+## Avance exclusivo de Pygame
+
+**Estimación inicial: ~10 %**, orientativa y pendiente de afinar con el plan.
+Se completaron la especificación, las aclaraciones visuales y la revisión de
+calidad. La implementación gráfica, sus pruebas y la validación visual todavía
+no han comenzado; ese 10 % corresponde a la preparación, no a funciones gráficas
+ya disponibles.
+
+El siguiente paso es planificar la integración técnica. Esta ampliación es una
+exigencia personal del usuario, independiente de la nota y del avance de Parte II.
+En adelante se reporta únicamente su propio progreso. La integración en `main`
+se evaluará cuando funcione y se haya validado la compatibilidad.
+
 ## Qué se construirá
 
 Mapa 2D con salas en cuadritos, sprites de enemigos, paneles y botones para

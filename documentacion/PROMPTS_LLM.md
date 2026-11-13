@@ -1664,3 +1664,18 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     Selector local `.specify/feature.json` actualizado; se respeta su exclusión
     de Git. Solo se crean documentos: sin código gráfico, dependencias nuevas,
     decisiones de estructuras ni afirmaciones de pruebas de Pygame aprobadas.
+
+57. Reportar el avance exclusivamente sobre la ampliación personal con Pygame
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Usuario: «el pasar el proyecto a pygame es una exigencia personal, y no es
+    importante para la nota del proyecto, entonces puedes cambiar el avance
+    estimado no al proyecto total, si no al apartado de pygame, que luego si
+    todo funciona bien, se puede integrar al, proyecto principal completo».
+
+    Actualizadas las instrucciones de colaboración de esta rama y sus README
+    para usar únicamente el progreso de Pygame. Estimación inicial orientativa
+    de ~10 % por especificación, aclaraciones y revisión; todavía sin código
+    gráfico, pruebas ni validación visual. Planificación como siguiente fase.
+    No se modifica main ni se recalcula el avance o la nota de Parte II.

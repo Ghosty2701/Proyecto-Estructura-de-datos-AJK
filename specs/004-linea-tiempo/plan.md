@@ -1,5 +1,10 @@
 # Plan: Línea de tiempo y puntos de control
 
+**D-LT-07 cerrada (2026-11-13):** Juan eligió K=10 para nuevas partidas/replay;
+la carga conserva el K guardado salvo opción explícita. Justificación en
+`research.md`, con mediciones de producción. Esta decisión no activa prototipos
+ni cierra automáticamente los presupuestos de procesamiento.
+
 **Corrección de entrega (2026-11-13):** `main.py --bench` ejecutará también
 `modelo/bench_cierre.py` por defecto, reutilizando las decisiones ya medidas
 por `bench_modelo`. `--bench-linea-tiempo` queda como alias compatible, sin

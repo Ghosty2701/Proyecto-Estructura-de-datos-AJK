@@ -405,6 +405,13 @@ se descarta o revisa. El diseño y el piloto están en [incremental.md](incremen
 
 ## Aclaraciones
 
+### Elección del grupo, 2026-11-13
+
+- **P**: ¿Qué valor por defecto elegir tras comparar consultas, memoria y ciclos?
+  → **R de Juan**: K=10, por equilibrio de consultas medidas y memoria. Aplicado
+  a FR-LT-012/PR-LT-005. No altera el K guardado al cargar sin opción explícita
+  ni equivale a certificar PR-LT-001/007 antes de la validación final.
+
 ### Sesión del 2026-11-09 (especificación)
 
 - **P**: Si una partida guardada con un K se carga con `--checkpoint-cada`

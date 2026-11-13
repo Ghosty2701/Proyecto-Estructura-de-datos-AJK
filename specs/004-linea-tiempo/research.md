@@ -1,5 +1,21 @@
 # Investigación: Línea de tiempo y puntos de control
 
+## D-LT-07: K predeterminado elegido — 2026-11-13
+
+Juan eligió explícitamente **K=10**: «K=10: menor memoria y consultas medidas
+<50 ms (recomendado)». Sustituye 25 provisional para partidas nuevas y replay
+sin opción; `--checkpoint-cada` continúa permitiendo otra elección. Cargar sin
+esa opción conserva el K guardado, según FR-LT-015/AC-LT-025.
+
+Base: misma producción con registros inmutables compartidos; 5 000 acciones,
+300 salas, 32 cazadores y 36 consultas. K5: máximo 24,264 ms / 756,94 MiB;
+K10: 43,052 ms / 398,70 MiB; K25: 54,885 ms / 191,93 MiB y dos excedidos.
+[Evidencia](../../documentacion/evidencia/k_oficial_registros_reutilizados_memoria_juan.json).
+Se prefiere el equilibrio de K10 frente al mayor consumo/frecuencia de puntos
+de K5. Esto justifica la elección, no garantiza otra corrida ni cierra 20 ms.
+Se verificará de nuevo producción con el valor elegido. No se activa ningún
+capturador experimental. Las menciones posteriores a K pendiente son históricas.
+
 **Fecha**: 2026-11-09. **Especificación**: [spec.md](spec.md).
 **Estado**: decisiones D-LT-01 a D-LT-06 elegidas explícitamente por el usuario
 (Kendall) tras presentar alternativas, ventajas, desventajas y recomendación,

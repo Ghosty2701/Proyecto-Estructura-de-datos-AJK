@@ -135,6 +135,15 @@ def medir(acciones=5000, salas=300, cazadores=32, valores_k=(5, 10, 25),
                 if referencias is None:
                     referencias = obtenidos
                 assert partida.fuente.solicitudes_realizadas == 0
+                bytes_vectores = bytes_pares = None
+                if captura:
+                    registro = captura._identidades
+                    bytes_vectores = sys.getsizeof(registro.casillas)
+                    inverso = getattr(registro, 'por_id', None)
+                    bytes_pares = 0
+                    if inverso is not None:
+                        bytes_vectores += sys.getsizeof(inverso.casillas)
+                        bytes_pares = sum(sys.getsizeof(e) for e in inverso.casillas if e)
                 fila = {'tipo': tipo, 'k': k, 'inicio_incremental_ms': inicio_ms if captura else None,
                         'ciclos': _tiempos(ciclos, 20), 'ordenes_incluido_undo': _tiempos(ordenes, 20),
                         'capturas': _tiempos(copias, 20),
@@ -145,9 +154,12 @@ def medir(acciones=5000, salas=300, cazadores=32, valores_k=(5, 10, 25),
                         'indices_finales': ({nombre: captura.estadisticas.get(nombre)
                             for nombre in ('registros_vivos', 'capacidad_version',
                                 'capacidad_identidades', 'capacidad_inverso',
+                                'reserva_identidades',
                                 'tumbas_identidades', 'tumbas_inverso',
                                 'recomposiciones_identidades', 'recomposiciones_inverso')}
                             if captura else None),
+                        'bytes_superficiales_vectores_indices': bytes_vectores,
+                        'bytes_superficiales_pares_inversos': bytes_pares,
                         'puntos': len(partida.linea_tiempo.puntos), 'sha256_bytes_v6_puntos': firma_puntos,
                         'partida_intacta': True, 'http': 0}
                 escenarios.append(fila)

@@ -371,3 +371,14 @@ ABBA K=25: 9/5/8/9 ciclos excedidos para A/B/B/A, con mayor mediana de captura
 por el costo de comparar. Sintético K=5/10/25: 94/22/21 ciclos >=20 ms.
 Oficial: 0/0/2 consultas >=50 ms, RSS observado 757/399/192 MiB. K definitivo
 y aceptación pendientes. Datos en `documentacion/REGISTROS_IGUALES_JUAN.md`.
+
+## Diagnóstico dirigido de picos (2026-11-13)
+
+Sin cambios al motor. Instrumentación con GC habilitado: K=10/25, 52/19
+ciclos lentos; todos crean punto. Captura: 98,0/97,6 % del tiempo lento; GC:
+14,7/16,6 %. El prototipo de plantilla heredado es más lento en captura aislada
+y no se integra. 699 pruebas, incluidos efectos sobre callbacks/umbrales y error.
+Resultados en `documentacion/DIAGNOSTICO_PICOS_JUAN.md`. Se propone captura
+incremental versionada frente a separación estático/mutable especializada;
+elección y ampliación del diseño pendientes antes de implementar. PR-LT-001/007,
+K definitivo y aceptación no se cierran con un diagnóstico instrumentado.

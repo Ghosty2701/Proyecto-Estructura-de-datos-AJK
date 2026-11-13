@@ -1496,3 +1496,15 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     reduce memoria. RSS oficial K=5/10/25: 757/399/192 MiB, con 0/0/2 consultas
     excedidas. Sintético: 94/22/21 ciclos excedidos. K y aceptación pendientes;
     evidencia compacta en REGISTROS_IGUALES_JUAN.md.
+
+46. Antes de continuar, el avance global estimado no ha avanzado casi desde los ultimos cambios, te estas quedando pegado con algo o realmente falta mucho? / Continua
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Aclarado que 93 % es una estimación conservadora por requisitos, no esfuerzo
+    restante. Se diagnostican ciclos concretos en vez de otra microoptimización:
+    captura explica ~98 % del tiempo lento y GC 15–17 %. No se cambia el motor
+    ni GC. Plantilla heredada más lenta, no integrada. 699 pruebas; evidencia
+    acotada a resúmenes y diez peores por K. Se solicita ruta de investigación
+    incremental/versionada o estático/mutable especializada, aún sin implementar.
+    Detalles en DIAGNOSTICO_PICOS_JUAN.md; presupuestos y K siguen pendientes.

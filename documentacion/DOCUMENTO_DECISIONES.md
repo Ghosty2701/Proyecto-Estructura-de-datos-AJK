@@ -1,5 +1,11 @@
 # Documento de Decisiones de Diseño
 
+**Diagnóstico de picos (2026-11-13):** sin cambios al motor; 699 pruebas.
+Todos los excedidos instrumentados crean punto: captura concentra ~98 % del
+tiempo lento y GC 15–17 %. La plantilla heredada resulta más lenta y no se
+integra. Se requiere elegir y especificar una ruta que reduzca el trabajo de
+captura; no se declara cerrada la aceptación. [Datos y siguiente decisión](DIAGNOSTICO_PICOS_JUAN.md).
+
 **Registros completos (2026-11-13):** reutilización elegida e implementada,
 con igualdad exacta de tipos/bits, arreglo propio y 697 pruebas. RSS oficial
 K=5/10/25: 757/399/192 MiB; consultas excedidas 0/0/2. Comparar aumenta la

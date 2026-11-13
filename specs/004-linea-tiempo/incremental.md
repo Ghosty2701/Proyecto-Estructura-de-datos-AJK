@@ -185,3 +185,15 @@ Pruebas: colisiones con tumbas en ambos hashes, crecer/limpiar/reducir, IDs
 dispersos, dos índices sincronizados, retirada de ciclos, liberación, fallos
 en mitad de bajas y comparación de todos los puntos v6. Medir ABBA con la
 variante anterior en procesos/trazas controlados, incluyendo mantenimiento.
+
+El primer ABBA del índice inverso produjo 62–64 ms frente a 51–52 ms del
+capturador anterior, con limpiezas frecuentes: no habilitar. Antes de cerrar
+el bloque se permiten dos ajustes sin cambiar estructuras: retorno temprano
+al acertar la primera casilla y procesar solo el sufijo de deltas que cambia
+por identidad. El observador conserva las tuplas de las cinco acciones antes
+de ejecutar; compara con las listas posteriores, también las de acciones
+retiradas. Undo vacía su lista y obliga a procesar el sufijo anterior completo;
+la expulsión de una acción sin mutaciones no lo hace. Reemplazar deltas dentro
+de una lista del mismo tamaño también se detecta. Conserva marcas explícitas
+para inventario/suelo y el oráculo por defecto. Medir estos ajustes por separado
+del primer ABBA adverso, con el mismo observador en ambas variantes comparadas.

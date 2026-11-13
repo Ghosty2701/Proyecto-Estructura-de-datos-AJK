@@ -1519,3 +1519,15 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     Se presentan hash propio/vector de casillas inmutable frente a hash/AVL
     persistente; recomendada la primera para un piloto sencillo, elección pendiente.
     Producción, K y presupuestos no cambian; especificación y auditoría publicadas.
+
+48. Hash propio + vector inmutable de casillas (recomendado)
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Elección explícita de A para el piloto. Contrato confirmado en c3e4d9f antes
+    del código. Índice aislado con doble hashing, bajas/tumbas, crecimiento,
+    registros inmutables y publicación atómica; 709 pruebas. Benchmark aislado
+    6 000 registros/200 versiones/96 cambios: mediana 0,484 ms, máxima 3,351 ms;
+    memoria trazada 29,8 MB, inicio y limpieza informados aparte. No se conecta
+    al motor ni se declara captura incremental completa. CI-005 y seguimiento
+    de mutaciones siguen pendientes; K no cambia. Commits y push separados.

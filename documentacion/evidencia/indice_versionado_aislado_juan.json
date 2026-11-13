@@ -1,0 +1,24 @@
+{
+  "python": "3.13.2",
+  "versiones": 200,
+  "registros_activos": 6000,
+  "cambios_por_lote": 96,
+  "capacidad_inicial": 16384,
+  "capacidad_final": 16384,
+  "construccion_inicial_con_crecimiento_ms": 39.6297,
+  "limpieza_tumbas_9000_a_0_ms": 4.0984,
+  "publicacion": {
+    "cantidad": 200,
+    "minimo_ms": 0.3096,
+    "mediana_ms": 0.48355000000000004,
+    "p95_ms": 0.8948,
+    "maximo_ms": 3.3508,
+    "excedidos_50ms": 0,
+    "excedidos_20ms": 0
+  },
+  "retenida_bytes": 29827032,
+  "pico_bytes": 29969996,
+  "gc_habilitado": true,
+  "tracemalloc_en_tiempos": false,
+  "alcance": "Indice aislado, lotes preparados fuera del tiempo. Incluye validacion de registros, copia, tumbas y rehash; excluye seguimiento, IDs de modelos, serializacion del juego, replay y reconstruccion. Memoria Python de versiones mas inicial en otra ejecucion, excluye caso separado de limpieza, no RSS. No certifica ciclos ni consultas ni elige K."
+}

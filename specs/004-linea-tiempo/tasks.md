@@ -393,6 +393,9 @@ K definitivo y aceptación no se cierran con un diagnóstico instrumentado.
 - [X] CI-004 Elegir índices: usuario elige hash propio/vector inmutable (2026-11-13).
 - [ ] CI-005 Concretar IDs/retirada, contenedores no weakref y cobertura por frontera.
 - [ ] CI-006 Implementar y verificar estructuras aisladas y capturador experimental.
+  - [X] CI-006a Índice hash de versiones aislado: 709 pruebas y benchmark separado.
+  - [ ] CI-006b Registro de identidad/cambios con ciclo de vida documentado.
+  - [ ] CI-006c Capturador experimental, tras resolver CI-005.
 - [ ] CI-007 Validar cada orden/undo/carga contra captura completa y bytes v6.
 - [ ] CI-008 Medir registro/captura/consulta/RSS con GC y crecimiento incluidos;
   decidir integración solo con equivalencia y ventaja demostradas.

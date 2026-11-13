@@ -62,7 +62,7 @@ al motor solo por aprobar sus pruebas aisladas.
 ## Piloto acotado y criterios de salida
 
 1. Elegir índices y definir IDs, altas/bajas, contenedores, direcciones reutilizadas
-   y publicación atómica. No codificar antes de resolver estos puntos.
+   y publicación atómica. No conectar el capturador antes de resolver estos puntos.
 2. Estructuras aisladas: colisiones, borrado, crecimiento y versiones anteriores
    inalteradas. Todavía sin conexión al capturador del juego.
 3. Capturador experimental: comparar con captura completa después de cada orden
@@ -78,3 +78,14 @@ al motor solo por aprobar sus pruebas aisladas.
 Salida: equivalencia completa, memoria controlada y reducción real de trabajo/costo.
 Si no demuestra ventaja, no se activa. Hasta entonces producción y K se conservan;
 no se cierra ningún presupuesto por escribir el plan.
+
+## Primer resultado: estructura aislada
+
+Índice elegido implementado en `modelo/indice_versionado.py`. Diez casos nuevos
+y regresión completa de 709 pruebas. Medición de 200 versiones/6 000 registros,
+96 cambios por lote: publicación mediana 0,484 ms, máxima 3,351 ms; memoria
+trazada retenida 29 827 032 bytes. No incluye detectar/serializar cambios ni
+reconstruir modelos. Inicio con crecimiento 39,630 ms y limpieza separada de
+9 000 tumbas 4,098 ms. No implica cumplimiento de ciclos/consultas.
+Detalles en `documentacion/INDICE_VERSIONADO_JUAN.md`. CI-005 sigue abierto;
+completada únicamente la subfase de estructura de CI-006, sin conexión al motor.

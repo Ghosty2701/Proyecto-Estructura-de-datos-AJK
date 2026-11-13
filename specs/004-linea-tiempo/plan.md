@@ -17,6 +17,11 @@ vez de generar otra tupla mediante referencia por elemento. Mantener su registro
 e ID para alias/ciclos; nunca compartir una tupla que contenga modelos, listas,
 dict u otras tuplas. Rechazar subclases sin esquema, conservar tipos/bits y
 validar equivalencia/independencia y ciclos completos antes de conservarlo.
+En el mismo capturador, los registros de listas/dict vacíos pueden usar una
+constante inmutable por tipo, manteniendo IDs distintos y reconstrucciones
+independientes. Evita comprensión vacía y comparación posterior por cada nodo.
+Reservar 256 casillas en el índice fijo de esquemas ya existente reduce sondeos
+sin cambiar su estructura; contabilizar su pequeño espacio fijo adicional.
 
 **D-LT-07 cerrada (2026-11-13):** Juan eligió K=10 para nuevas partidas/replay;
 la carga conserva el K guardado salvo opción explícita. Justificación en

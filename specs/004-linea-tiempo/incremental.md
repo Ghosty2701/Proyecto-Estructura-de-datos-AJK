@@ -1,6 +1,6 @@
 # Investigación y piloto incremental — 2026-11-13
 
-Ruta elegida; índices propuestos **sin elegir ni implementar**. Amplía 004,
+Ruta elegida; el usuario eligió la opción A el 2026-11-13. Amplía 004,
 sin otra funcionalidad de usuario ni cambio del K provisional.
 
 ## Auditoría de mutaciones
@@ -36,7 +36,28 @@ serializar datos, detectar cambios, retirar registros o materializar consultas.
 
 **Recomendación de primer piloto: A**, por simplicidad y porque copiar referencias
 evita la lectura de atributos que domina hoy. No se presupone barato el vector:
-se mide completo. B es alternativa si el vector domina. Ninguna está elegida.
+se mide completo. B queda descartada para el primer piloto. A está elegida.
+
+### Contrato del índice aislado elegido
+
+Claves: IDs enteros no negativos (bool no es ID). Valores: registros codificados
+como tuplas de tipos escalares/tuplas inmutables; no modelos ni contenedores
+mutables. Casillas vacías None y tumbas (); entradas (ID, registro).
+Doble hashing propio, capacidad potencia de dos (mínimo 8), salto impar,
+carga activa máxima 70 %. Actualizar no aumenta ocupación. Borrado usa tumbas;
+al insertar se recompone si la ocupación incluyendo tumbas exige limpiar,
+y se duplica si la carga activa lo exige. No crece por el valor máximo de ID.
+
+Una actualización por lote copia el vector y publica una nueva tupla; versiones
+anteriores y registros no cambiados se conservan. Si el lote falla, la versión
+original no cambia. No se omite una actualización por igualdad numérica: True,
+1 y 1.0, y los ceros con signo, conservan su tipo/bits. Costos O(C + D) esperados
+sin rehash, más validación de registros nuevos; crecimiento/rehash se miden.
+
+Este índice no define aún identidad de modelos vivos ni seguimiento de
+mutaciones. Su integración permanece bloqueada técnicamente hasta resolver
+ciclo de vida de contenedores/IDs y probar la cobertura exigida; no se conecta
+al motor solo por aprobar sus pruebas aisladas.
 
 ## Piloto acotado y criterios de salida
 

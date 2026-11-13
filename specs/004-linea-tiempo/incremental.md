@@ -159,3 +159,29 @@ La propuesta todavía no está elegida ni implementada. Incluye otro índice O(N
 y solo puede ahorrar parte del costo; se necesita decisión explícita antes
 de añadirlo (AGENTS.md). Contrato, tablas, límites y recomendación detallados
 en [el informe](../../documentacion/CAPTURA_INCREMENTAL_JUAN.md).
+
+## Índice inverso elegido: contrato del siguiente ensayo
+
+El usuario eligió explícitamente índice inverso hash por ID y bajas con tumbas.
+Es privado de la sesión: ID monótono → la misma entrada del hash por identidad.
+No se incluye en puntos, no retiene versiones anteriores y no cambia v6 ni K.
+Ambos hashes usan direccionamiento abierto/doble hashing y carga activa ≤70 %.
+Los borrados dejan tumbas; buscar atraviesa tumbas antes de decidir ausencia o
+inserción. Las altas limpian ocupación activa+tumbas antes del 70 % o crecen;
+al bajar del 17,5 % se reduce capacidad a la potencia de dos suficiente para
+70 %. Así no se dimensiona el índice por el ID máximo ni se retienen modelos
+retirados dentro de tumbas. No se recompone el índice en cada publicación.
+
+El trazador devuelve los IDs retirados, además de la versión sin ellos. Cada
+ID localiza su entrada y elimina la referencia fuerte de ambos hashes, O(R)
+esperado para R bajas, salvo limpieza/reducción. Continúan el barrido O(C+E),
+las copias transaccionales de vectores y el costo de altas en el índice nuevo.
+No se describe como captura O(D) ni se promete cerrar 20 ms.
+
+Preparar altas/bajas copia los dos vectores; errores no cambian índices, IDs
+publicados, versión previa ni marcas. Se limpian solo las marcas procesadas
+tras verificar, sin volver a recorrer todas las entradas para ese propósito.
+Pruebas: colisiones con tumbas en ambos hashes, crecer/limpiar/reducir, IDs
+dispersos, dos índices sincronizados, retirada de ciclos, liberación, fallos
+en mitad de bajas y comparación de todos los puntos v6. Medir ABBA con la
+variante anterior en procesos/trazas controlados, incluyendo mantenimiento.

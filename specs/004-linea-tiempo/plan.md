@@ -9,6 +9,15 @@ retenidos. No cambia esquema, orden de IDs, compartición, v6 ni K=10. Validar
 regresión y ABBA de ciclos completos, pasando el punto anterior a ambas versiones
 que lo admitan y comparando los bytes v6 de todos los puntos fuera del cronómetro.
 
+Resultado: la pila de ordinales no redujo excedidos en ABBA (13/15 ciclos
+lentos del control frente a 22/15). Se descartó el cambio de código. El siguiente
+ajuste conserva la misma captura: para una tupla cuyos elementos son todos None
+o escalares de tipo exacto permitido, conservarla como datos de su registro en
+vez de generar otra tupla mediante referencia por elemento. Mantener su registro
+e ID para alias/ciclos; nunca compartir una tupla que contenga modelos, listas,
+dict u otras tuplas. Rechazar subclases sin esquema, conservar tipos/bits y
+validar equivalencia/independencia y ciclos completos antes de conservarlo.
+
 **D-LT-07 cerrada (2026-11-13):** Juan eligió K=10 para nuevas partidas/replay;
 la carga conserva el K guardado salvo opción explícita. Justificación en
 `research.md`, con mediciones de producción. Esta decisión no activa prototipos

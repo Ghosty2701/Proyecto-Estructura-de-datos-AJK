@@ -6,6 +6,11 @@
   producción reutilizando sus arreglos; verificar originales no retenidos,
   estado/bytes idénticos, regresión y ciclos completos K10 con GC habilitado.
   PR-LT-007, FR-LT-013/014/015. Referencia previa de producción: `4d61ebd`.
+  Ensayo terminado sin ventaja en picos; código descartado. No marca cumplido 20 ms.
+- [ ] ENT-006 Evitar recodificar el contenido de tuplas de escalares exactos,
+  conservando su registro/ID y sin compartir descendientes mutables. Validar
+  tipos/bits, subclases, alias, v6, memoria y ciclos completos. FR-LT-013/014/015,
+  PR-LT-003/007. Mismas estructuras y formato; sin otro prototipo de arquitectura.
 
 Las tareas de investigación CI al final son históricas/experimentales y no
 condiciones adicionales del enunciado. No se continuará su ampliación como

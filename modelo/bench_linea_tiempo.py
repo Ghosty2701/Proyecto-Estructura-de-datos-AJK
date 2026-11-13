@@ -224,7 +224,7 @@ def medir_consultas(acciones=5000, cantidad_salas=200, valores_k=(10, 25, 50, 10
 
 def medir_cripta_consultas(cargador, partida, acciones=5000, muestras=12, rondas=3,
                           cazadores_objetivo=32, checkpoint_cada=None):
-    """Tramo de T033: K provisional, datos externos precargados, sin red al consultar.
+    """T033/PR-LT-007: consultas y ciclos completos con datos externos precargados.
 
     No altera estadísticas/posiciones de los enemigos. La preparación experimental
     aumenta la vida del jugador y activa cazadores, según la tarea aprobada.
@@ -259,6 +259,7 @@ def medir_cripta_consultas(cargador, partida, acciones=5000, muestras=12, rondas
                 capturas[i] = _resumen(partida)
 
     solicitudes = partida.fuente.solicitudes_realizadas
+    ciclos, con_punto, sin_punto = [], [], []
     print(f"CONSULTAS SERVICIO: {partida.id_cripta}, version {partida.version_cripta}, "
           f"K={k}, cazadores activos iniciales={activos}", flush=True)
     for paso in range(acciones):
@@ -269,7 +270,10 @@ def medir_cripta_consultas(cargador, partida, acciones=5000, muestras=12, rondas
                    if s.abierta and s.destino.sala_id != partida.sala_salida]
         texto = "esperar" if paso % 2 or not salidas else (
             f"ir {salidas[(paso // 2) % len(salidas)].direccion}")
-        _ejecutar(partida, texto)
+        puntos_antes = len(partida.linea_tiempo.puntos)
+        _, ms = _cronometrar(lambda: _ejecutar(partida, texto))
+        ciclos.append(ms)
+        (con_punto if len(partida.linea_tiempo.puntos) > puntos_antes else sin_punto).append(ms)
     capturar()
     _comprobar(partida.fuente.solicitudes_realizadas == solicitudes,
                "la preparacion de 5000 acciones requirio HTTP inesperado")
@@ -281,8 +285,17 @@ def medir_cripta_consultas(cargador, partida, acciones=5000, muestras=12, rondas
     _comprobar(_firma(partida, cargador) == firma, "las consultas alteraron la partida")
     _comprobar(partida.fuente.solicitudes_realizadas == solicitudes, "una consulta realizo HTTP")
     resumen = estadisticas([m["tiempo_ms"] for m in mediciones])
+    def resumir_ciclos(tiempos):
+        if not tiempos:
+            return {'cantidad': 0, 'limite_ms': 20, 'excedidos': 0}
+        valores = estadisticas(tiempos)
+        valores.pop('excedidos_50ms')
+        return {**valores, 'limite_ms': 20, 'excedidos': sum(t >= 20 for t in tiempos)}
+    ciclos_resumen = resumir_ciclos(ciclos)
     print(f"  {partida.acciones_ejecutadas} acciones; {resumen['cantidad']} consultas; "
           f"max {resumen['maximo_ms']:.3f} ms; >=50 ms: {resumen['excedidos_50ms']}", flush=True)
+    print(f"  ciclos con registro/puntos: max {ciclos_resumen['maximo_ms']:.3f} ms; "
+          f">=20 ms: {ciclos_resumen['excedidos']}", flush=True)
     return {"id_cripta": partida.id_cripta, "version_cripta": partida.version_cripta,
             "version_catalogo": cargador.servicio.cache.version, "salas": cargador.salas.cantidad,
             "k": k, "acciones_objetivo": acciones,
@@ -290,11 +303,14 @@ def medir_cripta_consultas(cargador, partida, acciones=5000, muestras=12, rondas
             "semilla": partida.motor.semilla, "rondas": rondas,
             "cazadores_totales": len(cazadores), "cazadores_activos_inicio": activos,
             "estadisticas": resumen, "muestras": mediciones,
+            'ciclos': ciclos_resumen, 'ciclos_con_punto': resumir_ciclos(con_punto),
+            'ciclos_sin_punto': resumir_ciclos(sin_punto), 'gc_habilitado': gc.isenabled(),
             "maximo_acciones_reaplicadas": max(m["acciones_reaplicadas"] for m in mediciones),
             "partida_intacta": True, "http_consultas": 0, "vista": False,
             "solicitudes": solicitudes, "presupuesto": partida.fuente.presupuesto_solicitudes,
             "python": platform.python_version(), "plataforma": platform.platform(),
-            "alcance": "K provisional; vida experimental del jugador 10^9; movimiento por salidas "
+            "alcance": "K declarado; vida experimental del jugador 10^9; movimiento por salidas "
                        "abiertas evitando la salida, alternado con esperas. Enemigos originales "
                        "sin alterar estadisticas/posiciones. Solo certifica las consultas muestreadas; "
-                       "no mide memoria ni ciclos. Intermedios sin oraculo independiente en este ensayo."}
+                       "mide ciclos completos de accion/registro/punto, sin memoria trazada. "
+                       "Intermedios sin oraculo independiente en este ensayo."}

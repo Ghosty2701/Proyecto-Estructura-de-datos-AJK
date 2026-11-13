@@ -941,6 +941,7 @@ def test_medicion_ciclos_usa_partida_real_precargada_y_repite_el_estado(paquete_
 
     cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path)
     partida = cargador.crear("prueba", 2026)
+    cargador.iniciar_linea(partida, 2)
     cargador.preparar_sala(cargador.salas.buscar(2))
     monkeypatch.setattr(cargador.servicio.fuente, "contenido", lambda *args: pytest.fail("Los datos ya estan precargados"))
     monkeypatch.setattr(cargador.servicio.fuente, "catalogo", lambda *args: pytest.fail("Las fichas ya estan precargadas"))
@@ -950,6 +951,24 @@ def test_medicion_ciclos_usa_partida_real_precargada_y_repite_el_estado(paquete_
     salida = capsys.readouterr().out
     assert "maximo:" in salida and "Ciclos con tiempo >= 20 ms:" in salida
     assert partida.acciones_ejecutadas == 6
+    assert partida.linea_tiempo.cantidad_acciones == 6
+    assert resultado['puntos_creados'] == 6  # Tres por repetición, dentro del ciclo.
+
+
+def test_cronometro_del_ciclo_incluye_registrar_la_orden(paquete_oficial_de_prueba, tmp_path, monkeypatch):
+    # PR-LT-007: el tiempo de registro no puede quedar fuera de la aceptación.
+    from modelo import bench_modelo
+    cargador = crear_cargador(paquete_oficial_de_prueba, tmp_path)
+    partida = cargador.crear('prueba', 2026)
+    reloj = [0]
+    original = partida.registrar_orden
+    def registrar(texto):
+        reloj[0] += 30_000_000
+        original(texto)
+    monkeypatch.setattr(partida, 'registrar_orden', registrar)
+    monkeypatch.setattr(bench_modelo.time, 'perf_counter_ns', lambda: reloj[0])
+    tiempos, terminales = bench_modelo.medir_ciclos_partida(partida, 1)
+    assert tiempos == [30.0] and not terminales
 
 
 def test_medicion_ciclos_rechaza_una_solicitud_dentro_del_cronometro():

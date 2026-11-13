@@ -357,6 +357,7 @@ def medir_ciclos_partida(partida, cantidad=100):
         solicitudes = getattr(partida.fuente, "solicitudes_realizadas", 0)
         inicio = time.perf_counter_ns()
         ejecutar_accion_replay(partida, accion)
+        partida.registrar_orden(accion)
         duracion = (time.perf_counter_ns() - inicio) / 1_000_000
         comprobar(getattr(partida.fuente, "solicitudes_realizadas", 0) == solicitudes,
                   "Se realizo HTTP durante un ciclo: la medicion no es valida")
@@ -394,6 +395,11 @@ def medir_cripta_cargada(cargador, partida, repeticiones=5, ciclos=100, cazadore
             activos += 1
     tiempos = []
     terminales = []
+    puntos_creados = 0
+    if partida.linea_tiempo is not None and partida.acciones_ejecutadas == 0:
+        # La preparación experimental pertenece al estado base medido. El
+        # punto anterior a descargar contenido/activar cazadores ya no lo describe.
+        cargador.iniciar_linea(partida, partida.linea_tiempo.k)
     with tempfile.TemporaryDirectory() as carpeta:
         ruta = Path(carpeta) / "inicio_bench.bin"
         # Un guardado inicial repite la carga experimental; no se usa para retroceso.
@@ -408,7 +414,9 @@ def medir_cripta_cargada(cargador, partida, repeticiones=5, ciclos=100, cazadore
         for _ in range(repeticiones):
             estado = cargador.leer_sesion(ruta, partida.id_cripta, partida.version_cripta)
             cargador.aplicar_sesion(partida, estado)
+            puntos_antes = len(partida.linea_tiempo.puntos)
             ciclos_medidos, finales = medir_ciclos_partida(partida, ciclos)
+            puntos_creados += len(partida.linea_tiempo.puntos) - puntos_antes
             tiempos.extend(ciclos_medidos)
             terminales.extend(finales)
     comprobar(bool(tiempos), "No se completo ningun ciclo entre decisiones")
@@ -425,8 +433,12 @@ def medir_cripta_cargada(cargador, partida, repeticiones=5, ciclos=100, cazadore
     if terminales:
         print(f"Maximo del intervalo de victoria/derrota: {max(terminales):.3f} ms")
     print(f"Ciclos con tiempo >= 20 ms: {excedidos}/{len(tiempos)}")
+    print(f"Registro de historia incluido; puntos creados dentro de ciclos: {puntos_creados}.")
+    if not puntos_creados:
+        print('Esta muestra no certifica el costo de crear puntos de control.')
     print(f"Limite de 20 ms en los ciclos medidos: {'CUMPLE' if excedidos == 0 else 'NO CUMPLE'}")
     return {"ciclos": len(tiempos), "maximo_ms": maximo, "excedidos": excedidos,
+            'incluye_registro_y_puntos': True, 'puntos_creados': puntos_creados,
             "cazadores_totales": len(cazadores), "cazadores_activos_inicio": activos,
             "version_cripta": partida.version_cripta, "niebla": rutas_conocidas,
             "solicitudes": getattr(partida.fuente, "solicitudes_realizadas", 0),

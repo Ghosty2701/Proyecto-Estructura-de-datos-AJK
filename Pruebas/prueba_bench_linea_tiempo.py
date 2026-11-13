@@ -84,7 +84,7 @@ def test_medicion_de_datos_externos_conserva_versiones_y_presupuesto(tmp_path, c
     assert datos["estadisticas"]["cantidad"] == 6
     assert datos["http_consultas"] == 0 and datos["partida_intacta"]
     assert datos["maximo_acciones_reaplicadas"] <= datos["k"]
-    assert datos['k'] == (25 if checkpoint_cada is None else checkpoint_cada)
+    assert datos['k'] == (10 if checkpoint_cada is None else checkpoint_cada)  # D-LT-07.
 
 
 @pytest.mark.parametrize("opciones", [

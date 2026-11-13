@@ -1,6 +1,6 @@
 # Plan: Línea de tiempo y puntos de control
 
-**Mantenimiento de memoria dentro del ciclo:** tras crear un punto, solicitar
+**Mantenimiento de memoria dentro del ciclo (descartado):** tras crear un punto, solicitar
 una recolección completa en la siguiente acción positiva que no cree otro punto.
 No ejecutarla en consultas/navegación/undo, ni fuera del cronómetro de acción+
 registro. Solo si GC está habilitado; no cambiar umbrales, deshabilitarlo ni
@@ -11,6 +11,10 @@ la carga inicia su propio mantenimiento. Para K=1 no hay ciclo sin punto y se
 mantiene la recolección automática, sin afirmar que ese K cumpla el presupuesto.
 Verificar determinismo, GC habilitado/umbrales intactos, costo medido, v6 y
 todos los ciclos oficiales K10; no aprobar por medir solo ciclos con punto.
+
+Resultado: las pruebas dirigidas pasaron, pero se midieron 53/5 000 ciclos
+oficiales >=20 ms (52 con punto y uno sin punto). No hubo ventaja: retirado
+el cambio, sin alterar GC productivo ni mantener otra variante experimental.
 
 **Codificación directa de tuplas escalares:** continuar con registros/tuplas
 elegidos, sin otro índice. Una tupla plana de tipos escalares exactos puede

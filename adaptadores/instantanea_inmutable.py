@@ -1,8 +1,9 @@
 """Puntos en registros inmutables: los enlaces del modelo son IDs locales.
 
 El esquema es el del guardado; esta representación solo existe en memoria.
-Las tuplas originales también tienen registro, por lo que una referencia (ID,)
-no se confunde con los valores del modelo. No retiene objetos del grafo vivo.
+Las tuplas con descendientes tienen registro; las planas de escalares exactos
+se comparten bajo la marca (None, valor), distinta de (ID,). No retiene modelos
+ni contenedores mutables del grafo vivo.
 """
 import random
 import struct

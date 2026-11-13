@@ -12,7 +12,13 @@ Las corridas anteriores se conservan como históricas, sin reemplazar este estad
 - `--bench` incluye historia por defecto; alias anterior compatible, salida
   configurable, entorno en JSON y errores de medición/exportación informados.
 - Entradas raíz `DECISIONES.md` y `PROMPTS_LLM.md`, README y trazabilidad actualizados.
-- **751 pruebas pasan**. Incluyen los 23 casos del apéndice B, configuración,
+- Captura optimizada de producción: comparte tuplas planas de escalares exactos,
+  reutiliza registros vacíos y reserva el índice fijo de esquemas existente.
+  No cambia K, estructuras elegidas ni formato de guardado v6.
+- Ciclos oficiales corregidos: incluyen ejecutar y registrar la orden, creando
+  puntos dentro del cronómetro. Se descarta la cifra anterior sin registro
+  como aceptación de 20 ms; el punto inicial refleja la preparación del ensayo.
+- **759 pruebas pasan**. Incluyen los 23 casos del apéndice B, configuración,
   guardado/replay y la integración real del benchmark en escala pequeña.
 
 ## Validación con K elegido
@@ -23,16 +29,15 @@ Producción sin capturadores experimentales; GC habilitado, sin trazado de tiemp
 
 | Comprobación | Resultado |
 |---|---|
-| Consulta oficial | Máxima **35,9904 ms**, **0/36** consultas ≥50 ms |
-| Memoria de proceso observada externamente | Pico **400,14 MiB**, incluye todo el proceso |
+| Consulta oficial | Máxima **31,9232 ms**, **0/36** consultas ≥50 ms |
+| Memoria de proceso observada externamente | Pico **397,66 MiB**, incluye todo el proceso |
 | Consulta sin efectos | Partida intacta; cero HTTP durante consultas |
-| Ciclos sintéticos con registro, misma escala/K | **14/5 001 ≥20 ms**; máximo **40,3269 ms** |
-| Ciclos sin crear punto | 0/4 501 excedidos; máximo **1,1315 ms** |
-| Ciclos creando punto | 14/500 excedidos; captura máxima **39,9700 ms** |
+| Ciclos oficiales completos con registro | **31/5 000 ≥20 ms**; máximo **39,8973 ms** |
+| Ciclos sin crear punto | 0/4 500 excedidos; máximo **17,6771 ms** |
+| Ciclos creando punto | 31/500 excedidos; mediana de ciclo **14,5394 ms** |
 
-[Consulta oficial](evidencia/validacion_k10_entrega.json),
-[ciclos](evidencia/ciclos_k10_entrega.json),
-[regresión](evidencia/pruebas_entrega_p2.txt).
+[Consulta y ciclos oficiales finales](evidencia/validacion_k10_captura_final.json),
+[regresión](evidencia/pruebas_captura_final.txt).
 La vida del jugador se amplía en la carga experimental para completar acciones;
 los cazadores conservan sus datos. No se garantiza otra ejecución o secuencia.
 Resolubilidad y viaje conservan evidencia oficial previa conforme a 200/5 ms;
@@ -40,7 +45,7 @@ no se presenta como medición nueva.
 
 ## Lo que falta para cerrar
 
-1. Corregir los picos de creación de puntos en **producción**, conservando estado,
+1. Terminar de reducir los picos de creación de puntos en **producción**, conservando estado,
    v6, alias, azar e independencia. No hay evidencia para reemplazar el motor
    con ninguno de los prototipos ensayados.
 2. Validar el ciclo completo <20 ms en la referencia y repetir consultas K10
@@ -50,6 +55,27 @@ no se presenta como medición nueva.
 K ya no es una decisión pendiente. No hacen falta nuevas capacidades ni terminar
 los contratos CI del experimento rechazado. Aprobar pruebas funcionales y cumplir
 consultas no certifica 20 ms. **Estimación global orientativa: ~95 %, no nota.**
+
+## Equivalencia y mejora de captura
+
+[ABBA final](evidencia/captura_final_abba.json): cuatro historias independientes
+de 5 000 acciones, K10, 300 salas, 32 cazadores; control `4d61ebd`, reconstrucción
+vigente en ambas variantes y GC automático habilitado. Los 501 puntos por
+historia (2 004 en total) producen el mismo SHA256 de bytes v6. Consultas sin
+efectos y sin HTTP; ninguno de los cuatro bloques excedió 50 ms.
+
+| Captura | Mediana copia (ms) | Ciclos ≥20 ms |
+|---|---|---|
+| Control A | 13,7544 | 27 |
+| Actual B | 13,3155 | 18 |
+| Actual B | 11,8274 | 9 |
+| Control A | 13,4027 | 24 |
+
+La mediana promedio baja 7,4 %. Se conservan todos los máximos en el JSON;
+la mejora no certifica el límite. [Regresión final](evidencia/pruebas_captura_final.txt).
+El intento de mantenimiento GC manual se retiró: no mejoró el límite y añadió
+costo a ciclos sin punto. Su [resultado descartado](evidencia/validacion_k10_gc_descartado.json)
+se distingue de producción. No se modifica el GC del juego.
 
 ## Reproducir
 

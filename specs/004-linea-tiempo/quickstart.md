@@ -99,4 +99,4 @@ python -m adaptadores.bench_adaptadores --solo memoria --acciones 5000 --salas 2
 
 Tracemalloc y tiempos se ejecutan por separado y se verifica equivalencia.
 Asignaciones Python, no RSS; punto inicial excluido de los tiempos de copia.
-Los incumplimientos de 20 ms están publicados; K permanece provisional.
+Los incumplimientos de 20 ms están publicados; Juan eligió K=10 definitivo.

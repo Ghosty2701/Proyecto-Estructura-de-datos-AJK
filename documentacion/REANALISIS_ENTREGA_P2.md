@@ -57,20 +57,28 @@ como contrato histórico del experimento rechazado, fuera del spec del juego.
 4. **Entrega navegable**: `DECISIONES.md` y `PROMPTS_LLM.md` en raíz; README,
    estado, plan y trazabilidad reconciliados. No se duplican bitácoras enormes.
 5. **Validación de producción con K elegido** y regresión completa de
-   **751 pruebas**, sin activar los capturadores experimentales.
+   **759 pruebas**, sin activar los capturadores experimentales.
+6. **Captura productiva optimizada**: tuplas planas de escalares compartidas,
+   registros constantes para contenedores vacíos y reserva del índice de esquemas.
+   ABBA con cuatro historias K10 de 5 000 acciones: mismos bytes v6 en los 2 004
+   puntos; mediana promedio de captura 7,4 % menor. No equivale a cumplir 20 ms.
+7. **Medición de ciclos corregida**: el medidor oficial anterior omitía registrar
+   la orden. Ahora incluye registro/puntos y mide los ciclos de las mismas
+   5 000 acciones oficiales usadas para consultas; separa con/sin punto.
+   No usar aquella cifra sin registro para certificar el ciclo completo.
 
 ## Presupuestos: hechos, condiciones y pendientes
 
 | Operación exigida por §6.1 | Evidencia | Resultado |
 |---|---|---|
-| Historia <50 ms, ≥5 000 acciones, K por defecto | Nueva corrida oficial K10: cripta-06, 300 salas, 32 cazadores iniciales, semilla 2026, 36 consultas; GC habilitado, sin trazado/perfilador, cero HTTP al consultar | **0/36 excedidas; máxima 35,9904 ms**, RSS observado 400,14 MiB; partida intacta |
-| Ciclo <20 ms, decenas de cazadores | Nueva regresión sintética de producción K10: 300 salas, 32 cazadores, 5 000 acciones vigentes, 5 001 ciclos con registro incluido | **14/5 001 excedidos**, todos con punto; máximo 40,3269 ms. No cumple esta carga; falta cierre oficial final |
+| Historia <50 ms, ≥5 000 acciones, K por defecto | Corrida oficial final K10: cripta-06, 300 salas, 32 cazadores iniciales, semilla 2026, 36 consultas; GC habilitado, sin trazado/perfilador, cero HTTP al consultar | **0/36 excedidas; máxima 31,9232 ms**, RSS observado 397,66 MiB; partida intacta |
+| Ciclo <20 ms, decenas de cazadores | Misma corrida oficial final, 5 000 ciclos incluyendo registro y puntos | **31/5 000 excedidos**, todos con punto; máximo 39,8973 ms. No cumple |
 | Resolubilidad <200 ms, mayor cripta publicada | Evidencia oficial previa, misma referencia de 300 salas; no repetida en esta revisión porque su algoritmo no cambió | Máximo registrado 7,5888 ms; evidencia conforme, no cifra nueva |
 | Paso de viaje <5 ms, mapa completo de referencia | Evidencia oficial previa de niebla/viaje; algoritmo no modificado en esta revisión | Máximo registrado 2,1130 ms; evidencia conforme, no cifra nueva |
 
-Fuentes: [consultas oficiales nuevas](evidencia/validacion_k10_entrega.json),
-[ciclos nuevos](evidencia/ciclos_k10_entrega.json),
-[regresión](evidencia/pruebas_entrega_p2.txt),
+Fuentes: [consultas y ciclos oficiales finales](evidencia/validacion_k10_captura_final.json),
+[ABBA de captura y equivalencia v6](evidencia/captura_final_abba.json),
+[regresión](evidencia/pruebas_captura_final.txt),
 [resolubilidad](evidencia/mediciones_resolubilidad.json) y
 [auditoría de referencia y límites previos](evidencia/auditoria_integridad_2026-11-09.md).
 No se garantiza el máximo para cualquier equipo, orden de acciones o ejecución.
@@ -79,9 +87,10 @@ No se garantiza el máximo para cualquier equipo, orden de acciones o ejecución
 
 ### 1. Corregir el costo de puntos del código de producción
 
-Es el pendiente de implementación. Los **4 501 ciclos sin punto** dieron máximo
-**1,1315 ms**, ninguno excedido. Los 14 ciclos lentos están entre los 500 que
-crearon punto; la captura mediana fue 13,0834 ms y su máximo 39,9700 ms.
+Es el pendiente de implementación. Los **4 500 ciclos oficiales sin punto** dieron
+máximo **17,6771 ms**, ninguno excedido. Los 31 ciclos lentos están entre los
+500 que crearon punto; la mediana de ciclo con punto fue 14,5394 ms y su máximo
+39,8973 ms. Son cifras de ciclos completos, no tiempos aislados de captura.
 Esto acota la próxima tarea a `adaptadores/instantanea_inmutable.py` y su
 publicación desde `CargadorPartida._capturar_punto`, no a reemplazar resolubilidad,
 inventario o la búsqueda del cazador ni a agregar otro índice al prototipo.

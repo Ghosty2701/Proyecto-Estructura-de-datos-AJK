@@ -2,26 +2,33 @@
 
 ## Cierre de entrega priorizado (2026-11-13)
 
-- [ ] ENT-009 Programar mantenimiento GC después de punto en siguiente acción
+- [X] ENT-009 Evaluar y descartar mantenimiento GC después de punto en siguiente acción
   sin punto, dentro de registro/cronometrado y respetando GC deshabilitado por
   el llamador. No cambiar umbrales/estado del juego/persistencia. Validar costo
   completo, K1, undo/navegación y ciclos oficiales K10. PR-LT-007/PR-TC-001.
+  Tres pruebas dirigidas pasan, pero 53/5 000 ciclos oficiales exceden 20 ms;
+  sin mejora. Código y pruebas específicos retirados; GC productivo sin cambios.
+  Evidencia: `validacion_k10_gc_descartado.json`. No cierra el presupuesto.
 
-- [ ] ENT-008 Codificar tuplas escalares planas en el campo con marca inequívoca,
+- [X] ENT-008 Codificar tuplas escalares planas en el campo con marca inequívoca,
   manteniendo IDs para tuplas con descendientes y lectura de puntos previos.
   Misma estructura/codec v6; verificar tipos, alias, ciclos, todos los puntos
   en v6, memoria y ciclo oficial completo. FR-LT-013/014/015, PR-LT-003/007.
+  759 pruebas; ABBA K10: 501 puntos por historia, cuatro historias y mismos
+  bytes v6. Medianas de captura: control 13,754/13,403 ms, actual 13,316/11,827;
+  ciclos lentos 27/24 frente a 18/9. Mejora parcial, sin aceptación de 20 ms.
 
-- [ ] ENT-005 Eliminar tuplas auxiliares de pendientes en el capturador de
+- [X] ENT-005 Evaluar y descartar eliminación de tuplas auxiliares de pendientes en el capturador de
   producción reutilizando sus arreglos; verificar originales no retenidos,
   estado/bytes idénticos, regresión y ciclos completos K10 con GC habilitado.
   PR-LT-007, FR-LT-013/014/015. Referencia previa de producción: `4d61ebd`.
   Ensayo terminado sin ventaja en picos; código descartado. No marca cumplido 20 ms.
-- [ ] ENT-006 Evitar recodificar el contenido de tuplas de escalares exactos,
+- [X] ENT-006 Evitar recodificar el contenido de tuplas de escalares exactos,
   conservando su registro/ID y sin compartir descendientes mutables. Validar
   tipos/bits, subclases, alias, v6, memoria y ciclos completos. FR-LT-013/014/015,
   PR-LT-003/007. Mismas estructuras y formato; sin otro prototipo de arquitectura.
-- [ ] ENT-007 Corregir medición oficial: registrar órdenes dentro del ciclo,
+  Sustituido por ENT-008: el registro individual se omite para tuplas planas.
+- [X] ENT-007 Corregir medición oficial: registrar órdenes dentro del ciclo,
   punto inicial posterior a preparación, y medir ciclos en las 5 000 acciones
   oficiales ya usadas para consultas, con/sin punto. PR-LT-007/PR-TC-001.
 
@@ -41,8 +48,9 @@ se siguen aquí y en `documentacion/REANALISIS_ENTREGA_P2.md`.
   producción. No activar ni medir más prototipos rechazados. FR-LT-012,
   PR-LT-001/007, PR-TC-001. Dep.: evidencia de producción y decisión de K.
   - [X] K=10 elegido y aplicado; sin alterar K guardado al cargar sin opción.
-  - [X] 5 000 acciones oficiales, 36 consultas, máximo 35,9904 ms, cero excedidos.
-  - [ ] Ciclo <20 ms: persisten 14 excedidos sintéticos, todos con punto.
+  - [X] 5 000 acciones oficiales, 36 consultas, máximo 31,9232 ms, cero excedidos.
+  - [ ] Ciclo <20 ms: persisten 31/5 000 excedidos oficiales, todos con punto;
+    máximo 39,8973 ms, mediana con punto 14,5394 ms. GC automático intacto.
 
 **Traslado al repositorio original:** el trabajo posterior a T028 se realizó
 en una copia descargada sin `.git` y se trasladó sobre la base `4c34c88` del

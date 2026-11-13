@@ -1590,3 +1590,18 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     400,14 MiB, partida intacta y cero HTTP al consultar. Sintético K10: 14/5 001
     ciclos ≥20 ms, todos con punto; ninguno de 4 501 sin punto. No se declara
     aceptación global. Cambios separados en commits y publicados.
+
+53. Continua
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Implementados atajos productivos de captura: tuplas escalares exactas
+    compartidas con marca inequívoca, registros constantes de contenedores
+    vacíos e índice fijo de esquemas reservado. Lectura de puntos previos y
+    guardado v6 conservados; pruebas de identidad, ciclos, tipos/bits y mutación.
+    Corregidos los ciclos oficiales para incluir registrar_orden y puntos;
+    preparación experimental coherente con el punto inicial. Comparador ABBA
+    corregido para pasar el punto anterior y verificar todos los puntos v6.
+    Suite completa: 759 pruebas pasan. Mantenimiento GC manual descartado por
+    no mejorar 20 ms; el estado de entrega contiene las cifras vigentes.
+    Commits por cambio lógico y push al repositorio original.

@@ -197,3 +197,14 @@ la expulsión de una acción sin mutaciones no lo hace. Reemplazar deltas dentro
 de una lista del mismo tamaño también se detecta. Conserva marcas explícitas
 para inventario/suelo y el oráculo por defecto. Medir estos ajustes por separado
 del primer ABBA adverso, con el mismo observador en ambas variantes comparadas.
+
+Para partidas cuya raíz contiene la lista de SalaRastro, se ensayará también
+la reserva conservadora ya usada en captura completa: 64 casillas por sala,
+redondeadas a potencia de dos, para ambos hashes privados. Será un mínimo
+de sesión para que la reducción automática no lo anule tras el punto inicial.
+No se guarda la lista ni los modelos para calcular el mínimo: solo el entero.
+Casos genéricos mantienen mínimo 8; cerrar libera también la reserva. El
+índice de versiones y los puntos no se agrandan por esta política. Espacio
+fijo O(salas iniciales), crecimiento/limpieza posteriores según carga 70 %.
+Declarar capacidad y costo adicional, y conservarla solo si las trazas muestran
+ventaja. Esto cambia reserva de memoria, no la estructura elegida ni los IDs.

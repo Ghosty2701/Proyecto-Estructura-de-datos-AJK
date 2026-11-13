@@ -221,9 +221,8 @@ def test_fallo_de_mantenimiento_u_oraculo_conserva_lote(monkeypatch, frontera):
 
 def _marcar_todos_para_probar_codificacion(captura):
     # Arnés conservador de prueba, NO observador incremental ni costo productivo.
-    for entrada in captura._identidades.casillas:
-        if entrada is not None:
-            captura.marcar(entrada.objeto)
+    for entrada in captura._identidades.entradas():
+        captura.marcar(entrada.objeto)
 
 
 @pytest.mark.parametrize('k', [5, 10, 25])

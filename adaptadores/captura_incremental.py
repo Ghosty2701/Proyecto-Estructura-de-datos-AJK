@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from adaptadores.instantanea_inmutable import (
     InstantaneaInmutable, _TIPOS, _VACIA, capturar_estado,
 )
-from modelo.indice_versionado import VersionRegistros, ELIMINAR, _localizar
+from modelo.indice_versionado import VersionRegistros, ELIMINAR, _localizar, _rehash, _TUMBA
 from modelo.tabla_hash import _mezclar
 
 
@@ -41,6 +41,59 @@ def _inicio_identidad(numero, mascara):
     return (plegado ^ (plegado >> 16) ^ (plegado >> 32)) & mascara
 
 
+class _IndicePorId:
+    """Hash inverso mutable, privado; entradas vivas, no registros de puntos."""
+
+    def __init__(self):
+        self.casillas = [None] * 32
+        self.cantidad = self.tumbas = self.recomposiciones = 0
+
+    def copiar(self):
+        copia = _IndicePorId()
+        copia.casillas = self.casillas.copy()
+        copia.cantidad, copia.tumbas = self.cantidad, self.tumbas
+        copia.recomposiciones = self.recomposiciones
+        return copia
+
+    def _recomponer(self, capacidad):
+        self.casillas = _rehash(self.casillas, capacidad)
+        self.tumbas = 0
+        self.recomposiciones += 1
+
+    def insertar(self, entrada):
+        clave = entrada.referencia[0]
+        if (self.cantidad + 1) * 10 > len(self.casillas) * 7:
+            self._recomponer(len(self.casillas) * 2)
+        elif (self.cantidad + self.tumbas + 1) * 10 > len(self.casillas) * 7:
+            self._recomponer(len(self.casillas))
+        posicion, existe = _localizar(self.casillas, clave)
+        if existe:
+            raise RuntimeError('ID de sesión duplicado')
+        if self.casillas[posicion] is _TUMBA:
+            self.tumbas -= 1
+        self.casillas[posicion] = (clave, entrada)
+        self.cantidad += 1
+
+    def obtener(self, clave):
+        posicion, existe = _localizar(self.casillas, clave)
+        return self.casillas[posicion][1] if existe else None
+
+    def borrar(self, clave):
+        posicion, existe = _localizar(self.casillas, clave)
+        if not existe:
+            raise RuntimeError('ID retirado sin entrada viva')
+        self.casillas[posicion] = _TUMBA
+        self.cantidad -= 1
+        self.tumbas += 1
+
+    def reducir(self):
+        if self.cantidad * 40 < len(self.casillas) * 7 and len(self.casillas) > 8:
+            capacidad = 8
+            while self.cantidad * 10 > capacidad * 7:
+                capacidad *= 2
+            self._recomponer(capacidad)
+
+
 class _Identidades:
     """Índice fuerte por identidad. Copiar el vector permite preparar altas."""
 
@@ -51,38 +104,66 @@ class _Identidades:
         self.casillas = [None] * tamano
         self.cantidad = 0
         self.siguiente = 0
+        self.tumbas = self.recomposiciones = 0
+        self.por_id = _IndicePorId()
 
     def _posicion(self, objeto):
         numero = id(objeto)
         mascara = len(self.casillas) - 1
         posicion = _inicio_identidad(numero, mascara)
         paso = None
-        while True:
+        primera_tumba = None
+        for _ in range(len(self.casillas)):
             entrada = self.casillas[posicion]
-            if entrada is None or entrada.objeto is objeto:
+            if entrada is None:
+                return posicion if primera_tumba is None else primera_tumba
+            if entrada is _TUMBA:
+                if primera_tumba is None:
+                    primera_tumba = posicion
+            elif entrada.objeto is objeto:
                 return posicion
             if paso is None:
                 paso = (_mezclar(numero ^ 0x9e3779b97f4a7c15) & mascara) | 1
             posicion = (posicion + paso) & mascara
+        if primera_tumba is not None:
+            return primera_tumba
+        raise RuntimeError('índice de identidades lleno')
 
     def copiar(self):
         copia = _Identidades()
         copia.casillas = self.casillas.copy()
         copia.cantidad, copia.siguiente = self.cantidad, self.siguiente
+        copia.tumbas, copia.recomposiciones = self.tumbas, self.recomposiciones
+        copia.por_id = self.por_id.copiar()
         return copia
+
+    def entradas(self):
+        return (e for e in self.casillas if e is not None and e is not _TUMBA)
+
+    def _recomponer(self, capacidad):
+        anteriores = self.casillas
+        self.casillas = [None] * capacidad
+        for actual in anteriores:
+            if actual is not None and actual is not _TUMBA:
+                self.casillas[self._posicion(actual.objeto)] = actual
+        self.tumbas = 0
+        self.recomposiciones += 1
 
     def insertar(self, entrada):
         if (self.cantidad + 1) * 10 > len(self.casillas) * 7:
-            anteriores = self.casillas
-            self.casillas = [None] * (len(anteriores) * 2)
-            for actual in anteriores:
-                if actual is not None:
-                    self.casillas[self._posicion(actual.objeto)] = actual
-        self.casillas[self._posicion(entrada.objeto)] = entrada
+            self._recomponer(len(self.casillas) * 2)
+        elif (self.cantidad + self.tumbas + 1) * 10 > len(self.casillas) * 7:
+            self._recomponer(len(self.casillas))
+        posicion = self._posicion(entrada.objeto)
+        if self.casillas[posicion] is _TUMBA:
+            self.tumbas -= 1
+        self.casillas[posicion] = entrada
         self.cantidad += 1
+        self.por_id.insertar(entrada)
 
     def obtener(self, objeto):
-        return self.casillas[self._posicion(objeto)]
+        entrada = self.casillas[self._posicion(objeto)]
+        return None if entrada is _TUMBA else entrada
 
     def registrar(self, objeto):
         _comprobar_tipo(objeto)
@@ -91,13 +172,22 @@ class _Identidades:
         self.insertar(entrada)
         return entrada
 
-    def retener(self, version):
-        nuevos = _Identidades(max(8, (version.cantidad * 10 + 6) // 7))
-        nuevos.siguiente = self.siguiente
-        for entrada in self.casillas:
-            if entrada is not None and version.obtener(entrada.referencia[0]) is not None:
-                nuevos.insertar(entrada)
-        return nuevos
+    def borrar_ids(self, ids):
+        for numero in ids:
+            entrada = self.por_id.obtener(numero)
+            if entrada is None:
+                raise RuntimeError('ID retirado sin entrada viva')
+            posicion = self._posicion(entrada.objeto)
+            self.casillas[posicion] = _TUMBA
+            self.cantidad -= 1
+            self.tumbas += 1
+            self.por_id.borrar(numero)
+        if self.cantidad * 40 < len(self.casillas) * 7 and len(self.casillas) > 8:
+            capacidad = 8
+            while self.cantidad * 10 > capacidad * 7:
+                capacidad *= 2
+            self._recomponer(capacidad)
+        self.por_id.reducir()
 
 
 def _valores_enlazados(codigo, datos):
@@ -126,7 +216,7 @@ def _retirar(raiz, version):
     bajas = [(entrada[0], ELIMINAR)
              for posicion, entrada in enumerate(version.casillas)
              if entrada is not None and entrada != () and not vistos[posicion]]
-    return version.con_cambios(bajas) if bajas else version, len(bajas)
+    return version.con_cambios(bajas) if bajas else version, [numero for numero, _ in bajas]
 
 
 @dataclass(frozen=True, slots=True)
@@ -284,7 +374,7 @@ class CapturadorIncremental:
             cambios.append((entrada.referencia[0], (codigo, datos)))
         anterior = self.actual.version if self.actual else VersionRegistros.vacia()
         version, retirados = _retirar(resultado, anterior.con_cambios(cambios))
-        identidades = identidades.retener(version)
+        identidades.borrar_ids(retirados)
         punto = PuntoIncremental(resultado, version)
         if verificar:
             comprobar_equivalencia(raiz, punto)
@@ -292,15 +382,19 @@ class CapturadorIncremental:
             'objetos_codificados': codificados, 'campos_leidos': campos,
             'objetos_nuevos_descubiertos': nuevos,
             'marcas_pendientes': len(self._pendientes),
-            'registros_retirados': retirados, 'registros_vivos': version.cantidad,
+            'registros_retirados': len(retirados), 'registros_vivos': version.cantidad,
             'capacidad_version': len(version.casillas),
             'capacidad_identidades': len(identidades.casillas),
+            'capacidad_inverso': len(identidades.por_id.casillas),
+            'tumbas_identidades': identidades.tumbas,
+            'tumbas_inverso': identidades.por_id.tumbas,
+            'recomposiciones_identidades': identidades.recomposiciones,
+            'recomposiciones_inverso': identidades.por_id.recomposiciones,
             'oraculo_completo': verificar,
         }
         # Ninguna escritura del estado de sesión ocurre antes de este punto.
-        for entrada in identidades.casillas:
-            if entrada is not None:
-                entrada.sucio = False
+        for entrada in pendientes:
+            entrada.sucio = False
         self._identidades, self._pendientes = identidades, []
         self.actual, self.estadisticas = punto, estadisticas
         return punto

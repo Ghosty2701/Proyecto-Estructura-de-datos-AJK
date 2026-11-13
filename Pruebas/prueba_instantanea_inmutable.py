@@ -180,3 +180,63 @@ def test_capturas_concurrentes_conservan_ambito_local_de_ids():
     for numero, punto in enumerate(puntos):
         copia = punto.reconstruir()
         assert copia[0] == numero and copia[1] is copia
+
+
+def test_registros_iguales_se_reutilizan_y_cambios_se_aislan():
+    raiz = [[1], [2]]
+    anterior = capturar_estado(raiz)
+    raiz[0][0] = 9
+    actual = capturar_estado(raiz, anterior)
+    assert actual.registros is not anterior.registros
+    assert actual.registros[0] is anterior.registros[0]
+    assert any(a is b for a, b in zip(actual.registros, anterior.registros))
+    assert actual.reconstruir() == [[9], [2]]
+    assert anterior.reconstruir() == [[1], [2]]
+    copia = actual.reconstruir()
+    copia[1].append(99)
+    assert actual.reconstruir() == [[9], [2]]
+    ref = weakref.ref(anterior)
+    del anterior
+    assert ref() is None  # los registros compartidos no retienen el punto padre
+
+
+def test_reuso_con_ids_reasignados_tamanos_distintos_y_ciclos():
+    raiz = [[1], [2]]
+    anterior = capturar_estado(raiz)
+    raiz.insert(0, {'nuevo': [3]})
+    raiz.append(raiz)
+    actual = capturar_estado(raiz, anterior)
+    copia = actual.reconstruir()
+    assert copia[:-1] == [{'nuevo': [3]}, [1], [2]] and copia[-1] is copia
+    pequeno = capturar_estado([[]], actual)
+    assert pequeno.reconstruir() == [[]]
+    assert anterior.reconstruir() == [[1], [2]]
+
+
+@pytest.mark.parametrize('antes,despues', [(True, 1), (1, 1.0), (0.0, -0.0)])
+def test_reuso_no_confunde_igualdad_numerica_con_tipo_o_bits(antes, despues):
+    import struct
+    previo = capturar_estado([antes])
+    actual = capturar_estado([despues], previo)
+    valor = actual.reconstruir()[0]
+    assert type(valor) is type(despues)
+    if type(valor) is float:
+        assert struct.pack('!d', valor) == struct.pack('!d', despues)
+    assert actual.registros[0] is not previo.registros[0]
+
+
+def test_linea_y_recarga_reutilizan_con_los_mismos_bytes_v6(tmp_path):
+    carpeta = escribir_paquete(tmp_path / 'datos')
+    p, c = crear_partida(carpeta, tmp_path / 'cache', checkpoint_cada=3)
+    jugar(p)
+    puntos = p.linea_tiempo.puntos
+    assert any(x is y for a, b in zip(puntos, puntos[1:])
+               for x, y in zip(a.estado.registros, b.estado.registros))
+    datos = c._linea_a_datos(p)
+    linea, _, _ = c._datos_a_linea(datos, c._identidad(p))
+    assert any(x is y for a, b in zip(linea.puntos, linea.puntos[1:])
+               for x, y in zip(a.estado.registros, b.estado.registros))
+    for a, b in zip(puntos, linea.puntos):
+        assert a.estado.registros == b.estado.registros
+    p.linea_tiempo = linea
+    assert c._linea_a_datos(p) == datos

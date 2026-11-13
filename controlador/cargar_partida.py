@@ -233,12 +233,19 @@ class CargadorPartida:
 
     def iniciar_linea(self, partida, k):
         """Punto 0 en el estado actual; raíces iguales a las del guardado."""
-        linea = LineaTiempo(k, capturar_estado)
+        linea = LineaTiempo(k, self._capturar_punto)
         linea.iniciar(lambda: (partida, self.salas_ordenadas()), partida.motor.reloj)
         partida.linea_tiempo = linea
         partida.gestor_linea = self
         partida._reloj_linea = partida.motor.reloj
         partida._acciones_linea = partida.acciones_ejecutadas
+
+    def _capturar_punto(self, raiz):
+        linea = getattr(raiz[0], 'linea_tiempo', None)
+        anterior = linea.puntos[-1].estado if linea is not None and linea.puntos else None
+        if not isinstance(anterior, InstantaneaInmutable):
+            anterior = None
+        return capturar_estado(raiz, anterior=anterior)
 
     def _identidad(self, partida):
         return IdentidadGuardado(partida.id_cripta, partida.version_cripta, self.servicio.cache.version)
@@ -275,7 +282,7 @@ class CargadorPartida:
         """Restaura la línea guardada; los puntos se decodifican una vez al cargar."""
         try:
             tramos, ordenes, acciones, en_tramo, reloj_linea, acciones_linea, puntos = datos
-            linea = LineaTiempo(tramos[0][0], capturar_estado)
+            linea = LineaTiempo(tramos[0][0], self._capturar_punto)
             linea.tramos = [TramoK(k, posicion) for k, posicion in tramos]
             linea.ordenes = [OrdenEjecutada(texto, tipo, reloj) for texto, tipo, reloj in ordenes]
             linea.acciones = [AccionVigente(reloj, posicion) for reloj, posicion in acciones]
@@ -285,7 +292,8 @@ class CargadorPartida:
                 copia = cargado.datos_extra["partida"]
                 if copia.motor is not cargado.motor or copia.jugador is not cargado.jugador:
                     raise ErrorGuardado("punto de control con raíces inconsistentes")
-                estado = capturar_estado((copia, cargado.salas))
+                anterior = linea.puntos[-1].estado if linea.puntos else None
+                estado = capturar_estado((copia, cargado.salas), anterior=anterior)
                 linea.puntos.append(PuntoControl(posicion, cantidad, reloj, estado, k))
         except (TypeError, ValueError, KeyError, IndexError, AttributeError) as error:
             raise ErrorGuardado(f"línea de tiempo guardada inválida: {error}") from error

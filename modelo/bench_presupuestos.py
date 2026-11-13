@@ -98,10 +98,14 @@ def comparar_captura(revision, k=25):
         # Misma codificación: solo comparar algoritmos de captura. Las copias
         # de trabajo usan la reconstrucción vigente en ambas variantes.
         anterior.InstantaneaInmutable = modulo.InstantaneaInmutable
+        def capturar_anterior(raiz, anterior=None):
+            # Referencia previa sin argumento de reutilización.
+            return referencia(raiz)
+        referencia = anterior.capturar_estado
         filas = []
         resultado = None
-        for nombre, capturar in (('anterior', anterior.capturar_estado), ('actual', original),
-                                 ('actual', original), ('anterior', anterior.capturar_estado)):
+        for nombre, capturar in (('anterior', capturar_anterior), ('actual', original),
+                                 ('actual', original), ('anterior', capturar_anterior)):
             modulo.capturar_estado = capturar
             print(f'HISTORIA COMPLETA: captura {nombre}, K={k}', flush=True)
             resultado = medir_presupuestos(valores_k=(k,))

@@ -5,6 +5,7 @@ Las tuplas originales también tienen registro, por lo que una referencia (ID,)
 no se confunde con los valores del modelo. No retiene objetos del grafo vivo.
 """
 import random
+import struct
 from dataclasses import dataclass
 from operator import attrgetter
 
@@ -101,7 +102,25 @@ class InstantaneaInmutable:
             resolver = None
 
 
-def capturar_estado(raiz):
+def _mismos_tipos_y_bits(a, b):
+    """Tras igualdad de tuplas: distinguir tipos numéricos y signo de cero."""
+    for i in range(len(a)):
+        x, y = a[i], b[i]
+        if x is y:
+            continue
+        tipo = type(x)
+        if tipo is not type(y):
+            return False
+        if tipo is tuple:
+            if not _mismos_tipos_y_bits(x, y):
+                return False
+        elif tipo is float and struct.pack('!d', x) != struct.pack('!d', y):
+            return False
+    return True
+
+
+def capturar_estado(raiz, anterior=None):
+    previos = anterior.registros if anterior is not None else ()
     capacidad = 1024
     if (type(raiz) is tuple and raiz and type(raiz[-1]) is list
             and raiz[-1] and type(raiz[-1][0]) is SalaRastro):
@@ -169,5 +188,11 @@ def capturar_estado(raiz):
                     valores.append(referencia(valor))
             valores.insert(0, mascara)
             datos = tuple(valores)
+        if numero < len(previos):
+            previo = previos[numero]
+            if (previo[0] == codigo and previo[1] == datos
+                    and _mismos_tipos_y_bits(previo[1], datos)):
+                registros[numero] = previo
+                continue
         registros[numero] = (codigo, datos)
     return InstantaneaInmutable(resultado, tuple(registros))

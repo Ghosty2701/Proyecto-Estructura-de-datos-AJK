@@ -355,6 +355,48 @@ comparar consultas históricas antes y después; intentar cargar archivos antigu
 - Esta especificación no implementa funcionalidades ni sustituye plan o tareas.
   Todas las decisiones de estructuras pertenecen al usuario.
 
+## Ampliación: captura incremental versionada (2026-11-13)
+
+Ruta de investigación elegida por el usuario; los índices concretos siguen
+pendientes. Conserva el contenido de historia, las reglas, K y los presupuestos.
+
+- **FR-CI-001**: Captura inicial completa; después representar todos los cambios
+  sin inspeccionar atributos de todas las entidades inalteradas en cada punto.
+- **FR-CI-002**: Identificadores preservan alias/ciclos y tienen política explícita
+  de altas, bajas y reutilización de direcciones. `id(obj)` aislado no basta.
+  Cada versión interpreta sus propios registros y permanece inmutable.
+- **FR-CI-003**: Cubrir atributos, listas/dict, heap/secuencias, enlaces, inventario,
+  cursor/equipo, suelo/botín, conocimiento, carga diferida y azar. También las
+  órdenes que cambian estado sin avanzar reloj o contador de acciones.
+- **FR-CI-004**: Seguimiento independiente de la ventana de cinco acciones de undo;
+  no perder cambios cuando K es mayor. Deshacer registra restauraciones y respeta
+  el consumo del pergamino fuera del historial reversible.
+- **FR-CI-005**: Registrar objetos nuevos y referencias antes de publicar, incluidos
+  nacimientos/bajas entre puntos. Definir retirada y límites de memoria de índices
+  sin retener modelos originales innecesariamente.
+- **FR-CI-006**: Publicación atómica: un fallo no publica una versión parcial ni
+  descarta cambios pendientes. Una mutación no soportada se detecta; no produce
+  silenciosamente una versión obsoleta o una consulta con más de K acciones.
+- **FR-CI-007**: Materialización independiente conserva tipos y bits de float y
+  permite reproducir a lo sumo K acciones. No depende de una cadena creciente
+  de puntos ni de reproducir desde el inicio.
+- **FR-CI-008**: Intentar conservar v6 materializando al guardar y reconstruyendo
+  el capturador al cargar, incluso con cambio de K. Si no es viable, revisar
+  el contrato antes de cambiar la versión de archivo.
+- **FR-CI-009**: Oráculo contra captura completa después de cada orden, undo y
+  carga en trazas pequeñas: modelo persistible/bytes normalizados y continuación,
+  no solamente el resumen visible.
+- **PR-CI-001**: Medir registro de cambios, publicación, crecimiento/bajas,
+  mantenimiento y fallback, con GC habilitado y todos los picos incluidos.
+  Informar inicio completo aparte; no desplazar costo fuera del cronómetro.
+- **PR-CI-002**: Con 5 000 acciones informar entidades visitadas/campos leídos,
+  cambios pendientes, memoria fija/marginal/RSS y consulta para tres K y solo
+  inicial. No certificar 20/50 ms con instrumentación o solo por la mediana.
+
+El piloto no reemplaza producción hasta demostrar equivalencia y reducción
+real de trabajo/costo. Si pierde estado, crece sin control o desplaza el costo,
+se descarta o revisa. El diseño y el piloto están en [incremental.md](incremental.md).
+
 ## Aclaraciones
 
 ### Sesión del 2026-11-09 (especificación)

@@ -261,3 +261,13 @@ criterio entre puntos decodificados, manteniendo v6.
 Verificar registros cambiados, cambios de tamaño/IDs, alias/ciclos, liberación
 del antecesor, independencia y mismos bytes. Medir memoria marginal sin
 confundirla con memoria total, y comparar historias completas contra 537db26.
+
+
+## Ruta incremental versionada: eleccion 2026-11-13
+
+El usuario elige investigar y especificar captura incremental con indices propios.
+Los indices concretos siguen pendientes: hash propio con vector inmutable de
+casillas (recomendado para el piloto) o hash de cambios con AVL persistente.
+No confundir esta eleccion de ruta con aprobacion de una estructura particular.
+Auditoria, costos y criterios de salida en incremental.md; FR-CI/PR-CI en spec.md.
+No hay implementacion ni cambios a produccion, K o formato v6.

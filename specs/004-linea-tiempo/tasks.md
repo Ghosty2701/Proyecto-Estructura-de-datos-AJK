@@ -382,3 +382,20 @@ Resultados en `documentacion/DIAGNOSTICO_PICOS_JUAN.md`. Se propone captura
 incremental versionada frente a separación estático/mutable especializada;
 elección y ampliación del diseño pendientes antes de implementar. PR-LT-001/007,
 K definitivo y aceptación no se cierran con un diagnóstico instrumentado.
+
+## Ruta incremental elegida: especificación (2026-11-13)
+
+- [X] CI-001 Ampliar requisitos de captura, versiones, identidad, ciclo de vida,
+  mutaciones, undo, publicación, carga y medición (FR-CI/PR-CI).
+- [X] CI-002 Revisar fronteras: motor, agenda, inventario, conocimiento, carga y
+  undo; documentar ventana de cinco acciones y escrituras fuera de `_cambiar`.
+- [X] CI-003 Definir oráculo completo y piloto acotado con criterios de descarte.
+- [ ] CI-004 Elegir índices de versiones: hash/vector inmutable o AVL persistente.
+- [ ] CI-005 Concretar IDs/retirada, contenedores no weakref y cobertura por frontera.
+- [ ] CI-006 Implementar y verificar estructuras aisladas y capturador experimental.
+- [ ] CI-007 Validar cada orden/undo/carga contra captura completa y bytes v6.
+- [ ] CI-008 Medir registro/captura/consulta/RSS con GC y crecimiento incluidos;
+  decidir integración solo con equivalencia y ventaja demostradas.
+
+La ruta está aprobada, no sus índices concretos. No se marca aceptación ni cambia
+K o producción. Diseño propuesto en `incremental.md`; quedan decisiones abiertas.

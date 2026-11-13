@@ -1,5 +1,12 @@
 # Documento de Decisiones de Diseño
 
+**Ruta incremental (2026-11-13):** el usuario eligió investigar/especificar
+captura incremental versionada con índices propios. Se amplía 004, con auditoría
+de mutaciones y piloto de equivalencia/costo. El historial limitado a cinco
+acciones no basta para K=10/25. Índices de versión pendientes de elección:
+hash con vector inmutable o AVL persistente. No hay código incremental ni
+cambio de producción. [Requisitos y piloto](../specs/004-linea-tiempo/incremental.md).
+
 **Diagnóstico de picos (2026-11-13):** sin cambios al motor; 699 pruebas.
 Todos los excedidos instrumentados crean punto: captura concentra ~98 % del
 tiempo lento y GC 15–17 %. La plantilla heredada resulta más lenta y no se

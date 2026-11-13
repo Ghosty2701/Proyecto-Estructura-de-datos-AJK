@@ -1508,3 +1508,14 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     acotada a resúmenes y diez peores por K. Se solicita ruta de investigación
     incremental/versionada o estático/mutable especializada, aún sin implementar.
     Detalles en DIAGNOSTICO_PICOS_JUAN.md; presupuestos y K siguen pendientes.
+
+47. Captura incremental versionada con índices propios (recomendado)
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Ruta elegida explícitamente. Ampliada capacidad 004 con FR-CI/PR-CI y piloto,
+    sin implementar índices aún. Auditoría detecta límite de cinco acciones de
+    undo y mutaciones fuera de `_cambiar` en heap, inventario, carga y restauración.
+    Se presentan hash propio/vector de casillas inmutable frente a hash/AVL
+    persistente; recomendada la primera para un piloto sencillo, elección pendiente.
+    Producción, K y presupuestos no cambian; especificación y auditoría publicadas.

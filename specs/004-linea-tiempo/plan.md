@@ -2,6 +2,11 @@
 
 **Fecha**: 2026-11-09. **Rama real**: `main`.
 **Capacidad activa de spec-kit**: `004-linea-tiempo`.
+
+**Ampliación 2026-11-13:** ruta incremental versionada elegida. FR-CI/PR-CI
+en spec.md; auditoría, alternativas de índices y piloto en [incremental.md](incremental.md).
+Índices pendientes de elección; no hay implementación incremental ni cambio de
+producción. La reutilización de registros sigue siendo captura completa.
 **Entrada**: [spec.md](spec.md). **Estado**: diseño implementado; mediciones y documentación en cierre, con presupuestos incumplidos y K pendiente.
 **Decisiones**: D-LT-01 a D-LT-06 elegidas por el usuario. D-LT-08 extiende los
 puntos a registros inmutables por ID (elección explícita del 2026-11-12), con

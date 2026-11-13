@@ -444,6 +444,8 @@ def test_ac019_022_main_aplica_k_y_el_valor_por_defecto(paquete, tmp_path, monke
     from datos_linea_tiempo import CRIPTA, SEMILLA
     from modelo.linea_tiempo import K_POR_DEFECTO
 
+    assert K_POR_DEFECTO == 10  # D-LT-07 elegida por Juan; FR-LT-012.
+
     usados = []
     original = CargadorPartida.iniciar_linea
     monkeypatch.setattr(CargadorPartida, "iniciar_linea",

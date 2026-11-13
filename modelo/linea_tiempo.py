@@ -13,8 +13,8 @@ ACCION = 'accion'
 PERGAMINO = 'pergamino'
 NAVEGACION = 'navegacion'
 
-# D-LT-07 pendiente: valor provisional hasta que el usuario elija con mediciones (T034).
-K_POR_DEFECTO = 25
+# D-LT-07: Juan eligió K=10 tras comparar consultas/memoria (research.md, 2026-11-13).
+K_POR_DEFECTO = 10
 
 
 class ErrorHistoria(ValueError):

@@ -2,6 +2,11 @@
 
 ## Cierre de entrega priorizado (2026-11-13)
 
+- [ ] ENT-008 Codificar tuplas escalares planas en el campo con marca inequívoca,
+  manteniendo IDs para tuplas con descendientes y lectura de puntos previos.
+  Misma estructura/codec v6; verificar tipos, alias, ciclos, todos los puntos
+  en v6, memoria y ciclo oficial completo. FR-LT-013/014/015, PR-LT-003/007.
+
 - [ ] ENT-005 Eliminar tuplas auxiliares de pendientes en el capturador de
   producción reutilizando sus arreglos; verificar originales no retenidos,
   estado/bytes idénticos, regresión y ciclos completos K10 con GC habilitado.

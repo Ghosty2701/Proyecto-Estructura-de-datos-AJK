@@ -1,5 +1,17 @@
 # Plan: Línea de tiempo y puntos de control
 
+**Codificación directa de tuplas escalares:** continuar con registros/tuplas
+elegidos, sin otro índice. Una tupla plana de tipos escalares exactos puede
+codificarse como `(None, tupla_original)` dentro del campo; las referencias a
+nodos siguen siendo `(ID,)`. Ningún ID es None: no hay ambigüedad aun si la
+tupla del juego contiene None o enteros. Se evita registrar, encolar y reconstruir
+nodos que solo contienen datos inmutables. Tuplas con modelos, listas, dict,
+subclases u otras tuplas mantienen su nodo. Se conserva alias de tuplas puras
+al compartir el mismo valor inmutable; no se comparte descendiente mutable.
+El reconstructor admite ambos formatos en memoria. Guardar materializa el
+modelo y conserva v6/bytes normalizados. Verificar tipos/bits, independencia,
+alias/ciclos, ausencia de modelos retenidos, memoria y ciclos completos reales.
+
 **Optimización de producción (2026-11-13, PR-LT-007):** conservar IDs locales,
 tabla de identidades y los dos arreglos existentes. Durante captura, el vector
 de registros conserva temporalmente el objeto original hasta codificar su

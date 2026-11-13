@@ -70,12 +70,23 @@ class FronteraIncremental:
                 if nombre != 'salidas':
                     for entidad in contenedor:
                         self._marcar(getattr(entidad, 'ficha', None))
-        cambios = []
-        for accion in motor.historial.acciones:
-            self._marcar(accion)
-            self._marcar(accion.cambios)
-            cambios.extend(accion.cambios)
-        return cambios
+        # Copiar referencias conserva lo que undo vaciará. No visitar otra vez
+        # los destinatarios de deltas inalterados en cada navegación/acción.
+        return [(accion, tuple(accion.cambios)) for accion in motor.historial.acciones]
+
+    def _diferencia(self, accion, antes, despues):
+        prefijo = 0
+        limite = min(len(antes), len(despues))
+        while prefijo < limite and antes[prefijo] is despues[prefijo]:
+            prefijo += 1
+        if prefijo == len(antes) == len(despues):
+            return
+        self._marcar(accion)
+        self._marcar(accion.cambios)
+        for cambio in antes[prefijo:]:
+            self._delta(cambio)
+        for cambio in despues[prefijo:]:
+            self._delta(cambio)
 
     def ejecutar(self, operacion):
         anteriores = self._frontera()
@@ -83,7 +94,10 @@ class FronteraIncremental:
             return operacion()
         finally:
             posteriores = self._frontera()
-            for cambio in anteriores:
-                self._delta(cambio)
-            for cambio in posteriores:
-                self._delta(cambio)
+            for accion, antes in anteriores:
+                # Una acción expulsada puede seguir intacta; la deshecha estará
+                # vacía. Leer su lista permite distinguir ambos casos.
+                self._diferencia(accion, antes, tuple(accion.cambios))
+            for accion, despues in posteriores:
+                if all(accion is not anterior for anterior, _ in anteriores):
+                    self._diferencia(accion, (), despues)

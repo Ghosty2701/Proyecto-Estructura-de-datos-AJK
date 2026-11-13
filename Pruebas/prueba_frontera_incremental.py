@@ -67,3 +67,37 @@ def test_cinco_undo_seguidos_y_ventana_superada(tmp_path):
         assert p.acciones_ejecutadas == antes - 5
 
 
+def test_navegar_no_reprocesa_deltas_de_acciones_inalteradas(tmp_path, monkeypatch):
+    p, c = crear_partida(escribir_paquete(tmp_path / 'datos'), tmp_path / 'cache')
+    ctl = Controlador(p, VistaConsola(salida=lambda _: None))
+    with CapturadorIncremental() as captura:
+        captura.capturar((p, c.salas_ordenadas()))
+        frontera = FronteraIncremental(captura, p)
+        for texto in ['recoger 1', 'recoger 1', 'esperar']:
+            frontera.ejecutar(lambda: ctl.procesar(texto))
+        captura.capturar((p, c.salas_ordenadas()))
+        def fallar(cambio):
+            raise AssertionError('se reprocesó un delta antiguo')
+        monkeypatch.setattr(frontera, '_delta', fallar)
+        frontera.ejecutar(lambda: ctl.procesar('sig'))
+        captura.capturar((p, c.salas_ordenadas()))
+
+
+def test_reemplazo_de_delta_sin_cambiar_longitud_se_observa(tmp_path):
+    p, c = crear_partida(escribir_paquete(tmp_path / 'datos'), tmp_path / 'cache')
+    ctl = Controlador(p, VistaConsola(salida=lambda _: None))
+    with CapturadorIncremental() as captura:
+        captura.capturar((p, c.salas_ordenadas()))
+        frontera = FronteraIncremental(captura, p)
+        frontera.ejecutar(lambda: ctl.procesar('esperar'))
+        captura.capturar((p, c.salas_ordenadas()))
+        sala = c.salas_ordenadas()[-1]
+        def reemplazar():
+            anterior = sala.ultimo_rastro
+            sala.ultimo_rastro = 123
+            p.motor.historial.acciones[-1].cambios[0] = ('rastro', sala, anterior)
+        frontera.ejecutar(reemplazar)
+        punto = captura.capturar((p, c.salas_ordenadas()))
+        assert punto.reconstruir()[1][-1].ultimo_rastro == 123
+
+

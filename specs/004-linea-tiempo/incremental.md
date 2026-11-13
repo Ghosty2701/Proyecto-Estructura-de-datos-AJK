@@ -124,3 +124,21 @@ medir cargas controladas con marcas conocidas; no demuestra cobertura del juego.
 La cobertura por fronteras de la auditoría seguirá abierta hasta instrumentar
 y verificar cada escritura, navegación y undo. No se conecta este componente
 a la línea de tiempo productiva por pasar pruebas de marcas manuales.
+
+### Piloto de observación por frontera de orden
+
+Antes de modificar las clases productivas se probará un envoltorio explícito
+por orden. Conservará las referencias a deltas de las cinco acciones antes y
+después de ejecutar, incluidas listas que undo vacía. Marcará sus destinatarios,
+los vecinos de cambios de inventario y las fronteras fuera de undo: partida,
+jugador, motor/azar, agenda/heap/secuencia, historial, inventario y nodos,
+sala actual/suelo y publicación de enemigos. Solo marca objetos ya registrados;
+los nuevos se descubren desde enlaces cambiados al capturar.
+
+Las marcas se acumulan en el registro independiente hasta publicar, aunque los
+deltas originales salgan de la ventana de cinco acciones. El envoltorio cubre
+también navegación y errores mediante finally. No intercepta escrituras
+arbitrarias ni precargas externas: su contrato exige ejecutar la operación
+entera dentro de la frontera; el oráculo sigue obligatorio durante validación.
+Recorrer inventario y deltas tiene costo explícito, incluido al medir órdenes.
+No se usará marcar todo el modelo como sustituto de este seguimiento.

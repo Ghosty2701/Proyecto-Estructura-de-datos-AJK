@@ -1,5 +1,10 @@
 # Piloto incremental: resultado y límite (2026-11-13)
 
+**Etapa histórica anterior al índice inverso.** El usuario eligió después ese
+índice, se implementó y se evaluó con ajustes adicionales. Resultado actual en
+[Índice inverso](INDICE_INVERSO_JUAN.md); las tablas de este archivo conservan
+las mediciones de la etapa anterior.
+
 Se completaron registro de identidades, retiro, capturador experimental,
 materialización, oráculo y seguimiento de órdenes. **No integrar esta variante**:
 es correcta en las pruebas ejecutadas, pero empeora los costos del juego.

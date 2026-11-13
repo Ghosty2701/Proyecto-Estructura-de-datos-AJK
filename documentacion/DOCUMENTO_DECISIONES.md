@@ -1,12 +1,20 @@
 # Documento de Decisiones de Diseño
 
+**Índice inverso evaluado (2026-11-13):** elegido por el usuario e implementado
+con bajas/tumbas atómicas. 744 pruebas, dos ABBA de cuatro historias de 5 000
+acciones, puntos v6 equivalentes. Añadidos búsqueda inicial rápida, observación
+de sufijos modificados y reserva de hashes privados. La primera variante es más
+lenta; la ajustada empata aproximadamente con el control (~46 ms de captura),
+con ~754 KiB privados extra. No activa producción ni cierra 20 ms/K. Investigación
+del índice cerrada con resultado negativo para integración. [Datos y contrato](INDICE_INVERSO_JUAN.md).
+
 **Piloto incremental evaluado (2026-11-13):** registro fuerte con IDs estables y
 retiro, capturador atómico, oráculo y seguimiento explícito por orden implementados;
 733 pruebas. Seis historias de 5 000 acciones y bytes v6 de todos los puntos:
 K25 coincide con producción, pero su captura mediana sube de 13,6–13,7 a
 50,5–53,8 ms. No activar esta variante. Perfil separado localiza costo de
 reconstruir identidades, alcanzabilidad y registros nuevos. Índice inverso
-hash propuesto para investigar, aún sin elección ni código. K sigue provisional.
+hash propuesto en esa etapa, posteriormente elegido y evaluado arriba. K sigue provisional.
 [Implementación, costos y siguiente decisión](CAPTURA_INCREMENTAL_JUAN.md).
 
 **Primer paso del piloto (2026-11-13):** hash propio con vector inmutable,

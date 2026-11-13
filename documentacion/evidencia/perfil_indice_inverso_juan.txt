@@ -1,0 +1,31 @@
+PILOTO incremental K=25: 500 acciones
+  validando bytes v6 de 21 puntos
+  ciclos >=20: 21; consultas >=50: 0
+         7935499 function calls in 2.869 seconds
+
+   Ordered by: cumulative time
+   List reduced from 48 to 20 due to restriction <20>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       21    0.203    0.010    2.876    0.137 captura_incremental.py:332(capturar)
+   330221    0.074    0.000    1.014    0.000 captura_incremental.py:370(<genexpr>)
+   340206    0.136    0.000    1.001    0.000 captura_incremental.py:348(referencia)
+       41    0.118    0.003    0.787    0.019 indice_versionado.py:101(con_cambios)
+   741023    0.401    0.000    0.610    0.000 indice_versionado.py:40(_localizar)
+       21    0.253    0.012    0.607    0.029 captura_incremental.py:209(_retirar)
+    71077    0.110    0.000    0.528    0.000 captura_incremental.py:176(registrar)
+   277907    0.256    0.000    0.435    0.000 captura_incremental.py:114(_posicion)
+    71077    0.074    0.000    0.386    0.000 captura_incremental.py:160(insertar)
+    72802    0.241    0.000    0.334    0.000 indice_versionado.py:18(_validar_registro)
+       21    0.043    0.002    0.256    0.012 captura_incremental.py:183(borrar_ids)
+   132916    0.041    0.000    0.256    0.000 captura_incremental.py:172(obtener)
+       30    0.041    0.001    0.171    0.006 indice_versionado.py:67(_rehash)
+  1880808    0.167    0.000    0.167    0.000 {built-in method builtins.len}
+    71077    0.056    0.000    0.155    0.000 captura_incremental.py:66(insertar)
+  1085994    0.112    0.000    0.112    0.000 {method 'pop' of 'list' objects}
+   210013    0.093    0.000    0.093    0.000 tabla_hash.py:13(_mezclar)
+   741023    0.091    0.000    0.091    0.000 indice_versionado.py:33(_inicio)
+   277907    0.072    0.000    0.072    0.000 captura_incremental.py:40(_inicio_identidad)
+   340206    0.070    0.000    0.070    0.000 captura_incremental.py:23(_primitivo)
+
+

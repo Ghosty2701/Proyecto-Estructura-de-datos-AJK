@@ -415,9 +415,19 @@ K definitivo y aceptación no se cierran con un diagnóstico instrumentado.
   - [X] Costos sintéticos completos, GC, mantenimiento y perfil: no activar
     variante actual porque aumenta captura de ~13,7 a ~50–54 ms para K25.
   - [ ] RSS/oficial de una variante que primero demuestre ventaja.
-- [ ] CI-009 Elegir siguiente ensayo: índice inverso hash ID → entrada con
+- [X] CI-009 Elegir siguiente ensayo: índice inverso hash ID → entrada con
   bajas/tumbas frente a conservar barrido y reducir marcas. Propuesta y costos
-  en `documentacion/CAPTURA_INCREMENTAL_JUAN.md`; no implementado sin elección.
+  en `documentacion/CAPTURA_INCREMENTAL_JUAN.md`; usuario eligió índice inverso.
+- [X] CI-010 Implementar índice inverso, bajas/tumbas transaccionales, reducción,
+  liberación y pruebas negativas. Añadidos primer sondeo rápido, observación
+  de sufijos modificados y reserva privada por salas; 744 pruebas.
+- [X] CI-011 Cerrar ABBA antes/después con puntos v6 completos, costos de
+  mantenimiento, espacio adicional y decisión de integración.
+  Ocho historias largas / 40 000 acciones vigentes, 744 pruebas. Índice inverso
+  inicial más lento; con ajustes queda en ~46–47 ms, sin ventaja clara sobre
+  control ~46 ms y con ~754 KiB privados adicionales. Todas las capturas del
+  ensayo ajustado exceden 20 ms. **No integrar esta variante**. Datos y límites
+  en `documentacion/INDICE_INVERSO_JUAN.md`; K/presupuestos siguen abiertos.
 
 Ruta e índices del piloto elegidos por el usuario. La existencia del prototipo
 no activa producción ni cierra presupuestos o K. Contratos y etapas en

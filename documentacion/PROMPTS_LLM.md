@@ -1546,3 +1546,17 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     Siguiente índice inverso hash propuesto, pendiente de elección por AGENTS.md.
     K y aceptación siguen abiertos. Commits/push por contratos, implementación,
     optimización de sondeos, seguimiento, benchmarks y documentación/evidencia.
+
+50. Índice inverso hash por ID y bajas con tumbas (recomendado para medir)
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Elección explícita implementada tras contrato: dos hashes sincronizados,
+    bajas/limpieza/reducción, copias transaccionales y liberación. 744 pruebas.
+    Se avanzó de seguido con primer sondeo rápido, observador de sufijos
+    modificados y reserva privada por salas, cada bloque con commit y push.
+    Dos ABBA / 40 000 acciones vigentes: primera variante 62–64 ms contra
+    51–52 ms; ajustada ~46–47 ms contra ~46 ms, sin ventaja clara y con ~754 KiB
+    privados adicionales. Todos los puntos v6 coinciden; no integrar ni cambiar K.
+    Perfil y estadísticas compactos conservan ambos resultados y los picos.
+    Investigación del índice cerrada, límites/aceptación del proyecto pendientes.

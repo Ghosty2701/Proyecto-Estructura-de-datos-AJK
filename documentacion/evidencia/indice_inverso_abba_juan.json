@@ -1,0 +1,274 @@
+{
+  "acciones": 5000,
+  "salas": 300,
+  "cazadores": 32,
+  "semilla": 2026,
+  "python": "3.13.2",
+  "gc_habilitado": true,
+  "oraculo_dentro_de_capturas": false,
+  "escenarios": [
+    {
+      "tipo": "incremental",
+      "k": 25,
+      "inicio_incremental_ms": 28.6152,
+      "ciclos": {
+        "cantidad": 5001,
+        "minimo_ms": 0.1747,
+        "mediana_ms": 4.3855,
+        "p95_ms": 7.1119,
+        "maximo_ms": 100.2915,
+        "limite_ms": 20,
+        "excedidos": 201
+      },
+      "ordenes_incluido_undo": {
+        "cantidad": 5002,
+        "minimo_ms": 0.1747,
+        "mediana_ms": 4.3854500000000005,
+        "p95_ms": 7.1119,
+        "maximo_ms": 100.2915,
+        "limite_ms": 20,
+        "excedidos": 201
+      },
+      "capturas": {
+        "cantidad": 200,
+        "minimo_ms": 38.5506,
+        "mediana_ms": 51.65775,
+        "p95_ms": 66.5389,
+        "maximo_ms": 91.5686,
+        "limite_ms": 20,
+        "excedidos": 200
+      },
+      "consultas": {
+        "cantidad": 36,
+        "minimo_ms": 0.042,
+        "mediana_ms": 22.3532,
+        "p95_ms": 27.733,
+        "maximo_ms": 28.6954,
+        "limite_ms": 50,
+        "excedidos": 0
+      },
+      "maximo_acciones_reaplicadas": 24,
+      "objetos_codificados_min_max": [
+        3472,
+        3651
+      ],
+      "campos_leidos_min_max": [
+        16523,
+        20020
+      ],
+      "indices_finales": {
+        "registros_vivos": 6760,
+        "capacidad_version": 16384,
+        "capacidad_identidades": 16384,
+        "capacidad_inverso": null,
+        "tumbas_identidades": null,
+        "tumbas_inverso": null,
+        "recomposiciones_identidades": null,
+        "recomposiciones_inverso": null
+      },
+      "puntos": 201,
+      "sha256_bytes_v6_puntos": "66cb0b6c48231cfcba743f96b294a352c1a2579993df82d41a1b44c7d94415f2",
+      "partida_intacta": true,
+      "http": 0,
+      "variante_indice": "anterior"
+    },
+    {
+      "tipo": "incremental",
+      "k": 25,
+      "inicio_incremental_ms": 30.1113,
+      "ciclos": {
+        "cantidad": 5001,
+        "minimo_ms": 0.1541,
+        "mediana_ms": 6.4755,
+        "p95_ms": 10.6935,
+        "maximo_ms": 135.2929,
+        "limite_ms": 20,
+        "excedidos": 204
+      },
+      "ordenes_incluido_undo": {
+        "cantidad": 5002,
+        "minimo_ms": 0.1541,
+        "mediana_ms": 6.47495,
+        "p95_ms": 10.6935,
+        "maximo_ms": 135.2929,
+        "limite_ms": 20,
+        "excedidos": 204
+      },
+      "capturas": {
+        "cantidad": 200,
+        "minimo_ms": 34.2677,
+        "mediana_ms": 64.39529999999999,
+        "p95_ms": 87.0894,
+        "maximo_ms": 123.5137,
+        "limite_ms": 20,
+        "excedidos": 200
+      },
+      "consultas": {
+        "cantidad": 36,
+        "minimo_ms": 0.0362,
+        "mediana_ms": 20.283099999999997,
+        "p95_ms": 26.0559,
+        "maximo_ms": 26.8251,
+        "limite_ms": 50,
+        "excedidos": 0
+      },
+      "maximo_acciones_reaplicadas": 24,
+      "objetos_codificados_min_max": [
+        3472,
+        3651
+      ],
+      "campos_leidos_min_max": [
+        16523,
+        20020
+      ],
+      "indices_finales": {
+        "registros_vivos": 6760,
+        "capacidad_version": 16384,
+        "capacidad_identidades": 16384,
+        "capacidad_inverso": 16384,
+        "tumbas_identidades": 3585,
+        "tumbas_inverso": 3932,
+        "recomposiciones_identidades": 196,
+        "recomposiciones_inverso": 207
+      },
+      "puntos": 201,
+      "sha256_bytes_v6_puntos": "66cb0b6c48231cfcba743f96b294a352c1a2579993df82d41a1b44c7d94415f2",
+      "partida_intacta": true,
+      "http": 0,
+      "variante_indice": "inverso"
+    },
+    {
+      "tipo": "incremental",
+      "k": 25,
+      "inicio_incremental_ms": 33.1182,
+      "ciclos": {
+        "cantidad": 5001,
+        "minimo_ms": 0.1398,
+        "mediana_ms": 6.7777,
+        "p95_ms": 10.7158,
+        "maximo_ms": 109.8483,
+        "limite_ms": 20,
+        "excedidos": 201
+      },
+      "ordenes_incluido_undo": {
+        "cantidad": 5002,
+        "minimo_ms": 0.1398,
+        "mediana_ms": 6.77755,
+        "p95_ms": 10.7158,
+        "maximo_ms": 109.8483,
+        "limite_ms": 20,
+        "excedidos": 201
+      },
+      "capturas": {
+        "cantidad": 200,
+        "minimo_ms": 39.2117,
+        "mediana_ms": 62.209199999999996,
+        "p95_ms": 81.6241,
+        "maximo_ms": 100.6618,
+        "limite_ms": 20,
+        "excedidos": 200
+      },
+      "consultas": {
+        "cantidad": 36,
+        "minimo_ms": 0.0361,
+        "mediana_ms": 20.421999999999997,
+        "p95_ms": 28.8839,
+        "maximo_ms": 29.1564,
+        "limite_ms": 50,
+        "excedidos": 0
+      },
+      "maximo_acciones_reaplicadas": 24,
+      "objetos_codificados_min_max": [
+        3472,
+        3651
+      ],
+      "campos_leidos_min_max": [
+        16523,
+        20020
+      ],
+      "indices_finales": {
+        "registros_vivos": 6760,
+        "capacidad_version": 16384,
+        "capacidad_identidades": 16384,
+        "capacidad_inverso": 16384,
+        "tumbas_identidades": 3621,
+        "tumbas_inverso": 3932,
+        "recomposiciones_identidades": 195,
+        "recomposiciones_inverso": 207
+      },
+      "puntos": 201,
+      "sha256_bytes_v6_puntos": "66cb0b6c48231cfcba743f96b294a352c1a2579993df82d41a1b44c7d94415f2",
+      "partida_intacta": true,
+      "http": 0,
+      "variante_indice": "inverso"
+    },
+    {
+      "tipo": "incremental",
+      "k": 25,
+      "inicio_incremental_ms": 27.4959,
+      "ciclos": {
+        "cantidad": 5001,
+        "minimo_ms": 0.1404,
+        "mediana_ms": 4.5542,
+        "p95_ms": 7.4002,
+        "maximo_ms": 103.4543,
+        "limite_ms": 20,
+        "excedidos": 200
+      },
+      "ordenes_incluido_undo": {
+        "cantidad": 5002,
+        "minimo_ms": 0.1404,
+        "mediana_ms": 4.554,
+        "p95_ms": 7.4002,
+        "maximo_ms": 103.4543,
+        "limite_ms": 20,
+        "excedidos": 200
+      },
+      "capturas": {
+        "cantidad": 200,
+        "minimo_ms": 35.7892,
+        "mediana_ms": 50.889,
+        "p95_ms": 68.6677,
+        "maximo_ms": 97.6774,
+        "limite_ms": 20,
+        "excedidos": 200
+      },
+      "consultas": {
+        "cantidad": 36,
+        "minimo_ms": 0.0363,
+        "mediana_ms": 19.93265,
+        "p95_ms": 26.8554,
+        "maximo_ms": 27.4178,
+        "limite_ms": 50,
+        "excedidos": 0
+      },
+      "maximo_acciones_reaplicadas": 24,
+      "objetos_codificados_min_max": [
+        3472,
+        3651
+      ],
+      "campos_leidos_min_max": [
+        16523,
+        20020
+      ],
+      "indices_finales": {
+        "registros_vivos": 6760,
+        "capacidad_version": 16384,
+        "capacidad_identidades": 16384,
+        "capacidad_inverso": null,
+        "tumbas_identidades": null,
+        "tumbas_inverso": null,
+        "recomposiciones_identidades": null,
+        "recomposiciones_inverso": null
+      },
+      "puntos": 201,
+      "sha256_bytes_v6_puntos": "66cb0b6c48231cfcba743f96b294a352c1a2579993df82d41a1b44c7d94415f2",
+      "partida_intacta": true,
+      "http": 0,
+      "variante_indice": "anterior"
+    }
+  ],
+  "alcance": "Piloto sintético, sin activación productiva. Ciclos incluyen observar fronteras/deltas, registro y captura con retiro/GC. Consultas incluyen convertir IDs, copiar, replay y resumen. Verificación completa final y SHA256 de bytes v6 de TODOS los puntos fuera de cronómetros; entre variantes de K25 y consultas entre todos los escenarios. Sin RSS ni red ni renderizado. No elige K ni certifica referencia oficial; conserva todos los picos en estadísticas. Comparación exclusiva de índices del piloto; no compara contra producción. Todos los puntos v6 coinciden entre las cuatro historias.",
+  "revision_referencia": "5ab4c78",
+  "orden": "ABBA K25 contiguo, historias independientes"
+}

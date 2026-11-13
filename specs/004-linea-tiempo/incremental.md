@@ -208,3 +208,17 @@ Casos genéricos mantienen mínimo 8; cerrar libera también la reserva. El
 fijo O(salas iniciales), crecimiento/limpieza posteriores según carga 70 %.
 Declarar capacidad y costo adicional, y conservarla solo si las trazas muestran
 ventaja. Esto cambia reserva de memoria, no la estructura elegida ni los IDs.
+
+### Cierre de este ensayo
+
+744 pruebas; ocho historias de 5 000 acciones y todos los puntos v6 iguales.
+El primer índice inverso empeora de 51–52 a 62–64 ms. Con búsquedas rápidas,
+observador diferencial y reserva, el segundo ABBA da ~46–47 ms, frente a ~46 ms
+del control que comparte observador/índice de versiones vigentes. No hay ventaja
+clara; todas las capturas exceden 20 ms. Reserva reduce limpiezas, pero añade
+~754 KiB superficiales frente al control; no se midió RSS de esta variante.
+Mantener el código como experimental, **no activar producción ni cambiar K**.
+La reserva conserva la mejora sobre la primera variante del índice inverso,
+sin convertir ese resultado parcial en recomendación de integración.
+Ensayo cerrado; aceptación global pendiente. Tablas, revisiones y límites en
+[el informe del índice inverso](../../documentacion/INDICE_INVERSO_JUAN.md).

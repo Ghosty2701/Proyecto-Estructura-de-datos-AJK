@@ -10,6 +10,9 @@ el registro de identidad con retiro, el capturador experimental y un observador
 explícito por orden. El piloto verifica alias/ciclos, errores, marcas omitidas,
 trazas reales, cinco undo, v6 y continuación. La evaluación de costo/integración
 sigue abierta; producción conserva captura completa y K provisional.
+Índice inverso ID → entrada elegido e implementado; bajas con tumbas y copias
+atómicas. Se optimizaron primer sondeo y observación de deltas; reserva privada
+por salas medida separadamente. Evaluación en [el informe](../../documentacion/INDICE_INVERSO_JUAN.md).
 **Entrada**: [spec.md](spec.md). **Estado**: diseño implementado; mediciones y documentación en cierre, con presupuestos incumplidos y K pendiente.
 **Decisiones**: D-LT-01 a D-LT-06 elegidas por el usuario. D-LT-08 extiende los
 puntos a registros inmutables por ID (elección explícita del 2026-11-12), con

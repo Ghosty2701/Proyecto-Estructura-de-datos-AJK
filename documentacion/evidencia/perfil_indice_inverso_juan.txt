@@ -27,5 +27,3 @@ PILOTO incremental K=25: 500 acciones
    741023    0.091    0.000    0.091    0.000 indice_versionado.py:33(_inicio)
    277907    0.072    0.000    0.072    0.000 captura_incremental.py:40(_inicio_identidad)
    340206    0.070    0.000    0.070    0.000 captura_incremental.py:23(_primitivo)
-
-

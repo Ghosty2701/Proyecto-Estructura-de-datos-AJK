@@ -11,6 +11,9 @@
   conservando su registro/ID y sin compartir descendientes mutables. Validar
   tipos/bits, subclases, alias, v6, memoria y ciclos completos. FR-LT-013/014/015,
   PR-LT-003/007. Mismas estructuras y formato; sin otro prototipo de arquitectura.
+- [ ] ENT-007 Corregir medición oficial: registrar órdenes dentro del ciclo,
+  punto inicial posterior a preparación, y medir ciclos en las 5 000 acciones
+  oficiales ya usadas para consultas, con/sin punto. PR-LT-007/PR-TC-001.
 
 Las tareas de investigación CI al final son históricas/experimentales y no
 condiciones adicionales del enunciado. No se continuará su ampliación como

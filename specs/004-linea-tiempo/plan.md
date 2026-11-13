@@ -23,6 +23,14 @@ independientes. Evita comprensión vacía y comparación posterior por cada nodo
 Reservar 256 casillas en el índice fijo de esquemas ya existente reduce sondeos
 sin cambiar su estructura; contabilizar su pequeño espacio fijo adicional.
 
+**Corrección de aceptación de ciclos (PR-LT-007):** el medidor oficial de
+`bench_modelo.medir_ciclos_partida` debe registrar la orden dentro del cronómetro,
+como la consola. Tras preparar contenido/cazadores, iniciar el punto base antes
+de guardar el estado del benchmark. Además, en las mismas 5 000 acciones oficiales
+de `medir_cripta_consultas`, medir acción+registro y separar ciclos con/sin punto.
+Conservar máximos/excedidos, número de puntos, GC habilitado y cero HTTP. No
+considerar la medición antigua sin registro como aceptación de PR-LT-007.
+
 **D-LT-07 cerrada (2026-11-13):** Juan eligió K=10 para nuevas partidas/replay;
 la carga conserva el K guardado salvo opción explícita. Justificación en
 `research.md`, con mediciones de producción. Esta decisión no activa prototipos

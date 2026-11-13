@@ -357,8 +357,8 @@ comparar consultas históricas antes y después; intentar cargar archivos antigu
 
 ## Ampliación: captura incremental versionada (2026-11-13)
 
-Ruta de investigación elegida por el usuario; los índices concretos siguen
-pendientes. Conserva el contenido de historia, las reglas, K y los presupuestos.
+Ruta de investigación elegida por el usuario; hash propio con vector inmutable
+elegido para el piloto. Conserva el contenido de historia, las reglas, K y los presupuestos.
 
 - **FR-CI-001**: Captura inicial completa; después representar todos los cambios
   sin inspeccionar atributos de todas las entidades inalteradas en cada punto.

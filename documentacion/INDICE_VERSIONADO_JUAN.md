@@ -52,12 +52,12 @@ python -m pytest -q
 
 ## Avance del piloto y pendientes
 
-Completado el índice de versiones aislado y verificado. Siguen abiertos la
-identidad/ciclo de vida de modelos y contenedores, la cobertura de mutaciones,
-el capturador experimental y su integración. No se ha implementado todavía
-captura incremental del juego: el motor conserva la captura completa y K=25
-provisional. El piloto deberá medir cargas de cambios reales, crecimiento,
-retirada, fallos, undo y v6 contra el oráculo completo antes de activarse.
+Este fue el primer paso aislado. Posteriormente se implementaron identidad,
+retirada, captura con marcas y observación experimental de órdenes; ver
+[piloto completo](CAPTURA_INCREMENTAL_JUAN.md). Las cifras anteriores son del
+índice inicial antes de optimizar su primer sondeo; no representan el capturador.
+Producción conserva captura completa y K=25 provisional. La integración exige
+ventaja demostrada y validación de cobertura/costo completo.
 
 Avance global estimado: **93 %**. El piloto avanzó en infraestructura; los
 requisitos de rendimiento y la elección final de K no están cerrados.

@@ -142,3 +142,20 @@ arbitrarias ni precargas externas: su contrato exige ejecutar la operación
 entera dentro de la frontera; el oráculo sigue obligatorio durante validación.
 Recorrer inventario y deltas tiene costo explícito, incluido al medir órdenes.
 No se usará marcar todo el modelo como sustituto de este seguimiento.
+
+## Resultado del bloque completo
+
+Registro, capturador y envoltorio implementados; 733 pruebas. Seis historias
+de 5 000 acciones, equivalencia de todos los puntos K25 mediante bytes v6 y
+consultas equivalentes. La captura incremental del juego cuesta 50,5–53,8 ms
+de mediana frente a 13,6–13,7 ms de producción. No supera el criterio de costo:
+**no activar esta variante**, aunque pase equivalencia. El envoltorio cubre su
+contrato explícito; no se presenta como interceptación universal.
+
+El perfil identifica reconstrucción del registro fuerte, alcanzabilidad y
+publicación/validación. Se propone comparar un índice inverso hash ID → entrada
+viva más borrado con tumbas contra conservar el barrido y reducir marcas.
+La propuesta todavía no está elegida ni implementada. Incluye otro índice O(N)
+y solo puede ahorrar parte del costo; se necesita decisión explícita antes
+de añadirlo (AGENTS.md). Contrato, tablas, límites y recomendación detallados
+en [el informe](../../documentacion/CAPTURA_INCREMENTAL_JUAN.md).

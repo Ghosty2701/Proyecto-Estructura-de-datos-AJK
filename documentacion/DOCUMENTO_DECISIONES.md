@@ -1,17 +1,27 @@
 # Documento de Decisiones de Diseño
 
-**Índice incremental elegido (2026-11-13):** hash propio con vector inmutable,
+**Piloto incremental evaluado (2026-11-13):** registro fuerte con IDs estables y
+retiro, capturador atómico, oráculo y seguimiento explícito por orden implementados;
+733 pruebas. Seis historias de 5 000 acciones y bytes v6 de todos los puntos:
+K25 coincide con producción, pero su captura mediana sube de 13,6–13,7 a
+50,5–53,8 ms. No activar esta variante. Perfil separado localiza costo de
+reconstruir identidades, alcanzabilidad y registros nuevos. Índice inverso
+hash propuesto para investigar, aún sin elección ni código. K sigue provisional.
+[Implementación, costos y siguiente decisión](CAPTURA_INCREMENTAL_JUAN.md).
+
+**Primer paso del piloto (2026-11-13):** hash propio con vector inmutable,
 implementado aisladamente; 709 pruebas. Publicación mediana 0,484 ms para 96
 cambios/6 000 registros en el ensayo, excluyendo detección/serialización del
 modelo. No está conectado al motor ni cierra 20/50 ms. Identidad/ciclo de vida
-y capturador pendientes. [Contrato, mediciones y alcance](INDICE_VERSIONADO_JUAN.md).
+y capturador estaban pendientes en esta etapa, resueltos después en el piloto.
+[Contrato, mediciones iniciales y alcance](INDICE_VERSIONADO_JUAN.md).
 
 **Ruta incremental (2026-11-13):** el usuario eligió investigar/especificar
 captura incremental versionada con índices propios. Se amplía 004, con auditoría
 de mutaciones y piloto de equivalencia/costo. El historial limitado a cinco
-acciones no basta para K=10/25. Índices de versión pendientes de elección:
-hash con vector inmutable o AVL persistente. No hay código incremental ni
-cambio de producción. [Requisitos y piloto](../specs/004-linea-tiempo/incremental.md).
+acciones no basta para K=10/25. Se presentaron hash/vector frente a AVL
+persistente; el usuario eligió hash/vector y se implementó después en el piloto.
+Producción no cambia. [Requisitos y piloto](../specs/004-linea-tiempo/incremental.md).
 
 **Diagnóstico de picos (2026-11-13):** sin cambios al motor; 699 pruebas.
 Todos los excedidos instrumentados crean punto: captura concentra ~98 % del

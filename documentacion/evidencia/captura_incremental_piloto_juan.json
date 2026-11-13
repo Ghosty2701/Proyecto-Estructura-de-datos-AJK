@@ -1,0 +1,111 @@
+{
+  "python": "3.13.2",
+  "salas": 1500,
+  "versiones": 200,
+  "gc_habilitado": true,
+  "tracemalloc_en_tiempos": false,
+  "bloques_abba": [
+    {
+      "tipo": "completo",
+      "inicio_ms": 13.5055,
+      "mutacion_marcado_captura": {
+        "cantidad": 200,
+        "minimo_ms": 13.4566,
+        "mediana_ms": 14.431750000000001,
+        "p95_ms": 15.6809,
+        "maximo_ms": 22.1647,
+        "excedidos_50ms": 0,
+        "excedidos_20ms": 1
+      },
+      "reconstruccion_final_ms": 3.8594,
+      "objetos_codificados_por_punto": {
+        "min": 6007,
+        "max": 6007
+      },
+      "campos_leidos_por_punto": null,
+      "registros_retirados_total": null,
+      "registros_iniciales": 6007,
+      "equivalencia_final_y_punto_inicial": true
+    },
+    {
+      "tipo": "incremental",
+      "inicio_ms": 41.8367,
+      "mutacion_marcado_captura": {
+        "cantidad": 200,
+        "minimo_ms": 8.4642,
+        "mediana_ms": 9.7789,
+        "p95_ms": 14.7751,
+        "maximo_ms": 17.8237,
+        "excedidos_50ms": 0,
+        "excedidos_20ms": 0
+      },
+      "reconstruccion_final_ms": 8.6839,
+      "objetos_codificados_por_punto": {
+        "min": 21,
+        "max": 21
+      },
+      "campos_leidos_por_punto": {
+        "min": 154,
+        "max": 154
+      },
+      "registros_retirados_total": 800,
+      "registros_iniciales": 6007,
+      "equivalencia_final_y_punto_inicial": true
+    },
+    {
+      "tipo": "incremental",
+      "inicio_ms": 38.8016,
+      "mutacion_marcado_captura": {
+        "cantidad": 200,
+        "minimo_ms": 8.4552,
+        "mediana_ms": 9.33655,
+        "p95_ms": 10.6105,
+        "maximo_ms": 13.963,
+        "excedidos_50ms": 0,
+        "excedidos_20ms": 0
+      },
+      "reconstruccion_final_ms": 8.6963,
+      "objetos_codificados_por_punto": {
+        "min": 21,
+        "max": 21
+      },
+      "campos_leidos_por_punto": {
+        "min": 154,
+        "max": 154
+      },
+      "registros_retirados_total": 800,
+      "registros_iniciales": 6007,
+      "equivalencia_final_y_punto_inicial": true
+    },
+    {
+      "tipo": "completo",
+      "inicio_ms": 13.2603,
+      "mutacion_marcado_captura": {
+        "cantidad": 200,
+        "minimo_ms": 12.3321,
+        "mediana_ms": 13.6823,
+        "p95_ms": 18.3906,
+        "maximo_ms": 34.7747,
+        "excedidos_50ms": 0,
+        "excedidos_20ms": 5
+      },
+      "reconstruccion_final_ms": 3.3735,
+      "objetos_codificados_por_punto": {
+        "min": 6007,
+        "max": 6007
+      },
+      "campos_leidos_por_punto": null,
+      "registros_retirados_total": null,
+      "registros_iniciales": 6007,
+      "equivalencia_final_y_punto_inicial": true
+    }
+  ],
+  "memoria_incremental": {
+    "con_sesion_y_modelo_bytes": 29569664,
+    "solo_puntos_bytes": 28645288,
+    "pico_bytes": 30102152,
+    "versiones_retenidas": 201,
+    "es_rss": false
+  },
+  "alcance": "Carga controlada; no partida ni consultas ni K. Incluye mutacion, marcas, IDs, codificacion, copia de indices, altas, alcanzabilidad, retirada y GC; inicio separado. Oraculo fuera del tiempo solo al final y punto inicial intacto. No prueba cobertura de escrituras del juego ni certifica 20/50 ms. Memoria en ejecucion aparte; sin RSS. Reconstruccion final es una muestra, no distribucion de consultas."
+}

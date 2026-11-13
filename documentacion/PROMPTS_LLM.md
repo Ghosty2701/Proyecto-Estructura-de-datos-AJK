@@ -1531,3 +1531,18 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     memoria trazada 29,8 MB, inicio y limpieza informados aparte. No se conecta
     al motor ni se declara captura incremental completa. CI-005 y seguimiento
     de mutaciones siguen pendientes; K no cambia. Commits y push separados.
+
+49. Completa todo lo seguido que puedas, sin pararse tanto a esperar que indique que continues, simplemente haz que el avance entre cada vez que paras sea mayor, a no se que sea necesario
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Completados de seguido contrato de ciclo de vida, registro de IDs monótonos
+    y retirada, capturador atómico, materialización, oráculo, observador explícito
+    de órdenes/undo y benchmarks controlado/integral. 733 pruebas, incluidos
+    controles negativos, cinco undo, v6 y continuación. Seis historias de 5 000
+    acciones: todos los bytes de puntos K25 coinciden, pero captura mediana
+    incremental 50,5–53,8 ms frente a 13,6–13,7 ms completa. No se activa.
+    Perfil agregado conserva el diagnóstico; evidencia compacta sin trazas crudas.
+    Siguiente índice inverso hash propuesto, pendiente de elección por AGENTS.md.
+    K y aceptación siguen abiertos. Commits/push por contratos, implementación,
+    optimización de sondeos, seguimiento, benchmarks y documentación/evidencia.

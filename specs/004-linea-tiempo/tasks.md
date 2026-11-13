@@ -392,13 +392,33 @@ K definitivo y aceptación no se cierran con un diagnóstico instrumentado.
 - [X] CI-003 Definir oráculo completo y piloto acotado con criterios de descarte.
 - [X] CI-004 Elegir índices: usuario elige hash propio/vector inmutable (2026-11-13).
 - [ ] CI-005 Concretar IDs/retirada, contenedores no weakref y cobertura por frontera.
-- [ ] CI-006 Implementar y verificar estructuras aisladas y capturador experimental.
+  - [X] CI-005a IDs monótonos, índice fuerte acotado, retiro de ciclos, publicación
+    atómica y cierre documentados y probados para modelos/list/dict/tuple.
+  - [X] CI-005b Observador explícito por orden: deltas antes/después, inventario,
+    suelo, agenda, azar, navegación y undo; trazas sintéticas con oráculo.
+  - [ ] CI-005c Cobertura ampliada en datos oficiales y escrituras externas al
+    contrato; no afirmar que el envoltorio intercepta cualquier mutación.
+- [X] CI-006 Implementar y verificar estructuras aisladas y capturador experimental.
   - [X] CI-006a Índice hash de versiones aislado: 709 pruebas y benchmark separado.
-  - [ ] CI-006b Registro de identidad/cambios con ciclo de vida documentado.
-  - [ ] CI-006c Capturador experimental, tras resolver CI-005.
+  - [X] CI-006b Registro de identidad/cambios con ciclo de vida documentado.
+  - [X] CI-006c Capturador experimental con marcas explícitas y oráculo por defecto.
+  - [X] CI-006d Envoltorio de órdenes reales sin parchear clases productivas.
 - [ ] CI-007 Validar cada orden/undo/carga contra captura completa y bytes v6.
+  - [X] CI-007a Modelo completo tras cada orden de traza pequeña, cinco undo,
+    recarga v6, continuación contra captura completa y controles negativos.
+  - [ ] CI-007b Evaluación larga de todos los puntos y datos oficiales.
+    - [X] Seis historias sintéticas de 5 000 acciones: bytes v6 de todos los
+      puntos K25 iguales entre variantes, consultas equivalentes y estado intacto.
+    - [ ] Validación oficial; no priorizar integración de una variante más lenta.
 - [ ] CI-008 Medir registro/captura/consulta/RSS con GC y crecimiento incluidos;
   decidir integración solo con equivalencia y ventaja demostradas.
+  - [X] Costos sintéticos completos, GC, mantenimiento y perfil: no activar
+    variante actual porque aumenta captura de ~13,7 a ~50–54 ms para K25.
+  - [ ] RSS/oficial de una variante que primero demuestre ventaja.
+- [ ] CI-009 Elegir siguiente ensayo: índice inverso hash ID → entrada con
+  bajas/tumbas frente a conservar barrido y reducir marcas. Propuesta y costos
+  en `documentacion/CAPTURA_INCREMENTAL_JUAN.md`; no implementado sin elección.
 
-La ruta está aprobada, no sus índices concretos. No se marca aceptación ni cambia
-K o producción. Diseño propuesto en `incremental.md`; quedan decisiones abiertas.
+Ruta e índices del piloto elegidos por el usuario. La existencia del prototipo
+no activa producción ni cierra presupuestos o K. Contratos y etapas en
+`incremental.md`; integración y aceptación siguen pendientes.

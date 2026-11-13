@@ -5,10 +5,11 @@
 
 **Ampliación 2026-11-13:** ruta incremental versionada elegida. FR-CI/PR-CI
 en spec.md; auditoría, alternativas de índices y piloto en [incremental.md](incremental.md).
-El usuario eligió hash propio con vector inmutable; su índice aislado está
-implementado y verificado. No hay capturador incremental ni cambio de producción.
-Identidad de modelos y seguimiento de mutaciones siguen pendientes. La
-reutilización de registros actual sigue siendo captura completa.
+El usuario eligió hash propio con vector inmutable. Están implementados el índice,
+el registro de identidad con retiro, el capturador experimental y un observador
+explícito por orden. El piloto verifica alias/ciclos, errores, marcas omitidas,
+trazas reales, cinco undo, v6 y continuación. La evaluación de costo/integración
+sigue abierta; producción conserva captura completa y K provisional.
 **Entrada**: [spec.md](spec.md). **Estado**: diseño implementado; mediciones y documentación en cierre, con presupuestos incumplidos y K pendiente.
 **Decisiones**: D-LT-01 a D-LT-06 elegidas por el usuario. D-LT-08 extiende los
 puntos a registros inmutables por ID (elección explícita del 2026-11-12), con

@@ -17,12 +17,24 @@ por identidad, reutilizar registro e IDs de hijos si no cambiaron, visitar los
 hijos igualmente para detectar cualquier mutación. No depender de marcas ni
 interceptar escrituras del motor. List/dict se comprueban por contenido inmediato;
 Random se lee siempre. Los registros publicados nunca retienen objetos vivos.
-Retirar nodos no alcanzados, liberar sus valores y reconstruir el mismo índice
-para evitar acumulación de bajas; reutilizar casillas libres solo en puntos
+Retirar nodos no alcanzados y liberar sus valores; mantener el mismo hash con
+bajas/tumbas ya elegidas, recomponiendo solo al superar el 70 % de ocupación.
+Reconstruirlo en cada punto anuló el ahorro y no se conserva. Reutilizar casillas libres solo en puntos
 posteriores. Vector congelado independiente por punto, huecos sin enlaces.
 Cache solo en el capturador de la línea, nunca persistida ni en el punto. Tras
 error descartar cache; guardar/cargar sigue materializando v6. Validar alias,
 ciclos, cambios externos, retiro acotado, undo/carga y bytes de todos los puntos.
+
+La lectura repetida de todos los atributos no cumple 20 ms. La integración
+requiere un contador derivado de revisión en las clases del esquema: incrementar
+en asignación/eliminación ordinaria de atributos, incluidas restauración/undo.
+Solo los modelos propios con ese contador pueden omitir releer atributos cuando
+la revisión coincide; sus hijos se visitan siempre. List/dict/Random y modelos
+sin contador conservan comprobación completa. No hay marcas manuales por acción
+ni parcheo dinámico; el contador no se persiste ni pertenece al estado simulado.
+La escritura directa en `__dict__` no es una API de mutación de partida. Auditar
+que producción no la usa salvo liberación de copias descartadas. Probar cobertura
+de todos los tipos del esquema, borrado de opcionales y equivalencia con oráculo.
 
 **Mantenimiento de memoria dentro del ciclo (descartado):** tras crear un punto, solicitar
 una recolección completa en la siguiente acción positiva que no cree otro punto.

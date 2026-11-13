@@ -1470,3 +1470,16 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     ciclos excedidos para A/B/B/A con K=25; presupuestos y K pendientes.
     Solicitada elección de catálogo acotado de tuplas de ID según AGENTS.md;
     no se implementa mientras no haya elección. Commits separados y publicados.
+
+44. Compartir las tuplas de ID con un catálogo acotado (recomendado)
+
+    *Fecha: 2026-11-12. Agente: Codex; modelo exacto no registrado.*
+
+    Elección explícita. Spec 3cbafd3 y código 9943bb9, publicados por separado.
+    Catálogo inmutable de 16 384 tokens y fallback propio; 691 pruebas, con
+    independencia, concurrencia y límite. Memoria marginal por punto 36,0 %
+    menor, contabilizando aparte 1,37 MiB fijos. RSS oficial K=5/10/25:
+    1 252/652/291 MiB; consultas excedidas 24/0/9. Ciclos siguen incumpliendo.
+    Diagnóstico: 61,2 % de registros iguales en mismo ID entre puntos vecinos;
+    propuesta su reutilización y solicitada elección, sin implementarla.
+    Resultados completos y límites en CATALOGO_ID_JUAN.md; K no cambia.

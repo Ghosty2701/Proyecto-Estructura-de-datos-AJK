@@ -1,5 +1,12 @@
 # Documento de Decisiones de Diseño
 
+**Catálogo de ID (2026-11-12):** elegido e implementado con 691 pruebas;
+16 384 tokens inmutables, fallback y reconstrucciones independientes.
+Memoria marginal por punto 36,0 % menor en el estado medido, más costo fijo
+estimado 1,37 MiB. Oficial K=5/10/25: 24/0/9 consultas >=50 ms y RSS observado
+1 252/652/291 MiB. Ciclos aún exceden 20 ms; K definitivo pendiente.
+[Método, costos y resultados desfavorables](CATALOGO_ID_JUAN.md).
+
 **Continuación de captura (2026-11-12):** clasificación de primitivos y mayor
 reserva temporal de identidades, con 688 pruebas. Misma representación, registros
 y bytes v6. Se descarta la inserción directa sin beneficio demostrado. ABBA de

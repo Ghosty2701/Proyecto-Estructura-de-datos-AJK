@@ -41,6 +41,32 @@ def medir_costo_catalogo():
                        'ya existia antes de trazar cada punto y se contabiliza aparte.'}
 
 
+def diagnosticar_registros_iguales():
+    """Solo lectura: coincidencias completas en el mismo ID entre puntos vecinos."""
+    with tempfile.TemporaryDirectory(prefix='cripta-diagnostico-registros-') as temporal:
+        carpeta = Path(temporal)
+        _paquete(carpeta/'datos', 300, 2026, cazadores=32)
+        c = _cargador(carpeta/'datos', carpeta/'cache')
+        p, _ = _preparar(c, 5000, 25, 32, 2026, [1])
+        puntos = p.linea_tiempo.puntos
+        total = iguales = 0
+        fracciones = []
+        for a, b in zip(puntos, puntos[1:]):
+            ra, rb = a.estado.registros, b.estado.registros
+            n = sum(ra[i] == rb[i] for i in range(min(len(ra), len(rb))))
+            iguales += n
+            total += len(rb)
+            fracciones.append(n / len(rb))
+        return {'acciones': 5000, 'salas': 300, 'cazadores': 32, 'k': 25,
+                'semilla': 2026, 'puntos': len(puntos), 'registros_posteriores': total,
+                'registros_iguales_en_mismo_id': iguales, 'fraccion_total': iguales / total,
+                'fraccion_minima_por_punto': min(fracciones),
+                'fraccion_maxima_por_punto': max(fracciones),
+                'alcance': 'Solo lectura: igualdad completa de codigo y datos con el punto '
+                           'anterior en el mismo ID local. No comparte registros, no mide '
+                           'latencia ni memoria ahorrada y no demuestra aceptacion.'}
+
+
 def medir(revision='de2b408', rondas=5, exigir_registros_iguales=False, alternar=False):
     if rondas < 1 or not gc.isenabled() or tracemalloc.is_tracing():
         raise ValueError('rondas positivas, GC habilitado y sin trazado externo')
@@ -134,7 +160,10 @@ if __name__ == '__main__':
     parser.add_argument('--rondas', type=int, default=5)
     parser.add_argument('--exigir-registros-iguales', action='store_true')
     parser.add_argument('--alternar', action='store_true')
+    parser.add_argument('--diagnosticar-registros', action='store_true',
+                        help='solo lectura: coincidencias entre puntos de la carga sintetica K=25')
     args = parser.parse_args()
-    resultado = medir(args.revision, args.rondas, args.exigir_registros_iguales, args.alternar)
+    resultado = (diagnosticar_registros_iguales() if args.diagnosticar_registros else
+                 medir(args.revision, args.rondas, args.exigir_registros_iguales, args.alternar))
     Path(args.salida_json).write_text(json.dumps(resultado, ensure_ascii=False, indent=2),
                                      encoding='utf-8')

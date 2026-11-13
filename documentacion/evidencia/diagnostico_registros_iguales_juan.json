@@ -1,0 +1,14 @@
+{
+  "acciones": 5000,
+  "salas": 300,
+  "cazadores": 32,
+  "k": 25,
+  "semilla": 2026,
+  "puntos": 201,
+  "registros_posteriores": 1352296,
+  "registros_iguales_en_mismo_id": 827257,
+  "fraccion_total": 0.6117425474896029,
+  "fraccion_minima_por_punto": 0.4473060982830077,
+  "fraccion_maxima_por_punto": 0.9124778237729154,
+  "alcance": "Solo lectura: igualdad completa de codigo y datos con el punto anterior en el mismo ID local. No comparte registros, no mide latencia ni memoria ahorrada y no demuestra aceptacion."
+}

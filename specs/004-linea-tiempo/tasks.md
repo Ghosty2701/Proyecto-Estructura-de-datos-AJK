@@ -346,3 +346,17 @@ ABBA de historias completas K=25: 166/57/74/61 ciclos >=20 ms en A/B/B/A;
 0/36 consultas >=50 ms por bloque. No cierra presupuestos ni elección de K.
 Reproducción y resultados en `documentacion/CAPTURA_TUPLAS_JUAN.md`.
 Catálogo acotado de tuplas de ID propuesto y pendiente de elección; no implementado.
+
+## Catálogo de tuplas de ID elegido e implementado (2026-11-12)
+
+La propuesta anterior fue elegida explícitamente por el usuario. Catálogo
+inmutable de 16 384 tokens, fallback propio y ámbito local de IDs por punto.
+691 pruebas; independencia entre puntos, concurrencia, límite, liberación de
+modelos y bytes v6. Memoria marginal 1 405 512 -> 898 948 bytes en el estado
+medido (36,0 % menos), más costo fijo estimado 1 433 608 bytes por proceso.
+ABBA de historias K=25: 16/9/12/15 ciclos >=20 ms en A/B/B/A; sigue pendiente.
+Sintético K=5/10/25: 219/40/11 ciclos excedidos. Oficial: 24/0/9 consultas
+>=50 ms, RSS observado 1 252/652/291 MiB. K=10 cumple solo la muestra oficial;
+K definitivo, presupuestos completos y aceptación siguen pendientes.
+Método y comandos en `documentacion/CATALOGO_ID_JUAN.md`.
+Reutilización de registros completos iguales propuesta, aún sin elección.

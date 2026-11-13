@@ -229,6 +229,6 @@ No se repitió el ensayo oficial en esta continuación; no se certifica su lími
 de consultas con estos ensayos sintéticos. Avance global estimado: **93 %**.
 
 El siguiente candidato propuesto es un catálogo inmutable y acotado de tuplas
-de ID, compartido entre puntos. Requiere un índice adicional y está pendiente
-de elección explícita según AGENTS.md; **no está implementado**. Se conserva
-la representación de tuplas elegida por el usuario, sin empaquetado en bytes.
+de ID, compartido entre puntos. El usuario lo eligió después y se implementó;
+los resultados posteriores están en [catálogo de ID](CATALOGO_ID_JUAN.md).
+Se conserva la representación de tuplas, sin empaquetado en bytes.

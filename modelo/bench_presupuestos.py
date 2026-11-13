@@ -4,6 +4,8 @@ import platform
 import tempfile
 import subprocess
 import sys
+import hashlib
+import inspect
 from pathlib import Path
 from types import ModuleType
 
@@ -21,8 +23,27 @@ def _tiempos(valores, limite):
     return d
 
 
+def _huella_puntos(partida, cargador):
+    """Fuera del tiempo: materializar cada punto en v6, liberando sus ciclos."""
+    from adaptadores.estado_binario import codificar_punto
+    from controlador.cargar_partida import _GestorConsulta
+    huella = hashlib.sha256()
+    for punto in partida.linea_tiempo.puntos:
+        creados = []
+        try:
+            copia, salas = punto.estado.reconstruir(creados=creados)
+            datos = codificar_punto(copia.motor, copia.jugador, salas,
+                                   cargador._identidad(partida), {'partida': copia})
+            huella.update(len(datos).to_bytes(8, 'little'))
+            huella.update(datos)
+        finally:
+            _GestorConsulta(creados).liberar_copia()
+    return huella.hexdigest()
+
+
 def medir_presupuestos(acciones=5000, salas=300, valores_k=(5, 10, 25), cazadores=32,
-                       rondas=3, muestras=12, semilla=2026, informar=True):
+                       rondas=3, muestras=12, semilla=2026, informar=True,
+                       verificar_puntos=False):
     if acciones < 3 or salas < 3 or muestras < 6 or rondas < 1 or cazadores < 0:
         raise ValueError('carga invalida')
     if not valores_k or any(type(k) is not int or k < 1 for k in valores_k):
@@ -71,6 +92,9 @@ def medir_presupuestos(acciones=5000, salas=300, valores_k=(5, 10, 25), cazadore
                     'consultas': _tiempos([m['tiempo_ms'] for m in medidas], 50),
                     'maximo_acciones_reaplicadas': max(m['acciones_reaplicadas'] for m in medidas),
                     'partida_intacta': True, 'http': 0}
+            if verificar_puntos:
+                fila['sha256_puntos_v6'] = _huella_puntos(a, c)
+                fila['puntos_verificados'] = len(a.linea_tiempo.puntos)
             filas.append(fila)
             if informar:
                 print(f"  ciclo max {fila['ciclos']['maximo_ms']:.3f} ms; >=20: {fila['ciclos']['excedidos']}; "
@@ -99,18 +123,24 @@ def comparar_captura(revision, k=25):
         # de trabajo usan la reconstrucción vigente en ambas variantes.
         anterior.InstantaneaInmutable = modulo.InstantaneaInmutable
         def capturar_anterior(raiz, anterior=None):
-            # Referencia previa sin argumento de reutilización.
-            return referencia(raiz)
+            # Conservar reutilización cuando la revisión ya la implementaba.
+            return (referencia(raiz, anterior=anterior) if admite_previo
+                    else referencia(raiz))
         referencia = anterior.capturar_estado
+        admite_previo = 'anterior' in inspect.signature(referencia).parameters
         filas = []
         resultado = None
+        huella = None
         for nombre, capturar in (('anterior', capturar_anterior), ('actual', original),
                                  ('actual', original), ('anterior', capturar_anterior)):
             modulo.capturar_estado = capturar
             print(f'HISTORIA COMPLETA: captura {nombre}, K={k}', flush=True)
-            resultado = medir_presupuestos(valores_k=(k,))
+            resultado = medir_presupuestos(valores_k=(k,), verificar_puntos=True)
             fila = resultado['escenarios'][0]
             fila['variante_captura'] = nombre
+            if huella is None:
+                huella = fila['sha256_puntos_v6']
+            assert fila['sha256_puntos_v6'] == huella, 'los puntos v6 difieren entre capturadores'
             filas.append(fila)
         resultado['escenarios'] = filas
         resultado['referencia_git_captura'] = revision

@@ -360,3 +360,14 @@ Sintético K=5/10/25: 219/40/11 ciclos excedidos. Oficial: 24/0/9 consultas
 K definitivo, presupuestos completos y aceptación siguen pendientes.
 Método y comandos en `documentacion/CATALOGO_ID_JUAN.md`.
 Reutilización de registros completos iguales propuesta, aún sin elección.
+
+## Registros completos elegidos e implementados (2026-11-13)
+
+Propuesta anterior elegida explícitamente. Captura con antecesor opcional,
+índice existente y comparación de código/datos/tipos/bits; arreglo propio sin
+retener al antecesor. Línea y carga v6 reutilizan entre puntos. 697 pruebas:
+independencia, IDs reasignados, tamaños, ciclos, liberación, bytes v6 y tipos.
+ABBA K=25: 9/5/8/9 ciclos excedidos para A/B/B/A, con mayor mediana de captura
+por el costo de comparar. Sintético K=5/10/25: 94/22/21 ciclos >=20 ms.
+Oficial: 0/0/2 consultas >=50 ms, RSS observado 757/399/192 MiB. K definitivo
+y aceptación pendientes. Datos en `documentacion/REGISTROS_IGUALES_JUAN.md`.

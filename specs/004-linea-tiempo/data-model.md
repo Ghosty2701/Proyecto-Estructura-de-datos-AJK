@@ -12,6 +12,11 @@ cuesta memoria fija por proceso, separada de la memoria marginal del punto,
 y no se persiste: guardar/cargar sigue convirtiendo al mismo esquema v6.
 El «prototipo compartido» histórico se refiere a `estado_compartido.py`.
 
+Ampliación elegida 2026-11-13: dentro del arreglo propio, cada posición puede
+reutilizar el registro del antecesor si código, datos, tipos y bits coinciden.
+Los números de ID se interpretan siempre en el punto actual. No hay enlace
+al antecesor ni otro índice; las reconstrucciones conservan objetos separados.
+
 ## Registros
 
 | Registro | Campos | Validación e invariantes |

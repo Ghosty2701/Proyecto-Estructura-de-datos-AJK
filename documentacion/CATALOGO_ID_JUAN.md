@@ -125,5 +125,6 @@ Reproducir: `python -X utf8 -u -m modelo.bench_registros --diagnosticar-registro
 
 Se propuso reutilizar también esos registros inmutables mediante el índice de
 ID existente, frente a compartir solo los tokens actuales. Amplía lo que se
-comparte y está **pendiente de elección explícita**; no está implementado.
+comparte; el usuario lo eligió posteriormente y se implementó. Los resultados
+posteriores están en [registros completos](REGISTROS_IGUALES_JUAN.md).
 Avance global estimado: **93 %**.

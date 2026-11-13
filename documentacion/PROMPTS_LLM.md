@@ -1483,3 +1483,16 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     Diagnóstico: 61,2 % de registros iguales en mismo ID entre puntos vecinos;
     propuesta su reutilización y solicitada elección, sin implementarla.
     Resultados completos y límites en CATALOGO_ID_JUAN.md; K no cambia.
+
+45. Reutilizar también registros completos iguales (recomendado)
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Elección explícita. Spec 2a207e5 y código 6a552fa publicados por separado.
+    Reutilización por ID existente y comparación exacta de tipos/bits; línea y
+    carga conservan v6. 697 pruebas. Comparador recursivo inicial sustituido
+    por comprobación que evita llamadas por valores idénticos y la tupla exterior
+    si se reutiliza. ABBA de ciclos 9/5/8/9; comparar encarece la captura, aunque
+    reduce memoria. RSS oficial K=5/10/25: 757/399/192 MiB, con 0/0/2 consultas
+    excedidas. Sintético: 94/22/21 ciclos excedidos. K y aceptación pendientes;
+    evidencia compacta en REGISTROS_IGUALES_JUAN.md.

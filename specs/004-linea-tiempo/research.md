@@ -248,7 +248,7 @@ y fallback, liberación de modelos y bytes v6. Comparar contra ed4b505, separand
 memoria marginal de cada punto del costo fijo del catálogo; después medir
 historias completas, consultas oficiales y RSS antes de declarar aceptación.
 
-## Registros completos iguales: elección 2026-11-12
+## Registros completos iguales: elección 2026-11-13
 
 El usuario elige reutilizar también registros completos iguales. La captura
 acepta un punto anterior opcional y compara código y datos completos en el

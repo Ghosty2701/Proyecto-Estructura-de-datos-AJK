@@ -1,5 +1,11 @@
 # Documento de Decisiones de Diseño
 
+**Registros completos (2026-11-13):** reutilización elegida e implementada,
+con igualdad exacta de tipos/bits, arreglo propio y 697 pruebas. RSS oficial
+K=5/10/25: 757/399/192 MiB; consultas excedidas 0/0/2. Comparar aumenta la
+mediana de captura; los ciclos aún exceden 20 ms. Se mantiene K provisional.
+[Mediciones, costos y límites](REGISTROS_IGUALES_JUAN.md).
+
 **Catálogo de ID (2026-11-12):** elegido e implementado con 691 pruebas;
 16 384 tokens inmutables, fallback y reconstrucciones independientes.
 Memoria marginal por punto 36,0 % menor en el estado medido, más costo fijo

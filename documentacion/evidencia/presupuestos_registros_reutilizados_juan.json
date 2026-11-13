@@ -1,0 +1,167 @@
+{
+  "semilla": 2026,
+  "acciones": 5000,
+  "salas": 300,
+  "cazadores": 32,
+  "rondas_consulta": 3,
+  "rondas_ciclos": 1,
+  "gc_habilitado": true,
+  "python": "3.13.2",
+  "plataforma": "Windows-11-10.0.26200-SP0",
+  "escenarios": [
+    {
+      "k": 5,
+      "ciclos": {
+        "cantidad": 5001,
+        "minimo_ms": 0.1018,
+        "mediana_ms": 0.3468,
+        "p95_ms": 16.671,
+        "maximo_ms": 49.2278,
+        "limite_ms": 20,
+        "excedidos": 94
+      },
+      "copias": {
+        "cantidad": 1000,
+        "minimo_ms": 8.7566,
+        "mediana_ms": 14.618849999999998,
+        "p95_ms": 21.6111,
+        "maximo_ms": 48.8782,
+        "limite_ms": 20,
+        "excedidos": 80
+      },
+      "ciclos_con_punto": {
+        "cantidad": 1000,
+        "minimo_ms": 9.0109,
+        "mediana_ms": 14.97965,
+        "p95_ms": 22.4387,
+        "maximo_ms": 49.2278,
+        "limite_ms": 20,
+        "excedidos": 94
+      },
+      "ciclos_sin_punto": {
+        "cantidad": 4001,
+        "minimo_ms": 0.1018,
+        "mediana_ms": 0.3167,
+        "p95_ms": 0.5832,
+        "maximo_ms": 10.7034,
+        "limite_ms": 20,
+        "excedidos": 0
+      },
+      "consultas": {
+        "cantidad": 36,
+        "minimo_ms": 0.0365,
+        "mediana_ms": 6.7806,
+        "p95_ms": 8.4253,
+        "maximo_ms": 8.9327,
+        "limite_ms": 50,
+        "excedidos": 0
+      },
+      "maximo_acciones_reaplicadas": 4,
+      "partida_intacta": true,
+      "http": 0
+    },
+    {
+      "k": 10,
+      "ciclos": {
+        "cantidad": 5001,
+        "minimo_ms": 0.1031,
+        "mediana_ms": 0.2971,
+        "p95_ms": 15.1627,
+        "maximo_ms": 35.3441,
+        "limite_ms": 20,
+        "excedidos": 22
+      },
+      "copias": {
+        "cantidad": 500,
+        "minimo_ms": 12.7148,
+        "mediana_ms": 14.767600000000002,
+        "p95_ms": 19.1109,
+        "maximo_ms": 34.9036,
+        "limite_ms": 20,
+        "excedidos": 21
+      },
+      "ciclos_con_punto": {
+        "cantidad": 500,
+        "minimo_ms": 13.0085,
+        "mediana_ms": 15.167549999999999,
+        "p95_ms": 19.5731,
+        "maximo_ms": 35.3441,
+        "limite_ms": 20,
+        "excedidos": 22
+      },
+      "ciclos_sin_punto": {
+        "cantidad": 4501,
+        "minimo_ms": 0.1031,
+        "mediana_ms": 0.2881,
+        "p95_ms": 0.5363,
+        "maximo_ms": 1.4412,
+        "limite_ms": 20,
+        "excedidos": 0
+      },
+      "consultas": {
+        "cantidad": 36,
+        "minimo_ms": 0.0427,
+        "mediana_ms": 8.91745,
+        "p95_ms": 12.1486,
+        "maximo_ms": 12.9693,
+        "limite_ms": 50,
+        "excedidos": 0
+      },
+      "maximo_acciones_reaplicadas": 9,
+      "partida_intacta": true,
+      "http": 0
+    },
+    {
+      "k": 25,
+      "ciclos": {
+        "cantidad": 5001,
+        "minimo_ms": 0.0581,
+        "mediana_ms": 0.2891,
+        "p95_ms": 0.7761,
+        "maximo_ms": 41.2708,
+        "limite_ms": 20,
+        "excedidos": 21
+      },
+      "copias": {
+        "cantidad": 200,
+        "minimo_ms": 12.1008,
+        "mediana_ms": 14.677050000000001,
+        "p95_ms": 22.5173,
+        "maximo_ms": 40.9726,
+        "limite_ms": 20,
+        "excedidos": 20
+      },
+      "ciclos_con_punto": {
+        "cantidad": 200,
+        "minimo_ms": 12.4401,
+        "mediana_ms": 15.0175,
+        "p95_ms": 22.9924,
+        "maximo_ms": 41.2708,
+        "limite_ms": 20,
+        "excedidos": 21
+      },
+      "ciclos_sin_punto": {
+        "cantidad": 4801,
+        "minimo_ms": 0.0581,
+        "mediana_ms": 0.2859,
+        "p95_ms": 0.5481,
+        "maximo_ms": 12.3555,
+        "limite_ms": 20,
+        "excedidos": 0
+      },
+      "consultas": {
+        "cantidad": 36,
+        "minimo_ms": 0.0364,
+        "mediana_ms": 10.35775,
+        "p95_ms": 20.4714,
+        "maximo_ms": 24.7233,
+        "limite_ms": 50,
+        "excedidos": 0
+      },
+      "maximo_acciones_reaplicadas": 24,
+      "partida_intacta": true,
+      "http": 0
+    }
+  ],
+  "alcance": "Sintetico de produccion; ciclos incluyen accion/registro/punto; consultas incluyen copia/re-simulacion/resumen. Sin red/renderizado. No elige K ni certifica referencia oficial. Se incluyen todos los picos."
+}

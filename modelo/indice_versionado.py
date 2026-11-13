@@ -40,6 +40,11 @@ def _inicio(clave, mascara):
 def _localizar(casillas, clave):
     mascara = len(casillas) - 1
     indice = _inicio(clave, mascara)
+    entrada = casillas[indice]
+    if entrada is None:
+        return indice, False
+    if entrada is not _TUMBA and entrada[0] == clave:
+        return indice, True
     primera_tumba = None
     paso = None
     for _ in range(len(casillas)):

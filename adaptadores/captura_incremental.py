@@ -13,6 +13,7 @@ from adaptadores.instantanea_inmutable import (
 )
 from modelo.indice_versionado import VersionRegistros, ELIMINAR, _localizar, _rehash, _TUMBA
 from modelo.tabla_hash import _mezclar
+from modelo.rastro import SalaRastro
 
 
 class ErrorCobertura(RuntimeError):
@@ -44,13 +45,15 @@ def _inicio_identidad(numero, mascara):
 class _IndicePorId:
     """Hash inverso mutable, privado; entradas vivas, no registros de puntos."""
 
-    def __init__(self):
-        self.casillas = [None] * 32
+    def __init__(self, capacidad=32, minima=8):
+        self.casillas = [None] * capacidad
+        self.minima = minima
         self.cantidad = self.tumbas = self.recomposiciones = 0
 
     def copiar(self):
         copia = _IndicePorId()
         copia.casillas = self.casillas.copy()
+        copia.minima = self.minima
         copia.cantidad, copia.tumbas = self.cantidad, self.tumbas
         copia.recomposiciones = self.recomposiciones
         return copia
@@ -87,8 +90,8 @@ class _IndicePorId:
         self.tumbas += 1
 
     def reducir(self):
-        if self.cantidad * 40 < len(self.casillas) * 7 and len(self.casillas) > 8:
-            capacidad = 8
+        if self.cantidad * 40 < len(self.casillas) * 7 and len(self.casillas) > self.minima:
+            capacidad = self.minima
             while self.cantidad * 10 > capacidad * 7:
                 capacidad *= 2
             self._recomponer(capacidad)
@@ -97,20 +100,24 @@ class _IndicePorId:
 class _Identidades:
     """Índice fuerte por identidad. Copiar el vector permite preparar altas."""
 
-    def __init__(self, capacidad=32):
+    def __init__(self, capacidad=32, minima=8):
         tamano = 8
         while tamano < capacidad:
             tamano *= 2
         self.casillas = [None] * tamano
         self.cantidad = 0
         self.siguiente = 0
+        self.minima = minima
         self.tumbas = self.recomposiciones = 0
-        self.por_id = _IndicePorId()
+        self.por_id = _IndicePorId(tamano, minima)
 
     def _posicion(self, objeto):
         numero = id(objeto)
         mascara = len(self.casillas) - 1
         posicion = _inicio_identidad(numero, mascara)
+        entrada = self.casillas[posicion]
+        if entrada is None or (entrada is not _TUMBA and entrada.objeto is objeto):
+            return posicion
         paso = None
         primera_tumba = None
         for _ in range(len(self.casillas)):
@@ -133,6 +140,7 @@ class _Identidades:
         copia = _Identidades()
         copia.casillas = self.casillas.copy()
         copia.cantidad, copia.siguiente = self.cantidad, self.siguiente
+        copia.minima = self.minima
         copia.tumbas, copia.recomposiciones = self.tumbas, self.recomposiciones
         copia.por_id = self.por_id.copiar()
         return copia
@@ -182,8 +190,8 @@ class _Identidades:
             self.cantidad -= 1
             self.tumbas += 1
             self.por_id.borrar(numero)
-        if self.cantidad * 40 < len(self.casillas) * 7 and len(self.casillas) > 8:
-            capacidad = 8
+        if self.cantidad * 40 < len(self.casillas) * 7 and len(self.casillas) > self.minima:
+            capacidad = self.minima
             while self.cantidad * 10 > capacidad * 7:
                 capacidad *= 2
             self._recomponer(capacidad)
@@ -324,6 +332,15 @@ class CapturadorIncremental:
     def capturar(self, raiz, *, verificar=True):
         self._abierto()
         identidades = self._identidades.copiar()
+        if (self.actual is None and identidades.cantidad == 0
+                and type(raiz) is tuple and raiz and type(raiz[-1]) is list
+                and raiz[-1] and type(raiz[-1][0]) is SalaRastro):
+            reserva = 8
+            while reserva < 64 * len(raiz[-1]):
+                reserva *= 2
+            siguiente = identidades.siguiente
+            identidades = _Identidades(reserva, minima=reserva)
+            identidades.siguiente = siguiente
         pendientes = self._pendientes.copy()
         cambios = []
         codificados = campos = nuevos = 0
@@ -386,6 +403,7 @@ class CapturadorIncremental:
             'capacidad_version': len(version.casillas),
             'capacidad_identidades': len(identidades.casillas),
             'capacidad_inverso': len(identidades.por_id.casillas),
+            'reserva_identidades': identidades.minima,
             'tumbas_identidades': identidades.tumbas,
             'tumbas_inverso': identidades.por_id.tumbas,
             'recomposiciones_identidades': identidades.recomposiciones,

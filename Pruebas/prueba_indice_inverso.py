@@ -117,3 +117,18 @@ def test_ids_dispersos_y_fallo_de_alta_no_publican_indices_parciales(monkeypatch
         monkeypatch.setattr(modulo._IndicePorId, 'insertar', original)
         assert captura.capturar(raiz).reconstruir() == [[]]
         assert len(captura._identidades.por_id.casillas) <= 32
+
+
+def test_reserva_por_salas_es_privada_y_no_agranda_puntos():
+    salas = [SalaRastro(i) for i in range(30)]
+    with CapturadorIncremental() as captura:
+        punto = captura.capturar((salas,))
+        assert len(captura._identidades.casillas) == 2048
+        assert len(captura._identidades.por_id.casillas) == 2048
+        assert len(punto.version.casillas) < 2048
+        assert captura._identidades.minima == 2048
+        captura.capturar((salas,))
+        assert captura.estadisticas['recomposiciones_identidades'] == 0
+        assert captura.estadisticas['recomposiciones_inverso'] == 0
+    assert captura.registrados == 0
+    assert len(captura._identidades.casillas) == 32

@@ -300,13 +300,19 @@ comparar consultas históricas antes y después; intentar cargar archivos antigu
 - **PR-LT-004**: Recortar la línea al usar un pergamino no recorre toda la historia.
 - **PR-LT-005**: `--bench` mide memoria y tiempo de consulta para al menos tres
   valores de K y la alternativa sin puntos de control, con partidas sintéticas
-  deterministas por semilla, y respalda el K por defecto (§§5.5, 6.3).
+  deterministas por semilla, y respalda el K por defecto (§§5.5, 6.3). El comando
+  estándar incluye estas comparaciones sin requerir una bandera adicional.
 - **PR-LT-006**: `--bench` documenta con evidencia si se reconstruye hacia adelante
   o hacia atrás (§5.5).
 - **PR-LT-007**: Registrar la historia no hace superar el límite de 20 ms por ciclo
   de eventos con decenas de cazadores; se repiten las mediciones de agenda de
   eventos e historial de retroceso de P1 con la carga nueva y se documenta si
   alguna decisión cambia (§§5.6, 6.1).
+- **PR-LT-008**: La ejecución estándar de mediciones conserva parámetros,
+  entorno y resultados nuevos en una carpeta de salida configurable. Por defecto
+  no sobrescribe la evidencia versionada de la entrega. Si una medición o su
+  exportación falla, informa el error y termina con código distinto de cero.
+  No crea vista ni usa red en las cargas sintéticas (§§6.1, 6.3, 7.1).
 
 ### Entidades del juego
 

@@ -1,5 +1,23 @@
 # Tareas: Línea de tiempo y puntos de control
 
+## Cierre de entrega priorizado (2026-11-13)
+
+Las tareas de investigación CI al final son históricas/experimentales y no
+condiciones adicionales del enunciado. No se continuará su ampliación como
+dependencia de entrega. Los únicos bloqueos funcionales/documentales pendientes
+se siguen aquí y en `documentacion/REANALISIS_ENTREGA_P2.md`.
+
+- [ ] ENT-001 Corregir `main.py --bench` para incluir línea de tiempo por defecto,
+  conservar alias, configurar carpeta de salida, informar fallos y entorno.
+  Pruebas de CLI sin vista/red y ejecución real pequeña. PR-LT-005/008; P2 §6.3.
+- [ ] ENT-002 Incorporar entradas raíz DECISIONES.md/PROMPTS_LLM.md, corregir
+  README/estado actual y distinguir cifras vigentes de históricas. P2 §7.1/7.2.
+- [ ] ENT-003 Reconciliar los 23 casos del apéndice B con especificaciones,
+  tareas, código y funciones de prueba, y verificar regresión. P2 §2.5/7.4.
+- [ ] ENT-004 Cerrar K por elección del usuario y validar presupuestos sobre
+  producción. No activar ni medir más prototipos rechazados. FR-LT-012,
+  PR-LT-001/007, PR-TC-001. Dep.: evidencia de producción y decisión de K.
+
 **Traslado al repositorio original:** el trabajo posterior a T028 se realizó
 en una copia descargada sin `.git` y se trasladó sobre la base `4c34c88` del
 repositorio original. Las referencias históricas a ausencia de Git describen

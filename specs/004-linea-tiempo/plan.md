@@ -1,5 +1,13 @@
 # Plan: Línea de tiempo y puntos de control
 
+**Corrección de entrega (2026-11-13):** `main.py --bench` ejecutará también
+`modelo/bench_cierre.py` por defecto, reutilizando las decisiones ya medidas
+por `bench_modelo`. `--bench-linea-tiempo` queda como alias compatible, sin
+doble ejecución; `--salida-bench` selecciona carpeta y por defecto usa
+`resultados/bench`, ignorada por Git. El cierre conserva entorno y parámetros
+y publica el JSON al terminar. Errores de medición/exportación devuelven 1.
+No cambia reglas, K, estructuras ni algoritmos. PR-LT-005/008.
+
 **Fecha**: 2026-11-09. **Rama real**: `main`.
 **Capacidad activa de spec-kit**: `004-linea-tiempo`.
 

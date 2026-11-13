@@ -1,5 +1,36 @@
 # Estado de entrega de Cripta Parte II
 
+## Cierre vigente de alcance ? 2026-11-13
+
+Por instruccion de Juan, se termina el intento de optimizar estrictamente las
+latencias: **EX-01** deja fuera del cierre solicitado lograr todos los ciclos
+<20 ms y todas las consultas <50 ms. Se conservan funciones, K=10, v6 y mediciones.
+Esto no altera el PDF ni acredita cumplimiento academico de esos presupuestos.
+
+Verificacion nueva del codigo conservado: **759 pruebas pasan**. Cripta-06,
+5 000 acciones, 32 cazadores iniciales, 36 consultas: **255 ciclos >=20 ms**
+(maximo 92,0115 ms) y **2 consultas >=50 ms** (maximo 63,5862 ms). Partida intacta,
+cero HTTP en consultas, maximo nueve acciones reaplicadas, pico 396,63 MiB.
+[JSON nuevo](evidencia/revision_sesion_k10_2026-11-13.json),
+[regresion nueva](evidencia/revision_sesion_pruebas_2026-11-13.txt).
+
+Confirmación previa a los commits: **759 pruebas pasan en 29,32 s**;
+[salida completa](evidencia/revision_sesion_pruebas_completas_2026-11-13.txt).
+Revisión de las cuatro listas de tareas y de los enlaces de entrega completada.
+Los pendientes CI-005/007/008 son antecedentes del experimento rechazado.
+
+T037 se cierra funcional y documentalmente con EX-01; los requisitos temporales
+PR-LT-001/007 y PR-TC-001 permanecen identificados como incumplidos en esta carga.
+**Avance estimado original: ~95 %**; alcance funcional cerrado con excepcion,
+sin mas optimizaciones pendientes en este encargo.
+[Diagnostico y decisiones](REVISION_SESION_BLOQUEADA.md).
+
+## Registro anterior, conservado como historial
+
+Las secciones siguientes describen la revision previa; sus pendientes de
+optimizacion y cifras no sustituyen el cierre vigente de arriba.
+
+
 Revisión vigente: **2026-11-13**. La fuente de prioridades es el
 [reanálisis del enunciado y los specs](REANALISIS_ENTREGA_P2.md).
 Las corridas anteriores se conservan como históricas, sin reemplazar este estado.

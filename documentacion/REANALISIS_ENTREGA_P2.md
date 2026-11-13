@@ -1,5 +1,13 @@
 # Reanálisis de entrega — 2026-11-13
 
+**Revision posterior de alcance (2026-11-13):** el usuario autorizo omitir el
+problema si no habia solucion rapida. La investigacion queda cerrada con EX-01;
+la verificacion nueva y la explicacion de las variantes retiradas estan en
+[Revision del bloqueo](REVISION_SESION_BLOQUEADA.md). Se conservan ~95 % estimados
+frente al enunciado original y se declaran los incumplimientos nuevos de 20/50 ms.
+El orden de optimizacion indicado abajo es historico, no una tarea activa.
+
+
 Fuente normativa: [Cripta - Parte II](../Cripta%20-%20Parte%20II.pdf), leído
 completo, y los cuatro specs contrastados con código/pruebas. Este informe
 reemplaza la prioridad anterior de ampliar prototipos. No es otra propuesta

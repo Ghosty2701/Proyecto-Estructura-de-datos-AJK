@@ -5,8 +5,12 @@ cazadores, niebla y viaje automático, resolubilidad y consultas históricas.
 Los datos proceden del servicio o de un paquete offline compatible.
 
 **Estado:** cuatro capacidades implementadas; **K predeterminado 10**, elegido
-por el grupo. La consulta oficial medida cumple 50 ms; el cierre de **20 ms por
-ciclo sigue pendiente**. [Estado y evidencia](documentacion/ESTADO_ENTREGA_P2.md).
+por el grupo. **759 pruebas pasan**. El alcance funcional queda cerrado con
+**excepcion de latencia EX-01**, autorizada por el usuario tras revisar los
+intentos fallidos. La nueva corrida incumple 20 ms en 255/5 000 ciclos y
+50 ms en 2/36 consultas; esos limites del enunciado no se declaran cumplidos.
+[Estado y evidencia](documentacion/ESTADO_ENTREGA_P2.md),
+[diagnostico y cierre](documentacion/REVISION_SESION_BLOQUEADA.md).
 
 - [Decisiones de diseño](DECISIONES.md).
 - [Prompts del equipo](PROMPTS_LLM.md).

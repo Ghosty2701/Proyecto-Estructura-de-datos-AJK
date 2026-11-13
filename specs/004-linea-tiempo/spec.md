@@ -2,8 +2,10 @@
 
 **Rama Git**: `main` (actual; no se crea otra rama).
 **Creación**: 2026-11-09.
-**Estado**: funcionalidad implementada y probada; K=10 elegido, consulta oficial
-validada; pendiente PR-LT-007, ciclo completo <20 ms.
+**Estado**: funcionalidad implementada y probada; K=10 elegido. Cierre funcional
+con excepcion EX-01 autorizada por el usuario el 2026-11-13. Los requisitos
+originales PR-LT-001/007 permanecen escritos; la corrida nueva incumple 20/50 ms.
+[Decision y evidencia](../../documentacion/REVISION_SESION_BLOQUEADA.md).
 **Entrada del usuario**: «Línea de tiempo de Cripta Parte II (P2 §3.6, §5.5, §6.1,
 §6.3, §7.3 y apéndice B, casos de línea de tiempo). Consultar sin modificar la
 partida el estado en cualquier instante desde el inicio: comandos historia <t> e

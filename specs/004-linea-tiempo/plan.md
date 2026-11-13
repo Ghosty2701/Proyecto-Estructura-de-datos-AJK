@@ -1,5 +1,22 @@
 # Plan: Línea de tiempo y puntos de control
 
+## Estado vigente: cierre funcional con EX-01
+
+El 2026-11-13 Juan autorizo omitir el problema de latencia si no habia una
+solucion rapida. Se conserva la captura completa productiva y K=10. No se
+implementan los contadores de revision, la captura distribuida ni la exclusion
+del GC descritos en los intentos siguientes: la sesion anterior retiro ese
+codigo a las 14:59:29 de Costa Rica. El cierre nuevo verifica 759 pruebas y
+registra los incumplimientos de 20/50 ms, sin alterar los requisitos originales.
+[Diagnostico, alcance y evidencia](../../documentacion/REVISION_SESION_BLOQUEADA.md).
+No queda un trabajo activo de optimizacion en este encargo.
+
+## Intentos anteriores: historicos, no instrucciones de implementacion
+
+Los parrafos siguientes documentan ensayos y propuestas de la sesion anterior;
+solo el codigo vigente y el estado enlazado arriba determinan lo implementado.
+
+
 **Cierre mínimo de 20 ms (2026-11-13):** el perfil de producción concentra el
 trabajo en referencia/registro y codificación completa. Mantener la misma tabla
 de identidades y doble hash, formatos, K10 y captura completa. Integrar la
@@ -8,6 +25,14 @@ evitar llamadas repetidas por nodo; conservar la ruta existente de colisiones
 y crecimiento. Verificar crecimientos, alias/ciclos y bytes v6, luego ciclos
 oficiales completos con GC normal. No añadir índices, prototipos ni dependencias.
 Solo conservar modificaciones con ventaja medida; no cerrar por la mediana.
+
+En el bucle final, las tuplas ya leídas solo visitan sus hijos (sus elementos
+no pueden cambiar); los contenedores vacíos conocidos se omiten. El mismo
+doble hash usa un paso impar de otros bits de identidad, sin mezcla multiplicativa
+de 64 bits. La capacidad potencia de dos y el paso impar conservan la cobertura
+completa, incluidas colisiones/bajas/crecimientos probados. Random se obtiene por
+su método estándar y se rechaza un estado opaco con mutables antes de excluirlo
+del GC. No hay cambios de prioridad, afinidad, umbrales o reloj de medición.
 
 Resultado: referencia integrada reduce mediana aislada ~10 %, pero conserva
 29/5 000 ciclos oficiales >=20 ms; no integrar ese cambio. El cierre utiliza
@@ -35,6 +60,33 @@ ni parcheo dinámico; el contador no se persiste ni pertenece al estado simulado
 La escritura directa en `__dict__` no es una API de mutación de partida. Auditar
 que producción no la usa salvo liberación de copias descartadas. Probar cobertura
 de todos los tipos del esquema, borrado de opcionales y equivalencia con oráculo.
+
+**Distribuir el trabajo sin sacar costo del ciclo:** la mayoría de altas son
+tuplas del historial de cinco acciones. Incorporarlas solo cada K concentra
+miles de altas y bajas. Actualizar el cache en cada acción dentro de `registrar`,
+comprobando revisiones y contenedores, y retirando bajas. La variante que solo
+incorpora altas deja todas las bajas para el punto y no cumple; no se conserva.
+Cada K, congelar/publicar el vector. No guardar
+puntos por acción ni retener vectores intermedios. El trabajo normal, altas,
+bajas y mantenimiento se cobra en el ciclo completo, sin hilos ni tareas
+diferidas. Medir todos los ciclos, no solo la publicación. Durante reconstrucción
+rellenar campos con `object.__setattr__` e inicializar revisión una vez: son
+objetos nuevos, no mutaciones de un modelo ya observado.
+
+La distribución deja publicaciones <20 ms, pero aparecen pausas del GC en
+ciclos intermedios. Las recolecciones forzadas no se conservan: empeoran el costo.
+En CPython, excluir únicamente registros, datos
+y vector inmutables ya codificados mediante la API estable `PyObject_GC_UnTrack`:
+https://docs.python.org/3.13/c-api/gcsupport.html#c.PyObject_GC_UnTrack
+La exclusión abarca cada tupla del dato congelado: tokens (None, escalares),
+referencias (ID,), pares de dict, estado interno de Random, registros y vector.
+No basta excluir los contenedores exteriores; una prueba recursiva lo verifica.
+El vector solo enlaza registros de tuplas/escalares y referencias numéricas;
+no puede participar en ciclos ni contener modelos vivos. Se mantiene el GIL
+(`ctypes.pythonapi`/PyDLL). Ningún umbral, modo GC, modelo ni contenedor mutable
+cambia su seguimiento. Otros intérpretes mantienen GC normal. Verificar que
+el original/copia mutable sigue siendo recolectable, bytes v6, liberación de
+puntos y medición de todos los ciclos con el costo de esta llamada incluido.
 
 **Mantenimiento de memoria dentro del ciclo (descartado):** tras crear un punto, solicitar
 una recolección completa en la siguiente acción positiva que no cree otro punto.

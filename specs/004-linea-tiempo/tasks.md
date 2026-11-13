@@ -44,13 +44,18 @@ se siguen aquí y en `documentacion/REANALISIS_ENTREGA_P2.md`.
   README/estado actual y distinguir cifras vigentes de históricas. P2 §7.1/7.2.
 - [X] ENT-003 Reconciliar los 23 casos del apéndice B con especificaciones,
   tareas, código y funciones de prueba, y verificar regresión. P2 §2.5/7.4.
-- [ ] ENT-004 Cerrar K por elección del usuario y validar presupuestos sobre
+- [X] ENT-004 Cierre funcional con EX-01: K elegido y presupuestos medidos;
+  límites incumplidos exceptuados del alcance solicitado por el usuario.
+  Texto original: cerrar K por elección del usuario y validar presupuestos sobre
   producción. No activar ni medir más prototipos rechazados. FR-LT-012,
   PR-LT-001/007, PR-TC-001. Dep.: evidencia de producción y decisión de K.
   - [X] K=10 elegido y aplicado; sin alterar K guardado al cargar sin opción.
   - [X] 5 000 acciones oficiales, 36 consultas, máximo 31,9232 ms, cero excedidos.
-  - [ ] Ciclo <20 ms: persisten 31/5 000 excedidos oficiales, todos con punto;
-    máximo 39,8973 ms, mediana con punto 14,5394 ms. GC automático intacto.
+  - [ ] Ciclo <20 ms: incumplido, omitida su optimización por EX-01.
+    Corrida nueva: 255/5 000 excedidos, máximo 92,0115 ms; consultas: 2/36 ≥50 ms.
+    Las cifras anteriores de esta sección son históricas. No se marca satisfecho.
+  - [X] EX-01 Registrar la excepción autorizada, verificar producción y cerrar
+    optimizaciones sin mejora: documentacion/REVISION_SESION_BLOQUEADA.md.
 
 **Traslado al repositorio original:** el trabajo posterior a T028 se realizó
 en una copia descargada sin `.git` y se trasladó sobre la base `4c34c88` del
@@ -58,9 +63,10 @@ repositorio original. Las referencias históricas a ausencia de Git describen
 esa copia; no describen el repositorio actual. Los commits del traslado son
 nuevos y no reconstruyen el historial perdido de la copia.
 
-**Revisión**: 2026-11-13. **Estado**: T001–T036 ejecutadas; T037 parcial por
-PR-LT-007 (20 ms). Regresión/matriz ejecutadas, K=10 elegido y consultas oficiales
-conformes. T018/T020 ya estaban cubiertas por el comportamiento existente.
+**Revisión**: 2026-11-13. **Estado**: T001–T036 ejecutadas; T037 cerrada
+funcional y documentalmente con EX-01. Regresión nueva: 759 pruebas pasan;
+K=10 elegido. Los presupuestos 20/50 ms no cumplen en la corrida nueva.
+T018/T020 ya estaban cubiertas por el comportamiento existente.
 **Entrada**: [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md),
 [data-model.md](data-model.md), [contrato](contracts/linea-tiempo.md) y
 [quickstart.md](quickstart.md). Rama real: `main`.
@@ -175,7 +181,7 @@ usuario y la documentación y trazabilidad finales.
 - [X] T034 Presentar al usuario la tabla de T032/T033 (memoria, consulta y creación de punto por K) con una recomendación justificada, y esperar su elección del K por defecto (D-LT-07). Fijarlo en modelo/linea_tiempo.py y registrar la decisión en research.md. Dep.: T033. Requisitos: FR-LT-012; PR-LT-005.
 - [X] T035 Actualizar documentacion/DOCUMENTO_DECISIONES.md con la sección de §5.5 (problema, alternativas, decisión, complejidad, evidencia y límites; enlaces a spec.md y plan.md; diferencias respecto del plan y la medición que las motivó) y la de §5.6 (antes y después, o la evidencia de que las decisiones de P1 siguen siendo adecuadas). Dep.: T034. Requisitos: PR-LT-005, PR-LT-006, PR-LT-007; P2 §7.1.
 - [X] T036 Actualizar README.md (comandos `historia`, `--checkpoint-cada`, `--replay … --hasta`, K por defecto, formato 6, cómo ejecutar las pruebas de aceptación de la línea de tiempo) y registrar las entradas en documentacion/PROMPTS_LLM.md. Dep.: T034. Requisitos: P2 §2.6, §7.2.
-- [ ] T037 Ejecutar `python -m pytest -q` completo y guardar la salida en documentacion/evidencia/pruebas_linea_tiempo.txt; completar en este archivo la matriz requisito → escenario → tarea → código → prueba para FR-LT-001 a 016 y PR-LT-001 a 007; marcar el estado de spec.md como implementado. Dep.: T035, T036. Requisitos: SC-LT-001 a SC-LT-005; constitución VIII.
+- [X] T037 Cierre funcional/documental con EX-01; 759 pruebas pasan, matriz revisada y evidencia nueva en `documentacion/evidencia/revision_sesion_*`. No acredita los presupuestos incumplidos. La regresión completa previa a los commits está en `revision_sesion_pruebas_completas_2026-11-13.txt` (759 pruebas, 29,32 s); la primera ejecución se conserva como resumen en `revision_sesion_pruebas_2026-11-13.txt` y la salida histórica permanece en `pruebas_linea_tiempo.txt`. Texto original: ejecutar `python -m pytest -q` completo y guardar la salida en documentacion/evidencia/pruebas_linea_tiempo.txt; completar en este archivo la matriz requisito → escenario → tarea → código → prueba para FR-LT-001 a 016 y PR-LT-001 a 007; marcar el estado de spec.md como implementado. Dep.: T035, T036. Requisitos: SC-LT-001 a SC-LT-005; constitución VIII.
 
 ## Avance de Juan — persistencia y copiado (2026-11-11)
 
@@ -438,6 +444,10 @@ elección y ampliación del diseño pendientes antes de implementar. PR-LT-001/0
 K definitivo y aceptación no se cierran con un diagnóstico instrumentado.
 
 ## Ruta incremental elegida: especificación (2026-11-13)
+
+**Registro histórico de un experimento rechazado.** Las casillas CI abiertas
+documentan lo que no se completó antes del descarte; no son trabajo pendiente
+del alcance vigente. Ver EX-01 y el cierre al comienzo de este archivo.
 
 - [X] CI-001 Ampliar requisitos de captura, versiones, identidad, ciclo de vida,
   mutaciones, undo, publicación, carga y medición (FR-CI/PR-CI).

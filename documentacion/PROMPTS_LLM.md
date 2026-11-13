@@ -1605,3 +1605,30 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     Suite completa: 759 pruebas pasan. Mantenimiento GC manual descartado por
     no mejorar 20 ms; el estado de entrega contiene las cifras vigentes.
     Commits por cambio lógico y push al repositorio original.
+
+54. Revisión de sesión bloqueada y límite al esfuerzo de optimización
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Juan solicitó analizar el historial de otra sesión atascada en 93/95 %,
+    aplicar una solución rápida si existía y omitir el problema si resolverlo
+    exigía demasiado tiempo/esfuerzo. Se leyeron el historial aportado, el
+    registro de herramientas y el repositorio vigente. Se verificó que la
+    variante de 803 pruebas fue retirada y que producción pasa 759 pruebas.
+    Corrida nueva K10: 5 000 acciones, 255 ciclos ≥20 ms y 2/36 consultas
+    ≥50 ms. Sin cambio de código productivo ni nuevas estructuras. Cierre
+    funcional/documental con EX-01, conservando los incumplimientos originales.
+    Informe: REVISION_SESION_BLOQUEADA.md. No se ejecutó publicación remota.
+
+55. Al igual que el otro chat, haz los commits necesarios tambien, y continua con lo que queda por hacer
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Revisadas las listas de tareas de las cuatro capacidades: solo quedan
+    límites exceptuados y experimentos rechazados. Verificados los enlaces de
+    siete documentos de entrega, sin destinos faltantes. Repetida la regresión
+    para conservar la salida completa: 759 pruebas pasan en 29,32 s. Cierre de
+    evidencia y documentación en commits separados, sin modificar el código
+    productivo ni incluir la eliminación previa del historial y otros resultados
+    locales ajenos al cambio. Se mantiene EX-01 y el avance original estimado
+    de ~95 %; no se declara cumplimiento de los presupuestos temporales.

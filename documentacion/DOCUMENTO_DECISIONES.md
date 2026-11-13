@@ -1,5 +1,15 @@
 # Documento de Decisiones de Diseño
 
+**Decision vigente de alcance (2026-11-13, EX-01):** Juan autorizo omitir el
+bloqueo si no existia solucion rapida. Se conservan las estructuras y el codigo
+productivo; no se recupera la variante de 803 pruebas retirada por la otra sesion.
+La regresion nueva pasa 759 pruebas. La corrida nueva registra 255/5 000 ciclos
+>=20 ms y 2/36 consultas >=50 ms; no se declara cumplimiento de esos limites.
+Se cierra el alcance funcional con excepcion y se termina la optimizacion.
+[Motivo, evidencia y reproduccion](REVISION_SESION_BLOQUEADA.md).
+Las cifras y prioridades de los apartados anteriores a esta revision son historicas.
+
+
 **Cierre de integración y K (2026-11-13):** se recontrastó el enunciado con las
 cuatro capacidades, sin seguir los prototipos rechazados como requisitos nuevos.
 Juan eligió **K=10**, ya aplicado a nuevas partidas/replay; cargar sin opción

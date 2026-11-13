@@ -1,5 +1,12 @@
 # Decisiones de diseño de Cripta
 
+**Cierre vigente (EX-01, 2026-11-13):** por instruccion del usuario se termina
+la optimizacion estricta de 20/50 ms tras descartar los intentos sin mejora.
+Las funciones permanecen implementadas; los presupuestos incumplidos se declaran
+en [la revision y evidencia nuevas](documentacion/REVISION_SESION_BLOQUEADA.md).
+Las alusiones inferiores a optimizacion pendiente corresponden al estado anterior.
+
+
 Entrada de entrega de P2 §7.1/7.2. El desarrollo completo de alternativas,
 complejidades y evidencia está en el [Documento de Decisiones](documentacion/DOCUMENTO_DECISIONES.md).
 El [estado vigente](documentacion/ESTADO_ENTREGA_P2.md) separa implementación,

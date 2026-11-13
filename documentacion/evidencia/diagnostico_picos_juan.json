@@ -1,0 +1,426 @@
+{
+  "acciones": 5000,
+  "salas": 300,
+  "cazadores": 32,
+  "semilla": 2026,
+  "python": "3.13.2",
+  "umbral_gc": [
+    2000,
+    10,
+    10
+  ],
+  "gc_habilitado": true,
+  "escenarios": [
+    {
+      "k": 10,
+      "ciclos": 5001,
+      "con_punto": 500,
+      "sin_punto": 4501,
+      "lentos": 52,
+      "lentos_con_punto": 52,
+      "lentos_con_gc": 52,
+      "lentos_con_gen2": 10,
+      "suma_lentos_ms": 1407.6258,
+      "suma_captura_lentos_ms": 1379.3264,
+      "suma_gc_lentos_ms": 207.1644,
+      "peores_diez": [
+        {
+          "accion_ejecutada": 3610,
+          "orden": "ir N",
+          "con_punto": true,
+          "ciclo_ms": 77.1226,
+          "captura_ms": 76.2221,
+          "resto_ms": 0.9005000000000081,
+          "cpu_hilo_ms": 31.25,
+          "gc_ms_por_generacion": [
+            1.1211,
+            4.2428,
+            0.0
+          ],
+          "gc_cantidades": [
+            3,
+            1,
+            0
+          ]
+        },
+        {
+          "accion_ejecutada": 520,
+          "orden": "esperar",
+          "con_punto": true,
+          "ciclo_ms": 49.8758,
+          "captura_ms": 49.5348,
+          "resto_ms": 0.3410000000000011,
+          "cpu_hilo_ms": 15.625,
+          "gc_ms_por_generacion": [
+            0.8277,
+            0.0,
+            0.0
+          ],
+          "gc_cantidades": [
+            3,
+            0,
+            0
+          ]
+        },
+        {
+          "accion_ejecutada": 3620,
+          "orden": "ir S",
+          "con_punto": true,
+          "ciclo_ms": 46.5715,
+          "captura_ms": 45.9537,
+          "resto_ms": 0.6178000000000026,
+          "cpu_hilo_ms": 31.25,
+          "gc_ms_por_generacion": [
+            0.6066,
+            0.0,
+            0.0
+          ],
+          "gc_cantidades": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "accion_ejecutada": 3460,
+          "orden": "ir N",
+          "con_punto": true,
+          "ciclo_ms": 44.9276,
+          "captura_ms": 44.2486,
+          "resto_ms": 0.6789999999999949,
+          "cpu_hilo_ms": 31.25,
+          "gc_ms_por_generacion": [
+            4.3644,
+            0.0,
+            0.0
+          ],
+          "gc_cantidades": [
+            3,
+            0,
+            0
+          ]
+        },
+        {
+          "accion_ejecutada": 530,
+          "orden": "esperar",
+          "con_punto": true,
+          "ciclo_ms": 42.8557,
+          "captura_ms": 42.2541,
+          "resto_ms": 0.6015999999999977,
+          "cpu_hilo_ms": 15.625,
+          "gc_ms_por_generacion": [
+            0.8341,
+            0.0,
+            0.0
+          ],
+          "gc_cantidades": [
+            3,
+            0,
+            0
+          ]
+        },
+        {
+          "accion_ejecutada": 870,
+          "orden": "ir S",
+          "con_punto": true,
+          "ciclo_ms": 37.1613,
+          "captura_ms": 36.2154,
+          "resto_ms": 0.9458999999999946,
+          "cpu_hilo_ms": 46.875,
+          "gc_ms_por_generacion": [
+            0.7374,
+            1.1073,
+            16.2475
+          ],
+          "gc_cantidades": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "accion_ejecutada": 3900,
+          "orden": "esperar",
+          "con_punto": true,
+          "ciclo_ms": 33.6485,
+          "captura_ms": 33.1716,
+          "resto_ms": 0.47690000000000055,
+          "cpu_hilo_ms": 31.25,
+          "gc_ms_por_generacion": [
+            0.5536,
+            1.0366,
+            15.7004
+          ],
+          "gc_cantidades": [
+            2,
+            1,
+            1
+          ]
+        },
+        {
+          "accion_ejecutada": 4360,
+          "orden": "ir N",
+          "con_punto": true,
+          "ciclo_ms": 32.7792,
+          "captura_ms": 32.4223,
+          "resto_ms": 0.3569000000000031,
+          "cpu_hilo_ms": 31.25,
+          "gc_ms_por_generacion": [
+            0.8242,
+            0.9756,
+            16.4548
+          ],
+          "gc_cantidades": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "accion_ejecutada": 1900,
+          "orden": "esperar",
+          "con_punto": true,
+          "ciclo_ms": 31.2015,
+          "captura_ms": 30.9146,
+          "resto_ms": 0.28689999999999927,
+          "cpu_hilo_ms": 31.25,
+          "gc_ms_por_generacion": [
+            0.0,
+            1.1013,
+            12.8303
+          ],
+          "gc_cantidades": [
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "accion_ejecutada": 3380,
+          "orden": "ir N",
+          "con_punto": true,
+          "ciclo_ms": 31.1657,
+          "captura_ms": 30.8051,
+          "resto_ms": 0.3606000000000016,
+          "cpu_hilo_ms": 31.25,
+          "gc_ms_por_generacion": [
+            0.0488,
+            0.9023,
+            16.0483
+          ],
+          "gc_cantidades": [
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "k": 25,
+      "ciclos": 5001,
+      "con_punto": 200,
+      "sin_punto": 4801,
+      "lentos": 19,
+      "lentos_con_punto": 19,
+      "lentos_con_gc": 19,
+      "lentos_con_gen2": 4,
+      "suma_lentos_ms": 454.3553,
+      "suma_captura_lentos_ms": 443.3867,
+      "suma_gc_lentos_ms": 75.4841,
+      "peores_diez": [
+        {
+          "accion_ejecutada": 4950,
+          "orden": "esperar",
+          "con_punto": true,
+          "ciclo_ms": 31.0667,
+          "captura_ms": 30.7646,
+          "resto_ms": 0.30209999999999937,
+          "cpu_hilo_ms": 31.25,
+          "gc_ms_por_generacion": [
+            0.0419,
+            0.0,
+            15.9565
+          ],
+          "gc_cantidades": [
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "accion_ejecutada": 1550,
+          "orden": "ir S",
+          "con_punto": true,
+          "ciclo_ms": 29.9416,
+          "captura_ms": 29.3725,
+          "resto_ms": 0.5691000000000024,
+          "cpu_hilo_ms": 15.625,
+          "gc_ms_por_generacion": [
+            0.737,
+            0.0,
+            0.0
+          ],
+          "gc_cantidades": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "accion_ejecutada": 1175,
+          "orden": "ir S",
+          "con_punto": true,
+          "ciclo_ms": 29.4578,
+          "captura_ms": 29.1056,
+          "resto_ms": 0.35219999999999985,
+          "cpu_hilo_ms": 31.25,
+          "gc_ms_por_generacion": [
+            0.0932,
+            0.0,
+            12.8992
+          ],
+          "gc_cantidades": [
+            2,
+            0,
+            1
+          ]
+        },
+        {
+          "accion_ejecutada": 3675,
+          "orden": "ir N",
+          "con_punto": true,
+          "ciclo_ms": 28.3557,
+          "captura_ms": 27.9855,
+          "resto_ms": 0.37020000000000053,
+          "cpu_hilo_ms": 15.625,
+          "gc_ms_por_generacion": [
+            0.0,
+            0.0,
+            13.5296
+          ],
+          "gc_cantidades": [
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "accion_ejecutada": 2000,
+          "orden": "ir N",
+          "con_punto": true,
+          "ciclo_ms": 26.5299,
+          "captura_ms": 25.674,
+          "resto_ms": 0.8559000000000019,
+          "cpu_hilo_ms": 31.25,
+          "gc_ms_por_generacion": [
+            1.5345,
+            0.0,
+            0.0
+          ],
+          "gc_cantidades": [
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "accion_ejecutada": 2375,
+          "orden": "esperar",
+          "con_punto": true,
+          "ciclo_ms": 26.4792,
+          "captura_ms": 26.1451,
+          "resto_ms": 0.3340999999999994,
+          "cpu_hilo_ms": 31.25,
+          "gc_ms_por_generacion": [
+            0.063,
+            1.0612,
+            12.8573
+          ],
+          "gc_cantidades": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "accion_ejecutada": 1975,
+          "orden": "ir S",
+          "con_punto": true,
+          "ciclo_ms": 23.4131,
+          "captura_ms": 22.8377,
+          "resto_ms": 0.5753999999999984,
+          "cpu_hilo_ms": 15.625,
+          "gc_ms_por_generacion": [
+            0.8392,
+            0.0,
+            0.0
+          ],
+          "gc_cantidades": [
+            3,
+            0,
+            0
+          ]
+        },
+        {
+          "accion_ejecutada": 1950,
+          "orden": "esperar",
+          "con_punto": true,
+          "ciclo_ms": 23.0518,
+          "captura_ms": 22.5327,
+          "resto_ms": 0.5191000000000017,
+          "cpu_hilo_ms": 15.625,
+          "gc_ms_por_generacion": [
+            1.001,
+            1.7798,
+            0.0
+          ],
+          "gc_cantidades": [
+            3,
+            1,
+            0
+          ]
+        },
+        {
+          "accion_ejecutada": 2050,
+          "orden": "ir S",
+          "con_punto": true,
+          "ciclo_ms": 23.0372,
+          "captura_ms": 22.4568,
+          "resto_ms": 0.5803999999999974,
+          "cpu_hilo_ms": 15.625,
+          "gc_ms_por_generacion": [
+            0.6855,
+            1.4945,
+            0.0
+          ],
+          "gc_cantidades": [
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "accion_ejecutada": 4900,
+          "orden": "ir N",
+          "con_punto": true,
+          "ciclo_ms": 22.6565,
+          "captura_ms": 21.2397,
+          "resto_ms": 1.416800000000002,
+          "cpu_hilo_ms": 31.25,
+          "gc_ms_por_generacion": [
+            0.6594,
+            0.0,
+            0.0
+          ],
+          "gc_cantidades": [
+            3,
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "alcance": "Diagnostico sintetico instrumentado; maximo diez ciclos detallados por K. GC incluido en captura y ciclo, no sumar las fases entre si. CPU del hilo puede tener resolucion limitada; diferencia con pared no prueba por si sola espera del SO. No certifica 20/50 ms ni elige K."
+}

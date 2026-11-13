@@ -1,0 +1,23 @@
+{
+  "acciones": 5000,
+  "salas": 300,
+  "cazadores": 32,
+  "semilla": 2026,
+  "captura_actual": {
+    "cantidad": 20,
+    "minimo_ms": 15.1968,
+    "mediana_ms": 18.244799999999998,
+    "p95_ms": 22.7764,
+    "maximo_ms": 23.8575,
+    "excedidos_50ms": 0
+  },
+  "plantilla_heredada": {
+    "cantidad": 20,
+    "minimo_ms": 21.9432,
+    "mediana_ms": 25.2363,
+    "p95_ms": 28.9805,
+    "maximo_ms": 29.2583,
+    "excedidos_50ms": 0
+  },
+  "alcance": "Exploratorio ABBA de captura aislada, 20 por variante. Solo punto inicial en preparacion (K=10000). Plantilla heredada conserva grafo mutable; no integrada ni prueba de ciclos, memoria o consultas. GC habilitado, recoleccion entre muestras fuera del tiempo. Resumen y azar reconstruidos comprobados."
+}

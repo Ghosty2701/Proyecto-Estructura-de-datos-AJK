@@ -22,6 +22,7 @@ def test_versiones_comparten_registros_sin_mutar_antecesor():
 
 
 def test_colisiones_borrado_y_actualizacion_no_duplican(monkeypatch):
+    monkeypatch.setattr('modelo.indice_versionado._inicio', lambda n, m: 0)
     monkeypatch.setattr('modelo.indice_versionado._mezclar', lambda n: 0)
     a = VersionRegistros.vacia(8).con_cambios((i, r(i)) for i in range(5))
     b = a.con_cambios([(1, ELIMINAR), (4, r(40)), (8, r(8))])

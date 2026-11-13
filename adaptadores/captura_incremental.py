@@ -36,6 +36,11 @@ class _Entrada:
     sucio: bool = True
 
 
+def _inicio_identidad(numero, mascara):
+    plegado = numero >> 4
+    return (plegado ^ (plegado >> 16) ^ (plegado >> 32)) & mascara
+
+
 class _Identidades:
     """Índice fuerte por identidad. Copiar el vector permite preparar altas."""
 
@@ -50,7 +55,7 @@ class _Identidades:
     def _posicion(self, objeto):
         numero = id(objeto)
         mascara = len(self.casillas) - 1
-        posicion = _mezclar(numero) & mascara
+        posicion = _inicio_identidad(numero, mascara)
         paso = None
         while True:
             entrada = self.casillas[posicion]

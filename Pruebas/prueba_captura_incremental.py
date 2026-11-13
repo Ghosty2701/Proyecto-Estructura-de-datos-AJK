@@ -177,6 +177,7 @@ def test_carga_mas_de_cinco_cambios_y_restauraciones():
 def test_colisiones_totales_y_crecimiento(monkeypatch):
     # FR-CI-002/005: el hash de identidad también verifica el objeto, no solo id().
     from adaptadores import captura_incremental as modulo
+    monkeypatch.setattr(modulo, '_inicio_identidad', lambda n, m: 0)
     monkeypatch.setattr(modulo, '_mezclar', lambda _: 0)
     raiz = [[i] for i in range(120)]
     with CapturadorIncremental() as captura:

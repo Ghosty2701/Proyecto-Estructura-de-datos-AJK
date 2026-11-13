@@ -30,9 +30,16 @@ def _validar_registro(registro):
             raise TypeError('el registro contiene un valor mutable o sin esquema')
 
 
+def _inicio(clave, mascara):
+    # Los IDs de sesión son ordinales: conservar sus bits bajos evita mezclar
+    # dos veces en cada acceso. Plegar altos admite también claves dispersas.
+    # Las colisiones conservan el segundo hash impar y la búsqueda acotada.
+    return (clave ^ (clave >> 32)) & mascara
+
+
 def _localizar(casillas, clave):
     mascara = len(casillas) - 1
-    indice = _mezclar(clave) & mascara
+    indice = _inicio(clave, mascara)
     primera_tumba = None
     paso = None
     for _ in range(len(casillas)):

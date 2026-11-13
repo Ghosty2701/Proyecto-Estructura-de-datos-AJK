@@ -1,0 +1,8 @@
+Revision nueva de la implementacion conservada, 2026-11-13
+Directorio: C:/Users/pipro/Downloads/Proyecto-Estructura-de-datos-AJK
+Base Git: 233fa54; sin cambios de codigo de produccion
+Comando ejecutado: python -m pytest -q
+Resumen observado en terminal: 759 passed in 29.95s
+Codigo de salida: 0
+Este archivo resume la ejecucion nueva; no es una transcripcion de toda su salida.
+Las 803 pruebas del historial pertenecian a una variante retirada.

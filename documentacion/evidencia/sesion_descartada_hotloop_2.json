@@ -1,0 +1,71 @@
+{
+  "escenarios": [
+    {
+      "id_cripta": "cripta-06",
+      "version_cripta": "f9ed9afa683d",
+      "version_catalogo": "4b9e75a42be5",
+      "salas": 300,
+      "k": 10,
+      "acciones_objetivo": 5000,
+      "acciones_vigentes": 5000,
+      "semilla": 2026,
+      "rondas": 3,
+      "cazadores_totales": 36,
+      "cazadores_activos_inicio": 32,
+      "estadisticas": {
+        "cantidad": 36,
+        "minimo_ms": 0.1063,
+        "mediana_ms": 28.9655,
+        "p95_ms": 55.6215,
+        "maximo_ms": 66.1774,
+        "excedidos_50ms": 6
+      },
+      "muestras": {
+        "cantidad": 36,
+        "maximo_acciones_reaplicadas": 9,
+        "maximo_comparaciones_puntos": 9
+      },
+      "ciclos": {
+        "cantidad": 5000,
+        "minimo_ms": 4.5265,
+        "mediana_ms": 9.9831,
+        "p95_ms": 16.8293,
+        "maximo_ms": 74.6764,
+        "limite_ms": 20,
+        "excedidos": 121
+      },
+      "ciclos_con_punto": {
+        "cantidad": 500,
+        "minimo_ms": 5.6289,
+        "mediana_ms": 9.41965,
+        "p95_ms": 15.9129,
+        "maximo_ms": 27.5599,
+        "limite_ms": 20,
+        "excedidos": 4
+      },
+      "ciclos_sin_punto": {
+        "cantidad": 4500,
+        "minimo_ms": 4.5265,
+        "mediana_ms": 10.03105,
+        "p95_ms": 17.0983,
+        "maximo_ms": 74.6764,
+        "limite_ms": 20,
+        "excedidos": 117
+      },
+      "gc_habilitado": true,
+      "maximo_acciones_reaplicadas": 9,
+      "partida_intacta": true,
+      "http_consultas": 0,
+      "vista": false,
+      "solicitudes": 46,
+      "presupuesto": 63,
+      "python": "3.13.2",
+      "plataforma": "Windows-11-10.0.26200-SP0",
+      "alcance": "K declarado; vida experimental del jugador 10^9; movimiento por salidas abiertas evitando la salida, alternado con esperas. Enemigos originales sin alterar estadisticas/posiciones. Solo certifica las consultas muestreadas; mide ciclos completos de accion/registro/punto, sin memoria trazada. Intermedios sin oraculo independiente en este ensayo.",
+      "pico_residente_observado_bytes": 437080064
+    }
+  ],
+  "psutil_observador": "7.2.2",
+  "intervalo_observador_s": 0.1,
+  "alcance_memoria": "Pico residente del proceso completo, observado desde otro proceso; Windows informa peak_wset; otros sistemas maximo RSS muestreado. Incluye Python, HTTP, cache, partida e historia; no memoria solo de puntos ni memoria virtual/commit. No cambia K del juego."
+}

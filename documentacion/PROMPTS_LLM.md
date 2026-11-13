@@ -1632,3 +1632,35 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     productivo ni incluir la eliminación previa del historial y otros resultados
     locales ajenos al cambio. Se mantiene EX-01 y el avance original estimado
     de ~95 %; no se declara cumplimiento de los presupuestos temporales.
+
+56. Nuevo spec para adaptar el proyecto a Pygame en una rama adicional
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Usuario: «Usando el mismo modelo de specs actuales del proyecto, el
+    Desarrollo dirigido por especificaciones (SDD) con GitHub spec-kit, ayudame
+    en la creacion de un nuevo spec para adaptar el proyecto a pygame.
+    No estoy seguro al 100% de como funciona pero, la idea principal es crear
+    una rama en el github para separar esta funcionalidad adicional del
+    proyecto ya funcional.»
+
+    Aclaración de presentación: «Que tenga un mapa 2D con las salas, que en
+    cada cuadrito de la sala aparezca una sprite indicando los enemigos en cada
+    sala, respetando tambien la niebla, osea que en el mapa solo se revele las
+    salas ya visitadas y adjacentes. Con paneles y botones para cada una de las
+    acciones. El juego sigue siendo un juego por turnos».
+
+    Aclaración de enemigos remotos elegida por el usuario: «Últimos enemigos
+    observados, marcados como recuerdo hasta volver a entrar (recomendado)».
+
+    Aplicada la habilidad local `$speckit-specify` de spec-kit 1.3.2, leyendo
+    sus instrucciones y la constitución. Resuelta la plantilla compuesta con
+    `powershell.exe -NoProfile -ExecutionPolicy Bypass -File
+    .specify/scripts/powershell/resolve-template.ps1 spec-template -Json`.
+    No hay `.specify/extensions.yml` ni hooks registrados para esta ejecución.
+    Rama `005-interfaz-pygame` desde `6107b98`, con worktree separado para no
+    alterar main ni sus archivos locales. Especificación en
+    `specs/005-interfaz-pygame/spec.md`, revisión de calidad y guía de fases SDD.
+    Selector local `.specify/feature.json` actualizado; se respeta su exclusión
+    de Git. Solo se crean documentos: sin código gráfico, dependencias nuevas,
+    decisiones de estructuras ni afirmaciones de pruebas de Pygame aprobadas.

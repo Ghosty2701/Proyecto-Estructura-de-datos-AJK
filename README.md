@@ -1,5 +1,11 @@
 # Cripta — Parte II
 
+**Rama adicional `005-interfaz-pygame`:** aquí se prepara una interfaz gráfica
+con mapa 2D, sprites y paneles, conservando el juego por turnos. Por ahora está
+[especificada, no implementada](specs/005-interfaz-pygame/README.md).
+`main` conserva la entrega actual; el estado de Parte II que sigue abajo no
+representa el avance de esta ampliación.
+
 Proyecto de Andrey, Juan y Kendall. Juego de consola con terreno ponderado,
 cazadores, niebla y viaje automático, resolubilidad y consultas históricas.
 Los datos proceden del servicio o de un paquete offline compatible.

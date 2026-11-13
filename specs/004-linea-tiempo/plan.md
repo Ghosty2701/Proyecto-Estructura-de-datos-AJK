@@ -9,6 +9,21 @@ y crecimiento. Verificar crecimientos, alias/ciclos y bytes v6, luego ciclos
 oficiales completos con GC normal. No añadir índices, prototipos ni dependencias.
 Solo conservar modificaciones con ventaja medida; no cerrar por la mediana.
 
+Resultado: referencia integrada reduce mediana aislada ~10 %, pero conserva
+29/5 000 ciclos oficiales >=20 ms; no integrar ese cambio. El cierre utiliza
+la decisión ya aprobada de hash propio + vector inmutable, con IDs locales
+reutilizables entre puntos. Capturador por línea: comprobar valores inmediatos
+por identidad, reutilizar registro e IDs de hijos si no cambiaron, visitar los
+hijos igualmente para detectar cualquier mutación. No depender de marcas ni
+interceptar escrituras del motor. List/dict se comprueban por contenido inmediato;
+Random se lee siempre. Los registros publicados nunca retienen objetos vivos.
+Retirar nodos no alcanzados, liberar sus valores y reconstruir el mismo índice
+para evitar acumulación de bajas; reutilizar casillas libres solo en puntos
+posteriores. Vector congelado independiente por punto, huecos sin enlaces.
+Cache solo en el capturador de la línea, nunca persistida ni en el punto. Tras
+error descartar cache; guardar/cargar sigue materializando v6. Validar alias,
+ciclos, cambios externos, retiro acotado, undo/carga y bytes de todos los puntos.
+
 **Mantenimiento de memoria dentro del ciclo (descartado):** tras crear un punto, solicitar
 una recolección completa en la siguiente acción positiva que no cree otro punto.
 No ejecutarla en consultas/navegación/undo, ni fuera del cronómetro de acción+

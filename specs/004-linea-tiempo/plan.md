@@ -1,5 +1,14 @@
 # Plan: Línea de tiempo y puntos de control
 
+**Cierre mínimo de 20 ms (2026-11-13):** el perfil de producción concentra el
+trabajo en referencia/registro y codificación completa. Mantener la misma tabla
+de identidades y doble hash, formatos, K10 y captura completa. Integrar la
+primera casilla y la inserción sin crecimiento en el bucle de referencia para
+evitar llamadas repetidas por nodo; conservar la ruta existente de colisiones
+y crecimiento. Verificar crecimientos, alias/ciclos y bytes v6, luego ciclos
+oficiales completos con GC normal. No añadir índices, prototipos ni dependencias.
+Solo conservar modificaciones con ventaja medida; no cerrar por la mediana.
+
 **Mantenimiento de memoria dentro del ciclo (descartado):** tras crear un punto, solicitar
 una recolección completa en la siguiente acción positiva que no cree otro punto.
 No ejecutarla en consultas/navegación/undo, ni fuera del cronómetro de acción+

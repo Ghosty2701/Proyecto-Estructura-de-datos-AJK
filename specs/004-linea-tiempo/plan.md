@@ -1,5 +1,17 @@
 # Plan: Línea de tiempo y puntos de control
 
+**Mantenimiento de memoria dentro del ciclo:** tras crear un punto, solicitar
+una recolección completa en la siguiente acción positiva que no cree otro punto.
+No ejecutarla en consultas/navegación/undo, ni fuera del cronómetro de acción+
+registro. Solo si GC está habilitado; no cambiar umbrales, deshabilitarlo ni
+congelar generaciones. Esto evita acumular la pasada completa y la captura en
+el mismo ciclo. El costo se paga y se mide íntegro en un ciclo sin punto.
+Una marca booleana derivada en LineaTiempo no se guarda ni es estado del juego;
+la carga inicia su propio mantenimiento. Para K=1 no hay ciclo sin punto y se
+mantiene la recolección automática, sin afirmar que ese K cumpla el presupuesto.
+Verificar determinismo, GC habilitado/umbrales intactos, costo medido, v6 y
+todos los ciclos oficiales K10; no aprobar por medir solo ciclos con punto.
+
 **Codificación directa de tuplas escalares:** continuar con registros/tuplas
 elegidos, sin otro índice. Una tupla plana de tipos escalares exactos puede
 codificarse como `(None, tupla_original)` dentro del campo; las referencias a

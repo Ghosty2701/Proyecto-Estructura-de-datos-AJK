@@ -2,6 +2,11 @@
 
 ## Cierre de entrega priorizado (2026-11-13)
 
+- [ ] ENT-009 Programar mantenimiento GC después de punto en siguiente acción
+  sin punto, dentro de registro/cronometrado y respetando GC deshabilitado por
+  el llamador. No cambiar umbrales/estado del juego/persistencia. Validar costo
+  completo, K1, undo/navegación y ciclos oficiales K10. PR-LT-007/PR-TC-001.
+
 - [ ] ENT-008 Codificar tuplas escalares planas en el campo con marca inequívoca,
   manteniendo IDs para tuplas con descendientes y lectura de puntos previos.
   Misma estructura/codec v6; verificar tipos, alias, ciclos, todos los puntos

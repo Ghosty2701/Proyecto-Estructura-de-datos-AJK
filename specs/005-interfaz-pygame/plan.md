@@ -166,6 +166,7 @@ controlador/partida.py                # paso de viaje compartido y proyección a
 controlador/sesion.py                 # preparar/finalizar sesión sin vista
 controlador/controlador_grafico.py    # coordinación serializada y ciclo de sesión
 controlador/proyeccion_grafica.py     # valores observables y revisión de selección
+controlador/disposicion_mapa.py       # croquis puro sobre conocimiento, sin Pygame
 controlador/memoria_visual.py         # observaciones y deshacer visual, tras D-IG-05
 adaptadores/estado_grafico.py         # validación/transporte, tras D-IG-06
 controlador/cargar_partida.py         # extensión opcional del cargador existente
@@ -182,6 +183,7 @@ Pruebas/prueba_guardado_grafico.py
 Pruebas/prueba_mapa_grafico.py
 Pruebas/prueba_eventos_pygame.py
 Pruebas/prueba_cli_pygame.py
+Pruebas/datos_graficos.py             # cargas sintéticas reutilizables, sin HTTP
 ```
 
 Los nombres anticipan responsabilidades, no implican implementación. No se

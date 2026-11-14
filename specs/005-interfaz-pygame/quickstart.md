@@ -125,6 +125,7 @@ capacidad afectada. EX-01 se conserva y no certifica rendimiento gráfico.
 ## Criterio para pasar a implementación
 
 El plan, las decisiones, el modelo de datos y ambos contratos están documentados.
-El próximo paso es `$speckit-tasks`; luego `$speckit-analyze` comprobará cobertura
-y consistencia antes de `$speckit-implement`. Esta guía no sustituye esos pasos
-ni afirma que se hayan ejecutado las pruebas futuras.
+Las 53 tareas están en [tasks.md](tasks.md) y el análisis de consistencia previo
+ya se realizó, sin bloqueos críticos/altos identificados. El próximo paso es
+`$speckit-implement`, comenzando por T001. Esta guía no afirma que se hayan
+ejecutado las pruebas futuras ni sustituye la evidencia por escenario.

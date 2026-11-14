@@ -12,7 +12,8 @@ visual final pendientes. Es una ampliación personal,
 independiente de la nota del proyecto. [Seguimiento](specs/005-interfaz-pygame/README.md#avance-exclusivo-de-pygame).
 
 **Evolución visual solicitada:** habitación con personaje, enemigos y objetos,
-mapa secundario y combate con sprites. [Spec 006 en borrador](specs/006-salas-combate-visual/spec.md);
+mapa secundario y combate integrado con animaciones por turno e ilustración 2D de
+fantasía oscura. [Spec 006 aclarado](specs/006-salas-combate-visual/spec.md);
 este alcance nuevo todavía no está implementado ni está incluido en el ~85 % anterior.
 
 Proyecto de Andrey, Juan y Kendall. Juego de consola con terreno ponderado,

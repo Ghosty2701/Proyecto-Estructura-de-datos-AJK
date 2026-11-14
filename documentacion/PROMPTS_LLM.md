@@ -1837,3 +1837,34 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     fantasía oscura». Incorporadas al spec 006 y revisión de calidad 16/16.
     Sin cambios de reglas ni implementación. Continúa la planificación técnica
     y la elaboración de una referencia visual fiel a las elecciones.
+
+67. Planificar la escena y preparar referencia ilustrada
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Aplicadas `$speckit-plan` e `imagegen`. El plan usa el selector de capacidad
+    006 y la rama Git real sigue siendo `005-interfaz-pygame`. Sin hooks.
+    Investigación delegada de lectura por requisito de fase 0; no modificó
+    código ni eligió estructuras. La presentación actual basta para sala y
+    objetivos; diferencias de snapshots no prueban daño intermedio o derrota.
+    Propuesta: hechos observables estructurados, sin atributos nuevos en raíces
+    persistidas ni lectura remota. AGENTS.md exige elección: se consultó vectores
+    por sala y una animación activa frente a índice espacial propio. D-EV-04
+    sigue pendiente; fase 1 e implementación dependientes no iniciadas.
+    Referencia visual solicitada al generador incorporado; prompt exacto en
+    `specs/006-salas-combate-visual/referencia-visual.prompt.txt`. Es concepto de
+    composición, no captura de juego ni sustituto de los recursos finales.
+
+68. Confirmar D-EV-04 y cerrar planificación de la escena
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    El usuario eligió «Vectores por sala y una animación activa (recomendado)».
+    Cerrados investigación, plan, modelo, contrato y guía; la referencia de
+    imagegen quedó copiada a `referencias/concepto-sala-v1.png`. Aplicados
+    `$speckit-tasks` y `$speckit-analyze`: 24 tareas, 20/20 requisitos construibles
+    y 15/15 escenarios con cobertura prevista; dependencias válidas y sin
+    hallazgos críticos/altos. Análisis de solo lectura sin modificaciones;
+    esta entrada se agrega después de cerrarlo. Sin hooks registrados.
+    Continúa `$speckit-implement` con pruebas antes de código. Avance visual
+    estimado ~20 %, sin funcionalidad nueva acreditada por documentos.

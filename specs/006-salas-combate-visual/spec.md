@@ -34,6 +34,24 @@ sprites concuerden con las criaturas. También solicitó explicar ordenamientos,
 aclarar selección de cripta y carga de archivos, señalar operaciones en curso
 y decorar ventanas/botones con contornos, relieve y luces discretas.
 
+### Revisión de exploración y cierre de rama — 2026-11-14
+
+El usuario pide más altura de minimapa, actividad discreta durante movimientos,
+controles consultables sin más botones, optimizaciones respaldadas por medidas
+y revisión interactiva final de escritorio. La rama se conserva separada mientras
+se decide su integración; no se autoriza fusionar main.
+
+- **AC-EV-024**: En ambos tamaños, el minimapa es más alto y sus casillas se
+  distinguen mejor; sigue ampliándose con clic y respetando niebla/recuerdos.
+- **AC-EV-025**: Inicio/carga conserva aviso detallado. Durante juego, una
+  operación lenta muestra un pequeño indicador en una esquina, sin tapar sala
+  o añadir controles; operaciones rápidas no provocan un cuadro emergente.
+- **AC-EV-026**: Una leyenda tenue muestra movimiento y acceso a ayuda; H abre
+  controles detallados sin turno, y se vuelve a jugar sin acumular órdenes.
+- **AC-EV-027**: La exploración reduce espera artificial y trabajo repetido de
+  presentación; no recarga arte al mover ni altera red, reloj, azar, niebla o
+  registro. Se comparan medidas antes/después indicando sus límites.
+
 Escenarios adicionales:
 
 - **AC-EV-018**: Rata gigante, espectro y sabueso usan representaciones acordes
@@ -228,6 +246,17 @@ ilustración anterior por petición explícita del usuario.
   como en juego, atender cierre y comunicar errores sin simular avance. AC-EV-022.
 - **FR-EV-021**: Decorar controles y paneles con contornos y luces discretas,
   distinguiendo selección, foco, cursor y deshabilitación. AC-EV-023.
+- **FR-EV-022**: Aumentar altura y legibilidad del minimapa conservando espacio
+  de estado y ampliación, a partir de 1024 × 768. AC-EV-024.
+- **FR-EV-023**: Diferenciar actividad inicial detallada y actividad de juego
+  discreta, sin cuadros grandes para cada movimiento ni porcentajes ficticios.
+  Cierre sigue atendido y no se acumulan acciones. AC-EV-025.
+- **FR-EV-024**: Mantener indicaciones tenues de movimiento y acceso a controles
+  detallados, sin botones permanentes nuevos ni costo de turno. AC-EV-026.
+- **FR-EV-025**: Evitar trabajo visual repetido con una presentación sin cambios
+  y recarga de arte al explorar. Transición de movimiento normal hasta 160 ms,
+  reducida hasta 80 ms; efectos de combate conservan sus límites. Medir antes y
+  después sin modificar reglas, presupuesto HTTP o persistencia. AC-EV-027.
 
 ### Entidades principales
 
@@ -269,6 +298,12 @@ ilustración anterior por petición explícita del usuario.
 - **SC-EV-010**: A 1024 × 768 y 1280 × 800 se reconoce la cripta elegida, el archivo
   para cargar, el propósito de ordenar y una operación deliberadamente demorada,
   sin turnos creados por la presentación ni comandos duplicados.
+- **SC-EV-011**: Renders y escritorio muestran minimapa más alto, ayuda accesible
+  y actividad discreta en juego/detallada en inicio, con controles alcanzables
+  en 1024 × 768 y 1280 × 800.
+- **SC-EV-012**: Perfil reproducible separa acción, dibujo y transición visual;
+  regresión mantiene estado/azar/registro y no hay nuevas descargas de arte al
+  mover. Revisión interactiva documentada antes de dejar la rama en evaluación.
 
 ## Supuestos, alcance y dependencias
 

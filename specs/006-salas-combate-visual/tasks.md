@@ -92,3 +92,13 @@ ninguna se completa por el hecho de generar estos documentos.
 - [X] T039 Añadir indicador animado y descripción/tiempo en `aplicacion.py`, sin bloquear ni duplicar comandos; verificar inicio y juego lentos. Dep.: T037. FR-EV-020; AC-EV-022; SC-EV-010.
 - [X] T040 Ejecutar regresión con/sin gráficos y renders reproducibles de dos tamaños en `Pruebas/renderizar_retro.py`; evidencia en `documentacion/evidencia/claridad_revision.md`. Dep.: T036, T038, T039. FR-EV-008, FR-EV-012, FR-EV-014, FR-EV-017, FR-EV-018, FR-EV-019, FR-EV-020, FR-EV-021; AC-EV-018, AC-EV-019, AC-EV-020, AC-EV-021, AC-EV-022, AC-EV-023; SC-EV-006, SC-EV-009, SC-EV-010.
 - [X] T041 Actualizar README, quickstart, decisiones, bitácora y avance exclusivo; commit y push en `005-interfaz-pygame`. Dep.: T040. FR-EV-017, FR-EV-018, FR-EV-019, FR-EV-020, FR-EV-021; SC-EV-009, SC-EV-010.
+
+## Fase 10 — Exploración ligera y revisión interactiva
+
+- [ ] T042 Confirmar revisión previa en `spec.md`, `plan.md` y bitácora; revisar cobertura. Dep.: T041. FR-EV-022, FR-EV-023, FR-EV-024, FR-EV-025; AC-EV-024, AC-EV-025, AC-EV-026, AC-EV-027; SC-EV-011, SC-EV-012.
+- [ ] T043 Probar altura, ayuda sin turno, carga compacta, no recarga de PNG, snapshot estable y transición en `Pruebas/prueba_exploracion_ligera.py`. Dep.: T042. FR-EV-022, FR-EV-023, FR-EV-024, FR-EV-025; AC-EV-024, AC-EV-025, AC-EV-026, AC-EV-027.
+- [ ] T044 Ajustar minimapa/leyenda y actividad contextual en `aplicacion.py`. Dep.: T043. FR-EV-022, FR-EV-023, FR-EV-024; SC-EV-011.
+- [ ] T045 Evitar recomparar snapshot idéntico en `mapa.py` y acortar transición en `animaciones.py`; sin cambios en solicitudes ni reglas. Dep.: T043. FR-EV-025; AC-EV-027; SC-EV-012.
+- [ ] T046 Ejecutar regresión con/sin gráficos, perfil antes/después con `Pruebas/medir_exploracion.py` y renders en `Pruebas/renderizar_retro.py`; documentar en `documentacion/evidencia/exploracion_revision.md`. Dep.: T044, T045. FR-EV-008, FR-EV-012, FR-EV-022, FR-EV-023, FR-EV-024, FR-EV-025; SC-EV-006, SC-EV-011, SC-EV-012.
+- [ ] T047 Ejecutar recorrido interactivo de escritorio con computer-use, dos tamaños, foco, teclado, sprites, inventario, mapa, historia, guardado/carga y cierre; evidencia en `documentacion/evidencia/exploracion_escritorio.md`. Dep.: T046. FR-EV-001, FR-EV-013, FR-EV-014, FR-EV-019, FR-EV-022, FR-EV-023, FR-EV-024; SC-EV-001, SC-EV-005, SC-EV-011, SC-EV-012.
+- [ ] T048 Auditar spec/plan/tareas/evidencia, actualizar README/decisiones/prompts, commit y push sin merge; cerrar pendientes anteriores solo con evidencia. Dep.: T047. FR-EV-012, FR-EV-022, FR-EV-023, FR-EV-024, FR-EV-025; SC-EV-006, SC-EV-011, SC-EV-012.

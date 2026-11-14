@@ -178,3 +178,23 @@ escalares. Se dibuja cada cuadro sin bloquear ni inventar porcentaje; no hay otr
 trabajador o cola. Se prueban inicio/catálogo/carga/orden deliberadamente lentos,
 rechazo de duplicados y cierre seguro. Contornos y brillo se dibujan en Pygame,
 sin generar imágenes de botones. Misma colección de controles/regiones aprobada.
+
+## Exploración y revisión final
+
+Se reutilizan Mapa, su clave/croquis/índice existentes, el snapshot inmutable y
+una animación activa aprobados. La identidad de la última presentación evita
+recomparar topología cada cuadro, sin un índice/caché nuevos. La precarga y
+política de solicitudes existentes no se modifican. Perfil local previo en
+`documentacion/evidencia/exploracion_perfil_antes.txt`; el motor no justifica
+añadir complejidad: acción mediana ~0,51 ms con perfil, dibujo ~3,39 ms.
+Se reduce transición de movimiento a 160/80 ms, dejando combate 500/180 ms.
+No se añaden campos a Partida/MotorEventos ni estructuras nuevas.
+
+Minimapa: marco ~286 px de alto y escala inicial 0,60; estado debajo y leyenda
+tenue en sala. Durante juego, indicador compacto sin botones tras 150 ms de
+actividad; inicio y cierre conservan detalle. El umbral solo decide dibujo.
+H usa la intención de ayuda ya existente. Pruebas de tamaños, identidad de
+croquis, invalidación por snapshot nuevo, PNG cargado una sola vez y duraciones.
+Después de regresión/medidas, revisión nativa mediante computer-use sobre una
+partida sintética local y archivos aislados; registrar límites observados sin
+confundir renders dummy con interacción de escritorio. Rama sin merge.

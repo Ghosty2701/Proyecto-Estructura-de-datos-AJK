@@ -1967,3 +1967,18 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     no se acredita selector nativo real ni revisión completa de escritorio.
     T020/T023/T024 siguen pendientes. Avance visual ~90 % estimado, sin nueva
     medición de latencia ni cambio a EX-01. Commit/push en rama adicional.
+
+74. Ampliar minimapa, aligerar exploración y revisar escritorio
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Usuario: minimapa más alto, carga sutil en una esquina durante movimiento,
+    optimizaciones para evitar espera, controles consultables sin más botones;
+    terminar validaciones y revisión interactiva de escritorio y dejar la rama
+    separada mientras se decide integrar. Aplicadas speckit-implement y
+    computer-use; checklist 16/16, sin hooks. Spec revisado antes de código.
+    Perfil previo local: mediana de acción ~0,51 ms y dibujo ~3,39 ms, con límites
+    de instrumentación; transición visual hasta 500 ms y comparaciones repetidas
+    del mapa detectadas. Se reutilizan snapshot, clave de mapa y animación
+    aprobados; sin estructura nueva ni cambio en política de solicitudes.
+    T042–T048; 25 FR, 27 AC y 12 SC con trazabilidad prevista. Avance ~90 %.

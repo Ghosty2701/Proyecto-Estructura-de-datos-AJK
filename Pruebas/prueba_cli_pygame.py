@@ -42,7 +42,10 @@ def test_dependencia_opcional_ausente_informa(monkeypatch, capsys):
         return importar(nombre, *args, **kwargs)
     monkeypatch.setattr(builtins, '__import__', sin_pygame)
     assert aplicacion.main(['--interfaz', 'pygame']) == 1
-    assert 'requirements-pygame.txt' in capsys.readouterr().err
+    error = capsys.readouterr().err
+    assert 'requirements-pygame.txt' in error
+    # AC-IG-022: el entorno se explica, incluida la versión de Python admitida.
+    assert 'Python 3.11 a 3.13' in error and 'py -3.13 -m venv' in error
 
 
 def test_cripta_y_carga_mutuamente_excluyentes(monkeypatch):

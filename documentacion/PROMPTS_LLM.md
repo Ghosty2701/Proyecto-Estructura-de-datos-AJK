@@ -1080,7 +1080,7 @@ pruebas o benchmarks ni se implementó código de la capacidad.
 
     *Fecha: 2026-10-17*
 
-### Entradas 72–105: Auditoría P2, integraciones, especificación y plan de línea de tiempo
+### Entradas 72–108: Auditoría P2, integraciones, especificación y plan de línea de tiempo
 
 *Fecha original de las intervenciones: 2026-11-09*
 
@@ -1125,6 +1125,9 @@ original y resume su resultado, sin convertir recomendaciones en decisiones.
 | 103 | prosigamos con terminar el pygame | Entorno de referencia: Python 3.13.17 instalado (pygame 2.6.1 no tiene wheel para 3.14) y `.venv` con pygame 2.6.1; 866/819 pruebas. T050 medido, T051 consolidado con límites, documentación y auditoría (58 y 64 identificadores con tarea); 005 53/53 y 006 48/48. |
 | 104 | satisfecho con la interfaz de pygame, integrar al main, aprobacion otorgada | Aprobación explícita del usuario para integrar `005-interfaz-pygame` en `main` (merge sin fast-forward); Pygame queda como interfaz opcional, independiente de la nota de Parte II. |
 | 105 | realiza el push, y luego proseguimos con el documento de desiciones | Push de `main` y `005-interfaz-pygame`. Documento de Decisiones: índice por problema y secciones consolidadas §5.5 (alternativas, decisión, cambios frente al plan, complejidad, evidencia y límites) y §5.6 (tabla antes/después de P1, con la agenda pequeña donde la lista empata o gana); tabla raíz actualizada. |
+| 106 | yes, confirm changes | Commit y push del Documento de Decisiones consolidado (`9e1d13d`). |
+| 107 | si me voy a github y clono el repositorio en la pc del profe, es completamente funcional? | Clon limpio desde GitHub: 819 pruebas con Python 3.14 sin Pygame, `--listar` y partida real contra el servicio, 866 pruebas con Pygame en Python 3.13. Mejoras: mensaje que explica la versión de Python requerida (AC-IG-022), «Inicio rápido» en el README y `.gitignore` para `.venv*/` y `resultados/`. |
+| 108 | commit and push changes | Commit y push de esas mejoras. |
 
 Detalle en [especificación](../specs/004-linea-tiempo/spec.md) e
 [investigación de la línea de tiempo](../specs/004-linea-tiempo/research.md).

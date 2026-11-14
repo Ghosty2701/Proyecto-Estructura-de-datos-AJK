@@ -1,6 +1,7 @@
 __pycache__/
 *.py[cod]
 .venv/
+.venv*/
 venv/
 dist/
 *.egg-info/
@@ -15,4 +16,4 @@ dist/
 .cache_cripta/
 puntajes.json
 partida.bin
-resultados/bench/
+resultados/

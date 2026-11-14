@@ -69,8 +69,12 @@ def _iniciar_grafica(opciones):
     except ModuleNotFoundError as error:
         if error.name != 'pygame':
             raise
+        # AC-IG-022: explicar instalación y entorno; pygame 2.6.1 no publica paquetes para 3.14+.
+        version = f'{sys.version_info.major}.{sys.version_info.minor}'
         print('Instala la interfaz opcional: python -m pip install -r '
               'documentacion/requirements-pygame.txt', file=sys.stderr)
+        print(f'Requiere Python 3.11 a 3.13 (estás usando {version}); pygame 2.6.1 no se '
+              'instala en 3.14 o posterior. En Windows: py -3.13 -m venv .venv', file=sys.stderr)
         return 1
     from vista.pygame_ui.aplicacion import ejecutar
     try:

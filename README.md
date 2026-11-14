@@ -1,5 +1,43 @@
 # Cripta — Parte II
 
+## Inicio rápido (clonar y ejecutar)
+
+Verificado el 2026-11-14 en un clon limpio desde GitHub, en Windows, con
+PowerShell y desde la raíz del repositorio.
+
+1. **Juego en consola y pruebas** (Python 3.11 o superior; probado con 3.13 y 3.14):
+
+   ```powershell
+   python -m venv .venv
+   .\.venv\Scripts\python.exe -m pip install -r documentacion/requirements.txt
+   .\.venv\Scripts\python.exe -m pytest -q
+   .\.venv\Scripts\python.exe main.py --listar
+   .\.venv\Scripts\python.exe main.py --cripta cripta-02 --semilla 2026
+   ```
+
+   Sin Pygame pasan 819 pruebas y se omiten 5 módulos gráficos. El juego usa el
+   servicio web del curso; `--listar` muestra las criptas disponibles.
+
+2. **Interfaz gráfica opcional** (Pygame 2.6.1 requiere **Python 3.11 a 3.13**;
+   no se instala en 3.14):
+
+   ```powershell
+   py -3.13 -m venv .venv313
+   .\.venv313\Scripts\python.exe -m pip install -r documentacion/requirements-pygame.txt
+   .\.venv313\Scripts\python.exe main.py --interfaz pygame
+   ```
+
+   Con Pygame pasan 866 pruebas.
+
+3. **Sin red:** `--offline CARPETA` lee un paquete local con el mismo contrato del servicio.
+   Para generar una cripta sintética de prueba:
+
+   ```powershell
+   .\.venv\Scripts\python.exe -c "from Pruebas.datos_graficos import paquete_grafico; paquete_grafico('resultados/manual/datos')"
+   .\.venv\Scripts\python.exe main.py --offline resultados/manual/datos --cripta lt --semilla 2026
+   ```
+
+
 **Interfaz opcional Pygame (integrada en `main` el 2026-11-14):** RPG con estética
 de 16 bits, habitación pixelada, personaje, enemigos, minimapa y combate animado
 por turnos. [Seguimiento de la escena visual](specs/006-salas-combate-visual/README.md).

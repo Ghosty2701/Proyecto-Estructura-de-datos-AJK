@@ -7,20 +7,22 @@ todavía no contiene una interfaz gráfica implementada.**
 - Base publicada: `6107b98` de `main`, sin cambiar su estado de Parte II ni EX-01.
 - [Especificación](spec.md): siete historias, 24 requisitos funcionales y 23 escenarios.
 - [Revisión de calidad](checklists/requirements.md): 16/16 criterios revisados.
-- [Plan técnico en borrador](plan.md) y [alternativas investigadas](research.md): pendientes de tres elecciones del usuario antes del diseño definitivo.
+- [Plan técnico completado](plan.md) y [decisiones investigadas](research.md): las tres elecciones del usuario están confirmadas.
+- [Modelo de datos](data-model.md), contratos de [interfaz](contracts/interfaz-grafica.md) y [recuerdos v6](contracts/recuerdos-v6.md), y [guía de validación](quickstart.md).
 - Carpeta de trabajo local usada: `C:/Users/pipro/Downloads/Proyecto-Estructura-de-datos-AJK-pygame`.
 
 ## Avance exclusivo de Pygame
 
-**Estimación actual: ~15 %**, orientativa. Se completaron la especificación,
-las aclaraciones visuales y su revisión de calidad; se prepararon la arquitectura
-estándar y las alternativas de estructuras, persistencia y disposición del mapa.
-La sonda temporal del lector v6 confirmó que admite una clave primitiva opcional.
+**Estimación actual: ~25 %**, orientativa. Especificación, aclaraciones y
+planificación técnica completadas: estructuras elegidas, arquitectura, modelo
+de datos, contratos y guía de validación. Se verificaron en cargas temporales
+la aceptación de una clave primitiva opcional en v6 y el recorrido base de cinco
+retrocesos, incluido usar un pergamino desde el inventario.
 La implementación gráfica, sus pruebas y la validación visual todavía no han
 comenzado; el porcentaje corresponde a preparación, no a funciones disponibles.
 
-El siguiente paso es recibir las tres elecciones del usuario y completar el
-modelo de datos, contratos y guía de validación del plan. Esta ampliación es una
+El siguiente paso es `$speckit-tasks`, seguido del análisis de consistencia antes
+de implementar. Esta ampliación es una
 exigencia personal del usuario, independiente de la nota y del avance de Parte II.
 En adelante se reporta únicamente su propio progreso. La integración en `main`
 se evaluará cuando funcione y se haya validado la compatibilidad.
@@ -59,15 +61,17 @@ plantillas compuestas y constitución. No se cambia de versión de spec-kit.
 |---|---|---|
 | Especificar (`$speckit-specify`) | Completada | Comportamiento y escenarios en `spec.md` |
 | Resolver ambigüedades | Decisiones visuales aclaradas durante la especificación | Mapa, niebla, turnos y recuerdos registrados |
-| Planificar (`$speckit-plan`) | En curso; pendientes tres elecciones | Arquitectura y alternativas preparadas; diseño definitivo después de las respuestas |
-| Descomponer (`$speckit-tasks`) | Pendiente del plan | Tareas enlazadas a requisitos, escenarios y pruebas |
+| Planificar (`$speckit-plan`) | Completada | Elecciones confirmadas, arquitectura, modelo de datos, contratos y guía de validación |
+| Descomponer (`$speckit-tasks`) | Siguiente paso | Tareas enlazadas a requisitos, escenarios y pruebas |
 | Analizar (`$speckit-analyze`) | Pendiente de los artefactos anteriores | Revisión de consistencia y cobertura |
 | Implementar (`$speckit-implement`) | No iniciada | Código, pruebas y validación visual por tareas |
 
-La fase activa es `$speckit-plan` en esta rama. Se presentaron las alternativas
-D-IG-05/06/07, con ventajas, desventajas y recomendación. Según AGENTS.md, una
-recomendación del agente no sustituye la elección del usuario. No iniciar
-`$speckit-tasks` antes de cerrar esas elecciones y los contratos del plan.
+La fase de planificación está cerrada. El usuario eligió explícitamente
+D-IG-05/06/07: índice propio con vectores y cambios por turno, datos visuales
+opcionales dentro del `.bin` y croquis por direcciones. No quedan decisiones
+de diseño pendientes para descomponer en tareas. Cualquier estructura nueva
+no cubierta por estas elecciones seguirá requiriendo alternativas y elección
+del usuario según AGENTS.md.
 
 No se introducen aquí dependencias, arte ni código gráfico. Los escenarios
 nuevos se probarán al implementar; la revisión documental no los marca aprobados.

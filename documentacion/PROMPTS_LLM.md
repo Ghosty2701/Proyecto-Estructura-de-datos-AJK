@@ -1705,3 +1705,28 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     como decisiones aprobadas. La puerta de diseño definitivo queda abierta
     hasta recibir las respuestas. Sin hooks registrados ni código de interfaz.
     Avance exclusivo de Pygame estimado en ~15 %, todavía sin implementación.
+
+59. Confirmación de las tres elecciones y cierre del plan técnico de Pygame
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    El usuario eligió explícitamente: «Índice propio + vectores por sala y
+    cambios por turno: acceso rápido; reserva espacio por sala», «Dentro del
+    mismo .bin, como datos opcionales: un solo archivo y v6 conservado» y
+    «Croquis por norte/sur/este/oeste: más parecido a un mapa; resuelve y señala
+    conflictos de posición». Durante el trabajo indicó también «Continua».
+
+    Registradas D-IG-05/06/07 y completada la fase de diseño de `$speckit-plan`:
+    modelo de datos, contratos de interfaz y recuerdos v6, guía de validación
+    y comprobación constitucional posterior. Revisión de lectura detectó y
+    permitió precisar retroceso mediante usar pergamino, revalidación de la
+    intención interruptora, receptor de valores sin Pygame en el trabajador y
+    fixtures reproducibles. Se ejecutó en temporal el recorrido del motor con
+    cinco recogidas, cinco esperas y cinco retrocesos, incluido usar pergamino.
+
+    Se conserva la distinción entre datos visuales semánticamente inválidos
+    y binario corrupto; sin ruptura de v6 ni promesa de recuperación arbitraria.
+    Aclarada la navegación canónica de inventario sin turnos y sin cola de
+    acciones. No se modificó código productivo ni se implementó Pygame.
+    Siguiente fase: `$speckit-tasks`, análisis de consistencia e implementación.
+    Avance exclusivo de Pygame estimado en ~25 %, por preparación y diseño.

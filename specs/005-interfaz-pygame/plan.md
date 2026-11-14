@@ -2,8 +2,9 @@
 
 **Rama**: `005-interfaz-pygame` | **Fecha**: 2026-11-13 | **Spec**: [spec.md](spec.md).
 **Entrada**: Capacidad adicional de escritorio, independiente de la entrega académica.
-**Estado**: Borrador técnico; investigación estándar completada y tres elecciones
-del usuario pendientes. No habilita todavía tareas de implementación.
+**Estado**: planificación técnica completada. Elecciones del usuario registradas;
+modelo de datos, contratos y guía de validación preparados. Listo para descomponer
+en tareas; código y pruebas gráficas todavía no implementados.
 
 ## Resumen
 
@@ -13,9 +14,9 @@ el ciclo de ventana de la ejecución serializada de una sola sesión; compartir
 validación, órdenes, registro y cada paso del viaje. Mostrar solo conocimiento
 permitido y observaciones presenciales, con deshacer visual acotado.
 
-Las alternativas y sus fuentes están en [research.md](research.md). Las
-recomendaciones de estructuras, persistencia y distribución de salas no están
-elegidas hasta recibir respuesta del usuario.
+Las alternativas y sus fuentes están en [research.md](research.md). El usuario
+eligió índice propio con vectores y cambios por turno, recuerdos opcionales
+dentro del `.bin` v6 y croquis por N/S/E/O con conflictos señalados.
 
 ## Contexto técnico
 
@@ -24,9 +25,9 @@ elegidas hasta recibir respuesta del usuario.
 - **Plataforma**: Windows x86-64; ventana redimensionable, 1280 × 800 inicial y mínimo útil 1024 × 768.
 - **Tipo de aplicación**: escritorio con motor MVC y alternativa de consola.
 - **Datos de juego**: servicio actual o paquete offline compatible; no incluir criptas concretas en producción.
-- **Persistencia**: guardado v6 obligatorio; ubicación de recuerdos opcionales PENDIENTE (D-IG-06).
-- **Auxiliares del mapa/recuerdos**: PENDIENTE de elección (D-IG-05).
-- **Disposición del mapa**: PENDIENTE de elección (D-IG-07).
+- **Persistencia**: guardado v6 con clave visual opcional en `datos_extra`, sin archivo compañero (D-IG-06).
+- **Auxiliares del mapa/recuerdos**: `IndiceSalas` propio, vectores y hasta cinco deltas visuales (D-IG-05).
+- **Disposición del mapa**: croquis cardinal determinista; ocupación en vectores y enlaces conflictivos marcados (D-IG-07).
 - **Pruebas**: pytest existente, comparaciones consola/GUI y pruebas gráficas controladas; revisión visual de escritorio independiente.
 - **Escala**: 300 salas conocidas, siete historias y 23 escenarios; cinco acciones reversibles y registro histórico existente.
 - **Objetivo de presentación**: límite de dibujo de 60 cuadros/s para no ocupar CPU innecesariamente; objetivo técnico, no promesa medida ni temporizador de turnos.
@@ -36,20 +37,21 @@ elegidas hasta recibir respuesta del usuario.
 
 | Regla | Comprobación previa al diseño | Estado |
 |---|---|---|
-| I: estructuras manuales | No elegir ni implementar alternativas sin respuesta; colecciones de transporte no sustituyen estructuras evaluadas | PENDIENTE D-IG-05 |
+| I: estructuras manuales | D-IG-05 elegida; índice propio y vectores, sin índices de bibliotecas; transporte de primitivas no sustituye estructuras evaluadas | Conforme al diseño aprobado |
 | II: determinismo | Un propietario del modelo; órdenes y azar canónicos; tiempo gráfico sin efecto de juego | Conforme al diseño estándar |
 | III: MVC y modos sin vista | Pygame solo en presentación; importar únicamente al elegir gráficos | Conforme al diseño estándar |
 | IV: datos externos | No mapas precalculados ni colocación basada en información oculta | Conforme al diseño estándar |
-| V: presupuesto, versiones y guardado | Reutilizar cliente/caché; comprobar lectura v6 por consola y carga sin recuerdos | PENDIENTE D-IG-06 |
+| V: presupuesto, versiones y guardado | D-IG-06 elegida; mantener v6, presupuestos/caché y lectura con/sin recuerdos | Conforme al contrato; pruebas completas futuras |
 | VI: rendimiento respaldado | Medir acción y presentación por separado; ninguna afirmación nueva de latencia | Conforme; medición futura |
 | VII: especificar antes de implementar | Spec publicado en `560ae0d`; este plan y sus contratos preceden al código | Conforme |
-| VIII: trazabilidad | Matriz de los 23 escenarios antes de crear tareas | Pendiente de completar diseño |
-| IX: prompts y proceso | Registrar solicitud, elecciones y uso de `$speckit-plan` | En curso |
-| AGENTS.md | Presentadas alternativas con ventajas, desventajas y recomendación, sin registrar aprobación inexistente | Esperando respuestas |
+| VIII: trazabilidad | Los 23 escenarios tienen evidencia propuesta en la matriz; tareas detalladas en la fase siguiente | Conforme al diseño |
+| IX: prompts y proceso | Solicitud, elecciones y uso de `$speckit-plan` registrados en la bitácora | Conforme |
+| AGENTS.md | Elecciones explícitas del usuario en D-IG-05/06/07; avance exclusivo de Pygame | Conforme |
 
-**Puerta previa**: no hay una excepción nueva a la constitución. Las elecciones
-abiertas impiden cerrar la fase de investigación y pasar al diseño definitivo.
-**Puerta posterior**: se revisará de nuevo al completar modelo de datos y contratos.
+**Puerta previa**: completada tras resolver las tres elecciones; ninguna
+aclaración técnica pendiente ni excepción constitucional nueva.
+**Puerta posterior**: modelo y contratos revisados contra las reglas anteriores;
+sin desviaciones de diseño. Esto no acredita pruebas de la implementación futura.
 
 ## Arquitectura estándar propuesta
 
@@ -61,7 +63,7 @@ conservará su comportamiento por defecto y añadirá `--interfaz pygame` como
 entrada explícita. Sin `--cripta` ni `--cargar`, gráficos abre el menú; con esos
 argumentos, prepara la sesión indicada. `--interfaz consola` conserva la entrada
 actual y sus validaciones. Las combinaciones gráficas con replay, verificar,
-listar, puntajes de CLI o bench se rechazan antes de inicializar la ventana.
+listar, puntajes de CLI, `--sin-interfaz` o bench se rechazan antes de inicializar la ventana.
 Los puntajes gráficos se consultan desde el menú de la aplicación.
 
 Extraer de `main.py` la preparación/finalización de sesión reutilizable, sin
@@ -87,15 +89,24 @@ recursos; la espera cancelable de red no cambia presupuestos ni tiempo virtual.
 ### Ejecución compartida y selección
 
 Conservar `Controlador.procesar()` como entrada compatible y extraer o exponer
-su resultado estructurado: acción, consulta, rechazo, carga, salida y mensajes.
+su resultado estructurado: acción, retroceso, consulta, rechazo, carga, salida y mensajes.
 Así el trabajador distingue una carga de una acción sin analizar texto de errores.
 No registrar desde la vista. Un clic de inventario emite `sig`/`ant` según
 corresponda; un orden visual no cambia el cursor ni el orden físico por accidente.
+
+La vista que recibe el controlador dentro del trabajador será un receptor de
+valores sin Pygame: recopila mensajes, inventario, mapa e historia. La vista
+gráfica real solo dibuja esos resultados en el hilo principal.
 
 La presentación tiene generación de sesión y revisión. Una intención contiene
 esa revisión y un objetivo identificado por actor/dirección/destino o posición
 real de inventario/suelo. Rechazar revisiones obsoletas para no atacar o usar otro
 objeto. No interpretar el texto del nombre para extraer identificadores o tipos.
+
+El retroceso se clasifica por el resultado real de la operación: también `usar`
+un pergamino reduce el contador y requiere restaurar memoria. No decidirlo solo
+por el nombre `retroceder` del botón. Una carga se distingue explícitamente de
+cualquier variación de contadores de una acción.
 
 ### Viaje reanudable
 
@@ -106,9 +117,12 @@ eventos antes de solicitar otro. El comentario de viaje no se convierte en turno
 
 Permitir una única intención interruptora explícita durante el viaje, además
 de detener/cerrar. Se ejecuta una vez después del paso ya aceptado, antes de
-cualquier paso nuevo. No es una cola de acciones ni permite acumular pulsaciones.
-Retroceder no reanuda el recorrido. Al perder foco se detiene la programación
-del siguiente paso hasta una nueva interacción deliberada.
+cualquier paso nuevo. Su revisión se revalida/rebasa por identidad del objetivo
+en la misma generación; no se rechaza automáticamente solo porque el paso haya
+publicado otra revisión. No es una cola de acciones ni permite acumular pulsaciones.
+Retroceder no reanuda el recorrido. Al perder foco se cancela la programación
+del siguiente paso y la intención interruptora aún no ejecutada. Reanudar
+requiere una nueva orden de viaje, sin repetir el paso ya aceptado.
 
 ### Información gráfica permitida
 
@@ -131,7 +145,7 @@ specs/005-interfaz-pygame/
   spec.md
   plan.md
   research.md
-  data-model.md            # fase de diseño, tras elecciones
+  data-model.md            # entidades, estructuras y transiciones aprobadas
   contracts/
     interfaz-grafica.md    # ventana, comandos, proyección y viaje
     recuerdos-v6.md        # recuerdos, undo y compatibilidad
@@ -177,10 +191,11 @@ creará un paquete alternativo de motor, inventario, rutas ni guardado completo.
 
 Sin desviaciones constitucionales justificadas. Mantener un trabajador y
 presentaciones copiadas limita concurrencia; no introduce simulaciones paralelas.
-Los costos del mapa/recuerdos se completarán al elegir D-IG-05/07. La planificación
-debe incluir ocupación conflictiva, salas con IDs dispersos y cinco undo tras
-cargar. La carga v6 visual usa primitivas opcionales, no tipos nuevos en el modelo,
-solo si el usuario elige esa alternativa y se verifica su lectura cruzada.
+Las estructuras y costos están en [data-model.md](data-model.md): observaciones
+O(V + T), cinco deltas y croquis O(S² + E) esperado al construir. Se contemplan
+ocupaciones conflictivas, IDs dispersos y cinco undo tras cargar. La carga v6
+visual usa primitivas opcionales, no tipos nuevos en el modelo. Su matriz de
+lectura cruzada es obligatoria antes de integrar código.
 
 ## Cobertura prevista antes de descomponer en tareas
 
@@ -206,5 +221,9 @@ contratos definitivos especificarán los casos y su preparación reproducible.
 - Sonda temporal con el lector de sesión existente: acepta una clave opcional
   primitiva v6; al re-guardar desde consola la descarta y conserva el estado básico.
   No es una prueba de la futura memoria gráfica ni de compatibilidad completa.
-- Implementación gráfica y pruebas nuevas: no iniciadas. Plan listo para
-  cerrar decisiones; aún no listo para `$speckit-tasks`.
+- Elecciones D-IG-05/06/07 confirmadas por el usuario; investigación cerrada.
+- Diseño disponible en [data-model.md](data-model.md), contratos de
+  [interfaz](contracts/interfaz-grafica.md) y [recuerdos](contracts/recuerdos-v6.md),
+  y [quickstart.md](quickstart.md). Revisión de coherencia documental completada.
+- Implementación gráfica y pruebas nuevas: no iniciadas. Listo para
+  `$speckit-tasks`; la planificación no acredita los escenarios futuros.

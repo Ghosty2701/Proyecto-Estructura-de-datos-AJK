@@ -445,9 +445,10 @@ K definitivo y aceptación no se cierran con un diagnóstico instrumentado.
 
 ## Ruta incremental elegida: especificación (2026-11-13)
 
-**Registro histórico de un experimento rechazado.** Las casillas CI abiertas
-documentan lo que no se completó antes del descarte; no son trabajo pendiente
-del alcance vigente. Ver EX-01 y el cierre al comienzo de este archivo.
+**Registro histórico de un experimento rechazado.** Cerrado el 2026-11-14: las
+casillas que quedaban abiertas se marcan como cerradas sin ejecutar, porque
+dependían de integrar una variante que los datos rechazaron; cada una indica
+su motivo y no declara trabajo realizado. Ver EX-01 al comienzo de este archivo.
 
 - [X] CI-001 Ampliar requisitos de captura, versiones, identidad, ciclo de vida,
   mutaciones, undo, publicación, carga y medición (FR-CI/PR-CI).
@@ -455,30 +456,41 @@ del alcance vigente. Ver EX-01 y el cierre al comienzo de este archivo.
   undo; documentar ventana de cinco acciones y escrituras fuera de `_cambiar`.
 - [X] CI-003 Definir oráculo completo y piloto acotado con criterios de descarte.
 - [X] CI-004 Elegir índices: usuario elige hash propio/vector inmutable (2026-11-13).
-- [ ] CI-005 Concretar IDs/retirada, contenedores no weakref y cobertura por frontera.
+- [X] CI-005 Concretar IDs/retirada, contenedores no weakref y cobertura por frontera.
+  Cerrada 2026-11-14 con CI-005a/b; la parte c se cierra por descarte (abajo).
   - [X] CI-005a IDs monótonos, índice fuerte acotado, retiro de ciclos, publicación
     atómica y cierre documentados y probados para modelos/list/dict/tuple.
   - [X] CI-005b Observador explícito por orden: deltas antes/después, inventario,
     suelo, agenda, azar, navegación y undo; trazas sintéticas con oráculo.
-  - [ ] CI-005c Cobertura ampliada en datos oficiales y escrituras externas al
+  - [X] CI-005c Cobertura ampliada en datos oficiales y escrituras externas al
     contrato; no afirmar que el envoltorio intercepta cualquier mutación.
+    **Cerrada sin ejecutar por descarte (2026-11-14):** solo era necesaria para
+    integrar el capturador; CI-008 y CI-011 lo rechazaron. No se afirma cobertura.
 - [X] CI-006 Implementar y verificar estructuras aisladas y capturador experimental.
   - [X] CI-006a Índice hash de versiones aislado: 709 pruebas y benchmark separado.
   - [X] CI-006b Registro de identidad/cambios con ciclo de vida documentado.
   - [X] CI-006c Capturador experimental con marcas explícitas y oráculo por defecto.
   - [X] CI-006d Envoltorio de órdenes reales sin parchear clases productivas.
-- [ ] CI-007 Validar cada orden/undo/carga contra captura completa y bytes v6.
+- [X] CI-007 Validar cada orden/undo/carga contra captura completa y bytes v6.
+  Cerrada 2026-11-14 con CI-007a y la parte sintética de CI-007b.
   - [X] CI-007a Modelo completo tras cada orden de traza pequeña, cinco undo,
     recarga v6, continuación contra captura completa y controles negativos.
-  - [ ] CI-007b Evaluación larga de todos los puntos y datos oficiales.
+  - [X] CI-007b Evaluación larga de todos los puntos y datos oficiales.
     - [X] Seis historias sintéticas de 5 000 acciones: bytes v6 de todos los
       puntos K25 iguales entre variantes, consultas equivalentes y estado intacto.
-    - [ ] Validación oficial; no priorizar integración de una variante más lenta.
-- [ ] CI-008 Medir registro/captura/consulta/RSS con GC y crecimiento incluidos;
+    - [X] Validación oficial; no priorizar integración de una variante más lenta.
+      **Cerrada sin ejecutar por descarte (2026-11-14):** la variante es más lenta
+      (CI-008) y no se integra; validarla con la cripta oficial gastaría
+      presupuesto de solicitudes sin cambiar la decisión. No hay validación oficial.
+- [X] CI-008 Medir registro/captura/consulta/RSS con GC y crecimiento incluidos;
   decidir integración solo con equivalencia y ventaja demostradas.
   - [X] Costos sintéticos completos, GC, mantenimiento y perfil: no activar
     variante actual porque aumenta captura de ~13,7 a ~50–54 ms para K25.
-  - [ ] RSS/oficial de una variante que primero demuestre ventaja.
+  - [X] RSS/oficial de una variante que primero demuestre ventaja.
+    **Cerrada por su propia condición (2026-11-14):** ninguna variante demostró
+    ventaja (CI-008: ~13,7 → ~50–54 ms; CI-011: índice inverso sin ventaja), así
+    que no existe variante que medir. Decisión final: no integrar; producción usa
+    el copiador completo con registros inmutables por ID (D-LT-08).
 - [X] CI-009 Elegir siguiente ensayo: índice inverso hash ID → entrada con
   bajas/tumbas frente a conservar barrido y reducir marcas. Propuesta y costos
   en `documentacion/CAPTURA_INCREMENTAL_JUAN.md`; usuario eligió índice inverso.

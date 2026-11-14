@@ -20,6 +20,13 @@ los personajes, escenarios y recursos tendrán diseños propios.
   una escena de batalla separada.
 - Dirección artística: ilustración 2D de fantasía oscura.
 
+### Revisión solicitada después de probar la escena — 2026-11-14
+
+El usuario sustituye la dirección artística anterior por estética de RPG de
+16 bits, tomando los Final Fantasy clásicos como referencia de lenguaje visual.
+Solicita menos botones, nombres intuitivos y puertas integradas en el entorno.
+Se mantienen diseños originales, habitación cenital, minimapa y combate por turnos.
+
 ## Escenarios de usuario y aceptación
 
 ### Historia 1 — Explorar una habitación con el personaje (Prioridad: P1)
@@ -116,7 +123,22 @@ objetivos visuales y usando también inventario y guardado.
    turno. Partidas existentes y modos de consola conservan su funcionamiento.
    FR-EV-012/014.
 
-**Dirección artística elegida**: ilustración 2D de fantasía oscura.
+**Dirección artística vigente**: pixel art de RPG de 16 bits; sustituye la
+ilustración anterior por petición explícita del usuario.
+
+### Revisión de interacción y estética (Prioridad: P1)
+
+16. **AC-EV-016** — En la habitación normal con paneles cerrados aparecen como
+    máximo seis botones de comando. La acción principal cambia según la selección:
+    atacar enemigo, recoger objeto o entrar/abrir puerta. Inventario, mapa y menú
+    permanecen accesibles; guardar, cargar, historia, mensajes y ajustes se
+    encuentran en paneles agrupados, sin perder capacidades ni crear turnos al abrirlos.
+    FR-EV-014/015.
+17. **AC-EV-017** — Sala, sprites y elementos comparten pixel art, paleta y escala.
+    Las ventanas tienen marcos y tipografía legibles de RPG clásico. Las puertas
+    encajan en el grosor y orientación de cada pared: ninguna puerta aparece
+    invertida o como un objeto vertical colocado sobre el suelo. Cerrada/abierta
+    se distinguen y conservan las conexiones reales. FR-EV-013/016.
 
 ### Casos límite
 
@@ -160,10 +182,16 @@ objetivos visuales y usando también inventario y guardado.
   historia; ninguna escena añade contenido remoto o futuro. AC-EV-009/010/011.
 - **FR-EV-012**: Sincronizar escenas al cargar/retroceder/consultar historia y
   conservar guardados, otros modos y cierre seguro. AC-EV-011/012/015.
-- **FR-EV-013**: Mantener ilustración 2D de fantasía oscura coherente, diseños originales y
+- **FR-EV-013**: Mantener pixel art coherente de RPG de 16 bits, diseños originales y
   recursos genéricos para contenido nuevo, disponibles offline. AC-EV-003/013.
 - **FR-EV-014**: Mantener funciones, texto legible y objetivos/controles alcanzables
   desde 1024 × 768. AC-EV-014/015.
+- **FR-EV-015**: Reducir la habitación normal a un máximo de seis botones de
+  comando, con acción contextual y nombres explícitos. Agrupar funciones secundarias
+  en menús, conservando acceso a todos los objetivos. AC-EV-016.
+- **FR-EV-016**: Integrar puertas abiertas/cerradas en cada orientación de pared,
+  con estilo y proporciones coherentes; no simular orientaciones girando una
+  puerta frontal hasta dejarla invertida. AC-EV-017.
 
 ### Entidades principales
 
@@ -194,6 +222,12 @@ objetivos visuales y usando también inventario y guardado.
   antes de abrir una lista textual.
 - **SC-EV-006**: Guardados previos y posteriores conservan continuación; la
   instalación sin gráficos mantiene sus modos actuales.
+- **SC-EV-007**: Con paneles cerrados, el conteo de comandos visibles es como
+  máximo seis en las ventanas mínima y de referencia; todas las funciones
+  anteriores se alcanzan desde contexto, inventario, mapa o menú.
+- **SC-EV-008**: La revisión del render muestra puertas N/S/E/O abiertas y
+  cerradas integradas en sus paredes, sin inversiones, y una estética pixelada
+  coherente en sala, actores, objetos y paneles.
 
 ## Supuestos, alcance y dependencias
 

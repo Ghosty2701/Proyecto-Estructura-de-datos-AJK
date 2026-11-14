@@ -1892,3 +1892,16 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     del usuario; captura posterior ajena al objetivo, sin más acciones sobre
     ella. Se cerró el proceso de prueba. T020 y cierre dependiente T023/T024
     pendientes; avance exclusivo de la evolución visual ~85 % estimado.
+
+70. Reducir botones y cambiar a estética de RPG de 16 bits
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    El usuario pidió menos botones y nombres intuitivos, mayor calidad visual,
+    puertas integradas en paredes y referencia a Final Fantasy de 16 bits.
+    Se actualizó primero el spec 006: pixel art original sustituye ilustración,
+    máximo seis comandos normales, acción contextual y menús agrupados; ocho
+    puertas orientadas. Plan y contrato reutilizan vectores y panel actual
+    aprobados; ninguna estructura nueva. Ocho tareas de revisión T025–T032.
+    Se usará imagegen incorporado para recursos nuevos versionados, sin cambiar
+    las reglas, la niebla, el guardado ni la independencia de main.

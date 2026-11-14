@@ -69,3 +69,14 @@ trabajo de agentes paralelo durante implementación ni edición concurrente de
 `aplicacion.py`. La revisión nativa puede ocurrir mientras se ejecuta regresión,
 sin confundir sus evidencias. Todas las tareas contienen rutas y trazabilidad;
 ninguna se completa por el hecho de generar estos documentos.
+
+## Fase 8 — Revisión solicitada: comandos compactos y RPG de 16 bits
+
+- [ ] T025 Confirmar primero la revisión de estilo y alcance de controles en `spec.md`, `plan.md` y `contracts/escena-animaciones.md`; reutilizar estructuras aprobadas, sin cambios de reglas. Dep.: T019. FR-EV-013, FR-EV-015, FR-EV-016; AC-EV-016, AC-EV-017.
+- [ ] T026 Generar e inspeccionar cuatro recursos originales con sufijo `_16bits` en `vista/pygame_ui/assets/`, registrar prompts, alfa y orientación N/S/E/O. Dep.: T025. FR-EV-013, FR-EV-016; AC-EV-017; SC-EV-008.
+- [ ] T027 Escribir `Pruebas/prueba_interfaz_compacta.py` para máximo seis botones, acción contextual, inventario/pausa/historia/guardado/mapa, Escape y puertas orientadas; observar fallos antes de implementar. Dep.: T026. FR-EV-014, FR-EV-015, FR-EV-016; AC-EV-016, AC-EV-017; SC-EV-007, SC-EV-008.
+- [ ] T028 Reorganizar `vista/pygame_ui/aplicacion.py` en habitación, contexto y paneles agrupados; nombres intuitivos, funciones completas y sin comandos acumulados. Adaptar recorridos de `Pruebas/prueba_eventos_pygame.py` a los paneles reales. Dep.: T027. FR-EV-005, FR-EV-014, FR-EV-015; AC-EV-009, AC-EV-014, AC-EV-015, AC-EV-016; SC-EV-007.
+- [ ] T029 Aplicar marcos/tipografía de RPG clásico, recursos y escalado pixelado en `componentes.py`, `recursos.py` y `sala.py`; encajar las ocho puertas sin invertirlas. Dep.: T028. FR-EV-013, FR-EV-016; AC-EV-013, AC-EV-017; SC-EV-008.
+- [ ] T030 Ejecutar regresión con/sin Pygame y matriz v6; registrar resultados en `documentacion/evidencia/retro_regresion.txt`. Dep.: T029. FR-EV-008, FR-EV-009, FR-EV-011, FR-EV-012, FR-EV-015; SC-EV-003, SC-EV-004, SC-EV-006, SC-EV-007.
+- [ ] T031 Revisar renders a 1024 × 768 y 1280 × 800 con sala vacía/combate, menús y ocho puertas; registrar capturas y límites de revisión nativa en `documentacion/evidencia/retro_revision_visual.md`. Dep.: T029. FR-EV-013, FR-EV-014, FR-EV-016; SC-EV-005, SC-EV-008.
+- [ ] T032 Actualizar uso, avance, arte y evidencia en `README.md`, `specs/006-salas-combate-visual/README.md` y `documentacion/PROMPTS_LLM.md`; commits y push en rama adicional. Dep.: T030, T031. FR-EV-013, FR-EV-015, FR-EV-016; SC-EV-007, SC-EV-008.

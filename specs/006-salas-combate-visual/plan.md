@@ -136,3 +136,27 @@ Sin descargas de bibliotecas gráficas ni dependencias nuevas de ejecución.
 Fase 0 completada en [research.md](research.md); fase 1 en [modelo](data-model.md),
 [contrato](contracts/escena-animaciones.md) y [guía](quickstart.md).
 No existen hooks en `.specify/extensions.yml`.
+
+## Revisión de 16 bits y reducción de comandos — 2026-11-14
+
+Solicitud explícita posterior: reemplazar el aspecto ilustrado por pixel art
+original de RPG de 16 bits, con ventanas azul profundo y marcos claros.
+Escalado de vecinos próximos para conservar píxeles; cámara y reglas sin cambios.
+
+Se reutilizan los vectores de recursos, botones y regiones y el campo de panel
+actual ya aprobados. No se introduce un árbol de menús, índice o cola nuevos.
+Habitación normal: acción contextual, esperar, inventario, mapa y menú; como
+sexto control, objetivos numerosos o detener/saltar cuando corresponda.
+Menú de pausa agrupa persistencia, pergamino, historia, registro y ajustes.
+Inventario y lista de objetivos aparecen solo al solicitarlos.
+
+Recursos nuevos versionados: `sala_16bits.png`, `actores_16bits.png`,
+`elementos_16bits.png` y `puertas_16bits.png`. Los atlas de actores/objetos conservan
+sus órdenes anteriores. Puertas: cuatro columnas N/S/E/O y dos filas
+cerradas/abiertas; cada orientación se dibuja como parte de una pared, sin
+rotar 180 grados una puerta frontal. La colocación deja el hueco dentro de la
+pared y el paso hacia el suelo, sin cambiar su región de interacción lógica.
+
+Pruebas previas al cambio: límites de botones, contexto, alcance de todos los
+paneles, inventario ordenado, cerrar con Escape, selección caducada y ocho
+combinaciones de puerta. Regresión de reglas, v6 y modos sin Pygame obligatoria.

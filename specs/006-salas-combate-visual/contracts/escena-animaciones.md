@@ -49,3 +49,17 @@ AC-EV-013–015: consistencia de recursos, paginación, tamaños mínimos y cont
 SC-EV-003: comparar exactamente reloj, azar, estado y registro con consola para
 normal/reducida/sin efectos; inactividad 60 s inyectados y 300 cuadros.
 SC-EV-005: revisión visual nativa independiente de vídeo dummy; no marcarla por tests.
+
+## Contrato vigente de presentación 16 bits
+
+La petición posterior del usuario sustituye el arte ilustrado por pixel art.
+Se conservan arte original, alfa, distribución local y composición independiente
+del estado. Nuevos atlas con sufijo `_16bits`; puertas en atlas 4 × 2, columnas
+N/S/E/O, fila superior cerrada e inferior abierta. Se usan directamente, sin giros.
+
+La pantalla normal muestra hasta seis comandos. Selección de enemigo/objeto/puerta
+no consume turno y determina el único comando principal. Inventario y pausa
+son paneles; Escape vuelve a la habitación. Persistencia e historia conservan
+sus intenciones y validaciones. El mapa y las páginas siguen alcanzables.
+Las pruebas anteriores que exigían todos los botones simultáneamente se adaptan
+a recorrer estos paneles; no se eliminan sus comprobaciones de juego.

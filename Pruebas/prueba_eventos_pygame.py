@@ -29,7 +29,27 @@ def ventana(tmp_path, monkeypatch):
 
 
 def pulsar(app, accion):
-    boton = next(b for b in app.ui.botones if b.accion == accion)
+    app.dibujar()
+    boton = next((b for b in app.ui.botones if b.accion == accion), None)
+    # Recorrer los paneles reales que sustituyen a los antiguos botones permanentes.
+    if boton is None:
+        if accion == 'menu':
+            app.accion('pausa')
+        elif accion == 'consultar_historia':
+            app.accion('abrir_historia')
+        elif isinstance(accion, tuple) and accion[0] == 'juego':
+            op = accion[1]
+            if op in ('mover', 'abrir'):
+                app.accion('cerrar_local'); app.accion(('puerta', accion[2]))
+            elif op in ('usar', 'equipar', 'soltar', 'orden'):
+                app.accion('inventario_panel')
+            elif op in ('guardar', 'cargar', 'retroceder', 'ayuda'):
+                app.accion('pausa' if op != 'ayuda' else 'opciones_panel')
+            elif op in ('atacar', 'recoger') and accion[3] is not None:
+                app.accion('cerrar_local'); app.accion(('objetivo', accion[3]))
+        app.dibujar()
+        boton = next((b for b in app.ui.botones if b.accion == accion), None)
+    assert boton is not None, f'Acción no alcanzable: {accion}'
     app.evento(pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=boton.rect.center))
     app.evento(pygame.event.Event(pygame.MOUSEBUTTONUP, button=1, pos=boton.rect.center))
 
@@ -123,7 +143,9 @@ def test_botones_mover_esperar_abrir_rechazar_y_recoger(ventana):
     respuesta = turno(app, 'recoger', objetivo=foto.objetos[0])
     assert respuesta.resultado.ordenes == ('recoger 1',)
     assert respuesta.presentacion.acciones == 1
-    respuesta = turno(app, 'abrir', 'E')
+    # Una salida inexistente ya no tiene botón; comprobar el rechazo del mismo comando.
+    app.accion(('juego', 'abrir', 'E', None)); assert app.controlador.esperar(3)
+    app.actualizar(); app.dibujar(); respuesta = app.controlador.respuesta
     assert not respuesta.resultado.aceptada and respuesta.presentacion.acciones == 1
     respuesta = turno(app, 'esperar')
     assert respuesta.presentacion.acciones == 2

@@ -2,12 +2,12 @@
 from dataclasses import dataclass
 import pygame
 
-FONDO = (17, 17, 20)
-PANEL = (29, 28, 29)
-TEXTO = (229, 235, 241)
-TENUE = (172, 167, 157)
-ACENTO = (221, 182, 112)
-BORDE = (76, 69, 57)
+FONDO = (8, 12, 28)
+PANEL = (21, 37, 91)
+TEXTO = (247, 246, 238)
+TENUE = (176, 191, 222)
+ACENTO = (255, 217, 116)
+BORDE = (165, 188, 231)
 PELIGRO = (244, 139, 122)
 
 
@@ -29,9 +29,9 @@ class Boton:
 
 class Componentes:
     def __init__(self):
-        self.fuente = pygame.font.SysFont('segoeui', 18)
-        self.pequena = pygame.font.SysFont('segoeui', 15)
-        self.titulo = pygame.font.SysFont('segoeui', 32, bold=True)
+        self.fuente = pygame.font.SysFont('consolas', 20)
+        self.pequena = pygame.font.SysFont('consolas', 16)
+        self.titulo = pygame.font.SysFont('consolas', 30, bold=True)
         self.botones = []
         self.campos = []
         self.foco = None
@@ -42,7 +42,20 @@ class Componentes:
 
     def texto(self, lienzo, texto, posicion, color=TEXTO, fuente=None):
         fuente = fuente or self.fuente
-        lienzo.blit(fuente.render(str(texto), True, color), posicion)
+        lienzo.blit(fuente.render(str(texto), False, color), posicion)
+
+    def panel(self, lienzo, rect, titulo=None):
+        r = pygame.Rect(rect)
+        pygame.draw.rect(lienzo, (2, 5, 16), r.move(4, 4))
+        for y in range(r.h):
+            t = y/max(1, r.h)
+            pygame.draw.line(lienzo, (19, int(46-18*t), int(112-42*t)),
+                             (r.x, r.y+y), (r.right-1, r.y+y))
+        pygame.draw.rect(lienzo, (23, 35, 65), r, 2)
+        pygame.draw.rect(lienzo, BORDE, r.inflate(-4, -4), 2)
+        pygame.draw.rect(lienzo, (238, 240, 247), r.inflate(-8, -8), 1)
+        if titulo:
+            self.texto(lienzo, titulo, (r.x+24, r.y+18), ACENTO)
 
     def parrafo(self, lienzo, texto, rect, color=TENUE, desplazamiento=0):
         """Recorte y ajuste de líneas sin alterar ni consultar datos del juego."""
@@ -67,15 +80,16 @@ class Componentes:
 
     def boton(self, lienzo, rect, texto, accion, habilitado=True):
         rect = pygame.Rect(rect)
-        color = (55, 47, 37) if habilitado else PANEL
-        if habilitado and rect.collidepoint(pygame.mouse.get_pos()):
-            color = (77, 61, 40)
-        pygame.draw.rect(lienzo, color, rect, border_radius=6)
-        pygame.draw.rect(lienzo, BORDE, rect, 1, border_radius=6)
+        hover = habilitado and rect.collidepoint(pygame.mouse.get_pos())
+        color = (48, 73, 142) if hover else (25, 44, 103) if habilitado else (20, 30, 66)
+        pygame.draw.rect(lienzo, color, rect)
+        pygame.draw.rect(lienzo, ACENTO if hover else BORDE if habilitado else (64, 78, 117), rect, 1)
+        if hover:
+            pygame.draw.polygon(lienzo, ACENTO, ((rect.x+5, rect.centery-4), (rect.x+5, rect.centery+4), (rect.x+10, rect.centery)))
         previo = lienzo.get_clip()
         lienzo.set_clip(rect.inflate(-8, -2))
         fuente = self.pequena if self.fuente.size(texto)[0] > rect.w - 12 else self.fuente
-        imagen = fuente.render(texto, True, TEXTO if habilitado else TENUE)
+        imagen = fuente.render(texto, False, TEXTO if habilitado else (111, 130, 167))
         lienzo.blit(imagen, imagen.get_rect(center=rect.center))
         lienzo.set_clip(previo)
         self.botones.append(Boton(rect, texto, accion, habilitado))
@@ -83,11 +97,11 @@ class Componentes:
     def campo(self, lienzo, campo, rect, habilitado=True):
         campo.rect = pygame.Rect(rect)
         self.texto(lienzo, campo.etiqueta, (campo.rect.x, campo.rect.y - 24), TENUE, self.pequena)
-        pygame.draw.rect(lienzo, PANEL, campo.rect, border_radius=5)
-        pygame.draw.rect(lienzo, ACENTO if self.foco is campo else BORDE, campo.rect, 1, border_radius=5)
+        pygame.draw.rect(lienzo, (10, 22, 62), campo.rect)
+        pygame.draw.rect(lienzo, ACENTO if self.foco is campo else BORDE, campo.rect, 1)
         previo = lienzo.get_clip()
         lienzo.set_clip(campo.rect.inflate(-12, -4))
-        imagen = self.fuente.render(campo.valor or ' ', True, TEXTO)
+        imagen = self.fuente.render(campo.valor or ' ', False, TEXTO)
         x = min(campo.rect.x + 8, campo.rect.right - 8 - imagen.get_width()) if self.foco is campo else campo.rect.x + 8
         lienzo.blit(imagen, (x, campo.rect.y + 8))
         lienzo.set_clip(previo)
@@ -98,7 +112,8 @@ class Componentes:
         if ocupado:
             if evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1:
                 return next((b.accion for b in self.botones if b.habilitado and
-                             b.accion in ('salir', 'detener') and b.rect.collidepoint(evento.pos)), None)
+                             b.accion in ('salir', 'detener', 'pausa', 'mapa', 'inventario_panel', 'cerrar_local')
+                             and b.rect.collidepoint(evento.pos)), None)
             return None
         if evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1:
             self.foco = next((c for c in self.campos if c.rect.collidepoint(evento.pos)), None)

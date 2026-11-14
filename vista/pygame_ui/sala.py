@@ -55,15 +55,14 @@ class EscenaSala:
         actual = next(s for s in foto.salas if s.actual)
         self.direcciones = tuple(s.direccion for s in actual.salidas)
         for salida in actual.salidas:
-            x, y = next((x, y) for d, x, y in (('N', 0.5, 0.10), ('S', 0.5, 0.91),
-                        ('E', 0.94, 0.5), ('O', 0.06, 0.5)) if d == salida.direccion)
+            x, y = next((x, y) for d, x, y in (('N', 0.5, 0.075), ('S', 0.5, 0.965),
+                        ('E', 0.967, 0.5), ('O', 0.033, 0.5)) if d == salida.direccion)
             imagen = self.recursos.puerta(salida.observada is True, salida.direccion)
             r = imagen.get_rect(center=(self.rect.x+int(self.rect.w*x), self.rect.y+int(self.rect.h*y)))
             r.clamp_ip(self.rect)
             lienzo.blit(imagen, r)
             if salida.direccion == puerta:
-                pygame.draw.rect(lienzo, ACENTO, r.inflate(4, 4), 2, border_radius=5)
-            ui.texto(lienzo, salida.direccion, (r.centerx-6, r.bottom-15), ACENTO, ui.pequena)
+                pygame.draw.rect(lienzo, ACENTO, r.inflate(4, 4), 2)
             self.regiones.append(RegionEscena('puerta', salida.direccion, r))
         jugador = self.recursos.actor('jugador')
         self.jugador_rect = jugador.get_rect(midbottom=(self.rect.x+int(self.rect.w*0.26),

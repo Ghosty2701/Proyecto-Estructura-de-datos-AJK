@@ -936,3 +936,25 @@ de código, no de un mockup. [Revisión nativa](evidencia/escena_revision_visual
 solo parcial: se observó la ventana inicial, pero la interacción quedó sin
 validar por actividad de usuario y una captura posterior ajena al objetivo.
 T020, T023 y T024 siguen abiertas; no se afirma aceptación completa.
+
+## Revisión de presentación de 16 bits — 2026-11-14
+
+Tras probar el incremento, el usuario pidió reducir botones, usar nombres
+intuitivos e integrar las puertas, con referencia a RPG clásicos de 16 bits.
+Esta elección sustituye el estilo ilustrado anterior. Se generaron cuatro
+recursos originales con imagegen incorporado; archivos y prompts exactos en
+[arte](../vista/pygame_ui/assets/README.md). No se copian recursos de Final Fantasy.
+
+La vista normal presenta cuatro comandos y una acción contextual cuando hay
+selección; máximo seis con control temporal. Inventario, mapa y menú agrupan
+el resto. Se reutilizan los vectores por sala, regiones y botones, una animación
+activa y el selector de panel ya aprobados; no hay una estructura nueva.
+Las puertas se dibujan en ocho variantes N/S/E/O abiertas/cerradas, sin girar
+la puerta frontal. Recursos normalizados y escalado de vecinos próximos.
+
+[Regresión](evidencia/retro_regresion.txt): 849 pruebas con Pygame y 819 sin él,
+tres módulos gráficos omitidos; compatibilidad v6 incluida. Los paneles y
+selecciones no consumen turno. [Render](evidencia/retro_jugable.png) y
+[revisión](evidencia/retro_revision_visual.md) incluyen dos resoluciones y
+ocho puertas; no acreditan interacción nativa completa. Avance visual exclusivo
+~90 % estimado, con T020 y cierre dependiente pendientes. EX-01 sigue vigente.

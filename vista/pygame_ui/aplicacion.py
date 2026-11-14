@@ -35,15 +35,16 @@ class Aplicacion:
         c = self.config
         self.campos = [
             Campo('nombre', 'Jugador', c.nombre or 'Explorador'),
-            Campo('semilla', 'Semilla', str(c.semilla)),
-            Campo('cripta', 'ID de cripta', c.cripta or ''),
-            Campo('offline', 'Carpeta offline (vacía: servicio oficial)', c.offline or ''),
-            Campo('cargar', 'Archivo .bin para reanudar', c.cargar or ''),
-            Campo('archivo_guardado', 'Archivo .bin para guardar', c.archivo_guardado or 'partida.bin'),
-            Campo('checkpoint_cada', 'Checkpoint cada K acciones (vacío: predeterminado)', str(c.checkpoint_cada or '')),
-            Campo('bitacora', 'Nueva bitácora (opcional; solo partida nueva)', c.bitacora or ''),
+            Campo('semilla', 'Semilla (código de partida)', str(c.semilla)),
+            Campo('cripta', 'Cripta elegida', c.cripta or ''),
+            Campo('offline', 'Datos locales (vacío = internet)', c.offline or ''),
+            Campo('cargar', 'Archivo de partida para cargar', c.cargar or ''),
+            Campo('archivo_guardado', 'Guardar partidas en', c.archivo_guardado or 'partida.bin'),
+            Campo('checkpoint_cada', 'Frecuencia del historial (opcional)', str(c.checkpoint_cada or '')),
+            Campo('bitacora', 'Archivo de repetición (opcional)', c.bitacora or ''),
         ]
         self.menu = not bool(c.cripta or c.cargar)
+        self.inicio_avanzado = bool(c.cargar)
         self.saliendo = False
         self.error = ''
         self.catalogo = ()
@@ -93,11 +94,29 @@ class Aplicacion:
                 self.panel_local = None
             elif accion == 'continuar':
                 self.menu = False
+            elif accion in ('pausa', 'inventario_panel', 'objetivos_panel', 'opciones_panel', 'abrir_historia'):
+                if accion != 'opciones_panel':
+                    self.controlador.detener_viaje()
+                self.animacion.saltar()
+                self.ui.foco = None
+                self.lista_inicio = 0
+                self.panel_local = next(panel for nombre, panel in
+                    (('pausa', 'pausa'), ('inventario_panel', 'inventario'), ('objetivos_panel', 'objetivos'),
+                     ('opciones_panel', 'opciones'), ('abrir_historia', 'historia_formulario')) if nombre == accion)
+                if accion == 'inventario_panel': self.tab = 'inventario'
+                if accion == 'objetivos_panel':
+                    self.tab = 'enemigos' if self.controlador.respuesta.presentacion.enemigos else 'suelo'
             elif accion == 'detener':
                 self.controlador.detener_viaje()
             elif accion == 'consultar_historia':
                 self.accion(('juego', 'historia', self.historia.valor.strip(), None))
+            elif accion == 'avanzado':
+                self.inicio_avanzado = not self.inicio_avanzado
             elif accion in ('nueva', 'cargar'):
+                if accion == 'cargar' and not self.campo('cargar').valor.strip():
+                    self.inicio_avanzado = True
+                    self.error = 'Indica el archivo de partida y vuelve a pulsar Cargar partida.'
+                    return
                 config = self.configurar(cargar=accion == 'cargar')
                 config.validar()
                 if self.controlador.iniciar(config):
@@ -121,6 +140,7 @@ class Aplicacion:
                 self.mapa.centrar(self.controlador.respuesta.presentacion.sala_id)
             elif accion == 'cerrar_local':
                 self.panel_local = None
+                self.ui.foco = None
             elif accion == 'saltar_efecto':
                 self.animacion.saltar()
             elif accion == 'modo_efectos':
@@ -135,8 +155,13 @@ class Aplicacion:
                 self.campo('cripta').valor = accion[1]
             elif isinstance(accion, tuple) and accion[0] == 'tab':
                 self.tab, self.lista_inicio = accion[1], 0
+                self.panel_local = 'inventario' if accion[1] == 'inventario' else 'objetivos'
+            elif isinstance(accion, tuple) and accion[0] == 'elegir_objetivo':
+                self.panel_local = None
+                self.accion(('objetivo', accion[1]))
             elif isinstance(accion, tuple) and accion[0] == 'objetivo':
                 self.objetivo = accion[1]
+                self.puerta = None
                 self.tab = 'enemigos' if self.objetivo.clase == 'enemigo' else 'suelo'
             elif isinstance(accion, tuple) and accion[0] == 'puerta':
                 self.puerta = accion[1]
@@ -158,6 +183,10 @@ class Aplicacion:
                         _, op, arg, objetivo = accion
                     if op == 'inventario':
                         self.tab = 'inventario'
+                        self.panel_local = 'inventario'
+                    if op == 'cerrar_panel':
+                        self.panel_local = None
+                        self.ui.foco = None
                     self.controlador.enviar(IntencionGrafica(foto.generacion, foto.revision, op, arg, objetivo))
         except (ValueError, OSError) as error:
             self.error = str(error)
@@ -181,22 +210,36 @@ class Aplicacion:
             self.catalogo_inicio = 0
         elif respuesta.presentacion is not None:
             self.menu = False
-            self.error = ''
-            self.objetivo = None
+            foto = respuesta.presentacion
+            self.error = '' if respuesta.resultado.aceptada else (foto.mensajes[-1] if foto.mensajes else '')
+            if foto.panel == 'historia':
+                self.panel_local = None
+                self.ui.foco = None
+            elif foto.panel == 'ayuda': self.panel_local = 'ayuda'
+            if anterior is None or anterior.generacion != foto.generacion or anterior.sala_id != foto.sala_id:
+                self.objetivo = None; self.puerta = None
+            elif self.objetivo is not None:
+                self.objetivo = (next((e for e in foto.enemigos if e.identificador == self.objetivo.identificador), None)
+                                 if self.objetivo.clase == 'enemigo' else None)
 
     def dibujar_menu(self):
         w, h = self.ventana.get_size()
         u, v = self.ui, self.ventana
         ocupado = self.controlador.ocupado
+        u.panel(v, (20, 16, w-40, h-32))
         u.texto(v, 'CRIPTA', (32, 22), ACENTO, u.titulo)
         u.texto(v, 'Una acción, un turno. El tiempo espera por ti.', (32, 66), TENUE)
         ancho = (w - 96) // 2
-        for i, campo in enumerate(self.campos):
+        for i, campo in enumerate(self.campos if self.inicio_avanzado else self.campos[:4]):
             u.campo(v, campo, (32 + i % 2 * (ancho + 32), 128 + i // 2 * 80, ancho, 42), not ocupado)
         y = 440
-        bw = (w-64)//5
-        for i, (texto, accion) in enumerate((('Nueva partida', 'nueva'), ('Cargar .bin', 'cargar'),
-                                            ('Listar criptas', 'listar'), ('Puntajes', 'puntajes'), ('Salir', 'salir'))):
+        if not self.inicio_avanzado:
+            u.parrafo(v, 'Elige una cripta con el botón Elegir cripta y comienza tu aventura.\nLas rutas de guardado, carga y opciones del historial están en Avanzado.',
+                      (40, 300, w-80, 100), TENUE)
+        bw = (w-64)//6
+        for i, (texto, accion) in enumerate((('Nueva partida', 'nueva'), ('Cargar partida', 'cargar'),
+                                            ('Elegir cripta', 'listar'), ('Puntajes', 'puntajes'),
+                                            ('Avanzado', 'avanzado'), ('Salir', 'salir'))):
             u.boton(v, (32 + i*bw, y, bw-12, 40), texto, accion, not ocupado or accion == 'salir')
         if self.controlador.respuesta.presentacion:
             u.boton(v, (w - 300, 494, 268, 40), 'Volver a la partida', 'continuar', not ocupado)
@@ -217,89 +260,178 @@ class Aplicacion:
                 u.boton(v, (32, 530 + 40 * i, w - 64, 34),
                         f'{identificador} · {nombre} · {salas} salas', ('cripta', identificador), not ocupado)
 
+    def contexto(self, foto):
+        if self.objetivo is not None:
+            if self.objetivo.clase == 'enemigo':
+                return 'Atacar', ('juego', 'atacar', None, self.objetivo), self.objetivo.nombre
+            if self.objetivo.clase == 'suelo':
+                return 'Recoger', ('juego', 'recoger', None, self.objetivo), self.objetivo.nombre
+        actual = next(s for s in foto.salas if s.actual)
+        salida = next((s for s in actual.salidas if s.direccion == self.puerta), None)
+        if salida:
+            nombre = next(n for d, n in (('N', 'Norte'), ('S', 'Sur'), ('E', 'Este'), ('O', 'Oeste')) if d == salida.direccion)
+            abierta = salida.observada is not False
+            return ('Entrar' if abierta else 'Abrir puerta',
+                    ('juego', 'mover' if abierta else 'abrir', salida.direccion, None),
+                    f'Puerta {nombre} | Paso: {salida.costo} | ' + ('Abierta' if abierta else 'Cerrada'))
+        return None, None, 'Elige una puerta, un enemigo o un objeto con el ratón.'
+
     def dibujar_juego(self):
         u, v = self.ui, self.ventana
         w, h = v.get_size()
         foto = self.controlador.respuesta.presentacion
-        if self.panel_local == 'mensajes':
-            u.texto(v, 'Mensajes de la partida', (28, 24), ACENTO, u.titulo)
-            u.parrafo(v, '\n'.join(foto.mensajes), (28, 100, w-56, h-190), desplazamiento=self.panel_scroll)
-            u.boton(v, (28, h-62, 220, 40), 'Volver', 'cerrar_local')
-            return
-        if self.panel_local == 'mapa':
-            u.texto(v, 'Mapa conocido de la cripta', (28, 24), ACENTO, u.titulo)
-            self.mapa.dibujar(v, (24, 90, w-48, h-210), foto, u)
-            u.texto(v, '? avistada · tenue: recuerdo · rojo: cerrada · ~ enlace esquemático', (30, h-110), TENUE)
-            sala = next((s for s in foto.salas if s.sala_id == self.mapa.seleccion), None)
-            if self.controlador.viajando:
-                u.boton(v, (300, h-62, 230, 40), 'Detener viaje', 'detener')
-            elif sala and sala.estado == 2:
-                u.boton(v, (300, h-62, 230, 40), f'Viajar a sala {sala.sala_id}', ('juego', 'viajar', str(sala.sala_id), None), not self.controlador.ocupado)
-            u.boton(v, (28, h-62, 230, 40), 'Volver a la habitación', 'cerrar_local')
-            return
         if foto.terminada and not self.animacion.activa:
-            u.texto(v, f'RESULTADO · {foto.resultado}', (40, 40), ACENTO, u.titulo)
-            u.parrafo(v, f'{foto.nombre_jugador}\nCripta {foto.id_cripta} · Semilla {foto.semilla}\n'
-                         f'Tiempo final: {foto.reloj}\nAcciones: {foto.acciones}\nVida: {foto.vida}/{foto.vida_max}\n\n'
-                         + (self.error or '\n'.join(foto.mensajes[-5:])), (40, 120, w-80, h-240))
-            u.boton(v, (40, h-80, 230, 40), 'Volver al menú', 'menu')
-            u.boton(v, (292, h-80, 180, 40), 'Cerrar', 'salir')
+            u.panel(v, (40, 48, w-80, h-96), 'Fin de la aventura')
+            u.texto(v, str(foto.resultado).upper(), (72, 110), ACENTO, u.titulo)
+            u.parrafo(v, f'{foto.nombre_jugador}\nTiempo: {foto.reloj} | Turnos: {foto.acciones}\n\n'
+                         + (self.error or '\n'.join(foto.mensajes[-5:])), (72, 170, w-144, h-310))
+            u.boton(v, (72, h-110, 240, 42), 'Volver al inicio', 'menu')
+            u.boton(v, (332, h-110, 180, 42), 'Cerrar juego', 'salir')
             return
         if foto.panel == 'historia' and foto.historia is not None:
             self.dibujar_historia(foto)
             return
-        activo = (not self.controlador.ocupado or self.controlador.viajando) and not foto.terminada and not self.animacion.activa
-        u.texto(v, 'CRIPTA', (24, 14), ACENTO, u.titulo)
-        u.texto(v, f'{foto.sala_nombre} · Sala {foto.sala_id}', (185, 21))
-        u.texto(v, f'{foto.nombre_jugador}   Vida {foto.vida}/{foto.vida_max}   Ataque {foto.ataque}   Defensa {foto.defensa}', (24, 61), TEXTO)
-        u.texto(v, f'Turno {foto.acciones} · t={foto.reloj} · Red {foto.red[0]}/{foto.red[1]}', (w-316, 26), TENUE, u.pequena)
+        u.panel(v, (16, 12, w-32, 66))
+        u.texto(v, 'CRIPTA', (32, 22), ACENTO, u.titulo)
+        u.parrafo(v, foto.sala_nombre, (194, 23, w-490, 26), TEXTO)
+        u.texto(v, f'{foto.nombre_jugador} | Turnos: {foto.acciones}', (194, 49), TENUE, u.pequena)
+        u.texto(v, f'Vida {foto.vida}/{foto.vida_max}', (w-255, 28))
+        barra = pygame.Rect(w-255, 56, 210, 8)
+        pygame.draw.rect(v, (10, 16, 43), barra)
+        pygame.draw.rect(v, (99, 213, 160), (barra.x, barra.y, int(barra.w*max(0, foto.vida)/max(1, foto.vida_max)), barra.h))
         visual = self.animacion.foto_para_dibujo(foto)
-        self.escena.dibujar(v, (20, 96, w-350, h-348), visual, u, self.objetivo, self.puerta, self.animacion)
-        if self.animacion.activa:
-            u.boton(v, (32, 104, 190, 28), 'Saltar efecto [espacio]', 'saltar_efecto')
+        self.escena.dibujar(v, (16, 90, w-252, h-250), visual, u, self.objetivo, self.puerta, self.animacion)
+        u.panel(v, (w-220, 90, 204, 156))
         self.mapa.actualizar(foto)
         if self.mini_generacion != foto.generacion:
             self.mapa.escala = 0.45
             self.mini_generacion = foto.generacion
         if self.mini_sala != foto.sala_id:
-            self.mapa.centrar(foto.sala_id)
-            self.mini_sala = foto.sala_id
-        self.mapa.dibujar(v, (w-314, 96, 294, 156), foto, u)
-        u.boton(v, (w-314, 258, 142, 28), 'Ampliar mapa', 'mapa')
-        u.boton(v, (w-164, 258, 144, 28), 'Centrar', 'centrar')
-        ancho = (w-374)//4
-        actual = next(s for s in foto.salas if s.actual)
-        for i, direccion in enumerate(('N', 'S', 'E', 'O')):
-            x = 20+i*(ancho+6)
-            salida = next((s for s in actual.salidas if s.direccion == direccion), None)
-            texto = f'Ir {direccion}' + (f' · {salida.costo}' if salida else '')
-            u.boton(v, (x, h-240, ancho, 32), texto, ('juego', 'mover', direccion, None), activo)
-            u.boton(v, (x, h-202, ancho, 30), f'Abrir {direccion}', ('juego', 'abrir', direccion, None), activo)
-        for i, (texto, op) in enumerate((('Esperar [espacio]', 'esperar'), ('Retroceder', 'retroceder'), ('Ayuda', 'ayuda'), ('Inventario', 'inventario'))):
-            u.boton(v, (20+i*(ancho+6), h-166, ancho, 32), texto, ('juego', op, None, None), activo)
-        u.campo(v, self.historia, (20, h-101, 114, 32), not self.controlador.ocupado)
-        u.boton(v, (142, h-101, 100, 32), 'Consultar', 'consultar_historia', not self.controlador.ocupado)
-        u.boton(v, (250, h-101, 92, 32), 'Guardar', ('juego', 'guardar', None, None), activo)
-        u.boton(v, (350, h-101, 92, 32), 'Cargar', ('juego', 'cargar', None, None), activo and foto.permitir_cargar)
-        u.boton(v, (450, h-101, 100, 32), 'Mensajes', 'mensajes')
-        u.boton(v, (w-314, h-112, 160, 30), f'Efectos: {self.animacion.modo}', 'modo_efectos')
-        if self.controlador.viajando:
-            u.boton(v, (20, 102, 170, 30), 'Detener viaje', 'detener')
-        u.parrafo(v, self.error or '\n'.join(foto.mensajes[-2:]), (24, h-59, w-374, 52), PELIGRO if self.error else TENUE)
-        self.dibujar_objetos(foto, activo)
-        if self.objetivo is not None:
-            u.texto(v, self.objetivo.nombre, (32, h-280), ACENTO, u.pequena)
-        elif self.puerta:
-            salida = next((s for s in actual.salidas if s.direccion == self.puerta), None)
-            if salida:
-                u.texto(v, f'Puerta {salida.direccion} · costo {salida.costo} · usa Ir/Abrir', (32, h-280), ACENTO, u.pequena)
-        # Páginas de la escena: conservan cada objetivo, sin agregar enemigos.
-        for lado, cantidad, pagina, limite, x in (('enemigos', len(foto.enemigos), self.escena.pagina_enemigos, 12, 20),
-                                                ('objetos', len(foto.objetos), self.escena.pagina_objetos, 8, 270)):
-            if cantidad > limite:
-                u.boton(v, (x, 102, 36, 26), '‹', ('pagina', lado, -1))
-                u.boton(v, (x+42, 102, 36, 26), '›', ('pagina', lado, 1))
-                u.texto(v, f'{lado} {pagina+1}/{(cantidad+limite-1)//limite}', (x+84, 106), TENUE, u.pequena)
+            self.mapa.centrar(foto.sala_id); self.mini_sala = foto.sala_id
+        self.mapa.dibujar(v, (w-212, 98, 188, 140), foto, u)
+        u.panel(v, (w-220, 258, 204, h-418), 'Estado')
+        u.parrafo(v, f'Ataque: {foto.ataque}\nDefensa: {foto.defensa}\nEnemigos: {len(foto.enemigos)}\nObjetos: {len(foto.objetos)}\n\n'
+                         + ('\n'.join(str(e) for e in foto.efectos) if foto.efectos else 'Sin efectos activos'),
+                  (w-202, 304, 168, h-480), TEXTO)
+        principal, orden, detalle = self.contexto(foto)
+        u.panel(v, (16, h-144, w-32, 128))
+        controles = []
+        if principal:
+            controles.append((principal, orden))
+        controles.extend((('Detener viaje', 'detener') if self.controlador.viajando else
+                          ('Esperar', ('juego', 'esperar', None, None)),
+                          ('Inventario', 'inventario_panel'), ('Mapa', 'mapa'), ('Menú', 'pausa')))
+        if self.animacion.activa:
+            controles.append(('Saltar efecto', 'saltar_efecto'))
+        elif len(foto.enemigos) > 12 or len(foto.objetos) > 8:
+            controles.append(('Objetivos', 'objetivos_panel'))
+        bw = (w-64)//len(controles)
+        activo = (not self.controlador.ocupado or self.controlador.viajando) and not self.animacion.activa
+        for i, (texto, accion) in enumerate(controles):
+            libre = accion in ('pausa', 'mapa', 'inventario_panel', 'objetivos_panel', 'detener', 'saltar_efecto')
+            u.boton(v, (32+i*bw, h-128, bw-8, 36), texto, accion, libre or activo)
+        mensaje = self.error or (foto.mensajes[-1] if foto.mensajes else 'W/A/S/D: moverse | Espacio: esperar | Esc: menú')
+        u.parrafo(v, detalle+'\n'+mensaje, (34, h-80, w-70, 54), PELIGRO if self.error else TEXTO)
+        if self.panel_local is not None:
+            # Se ocultan también las regiones de comandos del fondo para evitar clics a través.
+            u.comenzar()
+            sombra = pygame.Surface(v.get_size(), pygame.SRCALPHA)
+            sombra.fill((2, 5, 18, 155)); v.blit(sombra, (0, 0))
+            self.dibujar_panel(foto)
+
+    def dibujar_panel(self, foto):
+        u, v = self.ui, self.ventana
+        w, h = v.get_size()
+        r = pygame.Rect((w-620)//2, 92, 620, h-184)
+        activo = not self.controlador.ocupado and not self.animacion.activa
+        if self.panel_local == 'mapa':
+            u.panel(v, (24, 24, w-48, h-48), 'Mapa conocido')
+            self.mapa.dibujar(v, (40, 78, w-80, h-214), foto, u)
+            u.texto(v, '? Sin visitar | tenue: recuerdo | ~ conexión esquemática', (44, h-116), TENUE, u.pequena)
+            sala = next((s for s in foto.salas if s.sala_id == self.mapa.seleccion), None)
+            if self.controlador.viajando:
+                u.boton(v, (300, h-84, 230, 40), 'Detener viaje', 'detener')
+            elif sala and sala.estado == 2:
+                u.boton(v, (300, h-84, 250, 40), f'Viajar a sala {sala.sala_id}', ('juego', 'viajar', str(sala.sala_id), None), activo)
+            u.boton(v, (44, h-84, 236, 40), 'Volver', 'cerrar_local')
+            return
+        if self.panel_local in ('inventario', 'objetivos'):
+            self.dibujar_objetos(foto, activo)
+            return
+        if self.panel_local == 'mensajes':
+            u.panel(v, (40, 48, w-80, h-96), 'Registro de la aventura')
+            u.parrafo(v, '\n'.join(foto.mensajes), (64, 108, w-128, h-240), desplazamiento=self.panel_scroll)
+            u.boton(v, (64, h-110, 210, 40), 'Volver', 'cerrar_local')
+            return
+        if self.panel_local == 'historia_formulario':
+            u.panel(v, r, 'Consultar historia')
+            u.parrafo(v, 'Vuelve a ver un instante de la partida sin cambiar el presente.\nEscribe el tiempo o # seguido del número de acción.', (r.x+28, r.y+65, r.w-56, 90))
+            u.campo(v, self.historia, (r.x+28, r.y+198, r.w-56, 42), activo)
+            u.boton(v, (r.x+28, r.y+260, 240, 42), 'Consultar', 'consultar_historia', activo)
+            u.boton(v, (r.x+28, r.bottom-64, 240, 40), 'Volver', 'cerrar_local')
+            if self.error: u.parrafo(v, self.error, (r.x+28, r.y+326, r.w-56, 100), PELIGRO)
+            return
+        if self.panel_local == 'ayuda':
+            u.panel(v, r, 'Controles')
+            u.parrafo(v, 'Clic: seleccionar puerta, objeto o enemigo.\nEl botón principal cambia según lo elegido.\n\nW/A/S/D: moverse por las salidas.\nEspacio: esperar o saltar una animación.\nI: inventario. M: mapa. Esc: menú o volver.\n\nCada acción confirmada conserva su costo.\nLos enemigos del minimapa son recuerdos.\nNo hay movimiento ni turnos por esperar en pantalla.', (r.x+28, r.y+60, r.w-56, r.h-140), TEXTO)
+            u.boton(v, (r.x+28, r.bottom-64, 240, 40), 'Volver', ('juego', 'cerrar_panel', None, None))
+            return
+        u.panel(v, r, 'Menú de pausa' if self.panel_local == 'pausa' else 'Opciones')
+        if self.panel_local == 'pausa':
+            opciones = (('Guardar partida', ('juego', 'guardar', None, None)),
+                        ('Cargar partida', ('juego', 'cargar', None, None)),
+                        ('Usar pergamino', ('juego', 'retroceder', None, None)),
+                        ('Consultar historia', 'abrir_historia'), ('Registro de mensajes', 'mensajes'),
+                        ('Opciones y ayuda', 'opciones_panel'), ('Volver al inicio', 'menu'))
+        else:
+            opciones = ((f'Animaciones: {self.animacion.modo}', 'modo_efectos'),
+                        ('Controles y ayuda', ('juego', 'ayuda', None, None)), ('Cerrar juego', 'salir'))
+        for i, (texto, accion) in enumerate(opciones):
+            permiso = activo and (accion != ('juego', 'cargar', None, None) or foto.permitir_cargar)
+            u.boton(v, (r.x+28, r.y+56+i*48, r.w-56, 40), texto, accion, permiso or accion == 'salir')
+        if self.error:
+            u.parrafo(v, self.error, (r.x+28, r.bottom-112, r.w-56, 40), PELIGRO)
+        elif foto.mensajes:
+            u.parrafo(v, foto.mensajes[-1], (r.x+28, r.bottom-112, r.w-56, 40), TENUE)
+        u.boton(v, (r.x+28, r.bottom-60, 240, 36), 'Volver', 'cerrar_local')
+
+    def dibujar_objetos(self, foto, activo):
+        u, v = self.ui, self.ventana
+        w, h = v.get_size()
+        r = pygame.Rect((w-min(w-64, 860))//2, 64, min(w-64, 860), h-128)
+        inventario = self.panel_local == 'inventario'
+        titulo = f'Inventario {len(foto.inventario)}/{foto.capacidad}' if inventario else 'Elegir objetivo'
+        u.panel(v, r, titulo)
+        if not inventario:
+            for i, (nombre, tab) in enumerate((('Enemigos', 'enemigos'), ('Objetos', 'suelo'))):
+                u.boton(v, (r.x+24+i*192, r.y+48, 180, 34), nombre, ('tab', tab))
+        items = foto.inventario if inventario else foto.enemigos if self.tab == 'enemigos' else foto.objetos
+        inicio_y = r.y+90
+        visibles = max(1, (r.h-250)//38)
+        self.lista_inicio = min(self.lista_inicio, max(0, len(items)-visibles))
+        for i, o in enumerate(items[self.lista_inicio:self.lista_inicio+visibles]):
+            elegido = o.seleccionado or o == self.objetivo
+            texto = ('> ' if elegido else '')+o.nombre+(' [equipado]' if o.equipado else '')
+            if o.vida is not None: texto += f'  {o.vida}/{o.vida_max}'
+            accion = ('seleccionar', o) if inventario else ('elegir_objetivo', o)
+            u.boton(v, (r.x+24, inicio_y+i*38, r.w-48, 32), texto, accion, activo)
+        if not items:
+            u.texto(v, 'No hay objetos.' if inventario or self.tab == 'suelo' else 'No hay enemigos.', (r.x+28, inicio_y+12), TENUE)
+        u.texto(v, 'Rueda del ratón para recorrer la lista.', (r.x+28, r.bottom-158), TENUE, u.pequena)
+        if inventario:
+            elegido = next((o for o in foto.inventario if o.seleccionado), None)
+            acciones = []
+            if elegido:
+                if elegido.clase_objeto in ('arma', 'armadura'):
+                    acciones.append(('Equipar', 'equipar'))
+                elif elegido.clase_objeto in ('pocion', 'antidoto', 'antorcha', 'pergamino_retroceso'):
+                    acciones.append(('Usar', 'usar'))
+                acciones.append(('Soltar', 'soltar'))
+            for i, (texto, op) in enumerate(acciones):
+                u.boton(v, (r.x+24+i*174, r.bottom-138, 162, 36), texto, ('juego', op, None, None), activo)
+            for i, orden in enumerate(('nombre', 'peso', 'valor')):
+                u.boton(v, (r.x+24+i*174, r.bottom-94, 162, 32), orden.capitalize(), ('juego', 'orden', orden, None), activo)
+        u.boton(v, (r.right-216, r.bottom-50, 190, 32), 'Volver', 'cerrar_local')
 
 
     def dibujar_historia(self, foto):
@@ -313,51 +445,6 @@ class Aplicacion:
         self.mapa_historia.dibujar(v, (24, 120, w-440, alto-200), self.foto_historia, u)
         u.parrafo(v, '\n'.join(lineas_historia(h)), (w-392, 124, 364, alto-210), desplazamiento=self.historia_scroll)
         u.boton(v, (28, alto-62, 230, 40), 'Volver al presente', ('juego', 'cerrar_panel', None, None), not self.controlador.ocupado)
-
-    def dibujar_objetos(self, foto, activo):
-        u, v = self.ui, self.ventana
-        w, h = v.get_size()
-        x = w-314
-        for i, (texto, tab) in enumerate((('Enemigos', 'enemigos'), ('Suelo', 'suelo'), ('Inventario', 'inventario'))):
-            u.boton(v, (x+i*100, 300, 94, 36), texto, ('tab', tab))
-        items = foto.enemigos if self.tab == 'enemigos' else foto.objetos if self.tab == 'suelo' else foto.inventario
-        if foto.panel == 'ayuda':
-            u.parrafo(v, 'W/A/S/D: moverse. Espacio: esperar.\nClic en personaje, enemigo, objeto o puerta para seleccionar.\nUsa los botones para actuar.\nCada activación ejecuta una acción.\nRueda sobre mapa: zoom; botón central: desplazar.\nEl minimapa muestra recuerdos, no posiciones remotas.', (x, 348, 294, h-560))
-            u.boton(v, (x, h-224, 294, 36), 'Cerrar ayuda', ('juego', 'cerrar_panel', None, None))
-        else:
-            u.texto(v, f'{self.tab.capitalize()} · {len(items)}' + (f'/{foto.capacidad}' if self.tab == 'inventario' else ''), (x, 342), TENUE, u.pequena)
-            visibles = max(1, (h-574)//38)
-            self.lista_inicio = min(self.lista_inicio, max(0, len(items)-visibles))
-            for i, objeto in enumerate(items[self.lista_inicio:self.lista_inicio+visibles]):
-                seleccionado = objeto.seleccionado or objeto == self.objetivo
-                etiqueta = ('> ' if seleccionado else '') + f'{objeto.indice}. {objeto.nombre}'
-                if objeto.equipado: etiqueta += ' [equipado]'
-                if objeto.vida is not None: etiqueta += f' {objeto.vida}/{objeto.vida_max}'
-                accion = ('seleccionar', objeto) if self.tab == 'inventario' else ('objetivo', objeto)
-                u.boton(v, (x, 366+i*38, 294, 32), etiqueta, accion, activo)
-            if not items:
-                u.texto(v, 'Sin elementos en esta sala.' if self.tab != 'inventario' else 'Inventario vacío.', (x, 376), TENUE, u.pequena)
-            objetivo = self.objetivo
-            if self.tab == 'enemigos':
-                u.boton(v, (x, h-202, 294, 38), 'Atacar seleccionado', ('juego', 'atacar', None, objetivo), activo and objetivo is not None)
-            elif self.tab == 'suelo':
-                u.boton(v, (x, h-202, 294, 38), 'Recoger seleccionado', ('juego', 'recoger', None, objetivo), activo and objetivo is not None)
-            else:
-                for i, (texto, op) in enumerate((('Usar', 'usar'), ('Equipar', 'equipar'), ('Soltar', 'soltar'))):
-                    u.boton(v, (x+i*100, h-202, 94, 38), texto, ('juego', op, None, None), activo and bool(items))
-                for i, orden in enumerate(('nombre', 'peso', 'valor')):
-                    u.boton(v, (x+i*100, h-156, 94, 34), orden.capitalize(), ('juego', 'orden', orden, None), activo)
-        seleccion = next((s for s in foto.salas if s.sala_id == self.mapa.seleccion), None)
-        if seleccion:
-            detalle = f'Sala {seleccion.sala_id}: ' + (seleccion.nombre or 'avistada, contenido desconocido')
-            if seleccion.recuerdo:
-                detalle += f'\nÚltima observación: t={seleccion.recuerdo.reloj}'
-                detalle += '\n' + (', '.join(f'{nombre} ×{n}' for _, nombre, n in seleccion.recuerdo.grupos) or 'Sin enemigos observados')
-            u.parrafo(v, detalle, (x, h-75, 294, 23))
-        if self.controlador.ocupado:
-            u.texto(v, 'Procesando…', (x, h-112), ACENTO)
-        u.boton(v, (x, h-48, 140, 36), 'Menú', 'menu', not self.controlador.ocupado)
-        u.boton(v, (x+150, h-48, 144, 36), 'Cerrar', 'salir')
 
     def dibujar(self):
         self.ventana.fill(FONDO)
@@ -391,6 +478,15 @@ class Aplicacion:
             if evento.key in self.teclas or getattr(evento, 'repeat', False):
                 return
             self.teclas.append(evento.key)
+            if evento.key == pygame.K_ESCAPE and not self.menu:
+                self.ui.foco = None
+                if self.panel_local is not None:
+                    self.panel_local = None
+                elif self.controlador.respuesta.presentacion.panel == 'historia':
+                    self.accion(('juego', 'cerrar_panel', None, None))
+                else:
+                    self.accion('pausa')
+                return
             if self.animacion.activa:
                 if evento.key == pygame.K_SPACE:
                     self.animacion.saltar()
@@ -415,10 +511,14 @@ class Aplicacion:
             if not self.menu and self.controlador.respuesta.presentacion is not None:
                 if self.controlador.respuesta.presentacion.panel == 'historia':
                     self.mapa_historia.evento(evento)
-                else:
+                elif self.panel_local == 'mapa':
                     self.mapa.evento(evento)
+                elif self.panel_local is None and evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1 and self.mapa.rect.collidepoint(evento.pos):
+                    self.accion('mapa'); return
             if evento.type == pygame.MOUSEWHEEL:
-                if self.panel_local is not None:
+                if self.panel_local in ('inventario', 'objetivos'):
+                    self.lista_inicio = max(0, self.lista_inicio-evento.y)
+                elif self.panel_local is not None:
                     self.panel_scroll = max(0, self.panel_scroll - evento.y*42)
                 elif not self.menu and self.controlador.respuesta.presentacion.panel == 'historia':
                     self.historia_scroll = max(0, self.historia_scroll - evento.y*42)
@@ -445,9 +545,11 @@ class Aplicacion:
                                        (pygame.K_SPACE, 'esperar', None), (pygame.K_i, 'inventario', None),
                                        (pygame.K_h, 'ayuda', None), (pygame.K_ESCAPE, 'cerrar_panel', None)):
                     if evento.key == tecla:
-                        if op == 'inventario': self.tab = 'inventario'
+                        if op == 'inventario':
+                            self.accion('inventario_panel'); break
                         self.accion(('juego', op, arg, None))
                         break
+                if evento.key == pygame.K_m: self.accion('mapa')
 
     def ejecutar(self, reloj=None):
         reloj = reloj or pygame.time.Clock()
@@ -459,7 +561,7 @@ class Aplicacion:
                     self.evento(evento)
                 pygame.display.flip()
                 # Una publicación y un ciclo de eventos completos entre pasos.
-                if not self.saliendo and not self.menu and not self.animacion.activa:
+                if not self.saliendo and not self.menu and self.panel_local in (None, 'mapa') and not self.animacion.activa:
                     self.controlador.continuar_viaje()
                 reloj.tick(60)
         finally:

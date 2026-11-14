@@ -1905,3 +1905,26 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     aprobados; ninguna estructura nueva. Ocho tareas de revisión T025–T032.
     Se usará imagegen incorporado para recursos nuevos versionados, sin cambiar
     las reglas, la niebla, el guardado ni la independencia de main.
+
+71. Implementar comandos compactos y arte de 16 bits
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Se continuó la implementación de la revisión solicitada, con pruebas de
+    contexto antes de reorganizar la interfaz. La sala pasó de 30 botones a
+    cuatro o cinco habituales, máximo seis. Seleccionar muestra Atacar,
+    Recoger, Entrar o Abrir puerta. Inventario, mapa y menú agrupan las demás
+    funciones; Escape vuelve sin turno y los paneles bloquean clics al fondo.
+    Se reutilizaron los vectores aprobados y el selector de panel existente;
+    no se eligieron estructuras nuevas ni se modificaron reglas del motor.
+
+    Imagegen incorporado generó cuatro PNG originales: sala, actores,
+    elementos y ocho puertas orientadas; alfa e imágenes inspeccionados.
+    Prompts exactos en `vista/pygame_ui/assets/prompts_16bits.txt`. Marcos
+    azules, tipografía sin suavizado y escalado de vecinos próximos.
+    Regresión final: 849 pruebas en 54,32 s con Pygame; 819 en 41,85 s sin él,
+    tres módulos omitidos; matriz v6 incluida. Renders a 1024 × 768 y
+    1280 × 800, paneles y ocho puertas guardados con generador reproducible.
+    No se acredita revisión nativa completa ni una medición nueva de latencia.
+    T020/T023/T024 siguen pendientes; avance exclusivo visual ~90 % estimado.
+    Cambios destinados a commit y push en `005-interfaz-pygame`, sin fusionar main.

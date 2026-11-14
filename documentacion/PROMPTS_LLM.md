@@ -1811,3 +1811,19 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     captura no correspondiente al objetivo y recuperación fallida, luego el usuario
     detuvo el control con Esc. No se siguieron enviando acciones de aplicación.
     T050–T053 pendientes; avance exclusivo de Pygame estimado en ~85 %.
+
+65. Evolucionar el mapa hacia habitaciones y combates con sprites
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    El usuario indicó que el mapa funciona como idea, pero desea una experiencia
+    más gráfica con personajes y enemigos: referencias a The Binding of Isaac
+    para habitaciones/exploración y a RPG Maker para combate. Se aplicó
+    `$speckit-specify` para una capacidad 006 dentro de la rama Pygame actual;
+    plantilla compuesta resuelta correctamente y sin hooks registrados.
+    Se preguntaron perspectiva, escena de combate y dirección artística.
+    Mientras se esperan preferencias, se registró un borrador con cuatro
+    historias, 14 requisitos y 15 escenarios, preservando turnos, niebla,
+    continuidad v6 y reglas existentes. No se modificó código del juego ni se
+    aprobaron decisiones pendientes. Checklist documental 13/16; capacidad 006
+    sin implementación. El ~85 % previo describe únicamente el alcance de 005.

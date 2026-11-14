@@ -11,6 +11,10 @@ guardado de recuerdos implementados; **831 pruebas aprobadas**, mediciones y rev
 visual final pendientes. Es una ampliación personal,
 independiente de la nota del proyecto. [Seguimiento](specs/005-interfaz-pygame/README.md#avance-exclusivo-de-pygame).
 
+**Evolución visual solicitada:** habitación con personaje, enemigos y objetos,
+mapa secundario y combate con sprites. [Spec 006 en borrador](specs/006-salas-combate-visual/spec.md);
+este alcance nuevo todavía no está implementado ni está incluido en el ~85 % anterior.
+
 Proyecto de Andrey, Juan y Kendall. Juego de consola con terreno ponderado,
 cazadores, niebla y viaje automático, resolubilidad y consultas históricas.
 Los datos proceden del servicio o de un paquete offline compatible.

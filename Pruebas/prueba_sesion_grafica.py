@@ -6,6 +6,8 @@ from types import SimpleNamespace
 from Pruebas.datos_graficos import partida_grafica
 from controlador.proyeccion_grafica import proyectar, IntencionGrafica, validar_intencion
 from controlador.controlador_grafico import ControladorGrafico
+from controlador.sesion import ConfiguracionSesion, preparar_sesion, CriptaNoResoluble
+from Pruebas.datos_graficos import paquete_grafico
 
 
 def test_otras_generaciones_no_actuan_sobre_partida(tmp_path):
@@ -86,3 +88,63 @@ def test_receptor_historia_no_contiene_graficos_ni_muta_partida(tmp_path):
         assert nueva.acciones == 0 and nueva.reloj == 0
     finally:
         ctl.cerrar(esperar=True)
+
+
+def test_inicio_verifica_forzado_y_configuracion_offline(tmp_path):
+    datos = paquete_grafico(tmp_path / 'datos', resoluble=False)
+    config = ConfiguracionSesion(cripta='lt', offline=str(datos),
+                                 cache_dir=str(tmp_path/'cache'), nombre='Ana', semilla=88)
+    with pytest.raises(CriptaNoResoluble) as error:
+        preparar_sesion(config)
+    assert 'no resoluble' in error.value.informe
+    from dataclasses import replace
+    sesion = preparar_sesion(replace(config, forzar=True))
+    try:
+        assert sesion.partida.nombre_jugador == 'Ana' and sesion.partida.motor.semilla == 88
+        assert sesion.fuente.solicitudes_realizadas == 0
+    finally:
+        sesion.cerrar()
+
+
+def test_sesion_guardada_y_error_de_candidata_no_afectan_actual(tmp_path):
+    datos = paquete_grafico(tmp_path/'datos')
+    config = ConfiguracionSesion(cripta='lt', offline=str(datos), cache_dir=str(tmp_path/'cache'),
+                                 archivo_guardado=str(tmp_path/'partida.bin'))
+    sesion = preparar_sesion(config)
+    try:
+        sesion.partida.guardar()
+        from dataclasses import replace
+        with pytest.raises(Exception):
+            preparar_sesion(replace(config, cripta=None, cargar=str(tmp_path/'falta.bin')))
+        cargada = preparar_sesion(replace(config, cripta=None, cargar=config.archivo_guardado))
+        try:
+            assert cargada.partida.motor.reloj == 0
+            assert sesion.partida.motor.reloj == 0
+        finally:
+            cargada.cerrar()
+    finally:
+        sesion.cerrar()
+
+
+def test_sesion_respeta_k_bitacora_rutas_y_nombre(tmp_path):
+    from adaptadores.bitacora_partida import leer_bitacora
+    from controlador.controlador import Controlador
+    from controlador.controlador_grafico import ReceptorValores
+    datos = paquete_grafico(tmp_path/'datos')
+    log = str(tmp_path/'partida.log')
+    config = ConfiguracionSesion(cripta='lt', offline=str(datos), cache_dir=str(tmp_path/'cache'),
+                                 checkpoint_cada=7, nombre=' Ana ', bitacora=log,
+                                 archivo_guardado=str(tmp_path/'elegido.bin'))
+    sesion = preparar_sesion(config)
+    try:
+        p = sesion.partida
+        assert p.nombre_jugador == 'Ana' and p.ruta_guardado == config.archivo_guardado
+        assert p.bitacora_activa and p.linea_tiempo.k == 7
+        ctl = Controlador(p, ReceptorValores(), registrar_accion=sesion.registrar_accion)
+        ctl.procesar('esperar')
+        assert sesion.cache.tope == 25 and sesion.fuente.solicitudes_realizadas == 0
+    finally:
+        sesion.cerrar(); sesion.cerrar()
+    assert not p.bitacora_activa
+    encabezado, ordenes = leer_bitacora(log)
+    assert encabezado.semilla == 2026 and ordenes == ['esperar']

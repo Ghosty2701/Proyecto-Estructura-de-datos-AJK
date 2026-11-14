@@ -19,47 +19,8 @@ from vista.vista_consola import VistaConsola, lineas_historia
 from modelo.verificacion import verificar
 
 
-def informe_verificacion(resultado):
-    """Presentación textual sin instanciar la vista; tablas sin duplicar ubicaciones."""
-    mapa = resultado.mapa
-    lineas = [f'Cripta {mapa.id_cripta} ({mapa.version}): ' +
-              ('resoluble.' if resultado.resoluble else 'no resoluble.')]
-    if resultado.resoluble:
-        lineas.append('Orden de llaves: ' + ', '.join(mapa.llaves[k].id for k in resultado.cierre.orden))
-    else:
-        for k in resultado.no_obtenibles:
-            llave = mapa.llaves[k]
-            lugares = ', '.join(str(mapa.salas[u.sala].sala_id) +
-                                (f' (enemigo {u.enemigo})' if u.enemigo else '')
-                                for u in llave.ubicaciones)
-            lineas.append(f'Llave no obtenible {llave.id}: {lugares or "sin ubicación"}.')
-        for p in resultado.frontera:
-            salida = next(s for s in mapa.puertas[p] if resultado.cierre.salas[s.origen])
-            llave = mapa.llaves[salida.llave].id if salida.llave >= 0 else 'sin llave'
-            lineas.append(f'Frontera puerta {p}: {mapa.salas[salida.origen].sala_id} '
-                          f'{salida.direccion} → {mapa.salas[salida.destino].sala_id}; {llave}.')
-        def nodo(v):
-            return ('sala ' + str(mapa.salas[v].sala_id) if v < len(mapa.salas)
-                    else mapa.llaves[v - len(mapa.salas)].id)
-        def procedencia_texto(causa):
-            if causa[0] == 'puerta':
-                return (f'puerta {causa[1]}, desde sala '
-                        f'{mapa.salas[causa[2]].sala_id} por {causa[3]}')
-            if causa[0] == 'ubicacion':
-                return ('ubicación en sala ' + str(mapa.salas[causa[2]].sala_id)
-                        + (f', enemigo {causa[3]}' if causa[3] else ''))
-            return 'sin ubicación físicamente accesible desde el inicio'
-        for i, certificado in enumerate(resultado.certificados):
-            lineas.append(f'Grupo circular {i}: ' + ', '.join(nodo(v) for v in certificado.nodos))
-            lineas.append('Ciclo concreto de reglas: ' + ' → '.join(nodo(v) for v in certificado.ciclo))
-            for a, b, procedencia in certificado.reglas:
-                lineas.append(f'Alternativa: {nodo(a)} requiere {nodo(b)}; '
-                              f'{procedencia_texto(procedencia)}.')
-        for nodo_id, causa in resultado.estructurales:
-            lineas.append(f'Imposibilidad estructural: {nodo(nodo_id)}; {procedencia_texto(causa)}.')
-    for sala_id, direccion, aviso in mapa.avisos:
-        lineas.append(f'Aviso sala {sala_id} {direccion}: {aviso}.')
-    return '\n'.join(lineas)
+from vista.informes import informe_verificacion
+from controlador.sesion import abrir_partida, guardar_resultado
 
 
 def _entero_positivo(texto):
@@ -102,8 +63,27 @@ def _resumen_red(fuente, cache):
           f"{cache.lecturas_disco} lecturas de disco.")
 
 
+def _iniciar_grafica(opciones):
+    try:
+        import pygame
+    except ModuleNotFoundError as error:
+        if error.name != 'pygame':
+            raise
+        print('Instala la interfaz opcional: python -m pip install -r '
+              'documentacion/requirements-pygame.txt', file=sys.stderr)
+        return 1
+    from vista.pygame_ui.aplicacion import ejecutar
+    try:
+        return ejecutar(opciones)
+    except pygame.error as error:
+        print(f'No se pudo abrir la pantalla de Pygame: {error}', file=sys.stderr)
+        return 1
+
+
 def main(argumentos=None):
     parser = argparse.ArgumentParser(description="Cripta: primera partida de consola con datos oficiales.")
+    parser.add_argument('--interfaz', choices=('consola', 'pygame'), default='consola',
+                        help='interfaz opcional; pygame sin cripta abre el menú')
     seleccion = parser.add_mutually_exclusive_group()
     seleccion.add_argument("--listar", action="store_true", help="mostrar las criptas oficiales disponibles")
     seleccion.add_argument("--ver-puntajes", action="store_true", help="consultar resultados locales ordenados")
@@ -135,11 +115,16 @@ def main(argumentos=None):
     parser.add_argument("--offline", nargs="?", const="datos_offline", metavar="CARPETA",
                         help="leer el paquete local sin HTTP; carpeta predeterminada: datos_offline")
     opciones = parser.parse_args(argumentos)
+    grafica = opciones.interfaz == 'pygame'
+    if grafica and (opciones.listar or opciones.verificar or opciones.replay or
+                    opciones.ver_puntajes or opciones.bench or opciones.bench_linea_tiempo or
+                    opciones.salida_bench is not None or opciones.hasta is not None or opciones.sin_interfaz):
+        parser.error('--interfaz pygame no se combina con modos sin vista')
     if opciones.bench_linea_tiempo and not opciones.bench:
         parser.error('--bench-linea-tiempo requiere --bench')
     if opciones.salida_bench is not None and not opciones.bench:
         parser.error('--salida-bench requiere --bench')
-    if not (opciones.listar or opciones.cripta or opciones.cargar or opciones.replay or opciones.bench or opciones.ver_puntajes or opciones.verificar):
+    if not (grafica or opciones.listar or opciones.cripta or opciones.cargar or opciones.replay or opciones.bench or opciones.ver_puntajes or opciones.verificar):
         parser.error("indica --listar, --cripta, --cargar, --replay, --bench o --ver-puntajes")
     if opciones.bench and (opciones.listar or opciones.cargar or opciones.replay or opciones.bitacora or opciones.ver_puntajes or opciones.verificar):
         parser.error("--bench solo se combina con --cripta para medir ciclos")
@@ -156,6 +141,8 @@ def main(argumentos=None):
         parser.error("--sin-interfaz requiere --replay")
     if opciones.nombre is not None and not opciones.nombre.strip():
         parser.error("el nombre del jugador no puede estar vacio")
+    if grafica:
+        return _iniciar_grafica(opciones)
     if opciones.ver_puntajes:
         try:
             registros = consultar_puntajes(opciones.puntajes, opciones.orden_puntajes)
@@ -243,15 +230,7 @@ def main(argumentos=None):
                 print(informe_hasta(partida, opciones.hasta))
             _resumen_red(fuente, cache)
             return 0
-        if opciones.cargar:
-            partida = cargador.reanudar(opciones.cargar, checkpoint_cada=opciones.checkpoint_cada)
-        else:
-            partida = cargador.crear(opciones.cripta, opciones.semilla, datos_verificados=mapa,
-                                     checkpoint_cada=opciones.checkpoint_cada)
-        if opciones.nombre is not None:
-            partida.nombre_jugador = opciones.nombre.strip()
-        if opciones.archivo_guardado is not None:
-            partida.ruta_guardado = opciones.archivo_guardado
+        partida = abrir_partida(cargador, opciones, mapa)
         vista = VistaConsola()
         vista.permitir_cargar = not bool(opciones.bitacora)
         vista.agregar_mensajes([
@@ -280,7 +259,7 @@ def main(argumentos=None):
         resultado = partida.resultado_final()
         if resultado is not None:
             try:
-                registrar_resultado(opciones.puntajes, resultado)
+                guardar_resultado(partida, opciones.puntajes, registrar_resultado)
             except (OSError, ErrorPuntajes) as error:
                 print(f"No se pudo guardar el resultado: {error}", file=sys.stderr)
                 return 1

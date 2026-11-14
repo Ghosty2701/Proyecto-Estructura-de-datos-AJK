@@ -105,6 +105,9 @@ class ControladorGrafico:
     def iniciar(self, configuracion):
         return self._ofrecer('iniciar', configuracion)
 
+    def catalogo(self, configuracion):
+        return self._ofrecer('catalogo', configuracion)
+
     def enviar(self, intencion):
         if not isinstance(intencion, IntencionGrafica):
             raise TypeError('Se requiere una intención gráfica de valores.')
@@ -143,13 +146,19 @@ class ControladorGrafico:
                 try:
                     if operacion == 'iniciar':
                         self._iniciar(argumento)
+                    elif operacion == 'catalogo':
+                        from controlador.sesion import listar_criptas
+                        datos = listar_criptas(argumento, self.cancelar)
+                        self._publicar(RespuestaGrafica(ResultadoOperacion('consulta', True),
+                                       self.respuesta.presentacion, fase='CATALOGO', datos=datos))
                     else:
                         self._ejecutar(argumento)
                 except Exception as error:
                     anterior = self.respuesta
+                    from controlador.sesion import CriptaNoResoluble
                     self._publicar(RespuestaGrafica(
                         ResultadoOperacion('rechazo', False), anterior.presentacion,
-                        str(error), anterior.fase,
+                        str(error), 'VERIFICACION' if isinstance(error, CriptaNoResoluble) else anterior.fase,
                     ))
                 finally:
                     with self._condicion:
@@ -185,7 +194,8 @@ class ControladorGrafico:
         # Construir y validar la presentación antes de reemplazar la sesión activa.
         generacion = self._generacion + 1
         try:
-            foto = proyectar(nueva.partida, generacion, 0)
+            foto = proyectar(nueva.partida, generacion, 0,
+                             mensajes=getattr(nueva, 'mensajes', ()))
         except Exception:
             nueva.cerrar()
             raise

@@ -1769,3 +1769,16 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     buzón de capacidad uno, receptor sin Pygame y cierre ordenado.
     Regresión completa: 769 pruebas pasan en 32,44 s; T001–T010 marcadas solo
     después de verificar. Sin ventana jugable todavía; continúa US1.
+
+62. Continua — implementar arranque y menú T011–T016
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Continuación de `$speckit-implement`. Pruebas previas detectaron la ausencia
+    de la preparación de sesiones y del selector. Implementados `--interfaz`,
+    dependencia diferida, preparación compartida con consola, candidato separado,
+    campos y botones de inicio, listado, informe de verificación y forzado
+    explícito. Carga fallida conserva sesión activa; K, nombre, rutas y bitácora
+    verificados. Regresión completa: 787 pruebas pasan en 46,42 s. Los casos de
+    ventana usan vídeo dummy y no acreditan revisión visual de escritorio.
+    T011–T016 completas; estimación Pygame ~45 %; sigue mapa y memoria US2.

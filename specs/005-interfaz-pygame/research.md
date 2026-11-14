@@ -1,8 +1,8 @@
 # Investigación técnica acotada — Interfaz con Pygame
 
 **Fecha**: 2026-11-13. **Rama**: `005-interfaz-pygame`.
-**Estado**: decisiones estándar revisadas; las elecciones D-IG-05/06/07 esperan
-respuesta explícita del usuario. Las recomendaciones no se registran como aprobadas.
+**Estado**: investigación completada. El usuario eligió explícitamente las
+alternativas recomendadas de D-IG-05/06/07 el 2026-11-13; se registran abajo.
 La investigación combina lectura de código/documentación y una sonda temporal
 de serialización existente; no implementa la interfaz.
 
@@ -89,17 +89,18 @@ conocido; el tamaño del mundo oculto no se filtra mediante la distribución.
 
 ## D-IG-05 — Datos por sala y retroceso visual
 
-**Estado**: PENDIENTE DE ELECCIÓN DEL USUARIO.
+**Decisión del usuario, 2026-11-13**: índice propio de salas, vectores por sala
+y cambios por turno, limitados a las cinco acciones reversibles.
 
 | Alternativa presentada | Ventaja | Costo o límite |
 |---|---|---|
 | Índice propio de salas + vectores por posición + cambios de cinco acciones | Consulta directa; reutilización de utilidades y retirada acotada de cambios | Reserva proporcional a salas y requiere reconstrucción/validación al cargar |
 | Listas con búsqueda lineal + cambios de cinco acciones | Menos lógica y sin índice adicional | Consultas/búsquedas lineales al crecer el mapa |
 
-**Recomendación, no decisión**: primera alternativa. Los IDs externos no son
+**Justificación de la opción elegida**: primera alternativa. Los IDs externos no son
 posiciones contiguas; `IndiceSalas`, en `modelo/conocimiento.py`, ya ofrece la
-traducción a posiciones densas. La selección deberá cubrir también los vectores
-auxiliares de controles, disposición y sprites; no autoriza índices de `dict`/`set`.
+traducción a posiciones densas. Se utilizan vectores también para los auxiliares
+de controles, disposición y sprites; no se añaden índices de `dict`/`set`.
 
 **Contrato independiente de la elección**: conservar valores de observaciones,
 no referencias a actores; registrar solo la sala actual al iniciar y tras
@@ -113,14 +114,15 @@ remotos del presente. No se necesita otro historial gráfico de 5 000 acciones.
 
 ## D-IG-06 — Persistencia compatible de recuerdos
 
-**Estado**: PENDIENTE DE ELECCIÓN DEL USUARIO.
+**Decisión del usuario, 2026-11-13**: recuerdos opcionales dentro del mismo
+archivo `.bin`, manteniendo el formato v6 y sin archivo compañero.
 
 | Alternativa presentada | Ventaja | Costo o límite |
 |---|---|---|
 | Carga visual opcional de valores básicos en `datos_extra` del mismo v6 | Un archivo y sin versión nueva del modelo | Validar el contenido opcional; un re-guardado desde consola antigua pierde los recuerdos |
 | Archivo `.gui.json` compañero | Separación total del binario | Vincularlo al guardado y gestionar archivos faltantes, copiados u obsoletos |
 
-**Recomendación, no decisión**: primera alternativa. `estado_binario.py` ya
+**Justificación de la opción elegida**: primera alternativa. `estado_binario.py` ya
 serializa datos adicionales básicos. `CargadorPartida.leer_sesion()` exige sus
 campos conocidos pero no prohíbe una clave extra. `guardar_sesion()` reconstruye
 los datos extra: la consola de la base ignoraría la clave y la eliminaría al
@@ -136,16 +138,21 @@ no garantiza recuperar un binario físicamente corrupto o truncado.
 
 ## D-IG-07 — Disposición de salas sin coordenadas
 
-**Estado**: PENDIENTE DE ELECCIÓN DEL USUARIO.
+**Decisión del usuario, 2026-11-13**: croquis por norte/sur/este/oeste que resuelve
+y señala conflictos de posición.
 
 | Alternativa presentada | Ventaja | Costo o límite |
 |---|---|---|
 | Croquis por N/S/E/O con conflictos señalados | Orientación más cercana al recorrido | Resolver ocupaciones y enlaces incompatibles; geometría esquemática |
 | Cuadrícula por ID y conexiones explícitas | Más simple y estable | La vecindad visual no expresa necesariamente conectividad |
 
-**Recomendación, no decisión**: croquis direccional. Ni `SalaRastro` ni el
+**Justificación de la opción elegida**: croquis direccional. Ni `SalaRastro` ni el
 esqueleto normalizado contienen coordenadas. Cualquiera de las dos opciones
-solo usará salas/conexiones ya conocidas, sin revelar tamaños o zonas ocultas.
+solo usaría salas/conexiones ya conocidas. La opción elegida conserva esa
+restricción: no revela tamaños ni zonas ocultas. La ocupación se comprueba en
+vectores; una casilla en conflicto se coloca en un carril libre a la derecha
+del croquis y el enlace se marca como esquemático. No se incorpora otro índice
+espacial ni una biblioteca de grafos para esta primera versión.
 
 ## D-IG-08 — Controles y presentación inicial
 
@@ -175,9 +182,16 @@ acción por separado. La sincronización de cuadros limita dibujo, no programa
 turnos: [reloj de presentación](https://www.pygame.org/docs/ref/time.html#pygame.time.Clock.tick).
 EX-01 no se reabre ni se declara resuelta por esta ampliación.
 
+La carga específica de la guía con cinco pergaminos se comprobó en el motor
+existente: cinco recogidas, cinco esperas y cinco retrocesos aceptados, uno de
+ellos mediante `usar`. Se ejecutó en una carpeta temporal; no prueba memoria
+gráfica ni interfaz. La revisión del diseño incorporó esa vía de retroceso,
+el receptor de valores del trabajador y la revalidación de una intención
+interruptora que nació durante el paso de viaje anterior.
+
 ## Fuentes y límites
 
 - Código de la rama desde `4e20990`, leído el 2026-11-13.
 - Documentación oficial de eventos, pantalla y reloj; distribución oficial de PyPI citadas arriba.
 - Revisión de código y fuentes en paralelo según la fase de investigación de `$speckit-plan`; sin modificaciones de los revisores.
-- No se han ejecutado pruebas de interfaz, instalado dependencias ni medido rendimiento gráfico. Las elecciones pendientes impiden declarar terminada la planificación.
+- No se han ejecutado pruebas de interfaz, instalado dependencias ni medido rendimiento gráfico. Las tres elecciones están resueltas; la fase de diseño puede concretar modelo de datos, contratos y guía de validación.

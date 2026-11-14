@@ -1928,3 +1928,18 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     No se acredita revisión nativa completa ni una medición nueva de latencia.
     T020/T023/T024 siguen pendientes; avance exclusivo visual ~90 % estimado.
     Cambios destinados a commit y push en `005-interfaz-pygame`, sin fusionar main.
+
+72. Aclarar especies, inicio/carga, inventario y espera
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Usuario: «la rata gigante tiene el sprite de un mago», explicar botones de
+    ordenar, confirmar cripta seleccionada, mejorar carga de partida, indicar
+    cuándo se está cargando y añadir contornos/luces a controles y ventanas.
+    Se revisó primero spec/plan/contrato/tareas. El arte usaba comportamiento
+    como especie: se separará visualmente mediante el nombre ya observable.
+    Se reutilizan vectores de recursos/control y selector de panel aprobados;
+    no se introduce estructura nueva. Aplicadas speckit-implement e imagegen.
+    Checklist de requisitos de solo lectura 16/16; sin hooks registrados.
+    Cobertura prevista de 21 FR, 23 AC y 10 SC; T033–T041, sin cambiar reglas,
+    memoria, guardado v6 o main. Avance visual previo ~90 % estimado.

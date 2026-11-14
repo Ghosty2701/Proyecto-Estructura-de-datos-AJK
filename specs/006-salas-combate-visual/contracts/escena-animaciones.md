@@ -63,3 +63,14 @@ son paneles; Escape vuelve a la habitación. Persistencia e historia conservan
 sus intenciones y validaciones. El mapa y las páginas siguen alcanzables.
 Las pruebas anteriores que exigían todos los botones simultáneamente se adaptan
 a recorrer estos paneles; no se eliminan sus comprobaciones de juego.
+
+## Claridad y especies
+
+El sprite recibe nombre observable, además del comportamiento; los casos sin
+arte usan símbolo neutral. No se añaden campos persistidos ni consultas remotas.
+Inicio ofrece panel de nueva partida y panel de carga distintos. Selección de
+cripta se confirma con fila resaltada y resumen persistente. Buscar archivo es
+opcional, cancelar conserva ruta y cargar requiere confirmación explícita.
+Ordenar explica ascendente (nombre A–Z, peso menor primero, valor menor primero).
+El resultado sigue llegando del trabajador. Indicador de actividad animado sin
+porcentaje se superpone durante toda operación pendiente, atendiendo cierre.

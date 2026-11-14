@@ -80,3 +80,15 @@ ninguna se completa por el hecho de generar estos documentos.
 - [X] T030 Ejecutar regresión con/sin Pygame y matriz v6; registrar resultados en `documentacion/evidencia/retro_regresion.txt`. Dep.: T029. FR-EV-008, FR-EV-009, FR-EV-011, FR-EV-012, FR-EV-015; SC-EV-003, SC-EV-004, SC-EV-006, SC-EV-007.
 - [X] T031 Revisar renders a 1024 × 768 y 1280 × 800 con sala vacía/combate, menús y ocho puertas; registrar capturas y límites de revisión nativa en `documentacion/evidencia/retro_revision_visual.md`. Dep.: T029. FR-EV-013, FR-EV-014, FR-EV-016; SC-EV-005, SC-EV-008.
 - [X] T032 Actualizar uso, avance, arte y evidencia en `README.md`, `specs/006-salas-combate-visual/README.md` y `documentacion/PROMPTS_LLM.md`; commits y push en rama adicional. Dep.: T030, T031. FR-EV-013, FR-EV-015, FR-EV-016; SC-EV-007, SC-EV-008.
+
+## Fase 9 — Especies, inicio comprensible y respuesta visual
+
+- [X] T033 Confirmar revisión en `spec.md`, `plan.md`, contrato y bitácora antes de código; auditar cobertura y estructuras aprobadas. Dep.: T032. FR-EV-017, FR-EV-018, FR-EV-019, FR-EV-020, FR-EV-021; AC-EV-018, AC-EV-019, AC-EV-020, AC-EV-021, AC-EV-022, AC-EV-023; SC-EV-009, SC-EV-010.
+- [ ] T034 Generar e inspeccionar atlas de especies en `vista/pygame_ui/assets/`, conservar alfa y prompts; neutro sin especie inventada. Dep.: T033. FR-EV-017; AC-EV-018; SC-EV-009.
+- [ ] T035 Escribir pruebas de especies, selección, carga/cancelación/error y espera con trabajador demorado en `Pruebas/prueba_claridad_pygame.py`; observar fallos previos. Dep.: T033. FR-EV-017, FR-EV-018, FR-EV-019, FR-EV-020; AC-EV-018, AC-EV-019, AC-EV-020, AC-EV-021, AC-EV-022; SC-EV-009, SC-EV-010.
+- [ ] T036 Resolver sprites por nombre en `recursos.py` y `sala.py`, reutilizando vector de recursos y sustituto neutral. Dep.: T034, T035. FR-EV-017; AC-EV-018; SC-EV-009.
+- [ ] T037 Separar paneles de inicio/nueva/carga y selector de archivo en `aplicacion.py`; resaltar cripta, ruta y errores recuperables. Dep.: T035. FR-EV-019; AC-EV-020, AC-EV-021; SC-EV-010.
+- [ ] T038 Explicar ordenamiento y decorar botones/paneles en `aplicacion.py` y `componentes.py`, con selección y estados legibles. Dep.: T037. FR-EV-018, FR-EV-021; AC-EV-019, AC-EV-023; SC-EV-010.
+- [ ] T039 Añadir indicador animado y descripción/tiempo en `aplicacion.py`, sin bloquear ni duplicar comandos; verificar inicio y juego lentos. Dep.: T037. FR-EV-020; AC-EV-022; SC-EV-010.
+- [ ] T040 Ejecutar regresión con/sin gráficos y renders reproducibles de dos tamaños en `Pruebas/renderizar_retro.py`; evidencia en `documentacion/evidencia/claridad_revision.md`. Dep.: T036, T038, T039. FR-EV-008, FR-EV-012, FR-EV-014, FR-EV-017, FR-EV-018, FR-EV-019, FR-EV-020, FR-EV-021; AC-EV-018, AC-EV-019, AC-EV-020, AC-EV-021, AC-EV-022, AC-EV-023; SC-EV-006, SC-EV-009, SC-EV-010.
+- [ ] T041 Actualizar README, quickstart, decisiones, bitácora y avance exclusivo; commit y push en `005-interfaz-pygame`. Dep.: T040. FR-EV-017, FR-EV-018, FR-EV-019, FR-EV-020, FR-EV-021; SC-EV-009, SC-EV-010.

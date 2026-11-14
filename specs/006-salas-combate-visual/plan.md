@@ -160,3 +160,21 @@ pared y el paso hacia el suelo, sin cambiar su región de interacción lógica.
 Pruebas previas al cambio: límites de botones, contexto, alcance de todos los
 paneles, inventario ordenado, cerrar con Escape, selección caducada y ocho
 combinaciones de puerta. Regresión de reglas, v6 y modos sin Pygame obligatoria.
+
+## Revisión de claridad — 2026-11-14
+
+Se amplía el mismo catálogo vectorial de recursos aprobado con especies de
+criaturas; resolución por nombre observable normalizado, antes del comportamiento.
+Comportamiento sigue siendo una regla del motor, no una especie. El sustituto
+desconocido es neutral. No hay un índice ni estructura nueva.
+Los estados de inicio/nueva/carga usan el selector de panel existente; el archivo
+se guarda en el Campo ya disponible. Selector nativo estándar opcional mediante
+tkinter, sin dependencia pip; si no está disponible se permite editar la ruta.
+Cancelar no cambia la ruta; cargar confirma el comando vigente del trabajador.
+La carga en pausa conserva su semántica de reanudar el guardado configurado.
+
+El indicador usa tiempo real solo visual, operación pendiente y tiempo de inicio
+escalares. Se dibuja cada cuadro sin bloquear ni inventar porcentaje; no hay otro
+trabajador o cola. Se prueban inicio/catálogo/carga/orden deliberadamente lentos,
+rechazo de duplicados y cierre seguro. Contornos y brillo se dibujan en Pygame,
+sin generar imágenes de botones. Misma colección de controles/regiones aprobada.

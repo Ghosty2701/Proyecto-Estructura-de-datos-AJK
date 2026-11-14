@@ -27,6 +27,31 @@ El usuario sustituye la dirección artística anterior por estética de RPG de
 Solicita menos botones, nombres intuitivos y puertas integradas en el entorno.
 Se mantienen diseños originales, habitación cenital, minimapa y combate por turnos.
 
+### Revisión de claridad y correspondencia — 2026-11-14
+
+El usuario detectó una rata gigante representada como mago y pidió que los
+sprites concuerden con las criaturas. También solicitó explicar ordenamientos,
+aclarar selección de cripta y carga de archivos, señalar operaciones en curso
+y decorar ventanas/botones con contornos, relieve y luces discretas.
+
+Escenarios adicionales:
+
+- **AC-EV-018**: Rata gigante, espectro y sabueso usan representaciones acordes
+  con sus nombres, incluso si comparten comportamiento. Una criatura desconocida
+  conserva nombre y símbolo neutral, sin asignarle arbitrariamente un mago.
+- **AC-EV-019**: Inventario explica que los controles ordenan la lista y muestra
+  criterio y sentido, conservando el costo y resultado vigentes del ordenamiento.
+- **AC-EV-020**: Elegir una cripta resalta la fila y muestra nombre/ID y un resumen
+  antes de empezar; no es necesario inferir la selección de un campo editado.
+- **AC-EV-021**: Cargar tiene una pantalla propia con archivo seleccionado,
+  explicación, opción de buscar un .bin y confirmación para cargar. Cancelar la
+  búsqueda conserva el archivo anterior; errores permiten corregir o volver.
+- **AC-EV-022**: Mientras hay una operación pendiente aparece un indicador animado,
+  descripción y tiempo transcurrido, sin porcentaje inventado; la ventana atiende
+  cierre y no acepta comandos duplicados. Un fallo se distingue de una espera.
+- **AC-EV-023**: Botones/ventanas muestran borde, relieve y brillo de foco o cursor;
+  texto, estados deshabilitados y selección son legibles en ambos tamaños mínimos.
+
 ## Escenarios de usuario y aceptación
 
 ### Historia 1 — Explorar una habitación con el personaje (Prioridad: P1)
@@ -192,6 +217,17 @@ ilustración anterior por petición explícita del usuario.
 - **FR-EV-016**: Integrar puertas abiertas/cerradas en cada orientación de pared,
   con estilo y proporciones coherentes; no simular orientaciones girando una
   puerta frontal hasta dejarla invertida. AC-EV-017.
+- **FR-EV-017**: Elegir arte de enemigos por identidad descriptiva observable,
+  independientemente de su comportamiento; conservar sustituto neutral y nombre
+  para especies sin recurso específico. AC-EV-018.
+- **FR-EV-018**: Explicar los controles de ordenamiento del inventario y el
+  criterio/sentido aplicado, conservando reglas y registro. AC-EV-019.
+- **FR-EV-019**: Separar inicio de partida y carga, con selección de cripta
+  confirmada visiblemente y elección explícita de archivo .bin. AC-EV-020/021.
+- **FR-EV-020**: Mostrar actividad animada y operación pendiente tanto en inicio
+  como en juego, atender cierre y comunicar errores sin simular avance. AC-EV-022.
+- **FR-EV-021**: Decorar controles y paneles con contornos y luces discretas,
+  distinguiendo selección, foco, cursor y deshabilitación. AC-EV-023.
 
 ### Entidades principales
 
@@ -228,6 +264,11 @@ ilustración anterior por petición explícita del usuario.
 - **SC-EV-008**: La revisión del render muestra puertas N/S/E/O abiertas y
   cerradas integradas en sus paredes, sin inversiones, y una estética pixelada
   coherente en sala, actores, objetos y paneles.
+- **SC-EV-009**: Los nombres de criaturas conocidas corresponden a sus sprites
+  sin depender del comportamiento; pruebas incluyen una rata errante y guardiana.
+- **SC-EV-010**: A 1024 × 768 y 1280 × 800 se reconoce la cripta elegida, el archivo
+  para cargar, el propósito de ordenar y una operación deliberadamente demorada,
+  sin turnos creados por la presentación ni comandos duplicados.
 
 ## Supuestos, alcance y dependencias
 

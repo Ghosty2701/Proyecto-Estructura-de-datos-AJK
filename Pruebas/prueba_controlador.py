@@ -5,6 +5,43 @@ from modelo.inventario import Inventario
 from vista.vista_consola import VistaConsola
 
 
+def test_resultado_grafico_distingue_usar_pergamino_y_carga(tmp_path):
+    # FR-IG-011/014: una única ruta para consola y ventana.
+    from Pruebas.datos_graficos import partida_grafica
+    p, _ = partida_grafica(tmp_path, cinco=True)
+    p.ruta_guardado = str(tmp_path / 'partida.bin')
+    ordenes = []
+    ctl = Controlador(p, VistaConsola(salida=lambda *args: None), ordenes.append)
+    esperados = [('ayuda', 'consulta', True), ('recoger 1', 'accion', True),
+                 ('esperar', 'accion', True), ('usar', 'retroceso', True),
+                 ('atacar 99', 'rechazo', False), ('guardar', 'guardado', True)]
+    for texto, clase, aceptada in esperados:
+        assert ctl.procesar(texto) is True
+        assert ctl.ultimo_resultado.clase == clase
+        assert ctl.ultimo_resultado.aceptada is aceptada
+    assert ordenes == ['recoger 1', 'esperar', 'usar']
+    ctl.procesar('esperar')
+    assert ctl.procesar('cargar') is True
+    assert ctl.ultimo_resultado.clase == 'carga'
+    assert ctl.ultimo_resultado.ordenes == ()
+
+
+def test_resultado_grafico_navegacion_y_salida_sin_turnos(tmp_path):
+    from Pruebas.datos_graficos import partida_grafica
+    p, _ = partida_grafica(tmp_path)
+    ctl = Controlador(p, VistaConsola(salida=lambda *args: None))
+    ctl.procesar('sig')
+    assert not ctl.ultimo_resultado.aceptada
+    for _ in range(2): ctl.procesar('recoger 1')
+    reloj = p.motor.reloj
+    ctl.procesar('sig')
+    assert ctl.ultimo_resultado.clase == 'navegacion'
+    assert ctl.ultimo_resultado.ordenes == ('sig',)
+    assert p.motor.reloj == reloj
+    assert ctl.procesar('salir') is False
+    assert ctl.ultimo_resultado.clase == 'salida'
+
+
 class Obj:
     def __init__(self, nombre, peso, valor):
         self.nombre, self.peso, self.valor = nombre, peso, valor

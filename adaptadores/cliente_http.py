@@ -13,7 +13,7 @@ class PresupuestoAgotado(Exception):
     pass
 
 class ClienteHTTP:
-    def __init__(self, timeout=10, max_reintentos_429=3, *, reservar_imprevistos=False):
+    def __init__(self, timeout=10, max_reintentos_429=3, *, reservar_imprevistos=False, cancelar=None):
         # El id se genera una sola vez por ejecucion y se reutiliza en todas las solicitudes.
         self.headers = {"X-Cripta-Client-Id": str(uuid.uuid4())}
         self.timeout = timeout
@@ -24,6 +24,7 @@ class ClienteHTTP:
         self.reservar_imprevistos = reservar_imprevistos
         # Se conoce hasta leer los datos generales de la cripta.
         self.presupuesto_solicitudes = None
+        self.cancelar = cancelar
 
     def listar_criptas(self):
         return self._get("listar criptas", "/criptas")
@@ -78,6 +79,8 @@ class ClienteHTTP:
         reintentos = 0
 
         while True:
+            if self.cancelar is not None and self.cancelar.is_set():
+                raise ErrorHTTP(f'{operacion}: operación cancelada')
             self._verificar_presupuesto(operacion, es_reintento=reintentos > 0)
             # Cada intento cuenta, tambien los reintentos por 429.
             self.solicitudes_realizadas += 1
@@ -105,7 +108,10 @@ class ClienteHTTP:
                 except (ValueError, KeyError, TypeError, OverflowError) as error:
                     raise ErrorHTTP(f"{operacion}: HTTP 429 sin 'reintentar_en' valido") from error
                 try:
-                    time.sleep(espera)
+                    if self.cancelar is None:
+                        time.sleep(espera)
+                    elif self.cancelar.wait(espera):
+                        raise ErrorHTTP(f'{operacion}: operación cancelada durante espera HTTP 429')
                 except (ValueError, OverflowError) as error:
                     raise ErrorHTTP(f"{operacion}: HTTP 429 con 'reintentar_en' fuera de rango") from error
                 reintentos += 1

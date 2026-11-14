@@ -881,3 +881,115 @@ El 18 de octubre de 2026 se verificaron las cuatro criptas oficiales, semilla 20
 | 04 | 36 / 29 | 52 | 1.5630 |
 
 Son mediciones de las versiones y recorridos registrados en la evidencia. No prueban todas las secuencias posibles ni garantizan el mismo tiempo en otro equipo. Los prompts importados sin fecha o modelo se identifican como no registrados; las fechas aproximadas de Kendall se conservan como declaradas, pendientes de confirmación.
+
+## Ampliación personal Pygame — estado del 2026-11-14
+
+Rama `005-interfaz-pygame`, separada de la evaluación de Parte II. Se conservan
+las elecciones explícitas D-IG-05/06/07 de
+[investigación](../specs/005-interfaz-pygame/research.md): índice propio, vectores
+por sala y cinco deltas; payload primitivo opcional dentro del v6; croquis por
+direcciones con carril para conflictos. No se añaden índices de biblioteca ni
+campos gráficos al esquema binario del motor.
+
+Consola y GUI comparten cargador, comandos, registro y paso ordinario de viaje.
+El trabajador es dueño de la partida; la ventana recibe valores congelados.
+La memoria observa solo la sala presencial y los deltas se anclan a posiciones
+de órdenes, evitando aceptar recuerdos de una rama temporal diferente.
+
+[Compatibilidad v6](evidencia/pygame_compatibilidad_v6.txt) verificada con el lector
+real de `main@6107b98` extraído temporalmente y ejecutado en otro proceso.
+[Regresión](evidencia/pygame_regresion.txt): 831 pruebas con Pygame y 813 sin él,
+con un módulo gráfico omitido en este último entorno. No son mediciones de
+rendimiento por acción. EX-01 continúa vigente.
+
+**Cierre de 005 (2026-11-14):** [mediciones separadas](evidencia/pygame_mediciones.md)
+con Python 3.13.17 y vídeo dummy: escena y HUD con mediana de 3,5–4,0 ms, mapa de
+300 salas con 15,9 ms y acción completa «esperar» con 0,04 ms. 300 redibujados en
+61,8 s no cambiaron reloj, azar ni órdenes. La [revisión visual](evidencia/pygame_revision_visual.md)
+consolida la revisión real de escritorio y declara qué solo cubren pruebas
+automatizadas. Regresión: 866 pruebas con Pygame y 819 sin él. No hay cambios de
+diseño frente al plan ni estructuras nuevas. Integrada en `main` el 2026-11-14 con
+aprobación explícita del usuario, como interfaz opcional; no altera la evaluación de Parte II.
+
+## Presentación ilustrada 006 — 2026-11-14
+
+El usuario eligió sala desde arriba con minimapa, combate en la misma habitación,
+ilustración 2D de fantasía oscura y vectores por sala con una animación activa.
+Alternativa de índice espacial propio descartada por mayor mantenimiento para
+una sola habitación. Recorrido de regiones O(P), con páginas de 12 enemigos y
+8 objetos; efectos O(F) de la operación activa, sin cola de turnos ni índice de
+biblioteca. Catálogo de recursos vectorial y escalado solo al cambiar su tamaño.
+
+Se generaron recursos originales locales mediante imagegen incorporado:
+`vista/pygame_ui/assets/sala.png`, `actores.png` y `elementos.png`; prompts y
+procedencia en el mismo directorio. El concepto visual se conserva separado.
+El fondo final no contiene puertas o entidades incrustadas: el juego coloca
+solo las que permite la presentación actual.
+
+Los efectos proceden de hechos observables emitidos por el camino compartido
+de Partida mediante callback opcional; este no se almacena en raíces de v6.
+No se infiere muerte de una desaparición ni se consulta vida remota posterior.
+El reloj real controla solo presentación; saltar, reducir o desactivar efectos
+no vuelve a ejecutar acciones. Carga y retroceso invalidan animaciones anteriores.
+
+[Regresión](evidencia/escena_regresion.txt): 845 pruebas con Pygame, 819 sin él
+con dos módulos omitidos. [Medición separada](evidencia/escena_mediciones.md):
+300 redibujados en 60,582 s reales sin cambios de reloj/azar/log; mediana del
+dibujo a 1280 × 800 de 1,125 ms y de esperar sin dibujo/red de 0,027 ms en la
+carga sintética descrita. Vídeo dummy y cachés calientes: no son latencia del
+monitor ni presupuesto oficial K10. EX-01 sigue vigente.
+
+La captura [escena_jugable.png](evidencia/escena_jugable.png) procede del render
+de código, no de un mockup. [Revisión nativa](evidencia/escena_revision_visual.md)
+solo parcial: se observó la ventana inicial, pero la interacción quedó sin
+validar por actividad de usuario y una captura posterior ajena al objetivo.
+T020, T023 y T024 siguen abiertas; no se afirma aceptación completa.
+
+## Revisión de presentación de 16 bits — 2026-11-14
+
+Tras probar el incremento, el usuario pidió reducir botones, usar nombres
+intuitivos e integrar las puertas, con referencia a RPG clásicos de 16 bits.
+Esta elección sustituye el estilo ilustrado anterior. Se generaron cuatro
+recursos originales con imagegen incorporado; archivos y prompts exactos en
+[arte](../vista/pygame_ui/assets/README.md). No se copian recursos de Final Fantasy.
+
+La vista normal presenta cuatro comandos y una acción contextual cuando hay
+selección; máximo seis con control temporal. Inventario, mapa y menú agrupan
+el resto. Se reutilizan los vectores por sala, regiones y botones, una animación
+activa y el selector de panel ya aprobados; no hay una estructura nueva.
+Las puertas se dibujan en ocho variantes N/S/E/O abiertas/cerradas, sin girar
+la puerta frontal. Recursos normalizados y escalado de vecinos próximos.
+
+[Regresión](evidencia/retro_regresion.txt): 849 pruebas con Pygame y 819 sin él,
+tres módulos gráficos omitidos; compatibilidad v6 incluida. Los paneles y
+selecciones no consumen turno. [Render](evidencia/retro_jugable.png) y
+[revisión](evidencia/retro_revision_visual.md) incluyen dos resoluciones y
+ocho puertas; no acreditan interacción nativa completa. Avance visual exclusivo
+~90 % estimado, con T020 y cierre dependiente pendientes. EX-01 sigue vigente.
+
+## Claridad de especies, inicio y actividad — 2026-11-14
+
+El comportamiento (`rastreador`, `cazador`, etc.) describe reglas, no la especie.
+El sprite se resuelve ahora por nombre observable normalizado, con atlas local
+de ocho especies y un marcador neutral para nombres no reconocidos. Esto corrige
+la rata gigante representada como mago sin cambiar fichas ni conducta del motor.
+El mismo catálogo vectorial aprobado se amplía; no hay índice nuevo.
+
+Se reutiliza el selector de panel para separar partida nueva y carga. Cripta
+elegida con fila resaltada y resumen; cargar muestra ruta, selector nativo
+estándar opcional y confirmación. Cancelar no modifica la ruta. La carga no
+valida campos de una partida nueva ni sobrescribe nombre/semilla restaurados.
+Pausa distingue reanudar el guardado actual de elegir otro archivo.
+
+Los registros congelados existentes exponen criterio de orden y peso/valor,
+sin campos nuevos en raíces persistidas. La vista explica ascendente y que
+ordenar no consume turno. Dos escalares visuales describen la operación y su
+inicio; barra indeterminada, descripción y segundos, sin bloquear el bucle ni
+inventar porcentaje. Se conserva el trabajador exclusivo, rechazo de duplicados
+y cierre seguro. Biseles, sombras y luces se dibujan con Pygame.
+
+[Evidencia](evidencia/claridad_revision.md): 858 pruebas con gráficos y 819 sin
+ellos (cuatro módulos omitidos), renders a dos tamaños y demoras controladas.
+No acredita el selector nativo real ni el recorrido completo de escritorio;
+T020 y cierre dependiente siguen pendientes. Avance visual ~90 % estimado,
+independiente de Parte II. EX-01 y main sin cambios.

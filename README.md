@@ -1,5 +1,61 @@
 # Cripta — Parte II
 
+**Interfaz opcional Pygame (integrada en `main` el 2026-11-14):** RPG con estética
+de 16 bits, habitación pixelada, personaje, enemigos, minimapa y combate animado
+por turnos. [Seguimiento de la escena visual](specs/006-salas-combate-visual/README.md).
+La consola sigue siendo la interfaz predeterminada y la entrega de Parte II no
+cambia; el estado que sigue abajo no representa el avance de esta ampliación.
+
+**Pygame: alcance actual completado (100 % estimado)**, con funcionalidades y arte
+integrados; **866 pruebas aprobadas** con Pygame y **819 sin él** (cinco módulos
+gráficos omitidos). Mediciones separadas, revisión interactiva de escritorio y
+auditoría completadas; [evidencia y límites](documentacion/evidencia/exploracion_revision.md).
+Es una ampliación personal,
+independiente de la nota del proyecto. La base anterior de mapa se registra en
+[005](specs/005-interfaz-pygame/README.md).
+
+Para probar la versión local (pygame 2.6.1 no publica wheel para Python 3.14;
+usar Python 3.13 en el entorno virtual):
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r documentacion/requirements-pygame.txt
+```
+
+```powershell
+.\.venv\Scripts\python.exe main.py --interfaz pygame
+```
+
+Clic en sprites o puertas para seleccionar: aparece «Atacar», «Recoger»,
+«Entrar» o «Abrir puerta». La vista normal tiene cuatro o cinco comandos;
+inventario, mapa y menú agrupan las demás funciones. WASD cambia de sala,
+espacio espera o salta el efecto activo; Esc abre/cierra el menú. Guardar,
+cargar e historia están en Menú; animaciones en Menú → Opciones y ayuda.
+
+Inicio separa Nueva partida y Cargar partida. Buscar criptas muestra una lista:
+la elegida queda resaltada y se confirma por nombre/ID antes de Empezar partida.
+Cargar permite buscar un `.bin` y confirmar; al cargar se recuperan nombre,
+semilla y progreso. En pausa, Reanudar guardado actual abre el guardado de esa
+sesión; Cargar otro archivo abre el selector. Una barra animada, descripción y
+segundos transcurridos indican las operaciones pendientes. Inventario explica
+el ordenamiento y muestra peso/valor. Los sprites de enemigos se eligen por
+especie observable, independientemente del comportamiento.
+
+El minimapa es más alto; clic para ampliarlo. La leyenda tenue WASD/H permite
+consultar controles sin botones extra. El juego usa un indicador pequeño de
+actividad en una esquina; el inicio conserva el aviso detallado. Las transiciones
+de movimiento duran hasta 160/80 ms en modo normal/reducido. No se eliminan las
+esperas inevitables de la fuente de datos. Integrada en `main` con aprobación
+explícita del usuario; sin Pygame instalado, el juego y las pruebas base funcionan igual.
+
+[Revisión nativa](documentacion/evidencia/exploracion_escritorio.md),
+[inicio](documentacion/evidencia/inicio_claro.png),
+[carga](documentacion/evidencia/carga_clara.png) y
+[criaturas](documentacion/evidencia/criaturas_claras.png): renders de prueba.
+
+[Captura del render actual](documentacion/evidencia/retro_jugable.png),
+producida con vídeo de pruebas; no sustituye la revisión nativa completa.
+
 Proyecto de Andrey, Juan y Kendall. Juego de consola con terreno ponderado,
 cazadores, niebla y viaje automático, resolubilidad y consultas históricas.
 Los datos proceden del servicio o de un paquete offline compatible.

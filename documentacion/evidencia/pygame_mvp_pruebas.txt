@@ -1,0 +1,13 @@
+US2/US3 / T017-T029. Ejecutado 2026-11-14.
+Windows, Python 3.13.2, pygame 2.6.1; entorno .venv.
+Comando: ./.venv/Scripts/python.exe -m pytest -q --tb=short
+Resultado real: 800 passed in 61.84s (0:01:01)
+
+Croquis conocido: 300 salas dispersas, conflictos, componentes, cero solapes.
+Memoria: vacía/ausente, actual, recuerdo remoto, antorcha sin contenido remoto.
+UI: selección, mover/abrir/esperar/recoger/atacar/usar/equipar/soltar.
+Selección ordenada emite navegación canónica sin turno.
+Comparación consola/GUI: estado, reloj, azar y órdenes coinciden.
+Inactividad: 300 cuadros con reloj de presentación inyectado = 60000 ms,
+sin turnos, órdenes ni consumo de azar. No representa espera de pared de 60 s.
+Pruebas de ventana con SDL_VIDEODRIVER=dummy; QA visual nativa pendiente.

@@ -1,0 +1,26 @@
+Revisión de interfaz compacta y pixel art — 2026-11-14
+Rama: 005-interfaz-pygame. Python 3.13.2; pygame 2.6.1; pytest 9.
+
+Regresión completa con Pygame:
+  .\.venv\Scripts\python.exe -m pytest -q
+  849 passed in 54.32s
+  Salida: retro_regresion_grafica.txt
+
+Regresión completa en Python global, sin Pygame instalado:
+  python -m pytest -q
+  819 passed, 3 skipped in 41.85s
+  Salida: retro_regresion_sin_pygame.txt
+  Omitidos por importorskip: prueba_eventos_pygame, prueba_sala_visual,
+  prueba_interfaz_compacta. Las pruebas puras de animación permanecen activas.
+
+Última verificación dirigida de interfaz/eventos: 30 passed in 11.04s.
+Las pruebas recorren botones reales de los paneles para guardar, cargar,
+historia, inventario y retroceso, además de selección y movimiento.
+La suite completa incluye matriz v6 y comparación con consola/modos de efectos.
+Los cuatro casos nuevos comprueban el límite de comandos a dos tamaños,
+contexto, paneles sin turno y ocho imágenes de puertas independientes.
+
+Renders reproducibles: .\.venv\Scripts\python.exe -m Pruebas.renderizar_retro
+Inspección y límites: retro_revision_visual.md.
+El vídeo dummy no acredita interacción de escritorio ni latencia del monitor.
+No se repitieron mediciones de rendimiento del motor; EX-01 sigue vigente.

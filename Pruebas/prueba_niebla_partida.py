@@ -79,6 +79,27 @@ def test_ac009_012_017_viaje_y_destino_actual_sin_accion():
     assert p.motor.reloj == 400 and p.acciones_ejecutadas == 4
 
 
+def test_paso_compartido_equivale_al_viaje_completo_y_registra_una_orden():
+    # FR-IG-012/014; AC-IG-012/014.
+    a, salas_a = partida_niebla()
+    b, salas_b = partida_niebla()
+    explorar_todo(a, salas_a); explorar_todo(b, salas_b)
+    ordenes_a, ordenes_b, cuadros = [], [], []
+    mensajes_a = a.viajar('Sala 4', registrar=ordenes_a.append)
+    destino = b.resolver_viaje('Sala 4')
+    mensajes_b = []
+    while True:
+        paso = b.paso_viaje(destino, registrar=ordenes_b.append,
+                            mostrar_paso=lambda: cuadros.append(b.acciones_ejecutadas))
+        mensajes_b.extend(paso.mensajes)
+        if not paso.continuar: break
+    assert ordenes_a == ordenes_b == ['ir N'] * 4
+    assert mensajes_a == mensajes_b and cuadros == [1, 2, 3, 4]
+    assert a.motor.reloj == b.motor.reloj == 400
+    assert a.motor.azar.getstate() == b.motor.azar.getstate()
+    assert b.mapa() == a.mapa()
+
+
 def test_ac014_015_enemigos_al_entrar_y_dano_aunque_cure():
     # FR-NV-007/011/013
     from modelo.efectos import Trampa

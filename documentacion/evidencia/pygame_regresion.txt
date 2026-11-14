@@ -1,0 +1,17 @@
+Fecha: 2026-11-14. Windows, Python 3.13.2, Pygame opcional 2.6.1.
+
+Entorno gráfico .venv:
+./.venv/Scripts/python.exe -m pytest -q --tb=short
+831 passed in 86.48s (0:01:26)
+Salida íntegra: pygame_regresion_grafica.txt
+
+Entorno Python global, find_spec('pygame') == None:
+python -m pytest -q --tb=short
+813 passed, 1 skipped in 89.33s (0:01:29)
+Salida íntegra: pygame_regresion_sin_pygame.txt
+La omisión corresponde al módulo prueba_eventos_pygame.py y no acredita la UI.
+Las pruebas de ventana aprobadas en .venv usan SDL_VIDEODRIVER=dummy.
+
+Matriz cruzada v6: pygame_compatibilidad_v6.txt.
+Mediciones separadas T050 y revisión visual real T051 siguen pendientes.
+El tiempo total de pytest no mide el presupuesto de una acción ni resuelve EX-01.

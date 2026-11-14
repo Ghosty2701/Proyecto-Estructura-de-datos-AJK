@@ -18,5 +18,11 @@ Parte II, basado en requisitos completados y verificados. Distingue los document
 revisados de las funcionalidades implementadas, las pruebas ejecutadas y las
 mediciones realizadas; no presentes la estimación como una medición exacta.
 
+La interfaz Pygame (specs 005 y 006) es una ampliación personal, independiente
+de la nota de Parte II (instrucción del usuario del 2026-11-13). Se integró en
+`main` el 2026-11-14 con aprobación explícita del usuario, como interfaz opcional.
+Cuando una tarea la afecte, informa su avance como un porcentaje separado; no
+lo mezcles con el porcentaje de la entrega académica ni recalcules uno por el otro.
+
 En cada avance indica también el punto actual del trabajo, qué se completó y cuál es
 el siguiente paso, además del porcentaje global estimado.

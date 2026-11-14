@@ -1,0 +1,32 @@
+Eventos nativos de entrada; sin contenido de la partida.
+<Event(32785-WindowFocusGained {'window': None})>
+<Event(768-KeyDown {'unicode': 'w', 'key': 119, 'mod': 0, 'scancode': 26, 'window': None})>
+<Event(769-KeyUp {'unicode': 'w', 'key': 119, 'mod': 0, 'scancode': 26, 'window': None})>
+<Event(768-KeyDown {'unicode': 'd', 'key': 100, 'mod': 0, 'scancode': 7, 'window': None})>
+<Event(769-KeyUp {'unicode': 'd', 'key': 100, 'mod': 0, 'scancode': 7, 'window': None})>
+<Event(768-KeyDown {'unicode': 'a', 'key': 97, 'mod': 0, 'scancode': 4, 'window': None})>
+<Event(769-KeyUp {'unicode': 'a', 'key': 97, 'mod': 0, 'scancode': 4, 'window': None})>
+<Event(768-KeyDown {'unicode': 's', 'key': 115, 'mod': 0, 'scancode': 22, 'window': None})>
+<Event(769-KeyUp {'unicode': 's', 'key': 115, 'mod': 0, 'scancode': 22, 'window': None})>
+<Event(768-KeyDown {'unicode': 'h', 'key': 104, 'mod': 0, 'scancode': 11, 'window': None})>
+<Event(769-KeyUp {'unicode': 'h', 'key': 104, 'mod': 0, 'scancode': 11, 'window': None})>
+<Event(32786-WindowFocusLost {'window': None})>
+<Event(32785-WindowFocusGained {'window': None})>
+<Event(32786-WindowFocusLost {'window': None})>
+<Event(32785-WindowFocusGained {'window': None})>
+<Event(32786-WindowFocusLost {'window': None})>
+<Event(32785-WindowFocusGained {'window': None})>
+<Event(32786-WindowFocusLost {'window': None})>
+<Event(32785-WindowFocusGained {'window': None})>
+<Event(32786-WindowFocusLost {'window': None})>
+<Event(32785-WindowFocusGained {'window': None})>
+<Event(32786-WindowFocusLost {'window': None})>
+<Event(32785-WindowFocusGained {'window': None})>
+<Event(32786-WindowFocusLost {'window': None})>
+<Event(32785-WindowFocusGained {'window': None})>
+<Event(32786-WindowFocusLost {'window': None})>
+<Event(32785-WindowFocusGained {'window': None})>
+<Event(32786-WindowFocusLost {'window': None})>
+<Event(32785-WindowFocusGained {'window': None})>
+<Event(32786-WindowFocusLost {'window': None})>
+<Event(32785-WindowFocusGained {'window': None})>

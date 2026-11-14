@@ -1080,7 +1080,7 @@ pruebas o benchmarks ni se implementó código de la capacidad.
 
     *Fecha: 2026-10-17*
 
-### Entradas 72–100: Auditoría P2, integraciones, especificación y plan de línea de tiempo
+### Entradas 72–104: Auditoría P2, integraciones, especificación y plan de línea de tiempo
 
 *Fecha original de las intervenciones: 2026-11-09*
 
@@ -1120,6 +1120,10 @@ original y resume su resultado, sin convertir recomendaciones en decisiones.
 | 98 | check for changes in the repository / en la pagina de github hay cambios que se hicieron ayer, los puedes ver? | Revisión: 75 commits de Juan (2026-11-11 a 13) y rama `005-interfaz-pygame`. |
 | 99 | alineemos mi copia local | Respaldo en rama local `respaldo-copiador-kendall`; `main` alineado con `origin/main`; 759 pruebas pasan. |
 | 100 | verificar el estado actual para ver si cumple con el pdf de especificaciones, haciendo la excepcion mencionada por juan, y realiza las tareas abiertas que quedaran pendientes | Auditoría contra el PDF con EX-01: sin incumplimientos adicionales. CI-005/007/008 cerradas sin ejecutar por descarte del experimento; queda abierto solo el ciclo <20 ms (EX-01). |
+| 101 | prosigamos con la rama de pygame, que indicaciones te ha dado juan al respecto? para conocer la arquitectura que quiere armar | Lectura de la rama `005-interfaz-pygame`: prompts 56–74 de Juan, specs 005/006, arquitectura y pendientes; sin cambios. |
+| 102 | commit unconfirmed changes | Commit en `main` de la auditoría (`fbccbd7`). |
+| 103 | prosigamos con terminar el pygame | Entorno de referencia: Python 3.13.17 instalado (pygame 2.6.1 no tiene wheel para 3.14) y `.venv` con pygame 2.6.1; 866/819 pruebas. T050 medido, T051 consolidado con límites, documentación y auditoría (58 y 64 identificadores con tarea); 005 53/53 y 006 48/48. |
+| 104 | satisfecho con la interfaz de pygame, integrar al main, aprobacion otorgada | Aprobación explícita del usuario para integrar `005-interfaz-pygame` en `main` (merge sin fast-forward); Pygame queda como interfaz opcional, independiente de la nota de Parte II. |
 
 Detalle en [especificación](../specs/004-linea-tiempo/spec.md) e
 [investigación de la línea de tiempo](../specs/004-linea-tiempo/research.md).
@@ -1637,3 +1641,353 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     productivo ni incluir la eliminación previa del historial y otros resultados
     locales ajenos al cambio. Se mantiene EX-01 y el avance original estimado
     de ~95 %; no se declara cumplimiento de los presupuestos temporales.
+
+56. Nuevo spec para adaptar el proyecto a Pygame en una rama adicional
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Usuario: «Usando el mismo modelo de specs actuales del proyecto, el
+    Desarrollo dirigido por especificaciones (SDD) con GitHub spec-kit, ayudame
+    en la creacion de un nuevo spec para adaptar el proyecto a pygame.
+    No estoy seguro al 100% de como funciona pero, la idea principal es crear
+    una rama en el github para separar esta funcionalidad adicional del
+    proyecto ya funcional.»
+
+    Aclaración de presentación: «Que tenga un mapa 2D con las salas, que en
+    cada cuadrito de la sala aparezca una sprite indicando los enemigos en cada
+    sala, respetando tambien la niebla, osea que en el mapa solo se revele las
+    salas ya visitadas y adjacentes. Con paneles y botones para cada una de las
+    acciones. El juego sigue siendo un juego por turnos».
+
+    Aclaración de enemigos remotos elegida por el usuario: «Últimos enemigos
+    observados, marcados como recuerdo hasta volver a entrar (recomendado)».
+
+    Aplicada la habilidad local `$speckit-specify` de spec-kit 1.3.2, leyendo
+    sus instrucciones y la constitución. Resuelta la plantilla compuesta con
+    `powershell.exe -NoProfile -ExecutionPolicy Bypass -File
+    .specify/scripts/powershell/resolve-template.ps1 spec-template -Json`.
+    No hay `.specify/extensions.yml` ni hooks registrados para esta ejecución.
+    Rama `005-interfaz-pygame` desde `6107b98`, con worktree separado para no
+    alterar main ni sus archivos locales. Especificación en
+    `specs/005-interfaz-pygame/spec.md`, revisión de calidad y guía de fases SDD.
+    Selector local `.specify/feature.json` actualizado; se respeta su exclusión
+    de Git. Solo se crean documentos: sin código gráfico, dependencias nuevas,
+    decisiones de estructuras ni afirmaciones de pruebas de Pygame aprobadas.
+
+57. Reportar el avance exclusivamente sobre la ampliación personal con Pygame
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Usuario: «el pasar el proyecto a pygame es una exigencia personal, y no es
+    importante para la nota del proyecto, entonces puedes cambiar el avance
+    estimado no al proyecto total, si no al apartado de pygame, que luego si
+    todo funciona bien, se puede integrar al, proyecto principal completo».
+
+    Actualizadas las instrucciones de colaboración de esta rama y sus README
+    para usar únicamente el progreso de Pygame. Estimación inicial orientativa
+    de ~10 % por especificación, aclaraciones y revisión; todavía sin código
+    gráfico, pruebas ni validación visual. Planificación como siguiente fase.
+    No se modifica main ni se recalcula el avance o la nota de Parte II.
+
+58. Continuar la planificación técnica y consultar solo las decisiones necesarias
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Usuario: «Continuemos con la planificacion tecnica, pregunta todo lo que
+    necesite de mi aporte, y simplemente continua con todo lo estandard o lo
+    que no consideres necesario parar a preguntar».
+
+    Aplicada la habilidad `$speckit-plan` local. Ejecutado el script
+    `.specify/scripts/powershell/setup-plan.ps1 -Json` y leídas constitución,
+    especificación, modelo, controlador, carga, serializador y cliente HTTP.
+    Revisión de lectura en paralelo conforme a la fase de investigación de la
+    habilidad, sin modificaciones de los revisores. Consultadas fuentes oficiales
+    de Pygame y PyPI; comprobada disponibilidad del wheel 2.6.1 para CPython 3.13
+    Windows x86-64, sin instalarlo. Una sonda temporal verificó carga de una clave
+    adicional primitiva en v6 y su descarte al re-guardar desde consola.
+
+    Preparados plan.md y research.md con arquitectura estándar, integración de
+    órdenes, viaje incremental y cobertura de los 23 escenarios. Se preguntaron
+    tres elecciones: índice propio/vectores frente a búsqueda lineal, datos
+    opcionales v6 frente a archivo compañero, y croquis direccional frente a
+    cuadrícula por ID. Permanecen pendientes; no se registran recomendaciones
+    como decisiones aprobadas. La puerta de diseño definitivo queda abierta
+    hasta recibir las respuestas. Sin hooks registrados ni código de interfaz.
+    Avance exclusivo de Pygame estimado en ~15 %, todavía sin implementación.
+
+59. Confirmación de las tres elecciones y cierre del plan técnico de Pygame
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    El usuario eligió explícitamente: «Índice propio + vectores por sala y
+    cambios por turno: acceso rápido; reserva espacio por sala», «Dentro del
+    mismo .bin, como datos opcionales: un solo archivo y v6 conservado» y
+    «Croquis por norte/sur/este/oeste: más parecido a un mapa; resuelve y señala
+    conflictos de posición». Durante el trabajo indicó también «Continua».
+
+    Registradas D-IG-05/06/07 y completada la fase de diseño de `$speckit-plan`:
+    modelo de datos, contratos de interfaz y recuerdos v6, guía de validación
+    y comprobación constitucional posterior. Revisión de lectura detectó y
+    permitió precisar retroceso mediante usar pergamino, revalidación de la
+    intención interruptora, receptor de valores sin Pygame en el trabajador y
+    fixtures reproducibles. Se ejecutó en temporal el recorrido del motor con
+    cinco recogidas, cinco esperas y cinco retrocesos, incluido usar pergamino.
+
+    Se conserva la distinción entre datos visuales semánticamente inválidos
+    y binario corrupto; sin ruptura de v6 ni promesa de recuperación arbitraria.
+    Aclarada la navegación canónica de inventario sin turnos y sin cola de
+    acciones. No se modificó código productivo ni se implementó Pygame.
+    Siguiente fase: `$speckit-tasks`, análisis de consistencia e implementación.
+    Avance exclusivo de Pygame estimado en ~25 %, por preparación y diseño.
+
+60. Continua — descomposición en tareas y análisis de consistencia
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Aplicadas las habilidades locales `$speckit-tasks` y `$speckit-analyze`.
+    Ejecutado `setup-tasks.ps1 -Json` y utilizada su plantilla compuesta; leídos
+    spec, plan, investigación, modelo de datos, contratos, guía y constitución.
+    Generadas 53 tareas: preparación/fundamentos/cierre 15, y US1–US7 con
+    6/7/6/5/4/5/5 tareas. Pruebas exigidas por el spec y matriz completa de
+    requisitos, escenarios, archivos y dependencias; ninguna tarea implementada.
+
+    Antes del análisis formal se delimitó US3 a acciones ordinarias para no
+    exigir viaje/guardado antes de sus historias, y se explicitó el helper
+    puro de disposición y datos sintéticos en el plan. Después se realizó el
+    análisis estrictamente de solo lectura: 35/35 requisitos construibles y
+    23/23 escenarios con cobertura prevista; formato/dependencias válidos,
+    sin tareas huérfanas ni bloqueos críticos/altos identificados. El informe
+    se emitió en la sesión; no se escribieron archivos durante ese análisis.
+    No hay hooks registrados. Al terminar se actualizó el estado documental
+    para registrar el resultado. No se ejecutó la regresión ni se modificó
+    código productivo por este cambio de documentos. Siguiente fase:
+    `$speckit-implement`, T001; avance exclusivo de Pygame estimado en ~30 %.
+
+61. Continua — implementar preparación y fundamentos T001–T010
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Aplicada `$speckit-implement`, prerrequisitos y checklist 16/16 completos;
+    sin hooks registrados. Base: 759 pruebas en 25,29 s. Dependencia Pygame
+    2.6.1 instalada en .venv aislado y vídeo dummy comprobado. Fixtures offline
+    resolubles/no resolubles, cinco pergaminos y mapa disperso de 300 salas.
+    Casos escritos antes del módulo: se observaron fallos por ausencia de
+    proyección y coordinador, y del nuevo resultado del controlador.
+    Implementados DTO congelados, proyección solo conocida, objetivos vigentes,
+    resultado canónico sin alterar el bool de consola y trabajador único con
+    buzón de capacidad uno, receptor sin Pygame y cierre ordenado.
+    Regresión completa: 769 pruebas pasan en 32,44 s; T001–T010 marcadas solo
+    después de verificar. Sin ventana jugable todavía; continúa US1.
+
+62. Continua — implementar arranque y menú T011–T016
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Continuación de `$speckit-implement`. Pruebas previas detectaron la ausencia
+    de la preparación de sesiones y del selector. Implementados `--interfaz`,
+    dependencia diferida, preparación compartida con consola, candidato separado,
+    campos y botones de inicio, listado, informe de verificación y forzado
+    explícito. Carga fallida conserva sesión activa; K, nombre, rutas y bitácora
+    verificados. Regresión completa: 787 pruebas pasan en 46,42 s. Los casos de
+    ventana usan vídeo dummy y no acreditan revisión visual de escritorio.
+    T011–T016 completas; estimación Pygame ~45 %; sigue mapa y memoria US2.
+
+63. Continua — implementar mapa y acciones ordinarias T017–T029
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Pruebas previas observaron ausencia de memoria/croquis y controles. Se
+    implementaron índice propio y vectores aprobados, croquis conocido sin
+    solapes, sprites originales, cámara, observaciones presenciales y controles
+    serializados. Orden visual conserva posiciones reales; selección emite
+    `sig`/`ant`, sin turno. Entrada mantenida/ocupada no acumula acciones.
+    Regresión completa: 800 pruebas pasan en 61,84 s. Vídeo dummy e inactividad
+    de 300 cuadros con reloj inyectado, sin acreditar revisión visual nativa.
+    Pygame ~60 % estimado; siguen viaje, historia y persistencia de recuerdos.
+
+64. Continua — viaje, historia, persistencia y validación automatizada T030–T049
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Se implementaron paso de viaje compartido, interrupción única y cancelación
+    por foco/cierre; cinco deltas por ancla de orden; panel histórico separado;
+    payload primitivo opcional v6 y carga candidata; resultados únicos, cierre del
+    escritor, puntajes y cancelación opcional de espera 429. Pruebas previas
+    observaron los fallos esperados y se verificaron tras implementar.
+    Matriz real con lector congelado `main@6107b98` en proceso separado aprobada.
+    Regresión completa: 831 pruebas en .venv con Pygame; 813 y un módulo omitido
+    en Python global sin Pygame. Revisión nativa intentada con computer-use;
+    captura no correspondiente al objetivo y recuperación fallida, luego el usuario
+    detuvo el control con Esc. No se siguieron enviando acciones de aplicación.
+    T050–T053 pendientes; avance exclusivo de Pygame estimado en ~85 %.
+
+65. Evolucionar el mapa hacia habitaciones y combates con sprites
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    El usuario indicó que el mapa funciona como idea, pero desea una experiencia
+    más gráfica con personajes y enemigos: referencias a The Binding of Isaac
+    para habitaciones/exploración y a RPG Maker para combate. Se aplicó
+    `$speckit-specify` para una capacidad 006 dentro de la rama Pygame actual;
+    plantilla compuesta resuelta correctamente y sin hooks registrados.
+    Se preguntaron perspectiva, escena de combate y dirección artística.
+    Mientras se esperan preferencias, se registró un borrador con cuatro
+    historias, 14 requisitos y 15 escenarios, preservando turnos, niebla,
+    continuidad v6 y reglas existentes. No se modificó código del juego ni se
+    aprobaron decisiones pendientes. Checklist documental 13/16; capacidad 006
+    sin implementación. El ~85 % previo describe únicamente el alcance de 005.
+
+66. Resolver preferencias de la evolución visual
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Elecciones explícitas del usuario: «Sí, sala desde arriba y minimapa»;
+    «Dentro de la misma sala, con animaciones por turno»; «Ilustración 2D de
+    fantasía oscura». Incorporadas al spec 006 y revisión de calidad 16/16.
+    Sin cambios de reglas ni implementación. Continúa la planificación técnica
+    y la elaboración de una referencia visual fiel a las elecciones.
+
+67. Planificar la escena y preparar referencia ilustrada
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Aplicadas `$speckit-plan` e `imagegen`. El plan usa el selector de capacidad
+    006 y la rama Git real sigue siendo `005-interfaz-pygame`. Sin hooks.
+    Investigación delegada de lectura por requisito de fase 0; no modificó
+    código ni eligió estructuras. La presentación actual basta para sala y
+    objetivos; diferencias de snapshots no prueban daño intermedio o derrota.
+    Propuesta: hechos observables estructurados, sin atributos nuevos en raíces
+    persistidas ni lectura remota. AGENTS.md exige elección: se consultó vectores
+    por sala y una animación activa frente a índice espacial propio. D-EV-04
+    sigue pendiente; fase 1 e implementación dependientes no iniciadas.
+    Referencia visual solicitada al generador incorporado; prompt exacto en
+    `specs/006-salas-combate-visual/referencia-visual.prompt.txt`. Es concepto de
+    composición, no captura de juego ni sustituto de los recursos finales.
+
+68. Confirmar D-EV-04 y cerrar planificación de la escena
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    El usuario eligió «Vectores por sala y una animación activa (recomendado)».
+    Cerrados investigación, plan, modelo, contrato y guía; la referencia de
+    imagegen quedó copiada a `referencias/concepto-sala-v1.png`. Aplicados
+    `$speckit-tasks` y `$speckit-analyze`: 24 tareas, 20/20 requisitos construibles
+    y 15/15 escenarios con cobertura prevista; dependencias válidas y sin
+    hallazgos críticos/altos. Análisis de solo lectura sin modificaciones;
+    esta entrada se agrega después de cerrarlo. Sin hooks registrados.
+    Continúa `$speckit-implement` con pruebas antes de código. Avance visual
+    estimado ~20 %, sin funcionalidad nueva acreditada por documentos.
+
+69. Implementar la habitación ilustrada y combate por turnos
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Aplicada `$speckit-implement`; checklist 16/16, sin hooks, base 831/813.
+    Imagegen incorporado generó fondo y dos atlas originales; alfa y celdas
+    inspeccionados, imágenes copiadas al proyecto y prompts exactos conservados.
+    Pruebas antes de módulos detectaron ausencias de recursos, sala, efectos y
+    animaciones. Se implementaron vectores aprobados, habitación, personaje,
+    puertas, clics, páginas, minimapa y mapa completo. Callback opcional entrega
+    hechos observables sin nuevos campos de guardado. Una animación activa con
+    corte, cifras, curación, derrota y transición; espacio salta sin esperar.
+    Modos normal/reducida/sin; carga, retroceso y foco descartan el efecto.
+    Capturas del render corregidas por solape lateral y centrado del minimapa.
+
+    Regresión completa: 845 pruebas en 37,62 s con Pygame; 819 en 30,73 s sin él,
+    dos módulos gráficos omitidos. Matriz cruzada v6 incluida. Medición real:
+    300 redibujados en 60,582 s sin cambios de juego, azar o registro; dibujo y
+    acción medidos por separado, sin resolver EX-01. Revisión nativa intentada
+    con computer-use: ventana inicial correcta, clic bloqueado por actividad
+    del usuario; captura posterior ajena al objetivo, sin más acciones sobre
+    ella. Se cerró el proceso de prueba. T020 y cierre dependiente T023/T024
+    pendientes; avance exclusivo de la evolución visual ~85 % estimado.
+
+70. Reducir botones y cambiar a estética de RPG de 16 bits
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    El usuario pidió menos botones y nombres intuitivos, mayor calidad visual,
+    puertas integradas en paredes y referencia a Final Fantasy de 16 bits.
+    Se actualizó primero el spec 006: pixel art original sustituye ilustración,
+    máximo seis comandos normales, acción contextual y menús agrupados; ocho
+    puertas orientadas. Plan y contrato reutilizan vectores y panel actual
+    aprobados; ninguna estructura nueva. Ocho tareas de revisión T025–T032.
+    Se usará imagegen incorporado para recursos nuevos versionados, sin cambiar
+    las reglas, la niebla, el guardado ni la independencia de main.
+
+71. Implementar comandos compactos y arte de 16 bits
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Se continuó la implementación de la revisión solicitada, con pruebas de
+    contexto antes de reorganizar la interfaz. La sala pasó de 30 botones a
+    cuatro o cinco habituales, máximo seis. Seleccionar muestra Atacar,
+    Recoger, Entrar o Abrir puerta. Inventario, mapa y menú agrupan las demás
+    funciones; Escape vuelve sin turno y los paneles bloquean clics al fondo.
+    Se reutilizaron los vectores aprobados y el selector de panel existente;
+    no se eligieron estructuras nuevas ni se modificaron reglas del motor.
+
+    Imagegen incorporado generó cuatro PNG originales: sala, actores,
+    elementos y ocho puertas orientadas; alfa e imágenes inspeccionados.
+    Prompts exactos en `vista/pygame_ui/assets/prompts_16bits.txt`. Marcos
+    azules, tipografía sin suavizado y escalado de vecinos próximos.
+    Regresión final: 849 pruebas en 54,32 s con Pygame; 819 en 41,85 s sin él,
+    tres módulos omitidos; matriz v6 incluida. Renders a 1024 × 768 y
+    1280 × 800, paneles y ocho puertas guardados con generador reproducible.
+    No se acredita revisión nativa completa ni una medición nueva de latencia.
+    T020/T023/T024 siguen pendientes; avance exclusivo visual ~90 % estimado.
+    Cambios destinados a commit y push en `005-interfaz-pygame`, sin fusionar main.
+
+72. Aclarar especies, inicio/carga, inventario y espera
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Usuario: «la rata gigante tiene el sprite de un mago», explicar botones de
+    ordenar, confirmar cripta seleccionada, mejorar carga de partida, indicar
+    cuándo se está cargando y añadir contornos/luces a controles y ventanas.
+    Se revisó primero spec/plan/contrato/tareas. El arte usaba comportamiento
+    como especie: se separará visualmente mediante el nombre ya observable.
+    Se reutilizan vectores de recursos/control y selector de panel aprobados;
+    no se introduce estructura nueva. Aplicadas speckit-implement e imagegen.
+    Checklist de requisitos de solo lectura 16/16; sin hooks registrados.
+    Cobertura prevista de 21 FR, 23 AC y 10 SC; T033–T041, sin cambiar reglas,
+    memoria, guardado v6 o main. Avance visual previo ~90 % estimado.
+
+73. Implementar y verificar la revisión de claridad
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Se implementaron T034–T041 tras el commit previo del spec. Imagegen
+    incorporado generó `criaturas_16bits.png`; prompt exacto conservado, alfa
+    y render inspeccionados. Rata, espectro y sabueso óseo usan especies acordes,
+    independientemente de conducta; fallback neutral para nombres nuevos.
+    Inicio separa nueva/carga, destaca cripta y confirma selección. Selector
+    nativo opcional para .bin, cancelación sin cambios y errores recuperables.
+    Cargar conserva nombre/semilla y no valida opciones de partida nueva.
+    Inventario explica orden, muestra peso/valor y criterio resaltado. Se
+    añadieron biseles, sombras y luces. Barra indeterminada con operación y
+    segundos reales para espera; no hay porcentaje ficticio o cola nueva.
+
+    Nueve casos nuevos; regresión de 858 pruebas con Pygame y 819 sin él,
+    cuatro módulos omitidos. Matriz v6 y equivalencia de reglas incluidas.
+    Renders reproducibles de inicio/carga a dos tamaños, inventario, especies
+    y espera con trabajador demorado. Muestra de tres especies en DTO sintético,
+    sin agregarlas al motor. Pruebas del diálogo con sustituto controlado;
+    no se acredita selector nativo real ni revisión completa de escritorio.
+    T020/T023/T024 siguen pendientes. Avance visual ~90 % estimado, sin nueva
+    medición de latencia ni cambio a EX-01. Commit/push en rama adicional.
+
+74. Ampliar minimapa, aligerar exploración y revisar escritorio
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Usuario: minimapa más alto, carga sutil en una esquina durante movimiento,
+    optimizaciones para evitar espera, controles consultables sin más botones;
+    terminar validaciones y revisión interactiva de escritorio y dejar la rama
+    separada mientras se decide integrar. Aplicadas speckit-implement y
+    computer-use; checklist 16/16, sin hooks. Spec revisado antes de código.
+    Perfil previo local: mediana de acción ~0,51 ms y dibujo ~3,39 ms, con límites
+    de instrumentación; transición visual hasta 500 ms y comparaciones repetidas
+    del mapa detectadas. Se reutilizan snapshot, clave de mapa y animación
+    aprobados; sin estructura nueva ni cambio en política de solicitudes.
+    T042–T048; 25 FR, 27 AC y 12 SC con trazabilidad prevista. Avance ~90 %.

@@ -16,14 +16,24 @@
 #   Los indices que recibe (atacar/recoger) son base 1, tal como los ve el jugador.
 #   `usar/equipar/soltar` actuan sobre el objeto que el cursor del inventario esta viendo.
 
+from dataclasses import dataclass
+
 from controlador.comandos import parsear
+
+
+@dataclass(frozen=True)
+class ResultadoOperacion:
+    clase: str
+    aceptada: bool
+    ordenes: tuple = ()
+    continuar: bool = True
 
 
 class AccionInvalida(Exception):
     pass
 
 
-def ejecutar_comando_partida(partida, comando):
+def ejecutar_comando_partida(partida, comando, *, observar=None):
     """Operaciones compartidas por la consola y el replay, sin usar una vista."""
     if partida.estado().terminada:
         raise AccionInvalida("La partida ya termino.")
@@ -36,9 +46,11 @@ def ejecutar_comando_partida(partida, comando):
             raise AccionInvalida("Ya estás en el primer objeto.")
         return []
     accion = getattr(partida, comando.nombre)
+    opciones = ({'observar': observar} if observar is not None and comando.nombre in
+                ('mover', 'abrir', 'atacar', 'esperar', 'recoger', 'usar', 'equipar', 'soltar') else {})
     if comando.argumento is None:
-        return accion()
-    return accion(comando.argumento)
+        return accion(**opciones)
+    return accion(comando.argumento, **opciones)
 
 
 def ejecutar_accion_replay(partida, texto):
@@ -52,15 +64,19 @@ def ejecutar_accion_replay(partida, texto):
 
 
 class Controlador:
-    def __init__(self, partida, vista, registrar_accion=None):
+    def __init__(self, partida, vista, registrar_accion=None, *, observar=None):
         self.partida = partida
         self.vista = vista
         self._solo_consulta = False
         self.registrar_accion = registrar_accion
+        self.observar = observar
+        self.ultimo_resultado = ResultadoOperacion('consulta', True)
+        self._ordenes_emitidas = []
 
     def _registrar(self, texto):
         # Misma orden normalizada para el log y la línea de tiempo (FR-LT-013).
         normalizado = texto if texto.startswith('#') else " ".join(texto.strip().lower().split())
+        self._ordenes_emitidas.append(normalizado)
         if self.registrar_accion is not None:
             self.registrar_accion(normalizado)
         registrar_orden = getattr(self.partida, "registrar_orden", None)
@@ -79,10 +95,27 @@ class Controlador:
         self.vista.mostrar_fin(self.partida.estado())
 
     def procesar(self, texto):
+        """Mantiene el bool de consola y publica un resultado sin depender de una vista."""
+        antes = getattr(self.partida, 'acciones_ejecutadas', 0)
+        self._ordenes_emitidas = []
+        self._clase_resultado, self._aceptada = 'consulta', True
+        continuar = self._procesar(texto)
+        diferencia = getattr(self.partida, 'acciones_ejecutadas', 0) - antes
+        clase = self._clase_resultado
+        if self._aceptada and clase == 'accion':
+            if diferencia < 0:
+                clase = 'retroceso'
+        self.ultimo_resultado = ResultadoOperacion(
+            clase, self._aceptada, tuple(self._ordenes_emitidas), continuar,
+        )
+        return continuar
+
+    def _procesar(self, texto):
         # Devuelve False cuando el jugador pide salir, True en cualquier otro caso.
         self._solo_consulta = False
         comando = parsear(texto)
         if comando is None:
+            self._clase_resultado, self._aceptada = 'rechazo', False
             self.vista.agregar_mensajes(["Comando no reconocido. Escribe 'ayuda'."])
             return True
 
@@ -96,6 +129,7 @@ class Controlador:
             try:
                 resumen = self.partida.historia(comando.argumento)
             except AccionInvalida as error:
+                self._clase_resultado, self._aceptada = 'rechazo', False
                 # El rechazo se ve al redibujar la sala; nada del juego cambia.
                 self.vista.agregar_mensajes([str(error)])
                 return True
@@ -103,6 +137,7 @@ class Controlador:
             self.vista.mostrar_historia(resumen)
             return True
         if nombre == "salir":
+            self._clase_resultado = 'salida'
             return False
         if nombre == "ayuda":
             self._solo_consulta = True
@@ -110,8 +145,12 @@ class Controlador:
             return True
         if nombre in ("inventario", "siguiente", "anterior", "orden"):
             self._solo_consulta = True
-            if self._navegar_inventario(comando) and nombre in ("siguiente", "anterior"):
-                self._registrar(texto)
+            if self._navegar_inventario(comando):
+                if nombre in ("siguiente", "anterior"):
+                    self._clase_resultado = 'navegacion'
+                    self._registrar(texto)
+            else:
+                self._clase_resultado, self._aceptada = 'rechazo', False
             return True
 
         try:
@@ -122,17 +161,21 @@ class Controlador:
                     mostrar_paso=lambda: self.vista.mostrar_estado(self.partida.estado()),
                 )
             else:
-                mensajes = ejecutar_comando_partida(self.partida, comando)
+                mensajes = ejecutar_comando_partida(self.partida, comando, observar=self.observar)
         except AccionInvalida as error:
+            self._clase_resultado, self._aceptada = 'rechazo', False
             mensajes = [str(error)]
         else:
+            self._clase_resultado = (
+                'guardado' if nombre == 'guardar' else 'carga' if nombre == 'cargar'
+                else 'viaje' if nombre == 'viajar' else 'accion')
             # Guardar no cambia la simulacion; cargar solo se permite sin bitacora.
             if nombre not in ("guardar", "cargar", "viajar"):
                 self._registrar(texto)
         self.vista.agregar_mensajes(mensajes)
         if nombre == 'viajar' and self.vista.interrupcion_detectada:
             self.vista.interrupcion_detectada = False
-            return self.procesar(self.vista.leer_comando())
+            return self._procesar(self.vista.leer_comando())
         return True
 
     def _navegar_inventario(self, comando):

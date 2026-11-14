@@ -1,4 +1,4 @@
-"""Habitación ilustrada. Posiciones escénicas sin reglas de movimiento interiores."""
+"""Habitación de 16 bits. Posiciones escénicas sin reglas de movimiento interiores."""
 from dataclasses import dataclass
 import pygame
 from vista.pygame_ui.recursos import Recursos
@@ -70,7 +70,7 @@ class EscenaSala:
         self._sombra(lienzo, self.jugador_rect)
         lienzo.blit(jugador, self.jugador_rect)
         for i, objetivo in enumerate(enemigos):
-            imagen = self.recursos.actor(objetivo.comportamiento)
+            imagen = self.recursos.actor(objetivo.comportamiento, objetivo.nombre)
             if animacion is not None and animacion.alfa(objetivo.identificador) < 255:
                 imagen = imagen.copy()
                 imagen.set_alpha(animacion.alfa(objetivo.identificador))

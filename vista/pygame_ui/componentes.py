@@ -25,6 +25,7 @@ class Boton:
     texto: str
     accion: object
     habilitado: bool = True
+    seleccionado: bool = False
 
 
 class Componentes:
@@ -54,6 +55,12 @@ class Componentes:
         pygame.draw.rect(lienzo, (23, 35, 65), r, 2)
         pygame.draw.rect(lienzo, BORDE, r.inflate(-4, -4), 2)
         pygame.draw.rect(lienzo, (238, 240, 247), r.inflate(-8, -8), 1)
+        # Remates metálicos y luz en la arista superior, sin tapar el contenido.
+        pygame.draw.line(lienzo, (211, 226, 255), (r.x+14, r.y+4), (r.right-15, r.y+4))
+        for x, y, dx, dy in ((r.x+5, r.y+5, 1, 1), (r.right-6, r.y+5, -1, 1),
+                              (r.x+5, r.bottom-6, 1, -1), (r.right-6, r.bottom-6, -1, -1)):
+            pygame.draw.line(lienzo, ACENTO, (x, y), (x+dx*9, y), 2)
+            pygame.draw.line(lienzo, ACENTO, (x, y), (x, y+dy*9), 2)
         if titulo:
             self.texto(lienzo, titulo, (r.x+24, r.y+18), ACENTO)
 
@@ -78,21 +85,31 @@ class Componentes:
         lienzo.set_clip(previo)
         return y + desplazamiento - rect.y
 
-    def boton(self, lienzo, rect, texto, accion, habilitado=True):
+    def boton(self, lienzo, rect, texto, accion, habilitado=True, seleccionado=False):
         rect = pygame.Rect(rect)
         hover = habilitado and rect.collidepoint(pygame.mouse.get_pos())
-        color = (48, 73, 142) if hover else (25, 44, 103) if habilitado else (20, 30, 66)
-        pygame.draw.rect(lienzo, color, rect)
-        pygame.draw.rect(lienzo, ACENTO if hover else BORDE if habilitado else (64, 78, 117), rect, 1)
-        if hover:
-            pygame.draw.polygon(lienzo, ACENTO, ((rect.x+5, rect.centery-4), (rect.x+5, rect.centery+4), (rect.x+10, rect.centery)))
+        iluminado = hover or seleccionado
+        color = (48, 73, 142) if iluminado else (25, 44, 103) if habilitado else (20, 30, 66)
+        pygame.draw.rect(lienzo, (2, 5, 17), rect.move(2, 3))
+        for y in range(rect.h):
+            luz = int(12*(1-y/max(1, rect.h)))
+            pygame.draw.line(lienzo, tuple(c+luz for c in color), (rect.x, rect.y+y), (rect.right-1, rect.y+y))
+        borde = ACENTO if iluminado else BORDE if habilitado else (64, 78, 117)
+        pygame.draw.rect(lienzo, borde, rect, 1)
+        pygame.draw.line(lienzo, (157, 184, 235) if habilitado else (53, 65, 99),
+                         (rect.x+2, rect.y+2), (rect.right-3, rect.y+2))
+        pygame.draw.line(lienzo, (8, 17, 52), (rect.x+2, rect.bottom-3), (rect.right-3, rect.bottom-3), 2)
+        pygame.draw.line(lienzo, (8, 17, 52), (rect.right-3, rect.y+3), (rect.right-3, rect.bottom-3))
+        if iluminado:
+            pygame.draw.rect(lienzo, (142, 126, 89), rect.inflate(-4, -4), 1)
+            pygame.draw.polygon(lienzo, ACENTO, ((rect.x+7, rect.centery-4), (rect.x+7, rect.centery+4), (rect.x+12, rect.centery)))
         previo = lienzo.get_clip()
         lienzo.set_clip(rect.inflate(-8, -2))
         fuente = self.pequena if self.fuente.size(texto)[0] > rect.w - 12 else self.fuente
         imagen = fuente.render(texto, False, TEXTO if habilitado else (111, 130, 167))
         lienzo.blit(imagen, imagen.get_rect(center=rect.center))
         lienzo.set_clip(previo)
-        self.botones.append(Boton(rect, texto, accion, habilitado))
+        self.botones.append(Boton(rect, texto, accion, habilitado, seleccionado))
 
     def campo(self, lienzo, campo, rect, habilitado=True):
         campo.rect = pygame.Rect(rect)

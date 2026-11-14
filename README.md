@@ -7,7 +7,7 @@ pixelada, personaje, enemigos, minimapa y combate animado por turnos.
 representa el avance de esta ampliación.
 
 **Presentación gráfica (006): ~90 % estimado**, con funcionalidades y arte
-integrados; **849 pruebas aprobadas** con Pygame y **819 sin él** (tres módulos
+integrados; **858 pruebas aprobadas** con Pygame y **819 sin él** (cuatro módulos
 gráficos omitidos). Medición de inactividad real completada; revisión interactiva
 de escritorio y auditoría final pendientes. Es una ampliación personal,
 independiente de la nota del proyecto. La base anterior de mapa se registra en
@@ -24,6 +24,19 @@ Clic en sprites o puertas para seleccionar: aparece «Atacar», «Recoger»,
 inventario, mapa y menú agrupan las demás funciones. WASD cambia de sala,
 espacio espera o salta el efecto activo; Esc abre/cierra el menú. Guardar,
 cargar e historia están en Menú; animaciones en Menú → Opciones y ayuda.
+
+Inicio separa Nueva partida y Cargar partida. Buscar criptas muestra una lista:
+la elegida queda resaltada y se confirma por nombre/ID antes de Empezar partida.
+Cargar permite buscar un `.bin` y confirmar; al cargar se recuperan nombre,
+semilla y progreso. En pausa, Reanudar guardado actual abre el guardado de esa
+sesión; Cargar otro archivo abre el selector. Una barra animada, descripción y
+segundos transcurridos indican las operaciones pendientes. Inventario explica
+el ordenamiento y muestra peso/valor. Los sprites de enemigos se eligen por
+especie observable, independientemente del comportamiento.
+
+[Inicio](documentacion/evidencia/inicio_claro.png),
+[carga](documentacion/evidencia/carga_clara.png) y
+[criaturas](documentacion/evidencia/criaturas_claras.png): renders de prueba.
 
 [Captura del render actual](documentacion/evidencia/retro_jugable.png),
 producida con vídeo de pruebas; no sustituye la revisión nativa completa.

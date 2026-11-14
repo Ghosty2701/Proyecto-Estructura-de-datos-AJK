@@ -22,10 +22,10 @@ def test_atlas_locales_transparentes_y_genericos_sin_red(pantalla, monkeypatch):
     monkeypatch.setattr(requests, 'get', lambda *a, **k: pytest.fail('Arte no usa red'))
     recursos = Recursos()
     recursos.preparar((700, 500))
-    assert len(recursos.actores) == 6 and len(recursos.elementos) == 12
+    assert len(recursos.actores) == 15 and len(recursos.elementos) == 12
     assert recursos.actor('jugador').get_flags() & pygame.SRCALPHA
     assert recursos.actor('guardian') is not recursos.actor('cazador')
-    assert recursos.actor('nuevo_tipo') is recursos.actor('otro')
+    assert recursos.actor('nuevo_tipo') is recursos.actor('desconocido')
     assert recursos.objeto('objeto_nuevo') is recursos.objeto('otro')
     assert recursos.objeto('pergamino_retroceso') is not recursos.objeto('pocion')
     fondo = recursos.fondo

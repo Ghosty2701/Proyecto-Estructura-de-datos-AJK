@@ -33,7 +33,9 @@ def pulsar(app, accion):
     boton = next((b for b in app.ui.botones if b.accion == accion), None)
     # Recorrer los paneles reales que sustituyen a los antiguos botones permanentes.
     if boton is None:
-        if accion == 'menu':
+        if accion == 'cargar':
+            app.accion('pantalla_cargar')
+        elif accion == 'menu':
             app.accion('pausa')
         elif accion == 'consultar_historia':
             app.accion('abrir_historia')
@@ -68,6 +70,7 @@ def test_menu_lista_elige_e_inicia_sin_ordenes_consola(ventana):
 
 def test_campos_foco_texto_y_error_local(ventana):
     app = ventana
+    app.campo('cripta').valor = 'lt'
     campo = app.campo('semilla')
     app.evento(pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=campo.rect.center))
     app.evento(pygame.event.Event(pygame.MOUSEBUTTONUP, button=1, pos=campo.rect.center))

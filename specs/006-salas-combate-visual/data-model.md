@@ -43,3 +43,12 @@ no se convierten en efectos de combate; se descartan efectos de revisiones previ
 Ninguno de estos registros se agrega a Partida, MotorEventos, checkpoints o
 payload visual v6. Cargar o retroceder reconstruye escena y vuelve a INACTIVA.
 El recuerdo remoto conserva exclusivamente la representación aprobada en 005.
+
+## Metadatos de claridad de la presentación
+
+`ObjetivoActual` de inventario expone peso y valor simples, y `PresentacionGrafica`
+el criterio de orden aplicado por su dueño. Son ampliaciones de los mismos
+registros congelados, no de Partida, MotorEventos, guardados o checkpoints.
+El catálogo vectorial añade especies por nombre observable. El selector de panel
+se reutiliza para nueva partida/carga, y dos escalares visuales describen la
+operación pendiente y el inicio del indicador. No hay nuevas estructuras.

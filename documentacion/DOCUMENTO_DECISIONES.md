@@ -958,3 +958,30 @@ selecciones no consumen turno. [Render](evidencia/retro_jugable.png) y
 [revisión](evidencia/retro_revision_visual.md) incluyen dos resoluciones y
 ocho puertas; no acreditan interacción nativa completa. Avance visual exclusivo
 ~90 % estimado, con T020 y cierre dependiente pendientes. EX-01 sigue vigente.
+
+## Claridad de especies, inicio y actividad — 2026-11-14
+
+El comportamiento (`rastreador`, `cazador`, etc.) describe reglas, no la especie.
+El sprite se resuelve ahora por nombre observable normalizado, con atlas local
+de ocho especies y un marcador neutral para nombres no reconocidos. Esto corrige
+la rata gigante representada como mago sin cambiar fichas ni conducta del motor.
+El mismo catálogo vectorial aprobado se amplía; no hay índice nuevo.
+
+Se reutiliza el selector de panel para separar partida nueva y carga. Cripta
+elegida con fila resaltada y resumen; cargar muestra ruta, selector nativo
+estándar opcional y confirmación. Cancelar no modifica la ruta. La carga no
+valida campos de una partida nueva ni sobrescribe nombre/semilla restaurados.
+Pausa distingue reanudar el guardado actual de elegir otro archivo.
+
+Los registros congelados existentes exponen criterio de orden y peso/valor,
+sin campos nuevos en raíces persistidas. La vista explica ascendente y que
+ordenar no consume turno. Dos escalares visuales describen la operación y su
+inicio; barra indeterminada, descripción y segundos, sin bloquear el bucle ni
+inventar porcentaje. Se conserva el trabajador exclusivo, rechazo de duplicados
+y cierre seguro. Biseles, sombras y luces se dibujan con Pygame.
+
+[Evidencia](evidencia/claridad_revision.md): 858 pruebas con gráficos y 819 sin
+ellos (cuatro módulos omitidos), renders a dos tamaños y demoras controladas.
+No acredita el selector nativo real ni el recorrido completo de escritorio;
+T020 y cierre dependiente siguen pendientes. Avance visual ~90 % estimado,
+independiente de Parte II. EX-01 y main sin cambios.

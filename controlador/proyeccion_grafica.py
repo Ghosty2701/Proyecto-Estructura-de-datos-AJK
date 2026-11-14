@@ -44,6 +44,8 @@ class ObjetivoActual:
     seleccionado: bool = False
     equipado: bool = False
     clase_objeto: str | None = None
+    peso: float | None = None
+    valor: float | None = None
 
 
 @dataclass(frozen=True)
@@ -101,6 +103,7 @@ class PresentacionGrafica:
     historia: ResumenGrafico | None = None
     viaje_activo: bool = False
     permitir_cargar: bool = True
+    orden_inventario: str | None = None
 
 
 def congelar_mapa(mapa):
@@ -144,6 +147,7 @@ def proyectar(partida, generacion, revision, *, mensajes=(), memoria=None,
             seleccionado=objeto is inventario.actual(),
             equipado=any(objeto is x for x in (inventario.arma_equipada, inventario.armadura_equipada)),
             clase_objeto=getattr(objeto, 'clase', None),
+            peso=getattr(objeto, 'peso', None), valor=getattr(objeto, 'valor', None),
         ))
     enemigos = tuple(ObjetivoActual(
         'enemigo', e.actor_id, i, str(e.nombre), e.comportamiento, e.vida, e.vida_max,
@@ -162,7 +166,7 @@ def proyectar(partida, generacion, revision, *, mensajes=(), memoria=None,
         (estado.solicitudes_usadas, estado.presupuesto, estado.solicitudes_normales,
          estado.limite_normal, estado.reserva, estado.reintentos),
         tuple(str(m) for m in mensajes), panel, congelar_historia(historia),
-        viaje_activo, not partida.bitacora_activa,
+        viaje_activo, not partida.bitacora_activa, orden_inventario,
     )
 
 

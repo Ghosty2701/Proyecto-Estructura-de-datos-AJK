@@ -16,6 +16,21 @@ Los atlas tienen transparencia real verificada. El cargador normaliza a tamaños
 de pixel art y escala con vecinos próximos. Las puertas incluyen tramos de pared
 para encajar en el fondo, con umbral sur bajo y pasos laterales orientados.
 
+### Especies — revisión de claridad
+
+`criaturas_16bits.png`, 1293 × 1217, atlas 3 × 3 con alfa real, generado con
+imagegen incorporado el 2026-11-14. Prompt exacto en
+`prompts_criaturas_16bits.txt`. Filas: rata gigante / sabueso óseo / espectro;
+esqueleto / lobo / araña; goblin / murciélago / símbolo neutral de desconocido.
+Se inspeccionaron atlas y render recortado. Los cortes verticales de filas
+se ajustan a los huecos transparentes
+del PNG (0/390/805/1217), evitando recortar la cabeza del esqueleto o incluirla
+como residuo en la rata. La selección usa el nombre observable
+normalizado; el comportamiento no determina la especie. Los tipos abstractos
+anteriores siguen disponibles; los nombres no reconocidos usan símbolo neutral,
+no un mago arbitrario. Nombre y objetivo del motor se conservan.
+El arte se carga localmente, sin descargar recursos durante la partida.
+
 ## Recursos anteriores conservados como historial
 
 Generado con imagegen incorporado el 2026-11-14, a partir de las elecciones

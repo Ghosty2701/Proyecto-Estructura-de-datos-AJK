@@ -1943,3 +1943,27 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     Checklist de requisitos de solo lectura 16/16; sin hooks registrados.
     Cobertura prevista de 21 FR, 23 AC y 10 SC; T033–T041, sin cambiar reglas,
     memoria, guardado v6 o main. Avance visual previo ~90 % estimado.
+
+73. Implementar y verificar la revisión de claridad
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Se implementaron T034–T041 tras el commit previo del spec. Imagegen
+    incorporado generó `criaturas_16bits.png`; prompt exacto conservado, alfa
+    y render inspeccionados. Rata, espectro y sabueso óseo usan especies acordes,
+    independientemente de conducta; fallback neutral para nombres nuevos.
+    Inicio separa nueva/carga, destaca cripta y confirma selección. Selector
+    nativo opcional para .bin, cancelación sin cambios y errores recuperables.
+    Cargar conserva nombre/semilla y no valida opciones de partida nueva.
+    Inventario explica orden, muestra peso/valor y criterio resaltado. Se
+    añadieron biseles, sombras y luces. Barra indeterminada con operación y
+    segundos reales para espera; no hay porcentaje ficticio o cola nueva.
+
+    Nueve casos nuevos; regresión de 858 pruebas con Pygame y 819 sin él,
+    cuatro módulos omitidos. Matriz v6 y equivalencia de reglas incluidas.
+    Renders reproducibles de inicio/carga a dos tamaños, inventario, especies
+    y espera con trabajador demorado. Muestra de tres especies en DTO sintético,
+    sin agregarlas al motor. Pruebas del diálogo con sustituto controlado;
+    no se acredita selector nativo real ni revisión completa de escritorio.
+    T020/T023/T024 siguen pendientes. Avance visual ~90 % estimado, sin nueva
+    medición de latencia ni cambio a EX-01. Commit/push en rama adicional.

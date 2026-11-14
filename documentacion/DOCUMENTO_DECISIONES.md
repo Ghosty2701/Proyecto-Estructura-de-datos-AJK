@@ -9,6 +9,182 @@ Se cierra el alcance funcional con excepcion y se termina la optimizacion.
 [Motivo, evidencia y reproduccion](REVISION_SESION_BLOQUEADA.md).
 Las cifras y prioridades de los apartados anteriores a esta revision son historicas.
 
+## Cómo leer este documento (Parte II)
+
+Cada problema de P2 §5 tiene una sección con la estructura de P1 §8: problema,
+alternativas, decisión, complejidad, evidencia y límites.
+
+| Problema | Sección |
+|---|---|
+| §5.1 Ruta del cazador y §5.2 Invalidación | [Terreno y cazadores](#parte-ii--terreno-y-cazadores-2026-11-09) |
+| §5.3 Mapa conocido | [Niebla de guerra y viaje](#parte-ii--niebla-de-guerra-y-viaje-ir-a-2026-11-09) |
+| §5.4 Resolubilidad | [Resolubilidad](#parte-ii--resolubilidad-implementada-y-verificada-2026-11-09) |
+| §5.5 Línea de tiempo | [Consolidado §5.5](#parte-ii--55-línea-de-tiempo-y-puntos-de-control-consolidado) |
+| §5.6 Revisión de P1 | [Consolidado §5.6](#parte-ii--56-revisión-de-las-decisiones-de-la-primera-parte-consolidado) |
+
+Las entradas con fecha que siguen a los consolidados son el registro histórico de
+cada etapa y su evidencia; los consolidados resumen el estado final.
+
+## Parte II — §5.5 Línea de tiempo y puntos de control (consolidado)
+
+**Fuentes:** [especificación 004](../specs/004-linea-tiempo/spec.md),
+[plan](../specs/004-linea-tiempo/plan.md),
+[investigación](../specs/004-linea-tiempo/research.md) y
+[trazabilidad](../specs/004-linea-tiempo/trazabilidad.md).
+
+### Problema
+
+Consultar el estado en cualquier instante pasado sin modificar la partida
+(`historia <t>`, `historia #k`, `--replay … --hasta`). Las condiciones de P2 §3.6
+y §5.5 son estas:
+- como máximo una copia completa cada K acciones;
+- ninguna consulta aplica o deshace cambios de más de K acciones;
+- la memoria crece con los cambios ocurridos, no con «acciones × estado»;
+- localizar el punto cercano y recortar tras un pergamino no recorren toda la historia;
+- la historia completa se conserva al guardar.
+
+### Alternativas consideradas
+
+| Aspecto | Alternativas | Elegida |
+|---|---|---|
+| Dirección de reconstrucción | Hacia adelante (re-simular órdenes); hacia atrás (invertir deltas); híbrida | Hacia adelante (D-LT-01) |
+| Localizar el punto | Arreglo con búsqueda binaria propia; AVL propio; índice directo k // K | Arreglo y búsqueda binaria (D-LT-02) |
+| Registro de acciones | Arreglo por k; lista enlazada; AVL por instante | Dos arreglos: órdenes ejecutadas y acciones vigentes (D-LT-03/05) |
+| Copia del punto | Copiador de grafo propio; serializador binario; `copy.deepcopy` (usa `dict` como índice, prohibido) | Copiador propio (D-LT-04) |
+| Persistencia | Todos los puntos; solo el inicial y regenerar; uno de cada m | Todos los puntos en el formato 6 (D-LT-06) |
+| Representación del punto | Grafo copiado; registros inmutables por ID; captura incremental versionada | Registros inmutables por ID (D-LT-08) |
+| K por defecto | 5, 10, 25, 50, 100 y solo el punto inicial | K = 10 (D-LT-07) |
+
+### Decisión
+
+- Cada K acciones ejecutadas se guarda un punto de control. Cuentan también las
+  acciones que después revierte un pergamino; el uso del pergamino no cuenta.
+- El punto contiene el estado completo, incluido `random.Random`, como registros
+  inmutables por ID: tuplas de valores y referencias numéricas, sin enlaces al
+  grafo vivo. Un catálogo fijo de tuplas de ID se comparte entre puntos, y los
+  registros idénticos al punto anterior se reutilizan.
+- Una consulta busca por búsqueda binaria el último punto anterior al objetivo,
+  lo materializa en una copia de trabajo y re-ejecuta como máximo K acciones con
+  el mismo ejecutor que el replay. La última acción respeta un límite de tiempo.
+- El pergamino solo trunca el arreglo de acciones vigentes; los puntos nunca se
+  invalidan. Las órdenes revertidas se re-ejecutan para reproducir los efectos
+  que el pergamino no deshace.
+- El guardado (formato 6) conserva órdenes, acciones, tramos de K y todos los
+  puntos, cada uno como bloque binario con el esquema y la validación del modelo.
+  Cargar con otro `--checkpoint-cada` abre un tramo nuevo sin alterar los puntos.
+- **K = 10** por defecto, elegido por Juan el 2026-11-13.
+
+**Correspondencia con el plan original (2026-11-09):**
+- D-LT-01 a 06 se mantienen sin cambios.
+- **D-LT-08 no estaba en el plan.** Se agregó el 2026-11-12, por elección del
+  usuario, porque la memoria medida era excesiva. Con el catálogo de ID la memoria
+  marginal por punto bajó un 36 %. El RSS oficial con K = 10 pasó de unos 652 MiB
+  (catálogo de ID) a unos 399 MiB (reutilizando registros iguales).
+- **K estaba pendiente en el plan.** Se eligió con la comparación oficial de la
+  tabla siguiente.
+- La captura incremental versionada y el índice inverso se probaron y se
+  rechazaron: la captura mediana subió de ~13,7 ms a ~50 ms y el índice inverso
+  no mejoró. Detalle en [CAPTURA_INCREMENTAL_JUAN.md](CAPTURA_INCREMENTAL_JUAN.md)
+  e [INDICE_INVERSO_JUAN.md](INDICE_INVERSO_JUAN.md).
+
+### Complejidad
+
+Con A acciones, O órdenes, P = ⌈A/K⌉ puntos, S el tamaño del estado y C el costo
+de re-simular una acción:
+
+| Operación | Costo |
+|---|---|
+| Registrar una orden | O(1) amortizado, más la captura O(S) una vez cada K acciones |
+| Recortar tras un pergamino | O(r), con r acciones revertidas (≤ 5) |
+| `#k` → objetivo / instante t → objetivo | O(1) / O(log A) |
+| Localizar el punto | O(log P) |
+| Consulta | O(log A + log P + S + K·C) |
+| Memoria | O(O + A + P·S′), con S′ ≤ S gracias a los registros compartidos |
+
+### Evidencia empírica
+
+**Elección de K** (cripta oficial `cripta-06`, 300 salas, 32 cazadores activos
+al inicio, 5 000 acciones y 36 consultas; [datos](evidencia/k_oficial_registros_reutilizados_memoria_juan.json)):
+
+| K | Consulta máxima | Consultas ≥ 50 ms | RSS observado |
+|---|---|---|---|
+| 5 | 24,26 ms | 0/36 | 756,94 MiB |
+| **10** | **43,05 ms** | **0/36** | **398,70 MiB** |
+| 25 | 54,89 ms | 2/36 | 191,93 MiB |
+
+**Solo el punto inicial** (sintético, 200 salas, 32 cazadores): consulta máxima
+de 3 121,56 ms, porque hay que re-simular hasta 4 999 acciones. Los puntos
+periódicos son imprescindibles.
+
+**Hacia adelante frente a hacia atrás** (`--bench`, 300 salas, 32 cazadores,
+cinco acciones; [datos](evidencia/mediciones_linea_tiempo.json)):
+- re-simular cuesta una mediana de 0,48 ms por acción;
+- deshacer cuesta 0,09 ms por acción, pero exige conservar 1 660 deltas
+  (121 KB de contenedores) por cada cinco acciones, es decir, unos 120 MB para
+  5 000 acciones solo en contenedores.
+
+Se elige hacia adelante: la memoria entre puntos es despreciable y la cota
+de K acciones acota el costo de re-simular.
+
+**Copia del punto** (misma corrida, 200–300 salas): el copiador propio tardó
+16,6–57,7 ms y la ida y vuelta por el serializador binario 93,9–265,2 ms; con
+1 000 salas, 69–127 ms frente a 493–905 ms. El serializador no cabe en el
+presupuesto de consulta.
+
+**Persistencia** (5 000 acciones, 200 salas): con K = 10 el archivo ocupa
+62,60 MB y la carga máxima es 25,5 s; con K = 100, 6,72 MB y 3,1 s
+([datos](evidencia/mediciones_persistencia_juan.json)).
+
+**Validación vigente con K = 10** (2026-11-13, [datos](evidencia/revision_sesion_k10_2026-11-13.json)):
+- 2/36 consultas ≥ 50 ms (máximo 63,59 ms);
+- 255/5 000 ciclos ≥ 20 ms (máximo 92,01 ms);
+- pico de RSS 396,63 MiB;
+- partida intacta, sin solicitudes HTTP y como máximo nueve acciones re-simuladas.
+
+Otra corrida previa con el mismo código dio 0/36 y 31/5 000; la variación entre
+corridas es grande.
+
+### Límites conocidos
+
+- **EX-01:** los límites de 20 ms por ciclo y 50 ms por consulta **no se cumplen**
+  con decenas de cazadores. Los picos se concentran en los ciclos que crean un
+  punto: la captura ocupa ~98 % del tiempo lento y la recolección de basura un
+  15–17 %. Ver [diagnóstico](DIAGNOSTICO_PICOS_JUAN.md) y [revisión](REVISION_SESION_BLOQUEADA.md).
+- **Memoria:** unos 400 MiB de RSS con K = 10 y 5 000 acciones; crece con P.
+- **Guardado:** guardar y cargar todos los puntos tarda decenas de segundos con
+  K pequeño.
+- Las cifras dependen del equipo y de la carga; no se garantiza el peor caso.
+
+## Parte II — §5.6 Revisión de las decisiones de la primera parte (consolidado)
+
+**Fuentes:** P2 §5.6, [plan de 004](../specs/004-linea-tiempo/plan.md) y la
+corrida de `--bench` con trazas reales de agenda y retroceso
+([datos](evidencia/mediciones_linea_tiempo.json), bloque `decisiones`).
+Los cazadores, los costos variables y la línea de tiempo cambian la carga sobre
+la agenda y el historial de retroceso. Se repitieron sus mediciones con esa
+carga y se revisaron las demás decisiones afectadas.
+
+| Decisión de P1 | Antes (P1) | Después (P2, carga nueva) | Resultado |
+|---|---|---|---|
+| Agenda: heap propio con cancelación perezosa | 2 000 inserciones y 500 cancelaciones: heap 8,46 ms, lista ordenada 246,84 ms | Traza real de 100 acciones, con 6 600 operaciones y como máximo 33 eventos. Heap y lista: 7,89/7,89 ms (200 salas), 5,42/1,95 ms (300 salas) y 5,64/1,56 ms (1 000 salas) | **Se mantiene**, ver nota |
+| Retroceso por deltas, cinco intervalos | 2 000 deltas deshechos en 0,289 ms | 32 cazadores: 1 660 deltas por cinco acciones (121 KB); deshacer cuesta 0,09–0,18 ms por acción | **Se mantiene**; sigue siendo independiente de la línea de tiempo (FR-LT-009) |
+| Guardado binario por bloques | Versión 3, bloques por sala y lectura selectiva | Versión 4 (costos y rango), 5 (conocimiento) y 6 (línea de tiempo y puntos); versiones anteriores rechazadas explícitamente | **Modificada**; se conservan el contenedor y la lectura selectiva |
+| Sin copias completas del estado | El retroceso prohibía copiar el estado | P2 §3.6 admite puntos de control. El serializador cuesta 93,9–265,2 ms por ida y vuelta (200–300 salas) | **Nueva decisión:** copiador y registros por ID (§5.5) |
+| Rastro del jugador | Marca temporal por sala, O(d) por decisión | Sin cambios de carga: los rastreadores conservan su comportamiento (§3.1) | **Se mantiene** |
+| Precarga, catálogo y caché persistente | Presupuesto de solicitudes y validación de versión | Se añade la consulta de llaves dentro del mismo presupuesto (§4.3) | **Se mantiene** |
+| Inventario, bitácora de pantalla y ordenamiento | Ver sus secciones de P1 | Sin carga nueva; las pruebas de regresión pasan | **Se mantienen** |
+
+**Nota sobre la agenda.** Con la carga nueva la agenda es pequeña (≤ 33
+eventos), y ahí la lista ordenada empata o gana en tiempo absoluto. Aun así,
+cada operación cuesta del orden de 1 µs y la diferencia total es de 4,1 ms como
+máximo en 6 600 operaciones, despreciable frente al ciclo. El heap se conserva por tres
+razones:
+- su costo O(log H) no se degrada si una cripta tiene muchos más actores o
+  acumula cancelaciones, mientras que la lista inserta en O(H);
+- los deltas del retroceso (`evento_programado` y `evento_extraido`) y el formato
+  de guardado dependen de su interfaz;
+- cambiarlo no mejora el límite EX-01, cuyos picos vienen de la captura de puntos.
+
 
 **Cierre de integración y K (2026-11-13):** se recontrastó el enunciado con las
 cuatro capacidades, sin seguir los prototipos rechazados como requisitos nuevos.

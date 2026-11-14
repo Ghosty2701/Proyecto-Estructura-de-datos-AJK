@@ -16,6 +16,41 @@ class RespuestaFalsa:
         return self.cuerpo
 
 
+def test_grafica_cancelacion_previa_no_hace_peticion(preparar):
+    # FR-IG-020/022/024; AC-IG-023.
+    from threading import Event
+    llamadas, _ = preparar([])
+    cancelar = Event(); cancelar.set()
+    cliente = ClienteHTTP(cancelar=cancelar)
+    with pytest.raises(ErrorHTTP, match='cancelad'):
+        cliente.listar_criptas()
+    assert llamadas == [] and cliente.solicitudes_realizadas == 0
+
+
+def test_grafica_cancelacion_429_interrumpe_espera_sin_reintento(monkeypatch):
+    from threading import Event, Thread
+    cancelar, esperando = Event(), Event()
+    cliente = ClienteHTTP(cancelar=cancelar)
+    llamadas = []
+    def get(*args, **kwargs):
+        llamadas.append(1); esperando.set()
+        return RespuestaFalsa(429, {'reintentar_en': 3600})
+    monkeypatch.setattr(modulo.requests, 'get', get)
+    errores = []
+    def ejecutar():
+        try: cliente.listar_criptas()
+        except ErrorHTTP as error: errores.append(str(error))
+    hilo = Thread(target=ejecutar)
+    hilo.start()
+    try:
+        assert esperando.wait(2)
+        cancelar.set(); hilo.join(2)
+        assert not hilo.is_alive() and 'cancelad' in errores[0]
+        assert llamadas == [1] and cliente.solicitudes_realizadas == 1
+    finally:
+        cancelar.set(); hilo.join(2)
+
+
 def test_rs_ac017_018_llaves_y_reintentos_cuentan(preparar):
     """FR-RS-001/014: endpoint nuevo conserva cliente y presupuesto."""
     llamadas, _ = preparar([RespuestaFalsa(429, {'reintentar_en': 0}),

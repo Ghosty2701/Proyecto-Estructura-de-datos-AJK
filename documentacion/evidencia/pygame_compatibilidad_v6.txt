@@ -1,0 +1,17 @@
+Fecha: 2026-11-14. Python 3.13.2, Windows, entorno .venv.
+Comando: ./.venv/Scripts/python.exe -m pytest -q Pruebas/prueba_guardado_grafico.py --tb=short
+Resultado real: 16 passed in 5.20s
+
+Lector real congelado: 6107b985ec317addff0c122c95c762d940664828 de main.
+Preparación reproducible dentro de la prueba:
+git archive --format=zip 6107b985ec317addff0c122c95c762d940664828 --output <temporal>/lector.zip
+Extracción temporal y ejecución con el intérprete .venv en proceso separado,
+cwd del lector congelado y PYTHONPATH vacío. No modifica main ni su worktree.
+
+Verificado: GUI->GUI conserva juego, recuerdos y deltas reversibles.
+GUI->lector congelado: mismo estado; esperar produce la misma continuación.
+Lector congelado->nuevo binario: clave gráfica ignorada y descartada al guardar.
+Nuevo binario->GUI: mismo estado, aviso y observación solo de la sala actual.
+Payload visual semánticamente inválido: juego válido conservado, recuerdos reiniciados.
+Binario truncado: rechazo con sesión y memoria anteriores conservadas.
+VERSION_MODELO sigue siendo 6 y _ESQUEMAS no se modifica.

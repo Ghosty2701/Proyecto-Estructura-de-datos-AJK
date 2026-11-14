@@ -69,3 +69,55 @@ def test_antorcha_revela_mapa_sin_observar_enemigos_remotos(tmp_path):
     remota = next(s for s in foto.salas if s.sala_id == 3)
     assert remota.estado == 2 and remota.recuerdo is None
     assert foto.enemigos == ()
+
+
+def test_cinco_deltas_pergamino_usar_rechazo_y_rama_nueva(tmp_path):
+    p, _ = partida_grafica(tmp_path, cinco=True)
+    from controlador.controlador import Controlador
+    from controlador.controlador_grafico import ReceptorValores
+    base = Controlador(p, ReceptorValores())
+    for _ in range(5): base.procesar('recoger 1')
+    ctl = ControladorGrafico(lambda _: SimpleNamespace(partida=p, cerrar=lambda: None))
+    def orden(op):
+        foto = ctl.respuesta.presentacion
+        ctl.enviar(IntencionGrafica(foto.generacion, foto.revision, op)); assert ctl.esperar(3)
+        return ctl.respuesta
+    try:
+        ctl.iniciar(None); assert ctl.esperar(3)
+        memoria = ctl._memoria
+        for _ in range(5): orden('esperar')
+        assert len(memoria.deltas) == 5
+        anterior = memoria.deltas[-1]
+        orden('usar')
+        assert len(memoria.deltas) == 4
+        orden('esperar')
+        assert len(memoria.deltas) == 5 and memoria.deltas[-1].posicion != anterior.posicion
+        assert memoria.deltas[-1].reloj_despues == anterior.reloj_despues
+        for _ in range(4): orden('retroceder')
+        assert len(memoria.deltas) == 1
+        antes = tuple(memoria.observaciones), tuple(memoria.deltas)
+        respuesta = orden('retroceder')
+        assert not respuesta.resultado.aceptada
+        assert (tuple(memoria.observaciones), tuple(memoria.deltas)) == antes
+    finally:
+        ctl.cerrar(esperar=True)
+
+
+def test_retroceso_cruza_origen_descarta_recuerdos_inciertos(tmp_path):
+    p, _ = partida_grafica(tmp_path)
+    from controlador.controlador import Controlador
+    from controlador.controlador_grafico import ReceptorValores
+    base = Controlador(p, ReceptorValores())
+    for texto in ('recoger 1', 'w', 'w', 's'): base.procesar(texto)
+    ctl = ControladorGrafico(lambda _: SimpleNamespace(partida=p, cerrar=lambda: None))
+    try:
+        ctl.iniciar(None); assert ctl.esperar(3)
+        memoria = ctl._memoria
+        assert memoria.obtener(2) is not None and memoria.obtener(3) is None
+        foto = ctl.respuesta.presentacion
+        ctl.enviar(IntencionGrafica(foto.generacion, foto.revision, 'retroceder')); assert ctl.esperar(3)
+        assert memoria.obtener(2) is None and memoria.obtener(3).grupos
+        assert memoria.deltas == []
+        assert memoria.origen[1] == p.acciones_ejecutadas
+    finally:
+        ctl.cerrar(esperar=True)

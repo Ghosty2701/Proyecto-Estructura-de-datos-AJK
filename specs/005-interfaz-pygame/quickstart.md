@@ -1,9 +1,10 @@
 # Guía de validación prevista: Interfaz con Pygame
 
-**Estado**: menú, mapa y acciones ordinarias implementados; 800 pruebas pasan.
-Instalación y arranque gráfico ya disponibles. Viaje incremental, historia gráfica,
-memoria reversible/persistida y validación visual siguen pendientes. Las secciones
-de esos recorridos describen el contrato previsto, todavía sin aceptación completa.
+**Estado**: siete historias implementadas; 831 pruebas pasan con Pygame y 813 sin
+esa dependencia (un módulo gráfico omitido). Instalación, menú, mapa, acciones,
+viaje incremental, historia, memoria reversible/persistida y resultados disponibles.
+Quedan mediciones separadas y revisión visual real, detenida con Esc durante el
+intento del 2026-11-14; todavía sin aceptación completa.
 Requisitos: [spec.md](spec.md). Contratos: [interfaz](contracts/interfaz-grafica.md)
 y [recuerdos v6](contracts/recuerdos-v6.md).
 

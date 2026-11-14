@@ -881,3 +881,24 @@ El 18 de octubre de 2026 se verificaron las cuatro criptas oficiales, semilla 20
 | 04 | 36 / 29 | 52 | 1.5630 |
 
 Son mediciones de las versiones y recorridos registrados en la evidencia. No prueban todas las secuencias posibles ni garantizan el mismo tiempo en otro equipo. Los prompts importados sin fecha o modelo se identifican como no registrados; las fechas aproximadas de Kendall se conservan como declaradas, pendientes de confirmación.
+
+## Ampliación personal Pygame — estado del 2026-11-14
+
+Rama `005-interfaz-pygame`, separada de la evaluación de Parte II. Se conservan
+las elecciones explícitas D-IG-05/06/07 de
+[investigación](../specs/005-interfaz-pygame/research.md): índice propio, vectores
+por sala y cinco deltas; payload primitivo opcional dentro del v6; croquis por
+direcciones con carril para conflictos. No se añaden índices de biblioteca ni
+campos gráficos al esquema binario del motor.
+
+Consola y GUI comparten cargador, comandos, registro y paso ordinario de viaje.
+El trabajador es dueño de la partida; la ventana recibe valores congelados.
+La memoria observa solo la sala presencial y los deltas se anclan a posiciones
+de órdenes, evitando aceptar recuerdos de una rama temporal diferente.
+
+[Compatibilidad v6](evidencia/pygame_compatibilidad_v6.txt) verificada con el lector
+real de `main@6107b98` extraído temporalmente y ejecutado en otro proceso.
+[Regresión](evidencia/pygame_regresion.txt): 831 pruebas con Pygame y 813 sin él,
+con un módulo gráfico omitido en este último entorno. No son mediciones de
+rendimiento por acción. Las mediciones separadas y la revisión visual real
+siguen pendientes; el control nativo fue detenido con Esc. EX-01 continúa vigente.

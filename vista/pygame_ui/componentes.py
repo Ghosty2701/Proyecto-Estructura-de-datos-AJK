@@ -96,6 +96,9 @@ class Componentes:
 
     def evento(self, evento, ocupado=False):
         if ocupado:
+            if evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1:
+                return next((b.accion for b in self.botones if b.habilitado and
+                             b.accion in ('salir', 'detener') and b.rect.collidepoint(evento.pos)), None)
             return None
         if evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1:
             self.foco = next((c for c in self.campos if c.rect.collidepoint(evento.pos)), None)

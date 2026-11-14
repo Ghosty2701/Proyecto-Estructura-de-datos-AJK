@@ -190,7 +190,7 @@ def test_reloj_presentacion_60_segundos_300_frames_sin_simulacion(ventana):
     reloj = RelojPresentacion()
     assert app.ejecutar(reloj) == 0
     assert reloj.frames == 300 and reloj.transcurrido == 60_000
-    assert app.controlador.respuesta.presentacion is foto
+    assert app.controlador.respuesta.presentacion == foto
     assert p.motor.azar.getstate() == azar and tuple(p.linea_tiempo.ordenes) == ordenes
 
 
@@ -223,3 +223,123 @@ def test_ataque_equipar_soltar_y_entrada_ocupada(ventana):
         assert app.controlador.respuesta.presentacion.sala_id == 3
     finally:
         liberar.set()
+
+
+@pytest.mark.parametrize('interrupcion', ['detener', 'foco', 'orden', 'pergamino', 'cerrar'])
+def test_interrupcion_durante_paso_no_encola_mas_turnos(tmp_path, interrupcion):
+    # FR-IG-010/012/013/022; AC-IG-013/021.
+    from threading import Event
+    from types import SimpleNamespace
+    from Pruebas.datos_graficos import partida_grafica
+    from controlador.controlador import Controlador
+    from controlador.controlador_grafico import ControladorGrafico, ReceptorValores
+    from controlador.proyeccion_grafica import IntencionGrafica
+    p, _ = partida_grafica(tmp_path)
+    Controlador(p, ReceptorValores()).procesar('recoger 1')
+    for conocida in p.motor.conocimiento.salas:
+        p.motor.conocimiento.entrar(conocida.sala, False, p.motor._cambiar)
+    p.jugador.sala_actual.salidas[0].destino.trampas.clear()
+    entrar, liberar = Event(), Event()
+    original = p.mover
+    def lento(direccion):
+        entrar.set(); assert liberar.wait(3)
+        return original(direccion)
+    p.mover = lento
+    ctl = ControladorGrafico(lambda _: SimpleNamespace(partida=p, cerrar=lambda: None))
+    try:
+        ctl.iniciar(None); assert ctl.esperar(3)
+        foto = ctl.respuesta.presentacion
+        assert ctl.enviar(IntencionGrafica(foto.generacion, foto.revision, 'viajar', '4'))
+        assert entrar.wait(3)
+        if interrupcion == 'cerrar':
+            ctl.cerrar()
+        elif interrupcion in ('detener', 'foco'):
+            assert ctl.detener_viaje(perder_foco=interrupcion == 'foco')
+        else:
+            op = 'retroceder' if interrupcion == 'pergamino' else 'esperar'
+            assert ctl.enviar(IntencionGrafica(foto.generacion, foto.revision, op))
+            assert not ctl.enviar(IntencionGrafica(foto.generacion, foto.revision, 'esperar'))
+        liberar.set(); assert ctl.esperar(3)
+        if interrupcion == 'cerrar':
+            ctl.cerrar(esperar=True)
+        nueva = ctl.respuesta.presentacion
+        assert not nueva.viaje_activo
+        assert nueva.acciones == {'pergamino': 1, 'orden': 3}.get(interrupcion, 2)
+        assert not ctl.continuar_viaje()
+    finally:
+        liberar.set(); ctl.cerrar(esperar=True)
+
+
+def test_viaje_incremental_espera_eventos_y_conserva_paradas(tmp_path):
+    from types import SimpleNamespace
+    from Pruebas.datos_graficos import partida_grafica
+    from controlador.controlador_grafico import ControladorGrafico
+    from controlador.proyeccion_grafica import IntencionGrafica
+    p, cargador = partida_grafica(tmp_path)
+    for conocida in p.motor.conocimiento.salas:
+        cargador.preparar_sala(conocida.sala)
+        p.motor.conocimiento.entrar(conocida.sala, False, p.motor._cambiar)
+        conocida.sala.trampas.clear()
+    ctl = ControladorGrafico(lambda _: SimpleNamespace(partida=p, cerrar=lambda: None))
+    try:
+        ctl.iniciar(None); assert ctl.esperar(3)
+        foto = ctl.respuesta.presentacion
+        ctl.enviar(IntencionGrafica(foto.generacion, foto.revision, 'viajar', '4')); assert ctl.esperar(3)
+        paso1 = ctl.respuesta.presentacion
+        assert paso1.sala_id == 2 and paso1.acciones == 1 and paso1.viaje_activo
+        assert ctl.esperar(0.01) and ctl.respuesta.presentacion is paso1
+        assert ctl.continuar_viaje(); assert ctl.esperar(3)
+        paso2 = ctl.respuesta.presentacion
+        assert paso2.sala_id == 3 and paso2.acciones == 2 and not paso2.viaje_activo
+        assert 'enemigos' in paso2.mensajes[-1] and not ctl.continuar_viaje()
+        assert tuple(o.texto for o in p.linea_tiempo.ordenes) == ('ir n', 'ir n')
+    finally:
+        ctl.cerrar(esperar=True)
+
+
+def test_historia_panel_separa_pasado_sin_cambiar_juego_memoria_red_azar(ventana):
+    from Pruebas.datos_linea_tiempo import instantanea
+    app = ventana; iniciar(app)
+    turno(app, 'mover', 'N')
+    p = app.controlador._sesion.partida
+    antes = instantanea(p), p.motor.azar.getstate(), tuple(p.linea_tiempo.ordenes), tuple(app.controlador._memoria.observaciones)
+    for valor in ('0', '#1'):
+        app.historia.valor = valor
+        pulsar(app, 'consultar_historia'); assert app.controlador.esperar(3)
+        app.actualizar(); app.dibujar()
+        foto = app.controlador.respuesta.presentacion
+        assert foto.panel == 'historia' and foto.historia.sala_id == 1
+        assert app.mapa_historia.croquis.casilla(3) is None
+        assert all(s.recuerdo is None for s in app.foto_historia.salas)
+        pulsar(app, ('juego', 'cerrar_panel', None, None)); assert app.controlador.esperar(3)
+        app.actualizar(); app.dibujar()
+    app.historia.valor = 'invalido'
+    pulsar(app, 'consultar_historia'); assert app.controlador.esperar(3)
+    app.actualizar(); app.dibujar()
+    assert not app.controlador.respuesta.resultado.aceptada
+    assert (instantanea(p), p.motor.azar.getstate(), tuple(p.linea_tiempo.ordenes), tuple(app.controlador._memoria.observaciones)) == antes
+
+
+def test_ventana_minima_camara_300_salas_y_controles_alcanzables(ventana):
+    from dataclasses import replace
+    from controlador.proyeccion_grafica import salas_visuales
+    from Pruebas.datos_graficos import mapa_sintetico
+    app = ventana; iniciar(app)
+    app.evento(pygame.event.Event(pygame.VIDEORESIZE, w=800, h=600))
+    assert app.ventana.get_size() == (1024, 768)
+    foto = replace(app.controlador.respuesta.presentacion, sala_id=101,
+                   salas=salas_visuales(mapa_sintetico(conflicto=True), 101))
+    app.controlador._respuesta = replace(app.controlador.respuesta, presentacion=foto)
+    app.dibujar()
+    assert len(app.mapa.croquis.casillas) == 300
+    ultimo = foto.salas[-1].sala_id
+    app.mapa.centrar(ultimo)
+    app.mapa.zoom(100)
+    app.dibujar()
+    assert app.mapa.escala == 1.8
+    assert any(ident == ultimo for ident, _ in app.mapa.casillas)
+    app.mapa.zoom(0.0001)
+    assert app.mapa.escala == 0.45
+    for boton in app.ui.botones:
+        assert app.ventana.get_rect().contains(boton.rect), boton.texto
+    assert not app.controlador.ocupado and foto.acciones == 0

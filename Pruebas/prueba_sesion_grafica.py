@@ -176,3 +176,42 @@ def test_secuencia_grafica_equivale_a_consola_y_rechaza_objetivo_viejo(tmp_path)
         assert instantanea(p) == antes
     finally:
         grafica.cerrar(esperar=True)
+
+
+@pytest.mark.parametrize('fallo_puntaje', [False, True])
+def test_resultado_unico_cierra_log_rechaza_turnos_y_permite_otra_sesion(tmp_path, fallo_puntaje):
+    import json
+    from dataclasses import replace
+    from pathlib import Path
+    datos = paquete_grafico(tmp_path/'datos')
+    ruta = tmp_path/'no-existe'/'puntajes.json' if fallo_puntaje else tmp_path/'puntajes.json'
+    config = ConfiguracionSesion(cripta='lt', offline=str(datos), cache_dir=str(tmp_path/'cache'),
+                                 puntajes=str(ruta), bitacora=str(tmp_path/'uno.log'))
+    ctl = ControladorGrafico()
+    def enviar(op, arg=None):
+        foto = ctl.respuesta.presentacion
+        assert ctl.enviar(IntencionGrafica(foto.generacion, foto.revision, op, arg))
+        assert ctl.esperar(5)
+        return ctl.respuesta
+    try:
+        assert ctl.iniciar(config) and ctl.esperar(5)
+        primera = ctl._sesion
+        for texto in ('recoger 6', 'w', 'd', 'abrir E', 'd'):
+            respuesta = enviar('comando', texto)
+            assert respuesta.resultado.aceptada
+        foto = respuesta.presentacion
+        assert foto.terminada and respuesta.fase == 'RESULTADO'
+        assert primera._resultado_intentado and primera.escritor.archivo.closed
+        if fallo_puntaje:
+            assert 'puntaje' in respuesta.error.lower() and not ruta.exists()
+        else:
+            assert len(json.loads(ruta.read_text(encoding='utf-8'))) == 1
+        assert not enviar('esperar').resultado.aceptada
+        assert ctl.respuesta.presentacion.acciones == foto.acciones
+        assert ctl.iniciar(replace(config, bitacora=str(tmp_path/'dos.log'))) and ctl.esperar(5)
+        assert ctl.respuesta.presentacion.generacion == foto.generacion+1
+        assert ctl.respuesta.presentacion.acciones == 0
+        if not fallo_puntaje:
+            assert len(json.loads(ruta.read_text(encoding='utf-8'))) == 1
+    finally:
+        ctl.cerrar(esperar=True)

@@ -6,8 +6,9 @@ con mapa 2D, sprites y paneles, conservando el juego por turnos. Por ahora está
 `main` conserva la entrega actual; el estado de Parte II que sigue abajo no
 representa el avance de esta ampliación.
 
-**Avance de Pygame: ~60 % estimado**, con menú, mapa, recuerdos y acciones ordinarias
-implementados; **800 pruebas aprobadas**, viaje e historia gráfica pendientes. Es una ampliación personal,
+**Avance de Pygame: ~85 % estimado**, con menú, mapa, acciones, viaje, historia y
+guardado de recuerdos implementados; **831 pruebas aprobadas**, mediciones y revisión
+visual final pendientes. Es una ampliación personal,
 independiente de la nota del proyecto. [Seguimiento](specs/005-interfaz-pygame/README.md#avance-exclusivo-de-pygame).
 
 Proyecto de Andrey, Juan y Kendall. Juego de consola con terreno ponderado,

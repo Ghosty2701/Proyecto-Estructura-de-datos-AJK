@@ -182,6 +182,8 @@ class CargadorPartida:
         self.enemigos = []
         self.jugador = None
         self._ids_preparando = []
+        self.exportar_interfaz = None
+        self.datos_interfaz_cargados = None
         self.servicio.cache.esta_en_uso = self.ficha_en_uso
 
     def crear(self, cripta_id, semilla, *, encabezado_log=None, datos_verificados=None,
@@ -368,16 +370,19 @@ class CargadorPartida:
                 ficha = ficha.datos
             if ficha is not None:
                 fichas.insertar(ficha["id"], ficha)
+        extra = {
+            'partida': partida,
+            'contenido': list(_recorrer_arbol(self.servicio.contenido.raiz)),
+            'fichas': list(_recorrer_arbol(fichas.raiz)),
+            'linea': self._linea_a_datos(partida),
+        }
+        if self.exportar_interfaz is not None:
+            extra['interfaz_grafica'] = self.exportar_interfaz(partida)
         guardar_partida(
             ruta, partida.motor, partida.jugador, salas,
             id_cripta=partida.id_cripta, version_cripta=partida.version_cripta,
             version_catalogo=self.servicio.cache.version,
-            datos_extra={
-                "partida": partida,
-                "contenido": list(_recorrer_arbol(self.servicio.contenido.raiz)),
-                "fichas": list(_recorrer_arbol(fichas.raiz)),
-                "linea": self._linea_a_datos(partida),
-            },
+            datos_extra=extra,
         )
 
     def leer_sesion(self, ruta, id_cripta, version_cripta):
@@ -476,6 +481,8 @@ class CargadorPartida:
         self.enemigos = actual.enemigos
         self.jugador = actual.jugador
         self.servicio.cache.esta_en_uso = self.ficha_en_uso
+
+        self.datos_interfaz_cargados = cargada.datos_extra.get('interfaz_grafica')
 
     def reanudar(self, ruta, checkpoint_cada=None):
         if self.jugador is not None:

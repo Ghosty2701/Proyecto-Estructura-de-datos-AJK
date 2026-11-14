@@ -85,7 +85,10 @@ class Sesion:
         if self._resultado_intentado or self.partida.resultado_final() is None:
             return False
         self._resultado_intentado = True
-        return guardar_resultado(self.partida, self.config.puntajes)
+        try:
+            return guardar_resultado(self.partida, self.config.puntajes)
+        finally:
+            self.cerrar()
 
     def cerrar(self):
         if self._cerrada:
@@ -96,15 +99,15 @@ class Sesion:
             self.escritor.cerrar()
 
 
-def crear_fuente(config):
+def crear_fuente(config, cancelar=None):
     return (ModoOffline(config.offline) if config.offline is not None
-            else ClienteHTTP(reservar_imprevistos=True))
+            else ClienteHTTP(reservar_imprevistos=True, cancelar=cancelar))
 
 
 def listar_criptas(config, cancelar=None):
     if cancelar is not None and cancelar.is_set():
         raise ValueError('Preparación cancelada.')
-    datos = crear_fuente(config).listar_criptas()['criptas']
+    datos = crear_fuente(config, cancelar).listar_criptas()['criptas']
     return tuple((str(c['id']), str(c['nombre']), c['salas']) for c in datos)
 
 
@@ -112,7 +115,7 @@ def preparar_sesion(config, *, cancelar=None):
     config.validar()
     if cancelar is not None and cancelar.is_set():
         raise ValueError('Preparación cancelada.')
-    fuente = crear_fuente(config)
+    fuente = crear_fuente(config, cancelar)
     cache = CacheCatalogo(fuente, carpeta=config.cache_dir, tope=config.cache_size)
     servicio = ServicioCripta(fuente, cache)
     mapa, mensajes = None, []

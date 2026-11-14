@@ -18,6 +18,13 @@ class RutaSalida:
     costo: int = 100
 
 
+@dataclass(frozen=True)
+class PasoViaje:
+    mensajes: tuple
+    continuar: bool
+    movio: bool
+
+
 @dataclass
 class EstadoPartida:
     sala_id: int
@@ -297,28 +304,35 @@ class Partida:
             if interrumpir is not None and interrumpir():
                 mensajes.append('Viaje interrumpido por el jugador.')
                 break
-            ruta = self.motor.conocimiento.ruta(self.jugador.sala_actual, destino)
-            if not ruta.encontrada:
-                mensajes.append('Viaje detenido: no hay ruta conocida abierta.')
-                break
-            direccion = ruta.primer_paso.direccion
-            mensajes.extend(self.mover(direccion))
-            if registrar is not None:
-                registrar(f'ir {direccion}')
-            if mostrar_paso is not None:
-                mostrar_paso()
-            if self.motor.enemigos_entrada:
-                mensajes.append('Viaje detenido: enemigos en la sala de entrada.')
-                break
-            if self.motor.hubo_dano:
-                mensajes.append('Viaje detenido: recibiste daño.')
-                break
-            if self.jugador.sala_actual is destino.sala:
-                mensajes.append('Viaje completado: llegaste al destino.')
-                break
-            if self.victoria or self.jugador.vida <= 0:
+            paso = self.paso_viaje(destino, registrar=registrar, mostrar_paso=mostrar_paso)
+            mensajes.extend(paso.mensajes)
+            if not paso.continuar:
                 break
         return mensajes
+
+    def paso_viaje(self, destino, *, registrar=None, mostrar_paso=None):
+        """Un movimiento ordinario y sus paradas; compartido por consola y GUI."""
+        self._comprobar_activa()
+        if destino.sala is self.jugador.sala_actual:
+            return PasoViaje(('Ya estás en esa sala.',), False, False)
+        ruta = self.motor.conocimiento.ruta(self.jugador.sala_actual, destino)
+        if not ruta.encontrada:
+            return PasoViaje(('Viaje detenido: no hay ruta conocida abierta.',), False, False)
+        direccion = ruta.primer_paso.direccion
+        mensajes = list(self.mover(direccion))
+        if registrar is not None:
+            registrar(f'ir {direccion}')
+        if mostrar_paso is not None:
+            mostrar_paso()
+        if self.motor.enemigos_entrada:
+            mensajes.append('Viaje detenido: enemigos en la sala de entrada.')
+        elif self.motor.hubo_dano:
+            mensajes.append('Viaje detenido: recibiste daño.')
+        elif self.jugador.sala_actual is destino.sala:
+            mensajes.append('Viaje completado: llegaste al destino.')
+        else:
+            return PasoViaje(tuple(mensajes), not (self.victoria or self.jugador.vida <= 0), True)
+        return PasoViaje(tuple(mensajes), False, True)
 
     def _nombre_sala(self, sala):
         if self.motor.conocimiento is None:

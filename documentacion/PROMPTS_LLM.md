@@ -1795,3 +1795,19 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     Regresión completa: 800 pruebas pasan en 61,84 s. Vídeo dummy e inactividad
     de 300 cuadros con reloj inyectado, sin acreditar revisión visual nativa.
     Pygame ~60 % estimado; siguen viaje, historia y persistencia de recuerdos.
+
+64. Continua — viaje, historia, persistencia y validación automatizada T030–T049
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Se implementaron paso de viaje compartido, interrupción única y cancelación
+    por foco/cierre; cinco deltas por ancla de orden; panel histórico separado;
+    payload primitivo opcional v6 y carga candidata; resultados únicos, cierre del
+    escritor, puntajes y cancelación opcional de espera 429. Pruebas previas
+    observaron los fallos esperados y se verificaron tras implementar.
+    Matriz real con lector congelado `main@6107b98` en proceso separado aprobada.
+    Regresión completa: 831 pruebas en .venv con Pygame; 813 y un módulo omitido
+    en Python global sin Pygame. Revisión nativa intentada con computer-use;
+    captura no correspondiente al objetivo y recuperación fallida, luego el usuario
+    detuvo el control con Esc. No se siguieron enviando acciones de aplicación.
+    T050–T053 pendientes; avance exclusivo de Pygame estimado en ~85 %.

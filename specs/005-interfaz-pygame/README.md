@@ -1,12 +1,12 @@
 # Capacidad 005 — Interfaz gráfica con Pygame
 
 Esta rama desarrolla una ampliación del proyecto. **Interfaz gráfica jugable con
-las siete historias implementadas; aceptación completa aún pendiente.**
+las siete historias implementadas y aceptadas; 53/53 tareas (2026-11-14).**
 
 Tras probarla, el usuario pidió que la escena principal represente habitaciones,
 personaje y enemigos, con el mapa como apoyo. Esa evolución está en el
 [spec 006](../006-salas-combate-visual/spec.md), ya implementado y probado
-automáticamente, con validación nativa completa pendiente. El porcentaje de
+automáticamente y revisado en escritorio real (48/48 tareas). El porcentaje de
 esta página describe el alcance original de 005.
 
 - Rama de trabajo: `005-interfaz-pygame`.
@@ -15,12 +15,12 @@ esta página describe el alcance original de 005.
 - [Revisión de calidad](checklists/requirements.md): 16/16 criterios revisados.
 - [Plan técnico completado](plan.md) y [decisiones investigadas](research.md): las tres elecciones del usuario están confirmadas.
 - [Modelo de datos](data-model.md), contratos de [interfaz](contracts/interfaz-grafica.md) y [recuerdos v6](contracts/recuerdos-v6.md), y [guía de validación](quickstart.md).
-- [53 tareas de implementación](tasks.md), ordenadas por las siete historias; T001–T049 completadas y verificadas.
+- [53 tareas de implementación](tasks.md), ordenadas por las siete historias; 53/53 completadas y verificadas.
 - Carpeta de trabajo local usada: `C:/Users/pipro/Downloads/Proyecto-Estructura-de-datos-AJK-pygame`.
 
 ## Avance exclusivo de Pygame
 
-**Estimación actual: ~85 %**, orientativa. Especificación, aclaraciones,
+**Estimación actual: 100 % del alcance de 005**, orientativa. Especificación, aclaraciones,
 planificación técnica, descomposición y análisis de consistencia completados:
 estructuras elegidas, arquitectura, modelo de datos, contratos, guía y 53 tareas.
 El análisis de solo lectura verificó cobertura prevista de 35/35 requisitos
@@ -42,9 +42,11 @@ un módulo gráfico omitido en ese segundo entorno; esa omisión no acredita la 
 Salidas en [regresión](../../documentacion/evidencia/pygame_regresion.txt).
 Las pruebas de ventana usan vídeo dummy y no acreditan legibilidad real.
 
-Quedan T050–T053: mediciones separadas, revisión visual real, cierre documental
-y auditoría final de cobertura. El control de aplicaciones fue detenido con Esc
-durante el intento de revisión nativa; no se marca aprobada. Esta ampliación es una
+T050–T053 cerradas el 2026-11-14: [mediciones separadas](../../documentacion/evidencia/pygame_mediciones.md),
+[revisión visual real consolidada](../../documentacion/evidencia/pygame_revision_visual.md)
+(el primer intento detenido con Esc se reemplazó por la revisión de escritorio de 006),
+documentación y auditoría: 58/58 identificadores con tarea. Regresión vigente:
+866 con Pygame y 819 sin Pygame. Esta ampliación es una
 exigencia personal del usuario, independiente de la nota y del avance de Parte II.
 En adelante se reporta únicamente su propio progreso. La integración en `main`
 se evaluará cuando funcione y se haya validado la compatibilidad.
@@ -86,9 +88,9 @@ plantillas compuestas y constitución. No se cambia de versión de spec-kit.
 | Planificar (`$speckit-plan`) | Completada | Elecciones confirmadas, arquitectura, modelo de datos, contratos y guía de validación |
 | Descomponer (`$speckit-tasks`) | Completada | 53 tareas, siete historias, dependencias y cobertura completa prevista |
 | Analizar (`$speckit-analyze`) | Completada, solo lectura | 35/35 requisitos y 23/23 escenarios con tareas; sin bloqueos críticos/altos identificados |
-| Implementar (`$speckit-implement`) | En curso; T001–T049 completas | Siete historias implementadas, regresión 831/813; validación final pendiente |
+| Implementar (`$speckit-implement`) | Completada; 53/53 tareas | Siete historias implementadas, regresión 866/819, mediciones y revisión visual con límites |
 
-La preparación SDD está cerrada y la implementación está en curso.
+La preparación SDD y la implementación están cerradas.
 El usuario eligió explícitamente
 D-IG-05/06/07: índice propio con vectores y cambios por turno, datos visuales
 opcionales dentro del `.bin` y croquis por direcciones. No quedan decisiones

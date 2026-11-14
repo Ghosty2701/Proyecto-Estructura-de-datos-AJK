@@ -14,7 +14,13 @@ Es una ampliación personal,
 independiente de la nota del proyecto. La base anterior de mapa se registra en
 [005](specs/005-interfaz-pygame/README.md).
 
-Para probar la versión local:
+Para probar la versión local (pygame 2.6.1 no publica wheel para Python 3.14;
+usar Python 3.13 en el entorno virtual):
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r documentacion/requirements-pygame.txt
+```
 
 ```powershell
 .\.venv\Scripts\python.exe main.py --interfaz pygame

@@ -48,14 +48,14 @@ Prueba independiente: tamaños mínimo/referencia, muchos objetivos y funciones 
 
 - [X] T018 [US4] Escribir pruebas de paginación para «12 enemigos y 8 objetos por página», controles y selección alcanzables a 1024 × 768 en `Pruebas/prueba_sala_visual.py`. Dep.: T017. FR-EV-003, FR-EV-005, FR-EV-014; AC-EV-013, AC-EV-014, AC-EV-015; SC-EV-002.
 - [X] T019 [US4] Completar escala, páginas, contraste, leyenda, genéricos y modo de efectos en `sala.py`, `recursos.py` y `aplicacion.py`; hacer pasar T018. Dep.: T018. FR-EV-003, FR-EV-005, FR-EV-013, FR-EV-014; AC-EV-013, AC-EV-014, AC-EV-015; SC-EV-002, SC-EV-005.
-- [ ] T020 [US4] Ejecutar revisión visual real de `quickstart.md`, guardar capturas pertinentes y registrar límites en `documentacion/evidencia/escena_revision_visual.md`; vídeo dummy no acredita esta tarea. Dep.: T019. FR-EV-001, FR-EV-013, FR-EV-014; AC-EV-001, AC-EV-005, AC-EV-013, AC-EV-014, AC-EV-015; SC-EV-001, SC-EV-005.
+- [X] T020 [US4] Ejecutar revisión visual real de `quickstart.md`, guardar capturas pertinentes y registrar límites en `documentacion/evidencia/escena_revision_visual.md`; vídeo dummy no acredita esta tarea. Dep.: T019. FR-EV-001, FR-EV-013, FR-EV-014; AC-EV-001, AC-EV-005, AC-EV-013, AC-EV-014, AC-EV-015; SC-EV-001, SC-EV-005.
 
 ## Fase 7 — Validación y entrega
 
 - [X] T021 Ejecutar regresión completa con/sin Pygame, matriz v6 y comparación de secuencias normal/reducida/sin efectos; registrar salidas en `documentacion/evidencia/escena_regresion.txt`. Dep.: T019. FR-EV-008, FR-EV-009, FR-EV-011, FR-EV-012; AC-EV-004, AC-EV-007, AC-EV-011, AC-EV-015; SC-EV-003, SC-EV-004, SC-EV-006.
 - [X] T022 Medir dibujo y acción separadamente con fixtures locales; registrar tamaño, datos, equipo y min/mediana/máximo en `documentacion/evidencia/escena_mediciones.md`, sin afirmar EX-01 resuelta. Dep.: T021. FR-EV-009, FR-EV-014; SC-EV-003, SC-EV-005.
-- [ ] T023 Actualizar `README.md`, `specs/006-salas-combate-visual/README.md`, `quickstart.md`, `documentacion/DOCUMENTO_DECISIONES.md` y `documentacion/PROMPTS_LLM.md` con uso, arte, pruebas, avance exclusivo y pendientes reales. Dep.: T020, T022. FR-EV-012, FR-EV-013, FR-EV-014; SC-EV-005, SC-EV-006.
-- [ ] T024 Auditar cobertura de 14 FR/15 AC/6 SC en `specs/006-salas-combate-visual/tasks.md`, confirmar commits y push en rama adicional sin fusionar `main`. Dep.: T023. FR-EV-001, FR-EV-008, FR-EV-011, FR-EV-012, FR-EV-013, FR-EV-014; SC-EV-001, SC-EV-002, SC-EV-003, SC-EV-004, SC-EV-005, SC-EV-006.
+- [X] T023 Actualizar `README.md`, `specs/006-salas-combate-visual/README.md`, `quickstart.md`, `documentacion/DOCUMENTO_DECISIONES.md` y `documentacion/PROMPTS_LLM.md` con uso, arte, pruebas, avance exclusivo y pendientes reales. Dep.: T020, T022. FR-EV-012, FR-EV-013, FR-EV-014; SC-EV-005, SC-EV-006.
+- [X] T024 Auditar cobertura de 14 FR/15 AC/6 SC en `specs/006-salas-combate-visual/tasks.md`, confirmar commits y push en rama adicional sin fusionar `main`. Dep.: T023. FR-EV-001, FR-EV-008, FR-EV-011, FR-EV-012, FR-EV-013, FR-EV-014; SC-EV-001, SC-EV-002, SC-EV-003, SC-EV-004, SC-EV-005, SC-EV-006.
 
 ## Dependencias y estrategia
 
@@ -95,10 +95,19 @@ ninguna se completa por el hecho de generar estos documentos.
 
 ## Fase 10 — Exploración ligera y revisión interactiva
 
-- [ ] T042 Confirmar revisión previa en `spec.md`, `plan.md` y bitácora; revisar cobertura. Dep.: T041. FR-EV-022, FR-EV-023, FR-EV-024, FR-EV-025; AC-EV-024, AC-EV-025, AC-EV-026, AC-EV-027; SC-EV-011, SC-EV-012.
-- [ ] T043 Probar altura, ayuda sin turno, carga compacta, no recarga de PNG, snapshot estable y transición en `Pruebas/prueba_exploracion_ligera.py`. Dep.: T042. FR-EV-022, FR-EV-023, FR-EV-024, FR-EV-025; AC-EV-024, AC-EV-025, AC-EV-026, AC-EV-027.
-- [ ] T044 Ajustar minimapa/leyenda y actividad contextual en `aplicacion.py`. Dep.: T043. FR-EV-022, FR-EV-023, FR-EV-024; SC-EV-011.
-- [ ] T045 Evitar recomparar snapshot idéntico en `mapa.py` y acortar transición en `animaciones.py`; sin cambios en solicitudes ni reglas. Dep.: T043. FR-EV-025; AC-EV-027; SC-EV-012.
-- [ ] T046 Ejecutar regresión con/sin gráficos, perfil antes/después con `Pruebas/medir_exploracion.py` y renders en `Pruebas/renderizar_retro.py`; documentar en `documentacion/evidencia/exploracion_revision.md`. Dep.: T044, T045. FR-EV-008, FR-EV-012, FR-EV-022, FR-EV-023, FR-EV-024, FR-EV-025; SC-EV-006, SC-EV-011, SC-EV-012.
-- [ ] T047 Ejecutar recorrido interactivo de escritorio con computer-use, dos tamaños, foco, teclado, sprites, inventario, mapa, historia, guardado/carga y cierre; evidencia en `documentacion/evidencia/exploracion_escritorio.md`. Dep.: T046. FR-EV-001, FR-EV-013, FR-EV-014, FR-EV-019, FR-EV-022, FR-EV-023, FR-EV-024; SC-EV-001, SC-EV-005, SC-EV-011, SC-EV-012.
-- [ ] T048 Auditar spec/plan/tareas/evidencia, actualizar README/decisiones/prompts, commit y push sin merge; cerrar pendientes anteriores solo con evidencia. Dep.: T047. FR-EV-012, FR-EV-022, FR-EV-023, FR-EV-024, FR-EV-025; SC-EV-006, SC-EV-011, SC-EV-012.
+- [X] T042 Confirmar revisión previa en `spec.md`, `plan.md` y bitácora; revisar cobertura. Dep.: T041. FR-EV-022, FR-EV-023, FR-EV-024, FR-EV-025; AC-EV-024, AC-EV-025, AC-EV-026, AC-EV-027; SC-EV-011, SC-EV-012.
+- [X] T043 Probar altura, ayuda sin turno, carga compacta, no recarga de PNG, snapshot estable y transición en `Pruebas/prueba_exploracion_ligera.py`. Dep.: T042. FR-EV-022, FR-EV-023, FR-EV-024, FR-EV-025; AC-EV-024, AC-EV-025, AC-EV-026, AC-EV-027.
+- [X] T044 Ajustar minimapa/leyenda y actividad contextual en `aplicacion.py`. Dep.: T043. FR-EV-022, FR-EV-023, FR-EV-024; SC-EV-011.
+- [X] T045 Evitar recomparar snapshot idéntico en `mapa.py` y acortar transición en `animaciones.py`; sin cambios en solicitudes ni reglas. Dep.: T043. FR-EV-025; AC-EV-027; SC-EV-012.
+- [X] T046 Ejecutar regresión con/sin gráficos, perfil antes/después con `Pruebas/medir_exploracion.py` y renders en `Pruebas/renderizar_retro.py`; documentar en `documentacion/evidencia/exploracion_revision.md`. Dep.: T044, T045. FR-EV-008, FR-EV-012, FR-EV-022, FR-EV-023, FR-EV-024, FR-EV-025; SC-EV-006, SC-EV-011, SC-EV-012.
+- [X] T047 Ejecutar recorrido interactivo de escritorio con computer-use, dos tamaños, foco, teclado, sprites, inventario, mapa, historia, guardado/carga y cierre; evidencia en `documentacion/evidencia/exploracion_escritorio.md`. Dep.: T046. FR-EV-001, FR-EV-013, FR-EV-014, FR-EV-019, FR-EV-022, FR-EV-023, FR-EV-024; SC-EV-001, SC-EV-005, SC-EV-011, SC-EV-012.
+- [X] T048 Auditar spec/plan/tareas/evidencia, actualizar README/decisiones/prompts, commit y push sin merge; cerrar pendientes anteriores solo con evidencia. Dep.: T047. FR-EV-012, FR-EV-022, FR-EV-023, FR-EV-024, FR-EV-025; SC-EV-006, SC-EV-011, SC-EV-012.
+
+**Cierre verificado 2026-11-14 (Kendall, Claude Code):** las casillas T020,
+T023/T024 y T042–T048 se marcan después de comprobar su evidencia, registrada
+por Juan en el commit `b627d6f`. Spec, plan, tareas y bitácora (`205610e`) son
+anteriores al código. El código comprobado incluye minimapa de 286 px, escala 0,60,
+leyenda WASD/H, indicador de 160 × 30 tras 150 ms, transiciones de 160/80 ms y
+snapshot reutilizado. Pruebas: 866 con Pygame y 819 sin Pygame (Python 3.13.17 y
+3.14.7). Revisión nativa: [exploracion_escritorio.md](../../documentacion/evidencia/exploracion_escritorio.md).
+Cobertura: los 64 identificadores FR/AC/SC/PR del spec tienen tarea.

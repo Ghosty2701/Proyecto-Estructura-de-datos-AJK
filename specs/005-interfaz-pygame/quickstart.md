@@ -1,10 +1,10 @@
 # Guía de validación prevista: Interfaz con Pygame
 
-**Estado**: siete historias implementadas; 831 pruebas pasan con Pygame y 813 sin
-esa dependencia (un módulo gráfico omitido). Instalación, menú, mapa, acciones,
-viaje incremental, historia, memoria reversible/persistida y resultados disponibles.
-Quedan mediciones separadas y revisión visual real, detenida con Esc durante el
-intento del 2026-11-14; todavía sin aceptación completa.
+**Estado (2026-11-14)**: siete historias implementadas y aceptadas; 53/53 tareas.
+866 pruebas pasan con Pygame y 819 sin esa dependencia (cinco módulos gráficos
+omitidos). [Mediciones separadas](../../documentacion/evidencia/pygame_mediciones.md)
+y [revisión visual real consolidada](../../documentacion/evidencia/pygame_revision_visual.md),
+con sus límites. pygame 2.6.1 requiere Python ≤ 3.13: no hay wheel para 3.14.
 Requisitos: [spec.md](spec.md). Contratos: [interfaz](contracts/interfaz-grafica.md)
 y [recuerdos v6](contracts/recuerdos-v6.md).
 

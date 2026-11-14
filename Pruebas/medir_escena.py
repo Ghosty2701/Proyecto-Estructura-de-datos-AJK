@@ -1,18 +1,20 @@
 """Medición reproducible de presentación y acción; no es presupuesto EX-01.
 
-Ejecutar desde raíz: ./.venv/Scripts/python.exe -m Pruebas.medir_escena
+Ejecutar desde raíz: ./.venv/Scripts/python.exe -m Pruebas.medir_escena [destino.md] [titulo]
+Por defecto escribe documentacion/evidencia/escena_mediciones.md (006, T022).
 """
 from pathlib import Path
 from dataclasses import asdict, replace
 from types import SimpleNamespace
 from statistics import median
 from time import perf_counter, sleep
+from datetime import date
 import os
 import platform
 import sys
 
 
-def ejecutar():
+def ejecutar(destino='documentacion/evidencia/escena_mediciones.md', titulo='Mediciones de escena'):
     os.environ['SDL_VIDEODRIVER'] = 'dummy'
     os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
     import pygame
@@ -58,7 +60,7 @@ def ejecutar():
         ctl = Controlador(p, ReceptorValores())
         medir('Accion esperar completa sin dibujo/red', lambda: ctl.procesar('esperar'), 100)
         reporte = '\n'.join([
-            '# Mediciones de escena — 2026-11-14', '',
+            f'# {titulo} — {date.today().isoformat()}', '',
             f'Equipo: {platform.platform()}; {os.environ.get("PROCESSOR_IDENTIFIER", "CPU no informada")}.',
             f'Python {sys.version.split()[0]}; Pygame {pygame.version.ver}; SDL {pygame.get_sdl_version()}.',
             'Video dummy: dibujo de superficies, sin medir GPU, monitor ni percepcion nativa.',
@@ -70,12 +72,12 @@ def ejecutar():
             'Las muestras de dibujo reutilizan recursos escalados; no incluyen carga de PNG ni red.',
             'Accion completa incluye motor y registro/linea compartidos; no es el ciclo oficial K10.',
             'No se afirma EX-01 resuelta ni se extrapola a otras criptas/equipos.',
-            'Comando: ./.venv/Scripts/python.exe -m Pruebas.medir_escena', ''])
-        Path('documentacion/evidencia/escena_mediciones.md').write_text(reporte, encoding='utf-8')
+            f'Comando: ./.venv/Scripts/python.exe -m Pruebas.medir_escena {destino}', ''])
+        Path(destino).write_text(reporte, encoding='utf-8')
         print(reporte)
     finally:
         app.controlador.cerrar(esperar=True); pygame.quit()
 
 
 if __name__ == '__main__':
-    ejecutar()
+    ejecutar(*sys.argv[1:3])

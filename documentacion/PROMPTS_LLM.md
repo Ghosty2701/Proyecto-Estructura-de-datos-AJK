@@ -1080,7 +1080,7 @@ pruebas o benchmarks ni se implementó código de la capacidad.
 
     *Fecha: 2026-10-17*
 
-### Entradas 72–95: Auditoría P2, integraciones, especificación y plan de línea de tiempo
+### Entradas 72–103: Auditoría P2, integraciones, especificación y plan de línea de tiempo
 
 *Fecha original de las intervenciones: 2026-11-09*
 
@@ -1115,6 +1115,14 @@ original y resume su resultado, sin convertir recomendaciones en decisiones.
 | 93 | de acuerdo, prosigue con el siguiente paso | speckit-implement, fase 3 (US1, T012–T016): órdenes `historia <t>` e `historia #k`, resumen histórico y presentación en consola; 594 pruebas aprobadas. |
 | 94 | si | speckit-implement, US2 y US3 (T017–T020): pruebas de no alteración (reloj, azar, retroceso, línea, log, caché, solicitudes), «historia» durante «ir a» y coherencia con pergaminos consecutivos y efectos que no se deshacen; sin cambios de código necesarios. |
 | 95 | proceed with next steps | speckit-implement, US4 (T021–T023): `--replay LOG --hasta T` con el mismo resumen que `historia`, sin vista; aviso de fin anticipado y errores de uso. Después US5 (T024–T025, `--checkpoint-cada`) y US6 (T026–T028, formato 6 con todos los puntos codificados y rechazo de versiones anteriores); 630 pruebas aprobadas. |
+| 96 | si, prosigue con el bench | Bench de línea de tiempo (T029–T032) y copiador acelerado; la corrida del 2026-11-09 quedó contaminada por carga concurrente. |
+| 97 | commit changes / commit pending changes | Commit del código; la evidencia incompleta no se confirmó. |
+| 98 | check for changes in the repository / en la pagina de github hay cambios que se hicieron ayer, los puedes ver? | Revisión: 75 commits de Juan (2026-11-11 a 13) y rama `005-interfaz-pygame`. |
+| 99 | alineemos mi copia local | Respaldo en rama local `respaldo-copiador-kendall`; `main` alineado con `origin/main`; 759 pruebas pasan. |
+| 100 | verificar el estado actual para ver si cumple con el pdf de especificaciones, haciendo la excepcion mencionada por juan, y realiza las tareas abiertas que quedaran pendientes | Auditoría contra el PDF con EX-01: sin incumplimientos adicionales. CI-005/007/008 cerradas sin ejecutar por descarte del experimento; queda abierto solo el ciclo <20 ms (EX-01). |
+| 101 | prosigamos con la rama de pygame, que indicaciones te ha dado juan al respecto? para conocer la arquitectura que quiere armar | Lectura de la rama `005-interfaz-pygame`: prompts 56–74 de Juan, specs 005/006, arquitectura y pendientes; sin cambios. |
+| 102 | commit unconfirmed changes | Commit en `main` de la auditoría (`fbccbd7`). |
+| 103 | prosigamos con terminar el pygame | Entorno de referencia: Python 3.13.17 instalado (pygame 2.6.1 no tiene wheel para 3.14) y `.venv` con pygame 2.6.1; 866/819 pruebas. T050 medido, T051 consolidado con límites, documentación y auditoría (58 y 64 identificadores con tarea); 005 53/53 y 006 48/48. |
 
 Detalle en [especificación](../specs/004-linea-tiempo/spec.md) e
 [investigación de la línea de tiempo](../specs/004-linea-tiempo/research.md).

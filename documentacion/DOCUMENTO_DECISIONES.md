@@ -900,8 +900,16 @@ de órdenes, evitando aceptar recuerdos de una rama temporal diferente.
 real de `main@6107b98` extraído temporalmente y ejecutado en otro proceso.
 [Regresión](evidencia/pygame_regresion.txt): 831 pruebas con Pygame y 813 sin él,
 con un módulo gráfico omitido en este último entorno. No son mediciones de
-rendimiento por acción. Las mediciones separadas y la revisión visual real
-siguen pendientes; el control nativo fue detenido con Esc. EX-01 continúa vigente.
+rendimiento por acción. EX-01 continúa vigente.
+
+**Cierre de 005 (2026-11-14):** [mediciones separadas](evidencia/pygame_mediciones.md)
+con Python 3.13.17 y vídeo dummy: escena y HUD con mediana de 3,5–4,0 ms, mapa de
+300 salas con 15,9 ms y acción completa «esperar» con 0,04 ms. 300 redibujados en
+61,8 s no cambiaron reloj, azar ni órdenes. La [revisión visual](evidencia/pygame_revision_visual.md)
+consolida la revisión real de escritorio y declara qué solo cubren pruebas
+automatizadas. Regresión: 866 pruebas con Pygame y 819 sin él. No hay cambios de
+diseño frente al plan ni estructuras nuevas; la integración con `main` sigue
+pendiente de decisión explícita.
 
 ## Presentación ilustrada 006 — 2026-11-14
 

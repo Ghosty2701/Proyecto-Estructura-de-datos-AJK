@@ -1753,3 +1753,19 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     para registrar el resultado. No se ejecutó la regresión ni se modificó
     código productivo por este cambio de documentos. Siguiente fase:
     `$speckit-implement`, T001; avance exclusivo de Pygame estimado en ~30 %.
+
+61. Continua — implementar preparación y fundamentos T001–T010
+
+    *Fecha: 2026-11-13. Agente: Codex; modelo exacto no registrado.*
+
+    Aplicada `$speckit-implement`, prerrequisitos y checklist 16/16 completos;
+    sin hooks registrados. Base: 759 pruebas en 25,29 s. Dependencia Pygame
+    2.6.1 instalada en .venv aislado y vídeo dummy comprobado. Fixtures offline
+    resolubles/no resolubles, cinco pergaminos y mapa disperso de 300 salas.
+    Casos escritos antes del módulo: se observaron fallos por ausencia de
+    proyección y coordinador, y del nuevo resultado del controlador.
+    Implementados DTO congelados, proyección solo conocida, objetivos vigentes,
+    resultado canónico sin alterar el bool de consola y trabajador único con
+    buzón de capacidad uno, receptor sin Pygame y cierre ordenado.
+    Regresión completa: 769 pruebas pasan en 32,44 s; T001–T010 marcadas solo
+    después de verificar. Sin ventana jugable todavía; continúa US1.

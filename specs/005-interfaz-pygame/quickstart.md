@@ -1,7 +1,7 @@
 # Guía de validación prevista: Interfaz con Pygame
 
-**Estado**: planificación terminada; interfaz, pruebas y dependencias opcionales
-todavía no implementadas. Los comandos de las secciones «después de implementar»
+**Estado**: fundamentos y dependencia opcional implementados; 769 pruebas pasan.
+La ventana jugable todavía no está implementada. Los comandos de las secciones «después de implementar»
 son el contrato previsto de uso, no funcionalidades ya disponibles en esta rama.
 Requisitos: [spec.md](spec.md). Contratos: [interfaz](contracts/interfaz-grafica.md)
 y [recuerdos v6](contracts/recuerdos-v6.md).
@@ -127,5 +127,5 @@ capacidad afectada. EX-01 se conserva y no certifica rendimiento gráfico.
 El plan, las decisiones, el modelo de datos y ambos contratos están documentados.
 Las 53 tareas están en [tasks.md](tasks.md) y el análisis de consistencia previo
 ya se realizó, sin bloqueos críticos/altos identificados. El próximo paso es
-`$speckit-implement`, comenzando por T001. Esta guía no afirma que se hayan
+`$speckit-implement` está en curso; siguen T011–T016. Esta guía no afirma que se hayan
 ejecutado las pruebas futuras ni sustituye la evidencia por escenario.

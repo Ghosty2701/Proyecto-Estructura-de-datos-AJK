@@ -4,7 +4,9 @@ import pygame
 
 from controlador.controlador_grafico import ControladorGrafico
 from controlador.sesion import ConfiguracionSesion
+from controlador.proyeccion_grafica import IntencionGrafica
 from vista.pygame_ui.componentes import Campo, Componentes, FONDO, PANEL, TEXTO, TENUE, ACENTO, PELIGRO
+from vista.pygame_ui.mapa import Mapa
 
 
 class Aplicacion:
@@ -15,6 +17,7 @@ class Aplicacion:
         pygame.display.set_caption('Cripta · Mapa y turnos')
         pygame.key.set_repeat()
         self.ui = Componentes()
+        self.mapa = Mapa()
         self.controlador = controlador or ControladorGrafico()
         self.config = ConfiguracionSesion.desde_opciones(opciones)
         c = self.config
@@ -36,6 +39,11 @@ class Aplicacion:
         self.informe_scroll = 0
         self.ultima = None
         self.candidata = None
+        self.tab = 'suelo'
+        self.lista_inicio = 0
+        self.objetivo = None
+        self.teclas = []
+        self.botones_pulsados = []
         if not self.menu:
             self.candidata = c
             self.controlador.iniciar(c)
@@ -79,8 +87,27 @@ class Aplicacion:
                 config = replace(self.config, offline=self.campo('offline').valor.strip() or None)
                 self.controlador.catalogo(config)
                 self.error = ''
+            elif accion == 'centrar':
+                self.mapa.centrar(self.controlador.respuesta.presentacion.sala_id)
+            elif accion in ('zoom_mas', 'zoom_menos'):
+                self.mapa.zoom(1.15 if accion == 'zoom_mas' else 1/1.15)
             elif isinstance(accion, tuple) and accion[0] == 'cripta':
                 self.campo('cripta').valor = accion[1]
+            elif isinstance(accion, tuple) and accion[0] == 'tab':
+                self.tab, self.lista_inicio = accion[1], 0
+            elif isinstance(accion, tuple) and accion[0] == 'objetivo':
+                self.objetivo = accion[1]
+                self.tab = 'enemigos' if self.objetivo.clase == 'enemigo' else 'suelo'
+            elif isinstance(accion, tuple) and accion[0] in ('juego', 'seleccionar'):
+                foto = self.controlador.respuesta.presentacion
+                if foto is not None and not self.controlador.ocupado:
+                    if accion[0] == 'seleccionar':
+                        op, arg, objetivo = 'seleccionar', None, accion[1]
+                    else:
+                        _, op, arg, objetivo = accion
+                    if op == 'inventario':
+                        self.tab = 'inventario'
+                    self.controlador.enviar(IntencionGrafica(foto.generacion, foto.revision, op, arg, objetivo))
         except (ValueError, OSError) as error:
             self.error = str(error)
 
@@ -97,6 +124,7 @@ class Aplicacion:
         elif respuesta.presentacion is not None:
             self.menu = False
             self.error = ''
+            self.objetivo = None
 
     def dibujar_menu(self):
         w, h = self.ventana.get_size()
@@ -125,15 +153,71 @@ class Aplicacion:
                         f'{identificador} · {nombre} · {salas} salas', ('cripta', identificador), not ocupado)
 
     def dibujar_juego(self):
-        # Escena de sesión inicial; el mapa y controles se incorporan en US2/US3.
         u, v = self.ui, self.ventana
+        w, h = v.get_size()
         foto = self.controlador.respuesta.presentacion
         u.texto(v, f'Cripta {foto.id_cripta}', (32, 24), ACENTO, u.titulo)
         u.texto(v, f'{foto.nombre_jugador} · Sala {foto.sala_id} · Reloj {foto.reloj} · Vida {foto.vida}/{foto.vida_max}', (32, 78))
-        u.texto(v, 'Sesión preparada. Mapa y acciones en desarrollo.', (32, 128), TENUE)
-        u.parrafo(v, '\n'.join(foto.mensajes), (32, 190, v.get_width()-64, 360))
-        u.boton(v, (32, v.get_height()-72, 200, 40), 'Menú', 'menu', not self.controlador.ocupado)
-        u.boton(v, (250, v.get_height()-72, 200, 40), 'Cerrar', 'salir')
+        self.mapa.dibujar(v, (24, 116, w-410, h-430), foto, u)
+        u.texto(v, '? avistada · tú: verde · rojo: cerrada · ~: esquemático · tenue: recuerdo', (30, h-337), TENUE, u.pequena)
+        u.boton(v, (30, 124, 88, 28), 'Centrar', 'centrar')
+        u.boton(v, (126, 124, 40, 28), '+', 'zoom_mas')
+        u.boton(v, (174, 124, 40, 28), '−', 'zoom_menos')
+        activo = not self.controlador.ocupado and not foto.terminada
+        ancho = (w-440)//4
+        for i, direccion in enumerate(('N', 'S', 'E', 'O')):
+            x = 24+i*(ancho+8)
+            u.boton(v, (x, h-304, ancho, 38), f'Ir {direccion}', ('juego', 'mover', direccion, None), activo)
+            u.boton(v, (x, h-258, ancho, 36), f'Abrir {direccion}', ('juego', 'abrir', direccion, None), activo)
+        for i, (texto, op) in enumerate((('Esperar [espacio]', 'esperar'), ('Retroceder', 'retroceder'), ('Ayuda', 'ayuda'), ('Inventario', 'inventario'))):
+            u.boton(v, (24+i*(ancho+8), h-212, ancho, 36), texto, ('juego', op, None, None), activo)
+        u.parrafo(v, self.error or '\n'.join(foto.mensajes[-5:]), (30, h-162, w-430, 140), PELIGRO if self.error else TENUE)
+        self.dibujar_objetos(foto, activo)
+
+    def dibujar_objetos(self, foto, activo):
+        u, v = self.ui, self.ventana
+        w, h = v.get_size()
+        x = w-366
+        for i, (texto, tab) in enumerate((('Enemigos', 'enemigos'), ('Suelo', 'suelo'), ('Inventario', 'inventario'))):
+            u.boton(v, (x+i*112, 116, 106, 36), texto, ('tab', tab))
+        items = foto.enemigos if self.tab == 'enemigos' else foto.objetos if self.tab == 'suelo' else foto.inventario
+        if foto.panel == 'ayuda':
+            u.parrafo(v, 'W/A/S/D: moverse. Espacio: esperar.\nCada activación ejecuta una acción.\nElige enemigo u objeto y pulsa su acción.\nClic en inventario: cambia el cursor sin turno.\nRueda sobre mapa: zoom; botón central: desplazar.\nLos iconos tenues son recuerdos: no posiciones remotas.\nEscudo: guardián; rombo: errante; mira: rastreador; bestia: cazador.', (x, 166, 332, h-380))
+            u.boton(v, (x, h-224, 332, 36), 'Cerrar ayuda', ('juego', 'cerrar_panel', None, None))
+        else:
+            u.texto(v, f'{self.tab.capitalize()} · {len(items)}' + (f'/{foto.capacidad}' if self.tab == 'inventario' else ''), (x, 160), TENUE, u.pequena)
+            visibles = max(1, (h-410)//42)
+            self.lista_inicio = min(self.lista_inicio, max(0, len(items)-visibles))
+            for i, objeto in enumerate(items[self.lista_inicio:self.lista_inicio+visibles]):
+                seleccionado = objeto.seleccionado or objeto == self.objetivo
+                etiqueta = ('▶ ' if seleccionado else '') + f'{objeto.indice}. {objeto.nombre}'
+                if objeto.equipado: etiqueta += ' [equipado]'
+                if objeto.vida is not None: etiqueta += f' {objeto.vida}/{objeto.vida_max}'
+                accion = ('seleccionar', objeto) if self.tab == 'inventario' else ('objetivo', objeto)
+                u.boton(v, (x, 188+i*42, 332, 36), etiqueta, accion, activo)
+            if not items:
+                u.texto(v, 'Sin elementos en esta sala.' if self.tab != 'inventario' else 'Inventario vacío.', (x, 195), TENUE, u.pequena)
+            objetivo = self.objetivo
+            if self.tab == 'enemigos':
+                u.boton(v, (x, h-202, 332, 38), 'Atacar seleccionado', ('juego', 'atacar', None, objetivo), activo and objetivo is not None)
+            elif self.tab == 'suelo':
+                u.boton(v, (x, h-202, 332, 38), 'Recoger seleccionado', ('juego', 'recoger', None, objetivo), activo and objetivo is not None)
+            else:
+                for i, (texto, op) in enumerate((('Usar', 'usar'), ('Equipar', 'equipar'), ('Soltar', 'soltar'))):
+                    u.boton(v, (x+i*112, h-202, 106, 38), texto, ('juego', op, None, None), activo and bool(items))
+                for i, orden in enumerate(('nombre', 'peso', 'valor')):
+                    u.boton(v, (x+i*112, h-156, 106, 34), orden.capitalize(), ('juego', 'orden', orden, None), activo)
+        seleccion = next((s for s in foto.salas if s.sala_id == self.mapa.seleccion), None)
+        if seleccion:
+            detalle = f'Sala {seleccion.sala_id}: ' + (seleccion.nombre or 'avistada, contenido desconocido')
+            if seleccion.recuerdo:
+                detalle += f'\nÚltima observación: t={seleccion.recuerdo.reloj}'
+                detalle += '\n' + (', '.join(f'{nombre} ×{n}' for _, nombre, n in seleccion.recuerdo.grupos) or 'Sin enemigos observados')
+            u.parrafo(v, detalle, (x, h-112, 332, 56))
+        if self.controlador.ocupado:
+            u.texto(v, 'Procesando…', (x, h-112), ACENTO)
+        u.boton(v, (x, h-48, 150, 36), 'Menú', 'menu', not self.controlador.ocupado)
+        u.boton(v, (w-198, h-48, 150, 36), 'Cerrar', 'salir')
 
     def dibujar(self):
         self.ventana.fill(FONDO)
@@ -147,22 +231,55 @@ class Aplicacion:
             self.dibujar_juego()
 
     def evento(self, evento):
+        if evento.type == pygame.KEYUP:
+            if evento.key in self.teclas: self.teclas.remove(evento.key)
+        elif evento.type == pygame.MOUSEBUTTONUP:
+            if evento.button in self.botones_pulsados: self.botones_pulsados.remove(evento.button)
+        elif evento.type == pygame.WINDOWFOCUSLOST:
+            self.teclas.clear()
+            self.botones_pulsados.clear()
+            self.ui.foco = None
+            self.mapa.arrastrando = False
+            pygame.key.stop_text_input()
+            return
+        elif evento.type == pygame.KEYDOWN:
+            if evento.key in self.teclas or getattr(evento, 'repeat', False):
+                return
+            self.teclas.append(evento.key)
+        elif evento.type == pygame.MOUSEBUTTONDOWN:
+            if evento.button in self.botones_pulsados:
+                return
+            self.botones_pulsados.append(evento.button)
         if evento.type == pygame.QUIT:
             self.accion('salir')
         elif evento.type == pygame.VIDEORESIZE:
             self.ventana = pygame.display.set_mode((max(1024, evento.w), max(768, evento.h)), pygame.RESIZABLE)
         elif not self.saliendo:
+            if not self.menu and self.controlador.respuesta.presentacion is not None:
+                self.mapa.evento(evento)
             if evento.type == pygame.MOUSEWHEEL:
-                if self.error:
+                if not self.menu and pygame.mouse.get_pos()[0] >= self.ventana.get_width()-390:
+                    self.lista_inicio = max(0, self.lista_inicio-evento.y)
+                elif self.error:
                     self.informe_scroll = max(0, self.informe_scroll - evento.y * 42)
                 else:
                     self.catalogo_inicio = max(0, min(max(0, len(self.catalogo)-1), self.catalogo_inicio - evento.y))
             accion = self.ui.evento(evento, self.controlador.ocupado)
             if accion is not None:
                 self.accion(accion)
+            elif (evento.type == pygame.KEYDOWN and not self.menu and self.ui.foco is None
+                  and not self.controlador.ocupado):
+                for tecla, op, arg in ((pygame.K_w, 'mover', 'N'), (pygame.K_s, 'mover', 'S'),
+                                       (pygame.K_a, 'mover', 'O'), (pygame.K_d, 'mover', 'E'),
+                                       (pygame.K_SPACE, 'esperar', None), (pygame.K_i, 'inventario', None),
+                                       (pygame.K_h, 'ayuda', None), (pygame.K_ESCAPE, 'cerrar_panel', None)):
+                    if evento.key == tecla:
+                        if op == 'inventario': self.tab = 'inventario'
+                        self.accion(('juego', op, arg, None))
+                        break
 
-    def ejecutar(self):
-        reloj = pygame.time.Clock()
+    def ejecutar(self, reloj=None):
+        reloj = reloj or pygame.time.Clock()
         try:
             while not (self.saliendo and self.controlador.cerrada):
                 self.actualizar()

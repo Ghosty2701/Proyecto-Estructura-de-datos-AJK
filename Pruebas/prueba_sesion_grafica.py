@@ -148,3 +148,31 @@ def test_sesion_respeta_k_bitacora_rutas_y_nombre(tmp_path):
     assert not p.bitacora_activa
     encabezado, ordenes = leer_bitacora(log)
     assert encabezado.semilla == 2026 and ordenes == ['esperar']
+
+
+def test_secuencia_grafica_equivale_a_consola_y_rechaza_objetivo_viejo(tmp_path):
+    from Pruebas.datos_linea_tiempo import instantanea
+    from controlador.controlador import Controlador
+    from controlador.controlador_grafico import ReceptorValores
+    p, _ = partida_grafica(tmp_path/'gui')
+    otra, _ = partida_grafica(tmp_path/'consola')
+    consola = Controlador(otra, ReceptorValores())
+    grafica = ControladorGrafico(lambda _: SimpleNamespace(partida=p, cerrar=lambda: None))
+    try:
+        grafica.iniciar(None); assert grafica.esperar(3)
+        viejo = grafica.respuesta.presentacion
+        for texto in ('recoger 3', 'equipar', 'soltar', 'recoger 1', 'sig', 'ant',
+                      'w', 'w', 'atacar 1', 'esperar', 'abrir E', 's'):
+            foto = grafica.respuesta.presentacion
+            grafica.enviar(IntencionGrafica(foto.generacion, foto.revision, 'comando', texto))
+            assert grafica.esperar(3)
+            consola.procesar(texto)
+            assert instantanea(p) == instantanea(otra)
+            assert p.motor.azar.getstate() == otra.motor.azar.getstate()
+            assert tuple(o.texto for o in p.linea_tiempo.ordenes) == tuple(o.texto for o in otra.linea_tiempo.ordenes)
+        antes = instantanea(p)
+        grafica.enviar(IntencionGrafica(viejo.generacion, viejo.revision, 'recoger', objetivo=viejo.objetos[0]))
+        assert grafica.esperar(3) and not grafica.respuesta.resultado.aceptada
+        assert instantanea(p) == antes
+    finally:
+        grafica.cerrar(esperar=True)

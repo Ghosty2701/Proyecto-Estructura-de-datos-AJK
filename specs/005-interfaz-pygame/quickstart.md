@@ -1,8 +1,9 @@
 # Guía de validación prevista: Interfaz con Pygame
 
-**Estado**: fundamentos y dependencia opcional implementados; 769 pruebas pasan.
-La ventana jugable todavía no está implementada. Los comandos de las secciones «después de implementar»
-son el contrato previsto de uso, no funcionalidades ya disponibles en esta rama.
+**Estado**: menú, mapa y acciones ordinarias implementados; 800 pruebas pasan.
+Instalación y arranque gráfico ya disponibles. Viaje incremental, historia gráfica,
+memoria reversible/persistida y validación visual siguen pendientes. Las secciones
+de esos recorridos describen el contrato previsto, todavía sin aceptación completa.
 Requisitos: [spec.md](spec.md). Contratos: [interfaz](contracts/interfaz-grafica.md)
 y [recuerdos v6](contracts/recuerdos-v6.md).
 
@@ -20,10 +21,10 @@ debe registrar su resultado real. La comprobación de spec-kit debe encontrar
 la capacidad 005, plan, investigación, modelo de datos, contratos y esta guía.
 Encontrar documentos no significa que la interfaz esté implementada.
 
-## Instalación y arranque después de implementar
+## Instalación y arranque disponibles
 
-El archivo opcional previsto incorporará `-r requirements.txt` y `pygame==2.6.1`;
-no se añadirá Pygame a los requisitos base.
+El archivo opcional incorpora `-r requirements.txt` y `pygame==2.6.1`;
+Pygame se instala por separado de los requisitos base.
 
 ```powershell
 python -m venv .venv

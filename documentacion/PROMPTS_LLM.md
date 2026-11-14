@@ -1782,3 +1782,16 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     verificados. Regresión completa: 787 pruebas pasan en 46,42 s. Los casos de
     ventana usan vídeo dummy y no acreditan revisión visual de escritorio.
     T011–T016 completas; estimación Pygame ~45 %; sigue mapa y memoria US2.
+
+63. Continua — implementar mapa y acciones ordinarias T017–T029
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Pruebas previas observaron ausencia de memoria/croquis y controles. Se
+    implementaron índice propio y vectores aprobados, croquis conocido sin
+    solapes, sprites originales, cámara, observaciones presenciales y controles
+    serializados. Orden visual conserva posiciones reales; selección emite
+    `sig`/`ant`, sin turno. Entrada mantenida/ocupada no acumula acciones.
+    Regresión completa: 800 pruebas pasan en 61,84 s. Vídeo dummy e inactividad
+    de 300 cuadros con reloj inyectado, sin acreditar revisión visual nativa.
+    Pygame ~60 % estimado; siguen viaje, historia y persistencia de recuerdos.

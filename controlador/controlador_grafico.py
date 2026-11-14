@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from threading import Condition, Event, Thread
 
 from controlador.controlador import Controlador, ResultadoOperacion
+from controlador.memoria_visual import MemoriaVisual
 from controlador.proyeccion_grafica import (
     IntencionGrafica, congelar_historia, congelar_mapa, proyectar, validar_intencion,
 )
@@ -194,8 +195,9 @@ class ControladorGrafico:
         # Construir y validar la presentación antes de reemplazar la sesión activa.
         generacion = self._generacion + 1
         try:
+            memoria = MemoriaVisual(nueva.partida)
             foto = proyectar(nueva.partida, generacion, 0,
-                             mensajes=getattr(nueva, 'mensajes', ()))
+                             mensajes=getattr(nueva, 'mensajes', ()), memoria=memoria)
         except Exception:
             nueva.cerrar()
             raise
@@ -204,7 +206,7 @@ class ControladorGrafico:
         self._sesion, self._controlador, self._receptor = nueva, controlador, receptor
         self._generacion, self._revision = generacion, 0
         self._mensajes = list(getattr(nueva, 'mensajes', ()))
-        self._memoria = None
+        self._memoria = memoria
         self._orden_inventario = None
         self._publicar(RespuestaGrafica(ResultadoOperacion('inicio', True), foto, fase='JUGANDO'))
 
@@ -217,6 +219,18 @@ class ControladorGrafico:
         if op == 'cerrar_panel':
             self._receptor.panel, self._receptor.historia = 'juego', None
             resultado = ResultadoOperacion('consulta', True)
+        elif op == 'seleccionar':
+            if intencion.objetivo is None or intencion.objetivo.clase != 'inventario':
+                raise ValueError('Selecciona un objeto del inventario vigente.')
+            objetos = partida.inventario.listar()
+            actual = next(i for i, o in enumerate(objetos, 1) if o is partida.inventario.actual())
+            distancia = indice - actual
+            ordenes = []
+            for _ in range(abs(distancia)):
+                self._controlador.procesar('sig' if distancia > 0 else 'ant')
+                ordenes.extend(self._controlador.ultimo_resultado.ordenes)
+            self._receptor.panel = 'inventario'
+            resultado = ResultadoOperacion('navegacion', True, tuple(ordenes))
         else:
             if op == 'mover':
                 texto = f'ir {arg}'
@@ -237,6 +251,11 @@ class ControladorGrafico:
                 self._orden_inventario = arg
             if not self._controlador._solo_consulta:
                 self._receptor.panel, self._receptor.historia = 'juego', None
+        if resultado.aceptada and resultado.clase == 'accion':
+            self._memoria.observar(partida)
+        elif resultado.aceptada and resultado.clase in ('retroceso', 'carga'):
+            # La restauración de deltas y memoria persistida se integra en US5/US6.
+            self._memoria = MemoriaVisual(partida)
         self._mensajes.extend(self._receptor.mensajes)
         del self._mensajes[:-20]
         self._revision += 1

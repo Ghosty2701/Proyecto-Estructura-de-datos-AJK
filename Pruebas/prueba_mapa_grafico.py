@@ -49,3 +49,34 @@ def test_inventario_ordenado_conserva_posicion_real_y_cursor(tmp_path):
     assert tuple(o.indice for o in foto.inventario) == (4, 3, 1, 2)
     assert tuple(o.nombre for o in foto.inventario) == ('Antorcha', 'Daga', 'Pergamino', 'Pergamino')
     assert isinstance(foto.inventario, tuple)
+
+
+def test_croquis_direcciones_niebla_ids_dispersos_y_desconectados():
+    from controlador.disposicion_mapa import construir_croquis
+    from controlador.proyeccion_grafica import salas_visuales
+    mapa = [(101, 2, 'A', [('N', 908, None, 150, False), ('E', 404, None, 100, True)]),
+            (908, 1, None, []), (404, 1, None, []), (77, 2, 'Componente', []),
+            (999, 0, 'Oculta', [])]
+    croquis = construir_croquis(salas_visuales(mapa, 101), 101)
+    assert croquis.casilla(101).posicion == (0, 0)
+    assert croquis.casilla(908).posicion == (0, -1)
+    assert croquis.casilla(404).posicion == (1, 0)
+    assert croquis.casilla(999) is None
+    assert len(croquis.casillas) == 4 and len(croquis.enlaces) == 2
+    assert croquis.enlaces[0].conexion.observada is False
+    assert construir_croquis(salas_visuales(mapa[:-1], 101), 101) == croquis
+
+
+def test_croquis_300_salas_conflictos_sin_solapes_conserva_conexiones():
+    from controlador.disposicion_mapa import construir_croquis
+    from controlador.proyeccion_grafica import salas_visuales
+    from Pruebas.datos_graficos import mapa_sintetico
+    mapa = mapa_sintetico(conflicto=True)
+    salas = salas_visuales(mapa, 101)
+    croquis = construir_croquis(salas, 101)
+    assert len(croquis.casillas) == 300
+    assert len(croquis.enlaces) == sum(len(s.salidas) for s in salas)
+    posiciones = [c.posicion for c in croquis.casillas]
+    assert all(posiciones.count(p) == 1 for p in posiciones)
+    assert any(e.esquematico for e in croquis.enlaces)
+    assert construir_croquis(tuple(reversed(salas)), 101) == croquis

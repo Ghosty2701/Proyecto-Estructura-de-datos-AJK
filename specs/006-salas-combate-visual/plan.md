@@ -2,7 +2,7 @@
 
 **Rama Git**: `005-interfaz-pygame`. **Capacidad**: `006-salas-combate-visual`.
 **Fecha**: 2026-11-14. **Spec**: [spec.md](spec.md).
-**Estado**: Diseño completado; implementación pendiente de tareas y análisis.
+**Estado**: Diseño implementado; T001–T019, T021 y T022 verificadas; cierre nativo pendiente.
 
 ## Resumen
 

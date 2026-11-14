@@ -18,6 +18,8 @@ def ventana(tmp_path, monkeypatch):
     datos = paquete_grafico(tmp_path/'datos')
     config = ConfiguracionSesion(offline=str(datos), cache_dir=str(tmp_path/'cache'))
     app = Aplicacion(SimpleNamespace(**asdict(config)))
+    # Estas regresiones comparan activaciones sin demoras; efectos se prueban aparte.
+    app.animacion.modo = 'sin'
     try:
         app.actualizar(); app.dibujar()
         yield app
@@ -210,9 +212,9 @@ def test_ataque_equipar_soltar_y_entrada_ocupada(ventana):
     p = app.controlador._sesion.partida
     entrar, liberar = Event(), Event()
     original = p.esperar
-    def lento():
+    def lento(**opciones):
         entrar.set(); assert liberar.wait(3)
-        return original()
+        return original(**opciones)
     p.esperar = lento
     try:
         app.accion(('juego', 'esperar', None, None))
@@ -241,9 +243,9 @@ def test_interrupcion_durante_paso_no_encola_mas_turnos(tmp_path, interrupcion):
     p.jugador.sala_actual.salidas[0].destino.trampas.clear()
     entrar, liberar = Event(), Event()
     original = p.mover
-    def lento(direccion):
+    def lento(direccion, **opciones):
         entrar.set(); assert liberar.wait(3)
-        return original(direccion)
+        return original(direccion, **opciones)
     p.mover = lento
     ctl = ControladorGrafico(lambda _: SimpleNamespace(partida=p, cerrar=lambda: None))
     try:

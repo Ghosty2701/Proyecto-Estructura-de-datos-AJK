@@ -33,7 +33,7 @@ class AccionInvalida(Exception):
     pass
 
 
-def ejecutar_comando_partida(partida, comando):
+def ejecutar_comando_partida(partida, comando, *, observar=None):
     """Operaciones compartidas por la consola y el replay, sin usar una vista."""
     if partida.estado().terminada:
         raise AccionInvalida("La partida ya termino.")
@@ -46,9 +46,11 @@ def ejecutar_comando_partida(partida, comando):
             raise AccionInvalida("Ya estás en el primer objeto.")
         return []
     accion = getattr(partida, comando.nombre)
+    opciones = ({'observar': observar} if observar is not None and comando.nombre in
+                ('mover', 'abrir', 'atacar', 'esperar', 'recoger', 'usar', 'equipar', 'soltar') else {})
     if comando.argumento is None:
-        return accion()
-    return accion(comando.argumento)
+        return accion(**opciones)
+    return accion(comando.argumento, **opciones)
 
 
 def ejecutar_accion_replay(partida, texto):
@@ -62,11 +64,12 @@ def ejecutar_accion_replay(partida, texto):
 
 
 class Controlador:
-    def __init__(self, partida, vista, registrar_accion=None):
+    def __init__(self, partida, vista, registrar_accion=None, *, observar=None):
         self.partida = partida
         self.vista = vista
         self._solo_consulta = False
         self.registrar_accion = registrar_accion
+        self.observar = observar
         self.ultimo_resultado = ResultadoOperacion('consulta', True)
         self._ordenes_emitidas = []
 
@@ -158,7 +161,7 @@ class Controlador:
                     mostrar_paso=lambda: self.vista.mostrar_estado(self.partida.estado()),
                 )
             else:
-                mensajes = ejecutar_comando_partida(self.partida, comando)
+                mensajes = ejecutar_comando_partida(self.partida, comando, observar=self.observar)
         except AccionInvalida as error:
             self._clase_resultado, self._aceptada = 'rechazo', False
             mensajes = [str(error)]

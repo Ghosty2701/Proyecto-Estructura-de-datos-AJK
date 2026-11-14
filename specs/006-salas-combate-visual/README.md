@@ -1,26 +1,51 @@
 # Capacidad 006 — Salas y combate visual
 
-Evolución solicitada el 2026-11-14 después de probar la interfaz de mapa de 005.
-Se mantiene la rama `005-interfaz-pygame`; `main` continúa independiente.
+Ampliación personal en `005-interfaz-pygame`, separada de la evaluación y de `main`.
+Elecciones confirmadas: sala desde arriba, minimapa, combate en la misma habitación,
+ilustración 2D de fantasía oscura, vectores por sala y una animación activa.
 
-La propuesta lleva la experiencia principal a una habitación con personaje,
-enemigos, objetos y puertas. El mapa pasa a ser secundario. El combate mantiene
-las reglas actuales y utiliza sprites y respuesta visual a las acciones.
+**Avance estimado: ~85 %**. Funcionalidad integrada y verificada automáticamente;
+revisión interactiva de escritorio y auditoría final pendientes. El porcentaje
+de la base 005 es independiente y no se usa como avance de esta escena.
 
-- [Spec aclarado](spec.md): cuatro historias, 14 requisitos y 15 escenarios.
-- [Checklist](checklists/requirements.md): 16/16. Elecciones confirmadas: sala
-  desde arriba con minimapa, combate en la misma sala e ilustración 2D de fantasía oscura.
-- [Plan completado](plan.md) e [investigación](research.md): D-EV-04 confirmada,
-  vectores por sala y una animación activa; modelo y contrato disponibles.
-- [24 tareas](tasks.md) revisadas: 20/20 requisitos y 15/15 escenarios con cobertura
-  prevista, sin hallazgos críticos/altos. Implementación todavía no iniciada.
-- [Propuesta visual](propuesta-visual.md): referencia ilustrada generada,
-  separada de los recursos finales del juego.
-- Implementación de esta capacidad: **0 %**. El trabajo actual es documental.
-- El ~85 % anterior correspondía al alcance de 005; no acredita esta ampliación
-  de alcance ni se presenta como progreso de la nueva experiencia visual.
+## Implementado y probado
 
-Avance estimado de la capacidad 006: **~20 %**, por especificación y trabajo de
-investigación. Código nuevo: **0 %**; no se han ejecutado pruebas de esta capacidad.
-Siguiente paso: implementar las tareas, empezando por recursos separados y la
-habitación con personaje, antes de los efectos de combate y validación final.
+- Arte original local: habitación, seis personajes y doce elementos; atlas con alfa.
+- Personaje y objetivos seleccionables, puertas existentes por dirección y costo,
+  minimapa ampliable, HUD y controles ordinarios sin órdenes de consola.
+- Combate en la sala: corte, daño/curación, derrota y transiciones breves. Hechos
+  confirmados, sin inferir muerte por desaparición ni leer vida remota posterior.
+- Una animación activa; espacio la salta sin esperar otro turno. Modos normal,
+  reducida y sin efectos. Foco, carga y retroceso invalidan efectos anteriores.
+- Páginas de 12 enemigos y 8 objetos, selección vigente, inventario, historia,
+  recuerdos, guardado v6, viaje y resultados conservados.
+- **845 pruebas con Pygame** y **819 sin Pygame**, con dos módulos gráficos
+  omitidos en este último entorno. Matriz con lector real `main@6107b98` incluida.
+- 300 redibujados durante **60,582 s reales** sin cambiar juego, azar ni órdenes.
+
+Evidencia: [regresión](../../documentacion/evidencia/escena_regresion.txt),
+[mediciones](../../documentacion/evidencia/escena_mediciones.md),
+[render jugable](../../documentacion/evidencia/escena_jugable.png) y
+[revisión visual y límites](../../documentacion/evidencia/escena_revision_visual.md).
+
+## Pendientes reales
+
+T020: revisión interactiva nativa completa. Se observó la ventana inicial de
+1280 × 800, pero un aviso de actividad de usuario y una captura posterior ajena
+al objetivo impidieron seguir operando con seguridad. No se aprobaron teclado,
+foco, resize y recorrido completo de escritorio por esos intentos.
+
+T023 y T024: documentación actualizada parcialmente y auditoría final todavía
+condicionadas a T020. Las casillas de [tareas](tasks.md) reflejan estas dependencias.
+No se fusionó con `main`; EX-01 no se considera resuelta.
+
+## Arte y SDD
+
+[Spec](spec.md), [plan](plan.md), [investigación](research.md),
+[modelo](data-model.md), [contrato](contracts/escena-animaciones.md) y
+[guía](quickstart.md). Checklist de calidad 16/16. El análisis previo revisó
+20 requisitos y 15 escenarios con 24 tareas y sin bloqueos críticos/altos.
+
+La [referencia conceptual](propuesta-visual.md) precedió al código. El juego usa
+recursos separados en `vista/pygame_ui/assets/`; prompts y procedencia están
+en su README. La imagen conceptual no se utiliza como fondo jugable.

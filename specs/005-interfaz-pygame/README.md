@@ -5,8 +5,9 @@ las siete historias implementadas; aceptación completa aún pendiente.**
 
 Tras probarla, el usuario pidió que la escena principal represente habitaciones,
 personaje y enemigos, con el mapa como apoyo. Esa evolución está en el
-[spec 006](../006-salas-combate-visual/spec.md), ya aclarado y sin
-implementación. El porcentaje de esta página describe el alcance original de 005.
+[spec 006](../006-salas-combate-visual/spec.md), ya implementado y probado
+automáticamente, con validación nativa completa pendiente. El porcentaje de
+esta página describe el alcance original de 005.
 
 - Rama de trabajo: `005-interfaz-pygame`.
 - Base publicada: `6107b98` de `main`, sin cambiar su estado de Parte II ni EX-01.

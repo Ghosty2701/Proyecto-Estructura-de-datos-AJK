@@ -20,6 +20,7 @@ class RespuestaGrafica:
     error: str | None = None
     fase: str = 'INICIO'
     datos: tuple = ()
+    efectos: tuple = ()
 
 
 class ReceptorValores:
@@ -76,6 +77,7 @@ class ControladorGrafico:
         self._mensajes = []
         self._memoria = None
         self._orden_inventario = None
+        self._efectos = []
         self._destino = None
         self._viaje_activo = False
         self._detener = False
@@ -248,7 +250,8 @@ class ControladorGrafico:
             return
         receptor = ReceptorValores()
         controlador = Controlador(nueva.partida, receptor,
-                                  registrar_accion=getattr(nueva, 'registrar_accion', None))
+                                  registrar_accion=getattr(nueva, 'registrar_accion', None),
+                                  observar=self._efectos.append)
         # Construir y validar la presentación antes de reemplazar la sesión activa.
         generacion = self._generacion + 1
         try:
@@ -282,6 +285,7 @@ class ControladorGrafico:
         self._publicar(RespuestaGrafica(ResultadoOperacion('inicio', True), foto, fase='JUGANDO'))
 
     def _ejecutar(self, intencion, *, permitir_rebase=False):
+        self._efectos.clear()
         foto = self.respuesta.presentacion
         indice = validar_intencion(foto, intencion, permitir_rebase=permitir_rebase)
         partida = self._sesion.partida
@@ -316,7 +320,8 @@ class ControladorGrafico:
                 resultado = ResultadoOperacion('consulta', True)
                 self._viaje_activo = False
             else:
-                paso = partida.paso_viaje(self._destino, registrar=self._controlador._registrar)
+                paso = partida.paso_viaje(self._destino, registrar=self._controlador._registrar,
+                                          observar=self._efectos.append)
                 self._receptor.agregar_mensajes(paso.mensajes)
                 self._viaje_activo = paso.continuar
                 resultado = ResultadoOperacion('accion' if paso.movio else 'consulta', True,
@@ -382,4 +387,5 @@ class ControladorGrafico:
                           panel=self._receptor.panel, historia=self._receptor.historia,
                           orden_inventario=self._orden_inventario, viaje_activo=self._viaje_activo)
         fase = 'RESULTADO' if nueva.terminada else 'JUGANDO'
-        self._publicar(RespuestaGrafica(resultado, nueva, error=error_final, fase=fase))
+        efectos = tuple(self._efectos) if resultado.aceptada and resultado.clase == 'accion' else ()
+        self._publicar(RespuestaGrafica(resultado, nueva, error=error_final, fase=fase, efectos=efectos))

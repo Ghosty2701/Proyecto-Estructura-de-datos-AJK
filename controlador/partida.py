@@ -1,6 +1,7 @@
 """Conexion minima entre los comandos de consola y el motor existente."""
 
 from dataclasses import dataclass, field
+from controlador.efectos_visuales import emitir
 
 from controlador.controlador import AccionInvalida, ejecutar_accion_replay
 from modelo.linea_tiempo import ACCION, NAVEGACION, PERGAMINO, ErrorHistoria, ErrorReconstruccion
@@ -310,7 +311,7 @@ class Partida:
                 break
         return mensajes
 
-    def paso_viaje(self, destino, *, registrar=None, mostrar_paso=None):
+    def paso_viaje(self, destino, *, registrar=None, mostrar_paso=None, observar=None):
         """Un movimiento ordinario y sus paradas; compartido por consola y GUI."""
         self._comprobar_activa()
         if destino.sala is self.jugador.sala_actual:
@@ -319,7 +320,7 @@ class Partida:
         if not ruta.encontrada:
             return PasoViaje(('Viaje detenido: no hay ruta conocida abierta.',), False, False)
         direccion = ruta.primer_paso.direccion
-        mensajes = list(self.mover(direccion))
+        mensajes = list(self.mover(direccion, observar=observar) if observar is not None else self.mover(direccion))
         if registrar is not None:
             registrar(f'ir {direccion}')
         if mostrar_paso is not None:
@@ -362,23 +363,31 @@ class Partida:
         self._ataque_pendiente = None
         self._mensaje(texto)
 
-    def _informar_inicio(self):
+    def _informar_inicio(self, observar=None):
         # El motor ejecuta ataque y trampas antes de llamar al primer evento.
         # Observar aqui evita confundir ese daño con ataques o regeneracion posteriores.
         if not self._inicio_pendiente:
             return
         self._inicio_pendiente = False
         perdida = self._vida_inicial - self.jugador.vida
+        sala_id = self.jugador.sala_actual.sala_id
+        if perdida != 0:
+            emitir(observar, 'dano' if perdida > 0 else 'curacion', self.jugador,
+                   sala_id, self._tiempo_accion, abs(perdida))
         if perdida > 0:
             self._mensaje(f"Trampas de entrada: pierdes {perdida} de vida.", self._tiempo_accion)
         if self._ataque_pendiente is not None:
             objetivo, vida_anterior = self._ataque_pendiente
+            emitir(observar, 'ataque', objetivo, sala_id, self._tiempo_accion)
+            if vida_anterior > objetivo.vida:
+                emitir(observar, 'dano', objetivo, sala_id, self._tiempo_accion, vida_anterior-objetivo.vida)
             nombre = self._nombre_enemigo(objetivo)
             self._mensaje(
                 f"{nombre} pierde {vida_anterior - objetivo.vida} de vida "
                 f"y queda en {objetivo.vida}/{objetivo.vida_max}.", self._tiempo_accion,
             )
             if objetivo.vida == 0:
+                emitir(observar, 'derrota', objetivo, sala_id, self._tiempo_accion)
                 self._mensaje(f"Derrotaste a {nombre}.", self._tiempo_accion)
                 for objeto in getattr(objetivo, "suelta", []):
                     if (
@@ -390,8 +399,12 @@ class Partida:
                     self.motor.historial.registrar_botin(objetivo.sala_actual.objetos_suelo, objeto)
                     self._mensaje(f"{nombre} deja {objeto.nombre} en el suelo.", self._tiempo_accion)
 
-    def _ejecutar_evento(self, evento):
-        self._informar_inicio()
+    def _ejecutor(self, observar):
+        return (self._ejecutar_evento if observar is None else
+                lambda evento: self._ejecutar_evento(evento, observar))
+
+    def _ejecutar_evento(self, evento, observar=None):
+        self._informar_inicio(observar)
         vida_anterior = self.jugador.vida
         actor = evento.actor
         sala_anterior = actor.sala_actual if actor is not None else None
@@ -399,19 +412,28 @@ class Partida:
         self.motor.ejecutar_evento(evento, self.jugador)
         perdida = vida_anterior - self.jugador.vida
         if perdida > 0:
+            emitir(observar, 'dano', self.jugador, self.jugador.sala_actual.sala_id,
+                   self.motor.reloj, perdida)
             if evento.tipo == "accion" and evento.actor is not None:
                 origen = self._nombre_enemigo(evento.actor)
             else:
                 origen = "Veneno" if evento.tipo == "pulso_veneno" else evento.tipo.replace("_", " ")
             self._mensaje(f"{origen}: pierdes {perdida} de vida.")
+        elif perdida < 0:
+            emitir(observar, 'curacion', self.jugador, self.jugador.sala_actual.sala_id,
+                   self.motor.reloj, -perdida)
         if actor is not None and actor is not self.jugador:
             if actor.sala_actual is not sala_anterior:
                 if sala_anterior is self.jugador.sala_actual or actor.sala_actual is self.jugador.sala_actual:
+                    emitir(observar, 'entrada' if actor.sala_actual is self.jugador.sala_actual else 'salida',
+                           actor, self.jugador.sala_actual.sala_id, self.motor.reloj)
                     self._mensaje(
                         f"{self._nombre_enemigo(actor)} se mueve de {self._nombre_sala(sala_anterior)} "
                         f"a {self._nombre_sala(actor.sala_actual)}."
                     )
             if actor.vida > vida_actor and actor.sala_actual is self.jugador.sala_actual:
+                emitir(observar, 'curacion', actor, self.jugador.sala_actual.sala_id,
+                       self.motor.reloj, actor.vida-vida_actor)
                 self._mensaje(f"{self._nombre_enemigo(actor)} recupera {actor.vida - vida_actor} de vida.")
         if evento.tipo == "fin_antorcha":
             self._mensaje("Se apaga tu antorcha.")
@@ -426,7 +448,7 @@ class Partida:
                 if salida.puerta is evento.objetivo:
                     self._mensaje(f"Se cierra la puerta hacia {self._nombre_sala(salida.destino)} ({salida.direccion}).")
 
-    def mover(self, direccion):
+    def mover(self, direccion, *, observar=None):
         self._comprobar_activa()
         salida = self._buscar_salida(direccion)
         if not salida.abierta:
@@ -442,23 +464,24 @@ class Partida:
             and getattr(salida.puerta, "abierta_con_llave", False)
         )
         self.motor.mover_jugador(
-            self.jugador, salida, self._ejecutar_evento, finalizar_al_entrar=es_salida,
+            self.jugador, salida, self._ejecutor(observar), finalizar_al_entrar=es_salida,
         )
         self._contar_accion()
         if es_salida:
             self.motor._cambiar(self, "victoria", True)
-        self._informar_inicio()
+        self._informar_inicio(observar)
+        emitir(observar, 'movimiento', self.jugador, self.jugador.sala_actual.sala_id, self.motor.reloj)
         return self._mensajes
 
-    def esperar(self):
+    def esperar(self, *, observar=None):
         self._comprobar_activa()
         self._iniciar_mensajes("Esperas.")
-        self.motor.esperar_jugador(self.jugador, self._ejecutar_evento)
+        self.motor.esperar_jugador(self.jugador, self._ejecutor(observar))
         self._contar_accion()
-        self._informar_inicio()
+        self._informar_inicio(observar)
         return self._mensajes
 
-    def atacar(self, indice):
+    def atacar(self, indice, *, observar=None):
         self._comprobar_activa()
         presentes = self._enemigos_presentes()
         if type(indice) is not int or not 1 <= indice <= len(presentes):
@@ -469,16 +492,16 @@ class Partida:
         nombre = self._nombre_enemigo(objetivo)
         self._iniciar_mensajes(f"Atacas a {nombre}.")
         self._ataque_pendiente = objetivo, objetivo.vida
-        self.motor.atacar_jugador(self.jugador, objetivo, self._ejecutar_evento)
+        self.motor.atacar_jugador(self.jugador, objetivo, self._ejecutor(observar))
         self._contar_accion()
-        self._informar_inicio()
+        self._informar_inicio(observar)
         return self._mensajes
 
     @staticmethod
     def _pendiente():
         raise AccionInvalida("Este comando todavia no esta integrado en la partida de prueba.")
 
-    def abrir(self, direccion):
+    def abrir(self, direccion, *, observar=None):
         self._comprobar_activa()
         salida = self._buscar_salida(direccion)
         if salida.abierta:
@@ -495,15 +518,15 @@ class Partida:
         self._iniciar_mensajes(
             f"Abres la puerta hacia {self._nombre_sala(salida.destino)} ({salida.direccion})."
         )
-        self.motor.abrir_puerta_jugador(self.jugador, salida, self._ejecutar_evento)
+        self.motor.abrir_puerta_jugador(self.jugador, salida, self._ejecutor(observar))
         if not hasattr(salida.puerta, "abierta_con_llave"):
             salida.puerta.abierta_con_llave = False
         self.motor._cambiar(salida.puerta, "abierta_con_llave", True)
         self._contar_accion()
-        self._informar_inicio()
+        self._informar_inicio(observar)
         return self._mensajes
 
-    def recoger(self, indice):
+    def recoger(self, indice, *, observar=None):
         self._comprobar_activa()
         suelo = self.jugador.sala_actual.objetos_suelo
         if type(indice) is not int or not 1 <= indice <= len(suelo):
@@ -512,12 +535,12 @@ class Partida:
             raise AccionInvalida("El inventario esta lleno.")
         objeto = suelo[indice - 1]
         self._iniciar_mensajes(f"Recoges {objeto.nombre}.")
-        self.motor.recoger_jugador(self.jugador, indice, self._ejecutar_evento)
+        self.motor.recoger_jugador(self.jugador, indice, self._ejecutor(observar))
         self._contar_accion()
-        self._informar_inicio()
+        self._informar_inicio(observar)
         return self._mensajes
 
-    def usar(self):
+    def usar(self, *, observar=None):
         self._comprobar_activa()
         objeto = self.inventario.actual()
         if objeto is None:
@@ -560,14 +583,14 @@ class Partida:
             raise AccionInvalida("Ese objeto no se puede consumir; usa equipar para armas y armaduras.")
         self._iniciar_mensajes(mensaje)
         self.motor.usar_objeto_jugador(
-            self.jugador, self._ejecutar_evento, cantidad=cantidad,
+            self.jugador, self._ejecutor(observar), cantidad=cantidad,
             duracion=duracion, velocidad=velocidad,
         )
         self._contar_accion()
-        self._informar_inicio()
+        self._informar_inicio(observar)
         return self._mensajes
 
-    def equipar(self):
+    def equipar(self, *, observar=None):
         self._comprobar_activa()
         objeto = self.inventario.actual()
         if objeto is None:
@@ -579,20 +602,20 @@ class Partida:
         if anterior is objeto:
             raise AccionInvalida("Ese objeto ya esta equipado.")
         self._iniciar_mensajes(f"Equipas {objeto.nombre}.")
-        self.motor.equipar_jugador(self.jugador, self._ejecutar_evento)
+        self.motor.equipar_jugador(self.jugador, self._ejecutor(observar))
         self._contar_accion()
-        self._informar_inicio()
+        self._informar_inicio(observar)
         return self._mensajes
 
-    def soltar(self):
+    def soltar(self, *, observar=None):
         self._comprobar_activa()
         objeto = self.inventario.actual()
         if objeto is None:
             raise AccionInvalida("El inventario esta vacio.")
         self._iniciar_mensajes(f"Sueltas {objeto.nombre} en el suelo.")
-        self.motor.soltar_jugador(self.jugador, self._ejecutar_evento)
+        self.motor.soltar_jugador(self.jugador, self._ejecutor(observar))
         self._contar_accion()
-        self._informar_inicio()
+        self._informar_inicio(observar)
         return self._mensajes
 
     def retroceder(self):

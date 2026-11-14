@@ -1868,3 +1868,27 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     esta entrada se agrega después de cerrarlo. Sin hooks registrados.
     Continúa `$speckit-implement` con pruebas antes de código. Avance visual
     estimado ~20 %, sin funcionalidad nueva acreditada por documentos.
+
+69. Implementar la habitación ilustrada y combate por turnos
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Aplicada `$speckit-implement`; checklist 16/16, sin hooks, base 831/813.
+    Imagegen incorporado generó fondo y dos atlas originales; alfa y celdas
+    inspeccionados, imágenes copiadas al proyecto y prompts exactos conservados.
+    Pruebas antes de módulos detectaron ausencias de recursos, sala, efectos y
+    animaciones. Se implementaron vectores aprobados, habitación, personaje,
+    puertas, clics, páginas, minimapa y mapa completo. Callback opcional entrega
+    hechos observables sin nuevos campos de guardado. Una animación activa con
+    corte, cifras, curación, derrota y transición; espacio salta sin esperar.
+    Modos normal/reducida/sin; carga, retroceso y foco descartan el efecto.
+    Capturas del render corregidas por solape lateral y centrado del minimapa.
+
+    Regresión completa: 845 pruebas en 37,62 s con Pygame; 819 en 30,73 s sin él,
+    dos módulos gráficos omitidos. Matriz cruzada v6 incluida. Medición real:
+    300 redibujados en 60,582 s sin cambios de juego, azar o registro; dibujo y
+    acción medidos por separado, sin resolver EX-01. Revisión nativa intentada
+    con computer-use: ventana inicial correcta, clic bloqueado por actividad
+    del usuario; captura posterior ajena al objetivo, sin más acciones sobre
+    ella. Se cerró el proceso de prueba. T020 y cierre dependiente T023/T024
+    pendientes; avance exclusivo de la evolución visual ~85 % estimado.

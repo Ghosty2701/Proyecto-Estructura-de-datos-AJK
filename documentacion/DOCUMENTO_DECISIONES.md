@@ -902,3 +902,37 @@ real de `main@6107b98` extraído temporalmente y ejecutado en otro proceso.
 con un módulo gráfico omitido en este último entorno. No son mediciones de
 rendimiento por acción. Las mediciones separadas y la revisión visual real
 siguen pendientes; el control nativo fue detenido con Esc. EX-01 continúa vigente.
+
+## Presentación ilustrada 006 — 2026-11-14
+
+El usuario eligió sala desde arriba con minimapa, combate en la misma habitación,
+ilustración 2D de fantasía oscura y vectores por sala con una animación activa.
+Alternativa de índice espacial propio descartada por mayor mantenimiento para
+una sola habitación. Recorrido de regiones O(P), con páginas de 12 enemigos y
+8 objetos; efectos O(F) de la operación activa, sin cola de turnos ni índice de
+biblioteca. Catálogo de recursos vectorial y escalado solo al cambiar su tamaño.
+
+Se generaron recursos originales locales mediante imagegen incorporado:
+`vista/pygame_ui/assets/sala.png`, `actores.png` y `elementos.png`; prompts y
+procedencia en el mismo directorio. El concepto visual se conserva separado.
+El fondo final no contiene puertas o entidades incrustadas: el juego coloca
+solo las que permite la presentación actual.
+
+Los efectos proceden de hechos observables emitidos por el camino compartido
+de Partida mediante callback opcional; este no se almacena en raíces de v6.
+No se infiere muerte de una desaparición ni se consulta vida remota posterior.
+El reloj real controla solo presentación; saltar, reducir o desactivar efectos
+no vuelve a ejecutar acciones. Carga y retroceso invalidan animaciones anteriores.
+
+[Regresión](evidencia/escena_regresion.txt): 845 pruebas con Pygame, 819 sin él
+con dos módulos omitidos. [Medición separada](evidencia/escena_mediciones.md):
+300 redibujados en 60,582 s reales sin cambios de reloj/azar/log; mediana del
+dibujo a 1280 × 800 de 1,125 ms y de esperar sin dibujo/red de 0,027 ms en la
+carga sintética descrita. Vídeo dummy y cachés calientes: no son latencia del
+monitor ni presupuesto oficial K10. EX-01 sigue vigente.
+
+La captura [escena_jugable.png](evidencia/escena_jugable.png) procede del render
+de código, no de un mockup. [Revisión nativa](evidencia/escena_revision_visual.md)
+solo parcial: se observó la ventana inicial, pero la interacción quedó sin
+validar por actividad de usuario y una captura posterior ajena al objetivo.
+T020, T023 y T024 siguen abiertas; no se afirma aceptación completa.

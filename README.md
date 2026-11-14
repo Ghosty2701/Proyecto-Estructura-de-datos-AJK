@@ -1,20 +1,30 @@
 # Cripta — Parte II
 
-**Rama adicional `005-interfaz-pygame`:** aquí se prepara una interfaz gráfica
-con mapa 2D, sprites y paneles, conservando el juego por turnos. Por ahora está
-[en implementación mediante SDD](specs/005-interfaz-pygame/README.md).
+**Rama adicional `005-interfaz-pygame`:** interfaz con habitación ilustrada,
+personaje, enemigos, objetos, minimapa y combate animado por turnos.
+[Seguimiento de la escena visual](specs/006-salas-combate-visual/README.md).
 `main` conserva la entrega actual; el estado de Parte II que sigue abajo no
 representa el avance de esta ampliación.
 
-**Avance de Pygame: ~85 % estimado**, con menú, mapa, acciones, viaje, historia y
-guardado de recuerdos implementados; **831 pruebas aprobadas**, mediciones y revisión
-visual final pendientes. Es una ampliación personal,
-independiente de la nota del proyecto. [Seguimiento](specs/005-interfaz-pygame/README.md#avance-exclusivo-de-pygame).
+**Presentación ilustrada (006): ~85 % estimado**, con funcionalidades y arte
+integrados; **845 pruebas aprobadas** con Pygame y **819 sin él** (dos módulos
+gráficos omitidos). Medición de inactividad real completada; revisión interactiva
+de escritorio y auditoría final pendientes. Es una ampliación personal,
+independiente de la nota del proyecto. La base anterior de mapa se registra en
+[005](specs/005-interfaz-pygame/README.md).
 
-**Evolución visual solicitada:** habitación con personaje, enemigos y objetos,
-mapa secundario y combate integrado con animaciones por turno e ilustración 2D de
-fantasía oscura. [Spec 006 aclarado](specs/006-salas-combate-visual/spec.md);
-este alcance nuevo todavía no está implementado ni está incluido en el ~85 % anterior.
+Para probar la versión local:
+
+```powershell
+.\.venv\Scripts\python.exe main.py --interfaz pygame
+```
+
+Clic en sprites para seleccionar; acciones por botones. WASD cambia de sala,
+espacio espera o salta el efecto activo. «Efectos» cambia entre normal, reducida
+y sin animación; «Ampliar mapa» abre el mapa completo. Todos conservan las reglas.
+
+[Captura del render de la aplicación](documentacion/evidencia/escena_jugable.png),
+producida con vídeo de pruebas; no sustituye la revisión nativa completa.
 
 Proyecto de Andrey, Juan y Kendall. Juego de consola con terreno ponderado,
 cazadores, niebla y viaje automático, resolubilidad y consultas históricas.

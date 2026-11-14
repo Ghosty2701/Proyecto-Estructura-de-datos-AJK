@@ -1,14 +1,14 @@
 # Modelo de datos: escena y efectos de presentación
 
-**Estado**: Diseño aprobado por D-EV-04; sin implementación todavía.
+**Estado**: Diseño aprobado por D-EV-04 e implementado; validación nativa pendiente.
 
 ## Registros transitorios
 
 | Entidad | Campos | Invariantes |
 |---|---|---|
 | EfectoVisual | tipo, actor_id, sala_id, reloj, cantidad, nombre, comportamiento | Congelado; valores simples; solo hechos observables |
-| ElementoEscena | clase, objetivo/dirección, rectángulo, posición base | Vector de la página; objetivo incluye revisión/generación |
-| RecursoVisual | clave de clase/tipo, superficie fuente, superficie escalada | Vector pequeño; carga local una vez, escala por área activa |
+| RegionEscena | clase, objetivo/dirección, rectángulo | Vector de la página; objetivo incluye revisión/generación |
+| Recurso | clave de clase/tipo, superficie fuente, superficie escalada | Vector pequeño; carga local una vez, escala por área activa |
 | AnimacionActiva | generación, revisión, inicio real, duración, efectos, foto anterior | Una sola activa; no almacena Partida ni usa reloj virtual como temporizador |
 
 Tipos de efecto: ataque, daño, curación, derrota, entrada, salida y movimiento

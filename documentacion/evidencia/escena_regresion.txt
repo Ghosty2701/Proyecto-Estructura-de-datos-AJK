@@ -1,0 +1,22 @@
+Fecha: 2026-11-14. Windows, Python 3.13.2, Pygame opcional 2.6.1.
+
+Entorno gráfico .venv:
+./.venv/Scripts/python.exe -m pytest -q --tb=short
+845 passed in 37.62s
+Salida completa: escena_regresion_grafica.txt
+
+Entorno Python global sin Pygame:
+python -m pytest -q --tb=short
+819 passed, 2 skipped in 30.73s
+Salida completa: escena_regresion_sin_pygame.txt
+Se omiten prueba_eventos_pygame.py y prueba_sala_visual.py; no acredita la UI.
+Las seis pruebas de hechos/animación sin vídeo pasan también en este entorno.
+
+Incluye regresión del guardado visual v6 y lector real de main@6107b98 en otro proceso.
+Callback visual no agrega campos a Partida, MotorEventos ni _ESQUEMAS.
+Se conservan reglas, azar, estado y órdenes de secuencias comparadas con consola.
+Pruebas nuevas: sala/atlas/selección/páginas, efectos precisos, daño+curación neta
+cero, salida sin derrota, modos, salto, foco, carga y retroceso durante un efecto.
+
+Ventana automatizada: SDL_VIDEODRIVER=dummy. No sustituye QA nativa completa.
+Medición independiente: escena_mediciones.md; EX-01 sigue vigente.

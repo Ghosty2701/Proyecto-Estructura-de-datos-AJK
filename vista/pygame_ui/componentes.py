@@ -2,12 +2,12 @@
 from dataclasses import dataclass
 import pygame
 
-FONDO = (15, 20, 29)
-PANEL = (25, 33, 46)
+FONDO = (17, 17, 20)
+PANEL = (29, 28, 29)
 TEXTO = (229, 235, 241)
-TENUE = (154, 171, 190)
-ACENTO = (90, 213, 178)
-BORDE = (57, 73, 92)
+TENUE = (172, 167, 157)
+ACENTO = (221, 182, 112)
+BORDE = (76, 69, 57)
 PELIGRO = (244, 139, 122)
 
 
@@ -67,9 +67,9 @@ class Componentes:
 
     def boton(self, lienzo, rect, texto, accion, habilitado=True):
         rect = pygame.Rect(rect)
-        color = (40, 68, 75) if habilitado else PANEL
+        color = (55, 47, 37) if habilitado else PANEL
         if habilitado and rect.collidepoint(pygame.mouse.get_pos()):
-            color = (52, 88, 92)
+            color = (77, 61, 40)
         pygame.draw.rect(lienzo, color, rect, border_radius=6)
         pygame.draw.rect(lienzo, BORDE, rect, 1, border_radius=6)
         previo = lienzo.get_clip()

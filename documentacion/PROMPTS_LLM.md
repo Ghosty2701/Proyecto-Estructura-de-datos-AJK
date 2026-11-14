@@ -1827,3 +1827,13 @@ El K por defecto (D-LT-07) queda pendiente de las mediciones del bench.
     continuidad v6 y reglas existentes. No se modificó código del juego ni se
     aprobaron decisiones pendientes. Checklist documental 13/16; capacidad 006
     sin implementación. El ~85 % previo describe únicamente el alcance de 005.
+
+66. Resolver preferencias de la evolución visual
+
+    *Fecha: 2026-11-14. Agente: Codex; modelo exacto no registrado.*
+
+    Elecciones explícitas del usuario: «Sí, sala desde arriba y minimapa»;
+    «Dentro de la misma sala, con animaciones por turno»; «Ilustración 2D de
+    fantasía oscura». Incorporadas al spec 006 y revisión de calidad 16/16.
+    Sin cambios de reglas ni implementación. Continúa la planificación técnica
+    y la elaboración de una referencia visual fiel a las elecciones.

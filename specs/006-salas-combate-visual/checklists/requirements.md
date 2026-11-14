@@ -1,7 +1,7 @@
 # Revisión de calidad: Salas habitables y combate visual
 
 **Fecha**: 2026-11-14. **Spec**: [spec.md](../spec.md).
-**Estado**: Borrador; tres preferencias consultadas, aún sin respuesta.
+**Estado**: 16/16 criterios revisados tras incorporar las tres elecciones del usuario.
 
 ## Calidad del contenido
 
@@ -12,8 +12,8 @@
 
 ## Requisitos completos
 
-- [ ] No quedan marcadores de aclaración.
-- [ ] Los requisitos y sus alternativas visuales están cerrados sin ambigüedad.
+- [x] No quedan marcadores de aclaración.
+- [x] Los requisitos y sus alternativas visuales están cerrados sin ambigüedad.
 - [x] Los criterios de éxito son comprobables.
 - [x] Los criterios de éxito describen resultados de usuario.
 - [x] Hay escenarios de aceptación para cada requisito.
@@ -25,12 +25,13 @@
 
 - [x] Cada requisito tiene escenarios asociados.
 - [x] Las historias cubren exploración, combate, orientación y continuidad.
-- [ ] La experiencia visual está definida para pasar a planificación.
+- [x] La experiencia visual está definida para pasar a planificación.
 - [x] El spec no impone detalles de implementación.
 
 ## Hallazgos
 
-13/16 criterios satisfechos documentalmente. Quedan perspectiva, composición del
-combate y dirección artística. Las tres consultas se enviaron juntas durante la
-sesión. No se registran las recomendaciones como elecciones aprobadas.
+16/16 criterios satisfechos documentalmente. El usuario eligió sala desde arriba
+y minimapa, combate dentro de la misma habitación con animaciones por turno e
+ilustración 2D de fantasía oscura. Se revisaron los 14 requisitos, 15 escenarios
+y seis criterios de éxito después de sustituir las alternativas.
 Esta revisión no acredita implementación ni pruebas visuales.

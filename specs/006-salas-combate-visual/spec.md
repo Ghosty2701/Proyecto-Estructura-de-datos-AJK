@@ -2,7 +2,7 @@
 
 **Rama**: `005-interfaz-pygame`, separada de `main`.
 **Creación**: 2026-11-14.
-**Estado**: Borrador; tres preferencias consultadas. Sin implementación.
+**Estado**: Preferencias aclaradas; especificación lista para planificación. Sin implementación.
 **Entrada**: El mapa sirve para orientarse, pero el usuario quiere habitaciones,
 personaje y enemigos con sprites; referencias de exploración a The Binding of
 Isaac y de combate a RPG Maker. La finalidad es hacer más visual el juego.
@@ -11,6 +11,14 @@ Esta capacidad evoluciona la presentación de [005](../005-interfaz-pygame/spec.
 dentro de la misma rama adicional. Las pruebas y el avance de 005 no acreditan
 esta nueva experiencia. Las referencias comunican composición y experiencia;
 los personajes, escenarios y recursos tendrán diseños propios.
+
+## Aclaraciones del usuario — 2026-11-14
+
+- Vista principal: habitación desde arriba con personaje, enemigos y objetos;
+  minimapa como apoyo y mapa completo ampliable.
+- Combate dentro de la misma habitación, con animaciones por turno; no cambia a
+  una escena de batalla separada.
+- Dirección artística: ilustración 2D de fantasía oscura.
 
 ## Escenarios de usuario y aceptación
 
@@ -36,8 +44,7 @@ personaje, objetivos y salidas sin consultar listas.
    colisiones o costos nuevos de caminar dentro de la sala. Observar una escena
    o sus animaciones no consume turnos. FR-EV-008/009.
 
-**Pendiente**: [NEEDS CLARIFICATION: confirmar sala desde arriba con mapa
-secundario, o indicar otra perspectiva. La primera opción es una recomendación.]
+**Presentación elegida**: sala desde arriba y minimapa.
 
 ### Historia 2 — Combatir con personajes y enemigos visibles (Prioridad: P1)
 
@@ -49,7 +56,8 @@ mensajes detallados como apoyo.
 **Prueba independiente**: Seleccionar enemigos con nombres repetidos, atacar,
 recibir daño y derrotar uno, comparando el resultado con la consola.
 
-1. **AC-EV-005** — Si hay enemigos observables actuales, el combate muestra al
+1. **AC-EV-005** — Si hay enemigos observables actuales, el combate en la misma
+   habitación muestra al
    personaje y sprites reconocibles de las familias de criaturas. Los iconos
    esquemáticos anteriores dejan de ser su representación principal. FR-EV-001/003/006.
 2. **AC-EV-006** — Elegir un enemigo resalta su sprite e identifica nombre y vida
@@ -64,8 +72,7 @@ recibir daño y derrotar uno, comparando el resultado con la consola.
    combate no bloquea puertas ni obliga a derrotar a todos si las reglas actuales
    permiten salir; tampoco añade habilidades o defensa nuevas. FR-EV-006/008.
 
-**Pendiente**: [NEEDS CLARIFICATION: elegir escena de combate aparte inspirada
-en RPG Maker o combate dentro de la misma habitación. Se recomienda escena aparte.]
+**Presentación elegida**: combate dentro de la misma sala, con animaciones por turno.
 
 ### Historia 3 — Orientarse sin revelar contenido oculto (Prioridad: P1)
 
@@ -76,8 +83,8 @@ y recuerdos sin reemplazar el escenario principal.
 **Prueba independiente**: Recorrer, revelar con antorcha, retroceder y consultar
 historia, contrastando cada representación con la información permitida.
 
-1. **AC-EV-009** — La habitación es la vista principal; un minimapa o panel
-   secundario ampliable conserva conocimiento, conexiones, costos, recuerdos y
+1. **AC-EV-009** — La habitación es la vista principal; un minimapa y el mapa
+   completo ampliable conservan conocimiento, conexiones, costos, recuerdos y
    enlaces esquemáticos de 005. No aparecen habitaciones desconocidas. FR-EV-010/011.
 2. **AC-EV-010** — Habitación y combate solo muestran contenido observable actual.
    La antorcha no crea una escena de contenido remoto; el mapa conserva los últimos
@@ -109,8 +116,7 @@ objetivos visuales y usando también inventario y guardado.
    turno. Partidas existentes y modos de consola conservan su funcionamiento.
    FR-EV-012/014.
 
-**Pendiente**: [NEEDS CLARIFICATION: elegir pixel art oscuro y legible o ilustración
-2D de fantasía oscura. Pixel art es la recomendación, todavía sin confirmar.]
+**Dirección artística elegida**: ilustración 2D de fantasía oscura.
 
 ### Casos límite
 
@@ -129,7 +135,7 @@ objetivos visuales y usando también inventario y guardado.
 
 ### Requisitos funcionales
 
-- **FR-EV-001**: Presentar habitación, personaje y enemigos como escenas con
+- **FR-EV-001**: Presentar la habitación desde arriba, personaje y enemigos como escenas con
   sprites reconocibles; el mapa pasa a ser apoyo. AC-EV-001/005/013.
 - **FR-EV-002**: Mostrar suelo, límites, puertas y objetos actuales, distinguiendo
   decoración y elementos utilizables. AC-EV-001/003/013.
@@ -139,7 +145,7 @@ objetivos visuales y usando también inventario y guardado.
   costos y rechazos vigentes. AC-EV-001/002.
 - **FR-EV-005**: Seleccionar sprites con nombre, indicador e identidad vigente;
   mantener acceso a todos si el espacio visible resulta insuficiente. AC-EV-003/006/014.
-- **FR-EV-006**: Mostrar combate con personaje, enemigos, vida observable, objetivo
+- **FR-EV-006**: Mostrar el combate dentro de la misma habitación con personaje, enemigos, vida observable, objetivo
   y acciones actuales pertinentes. AC-EV-005/006/008.
 - **FR-EV-007**: Dar respuesta visual breve a ataque, daño, curación y derrota
   confirmados, sin inventar resultados. AC-EV-007.
@@ -154,7 +160,7 @@ objetivos visuales y usando también inventario y guardado.
   historia; ninguna escena añade contenido remoto o futuro. AC-EV-009/010/011.
 - **FR-EV-012**: Sincronizar escenas al cargar/retroceder/consultar historia y
   conservar guardados, otros modos y cierre seguro. AC-EV-011/012/015.
-- **FR-EV-013**: Mantener dirección artística coherente, diseños originales y
+- **FR-EV-013**: Mantener ilustración 2D de fantasía oscura coherente, diseños originales y
   recursos genéricos para contenido nuevo, disponibles offline. AC-EV-003/013.
 - **FR-EV-014**: Mantener funciones, texto legible y objetivos/controles alcanzables
   desde 1024 × 768. AC-EV-014/015.
@@ -203,6 +209,5 @@ objetivos visuales y usando también inventario y guardado.
   proporcionan. Los recursos acompañan a la distribución del juego.
 - Audio, diálogos, creación de personajes y mecánicas nuevas quedan fuera del
   primer incremento; los efectos se limitan a comunicar las acciones actuales.
-- Las preferencias consultadas se resolverán antes de implementar la disposición
-  principal y elegir recursos definitivos. Las estructuras siguen requiriendo
+- Las preferencias visuales quedaron resueltas el 2026-11-14. Las estructuras siguen requiriendo
   elección explícita del usuario conforme a AGENTS.md durante la planificación.

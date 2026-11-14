@@ -12,6 +12,7 @@ class Mapa:
         self.croquis = None
         self.indice = None
         self.clave = None
+        self.foto_actualizada = None
         self.generacion = None
         self.ancla = None
         self.centro = [0.0, 0.0]
@@ -22,6 +23,8 @@ class Mapa:
         self.arrastrando = False
 
     def actualizar(self, foto):
+        if self.foto_actualizada is foto:
+            return
         if self.generacion != foto.generacion:
             self.generacion, self.ancla = foto.generacion, foto.sala_id
             self.clave = None
@@ -36,6 +39,7 @@ class Mapa:
             if self.seleccion is not None and self.croquis.casilla(self.seleccion) is None:
                 self.seleccion = None
             self.limitar()
+        self.foto_actualizada = foto
 
     def limitar(self):
         if self.croquis is None:

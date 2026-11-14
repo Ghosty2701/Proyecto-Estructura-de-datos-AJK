@@ -6,10 +6,11 @@ pixelada, personaje, enemigos, minimapa y combate animado por turnos.
 `main` conserva la entrega actual; el estado de Parte II que sigue abajo no
 representa el avance de esta ampliación.
 
-**Presentación gráfica (006): ~90 % estimado**, con funcionalidades y arte
-integrados; **858 pruebas aprobadas** con Pygame y **819 sin él** (cuatro módulos
-gráficos omitidos). Medición de inactividad real completada; revisión interactiva
-de escritorio y auditoría final pendientes. Es una ampliación personal,
+**Pygame: alcance actual completado (100 % estimado)**, con funcionalidades y arte
+integrados; **866 pruebas aprobadas** con Pygame y **819 sin él** (cinco módulos
+gráficos omitidos). Mediciones separadas, revisión interactiva de escritorio y
+auditoría completadas; [evidencia y límites](documentacion/evidencia/exploracion_revision.md).
+Es una ampliación personal,
 independiente de la nota del proyecto. La base anterior de mapa se registra en
 [005](specs/005-interfaz-pygame/README.md).
 
@@ -34,7 +35,15 @@ segundos transcurridos indican las operaciones pendientes. Inventario explica
 el ordenamiento y muestra peso/valor. Los sprites de enemigos se eligen por
 especie observable, independientemente del comportamiento.
 
-[Inicio](documentacion/evidencia/inicio_claro.png),
+El minimapa es más alto; clic para ampliarlo. La leyenda tenue WASD/H permite
+consultar controles sin botones extra. El juego usa un indicador pequeño de
+actividad en una esquina; el inicio conserva el aviso detallado. Las transiciones
+de movimiento duran hasta 160/80 ms en modo normal/reducido. No se eliminan las
+esperas inevitables de la fuente de datos. La rama queda preparada para evaluar
+integración, sin merge a `main`.
+
+[Revisión nativa](documentacion/evidencia/exploracion_escritorio.md),
+[inicio](documentacion/evidencia/inicio_claro.png),
 [carga](documentacion/evidencia/carga_clara.png) y
 [criaturas](documentacion/evidencia/criaturas_claras.png): renders de prueba.
 

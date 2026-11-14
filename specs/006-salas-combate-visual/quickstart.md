@@ -1,7 +1,8 @@
-# Guía de validación prevista — escena ilustrada
+# Guía de validación — escena de 16 bits
 
-**Estado**: escena implementada; regresión automática aprobada. Recorrido nativo
-completo pendiente; no presentarlo como aprobado por las capturas con vídeo dummy.
+**Estado**: implementación, regresión y revisión nativa completadas. Evidencia
+en `documentacion/evidencia/exploracion_escritorio.md`, con teclado confirmado
+físicamente por el usuario y límites de automatización declarados.
 
 ## Preparación
 
@@ -31,7 +32,7 @@ secundario y suelo seleccionable. Este comando ya abre la nueva escena de 006.
 
 Pruebas disponibles: `Pruebas/prueba_sala_visual.py` y
 `Pruebas/prueba_animaciones_visuales.py` y `Pruebas/prueba_interfaz_compacta.py`;
-regresión completa: 858 con Pygame y 819 sin él (cuatro módulos omitidos).
+regresión completa: 866 con Pygame y 819 sin él (cinco módulos omitidos).
 La comprobación gráfica con vídeo dummy no sustituye pasos 1–8
 en escritorio real. Evidencia de render y límites en `documentacion/evidencia/`;
 capturas pertinentes en `resultados/bench/pygame/`.
@@ -64,3 +65,8 @@ Evidencia y límites: `documentacion/evidencia/claridad_revision.md`.
 
 Medición reproducible: `.\.venv\Scripts\python.exe -m Pruebas.medir_escena`.
 Incluye 300 redibujados con pausas de 0,2 s y dura algo más de un minuto.
+
+Minimapa más alto y leyenda tenue WASD/H. Actividad discreta tras 150 ms en juego,
+detallada en inicio/cierre; movimiento con transición hasta 160/80 ms.
+Revisión nativa aislada: `-m Pruebas.revisar_escritorio`, con `--minima` o
+`--minima --muchos` para 31 enemigos/19 objetos. No usa datos personales del juego.

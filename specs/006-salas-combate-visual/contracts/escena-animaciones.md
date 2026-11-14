@@ -74,3 +74,12 @@ opcional, cancelar conserva ruta y cargar requiere confirmación explícita.
 Ordenar explica ascendente (nombre A–Z, peso menor primero, valor menor primero).
 El resultado sigue llegando del trabajador. Indicador de actividad animado sin
 porcentaje se superpone durante toda operación pendiente, atendiendo cierre.
+
+## Exploración ligera — contrato final
+
+En juego, indicador compacto tras 150 ms; inicio/cierre conserva detalle.
+Minimapa útil de 234 px de alto y escala inicial 0,60. Leyenda WASD/H sin
+botones adicionales. Transición de movimiento 160/80 ms; combate 500/180 ms.
+Mapa reutiliza el snapshot idéntico antes de recorrer su clave existente.
+Lista de objetivos numerada: elegir un objetivo muestra su página de 12/8.
+No cambia identidad, validación, costo ni orden canónico del objetivo.

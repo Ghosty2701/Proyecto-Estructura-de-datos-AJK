@@ -2,7 +2,7 @@
 
 **Rama**: `005-interfaz-pygame`, separada de `main`.
 **Creación**: 2026-11-14.
-**Estado**: Implementada y verificada automáticamente; aceptación visual nativa y auditoría final pendientes.
+**Estado**: Implementada, regresión y revisión nativa completadas; rama lista para evaluar integración sin merge.
 **Entrada**: El mapa sirve para orientarse, pero el usuario quiere habitaciones,
 personaje y enemigos con sprites; referencias de exploración a The Binding of
 Isaac y de combate a RPG Maker. La finalidad es hacer más visual el juego.

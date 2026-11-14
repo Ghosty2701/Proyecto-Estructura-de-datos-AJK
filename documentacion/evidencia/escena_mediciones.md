@@ -7,12 +7,12 @@ Paquete sintetico lt de seis salas; semilla 2026; cache 25; sin HTTP.
 
 | Operacion | Muestras | Min ms | Mediana ms | Max ms |
 |---|---:|---:|---:|---:|
-| Escena + HUD 1024x768 | 60 | 0.772 | 1.045 | 2.024 |
-| Escena + HUD 1280x800 | 60 | 0.861 | 1.125 | 2.121 |
-| Mapa conocido 300 salas | 60 | 1.528 | 2.018 | 3.520 |
-| Accion esperar completa sin dibujo/red | 100 | 0.020 | 0.027 | 1.421 |
+| Escena + HUD 1024x768 | 60 | 2.084 | 2.258 | 3.317 |
+| Escena + HUD 1280x800 | 60 | 2.411 | 2.573 | 3.720 |
+| Mapa conocido 300 salas | 60 | 9.906 | 10.619 | 11.746 |
+| Accion esperar completa sin dibujo/red | 100 | 0.020 | 0.025 | 1.028 |
 
-Inactividad real: 300 redibujados en 60.582 s, pausas de 0.2 s.
+Inactividad real: 300 redibujados en 60.993 s, pausas de 0.2 s.
 Reloj virtual, acciones, azar y ordenes no cambiaron durante esa inactividad.
 Las muestras de dibujo reutilizan recursos escalados; no incluyen carga de PNG ni red.
 Accion completa incluye motor y registro/linea compartidos; no es el ciclo oficial K10.

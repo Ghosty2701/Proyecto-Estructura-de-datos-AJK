@@ -208,6 +208,10 @@ class Aplicacion:
             elif isinstance(accion, tuple) and accion[0] == 'elegir_objetivo':
                 self.panel_local = None
                 self.accion(('objetivo', accion[1]))
+                if accion[1].clase == 'enemigo':
+                    self.escena.pagina_enemigos = (accion[1].indice-1)//12
+                else:
+                    self.escena.pagina_objetos = (accion[1].indice-1)//8
             elif isinstance(accion, tuple) and accion[0] == 'objetivo':
                 self.objetivo = accion[1]
                 self.puerta = None
@@ -394,18 +398,19 @@ class Aplicacion:
         pygame.draw.rect(v, (99, 213, 160), (barra.x, barra.y, int(barra.w*max(0, foto.vida)/max(1, foto.vida_max)), barra.h))
         visual = self.animacion.foto_para_dibujo(foto)
         self.escena.dibujar(v, (16, 90, w-252, h-250), visual, u, self.objetivo, self.puerta, self.animacion)
-        u.panel(v, (w-220, 90, 204, 156))
+        u.panel(v, (w-220, 90, 204, 286), 'Mapa')
         self.mapa.actualizar(foto)
         if self.mini_generacion != foto.generacion:
-            self.mapa.escala = 0.45
+            self.mapa.escala = 0.60
             self.mini_generacion = foto.generacion
         if self.mini_sala != foto.sala_id:
             self.mapa.centrar(foto.sala_id); self.mini_sala = foto.sala_id
-        self.mapa.dibujar(v, (w-212, 98, 188, 140), foto, u)
-        u.panel(v, (w-220, 258, 204, h-418), 'Estado')
+        self.mapa.dibujar(v, (w-212, 132, 188, 234), foto, u)
+        u.panel(v, (w-220, 388, 204, h-548), 'Estado')
         u.parrafo(v, f'Ataque: {foto.ataque}\nDefensa: {foto.defensa}\nEnemigos: {len(foto.enemigos)}\nObjetos: {len(foto.objetos)}\n\n'
                          + ('\n'.join(str(e) for e in foto.efectos) if foto.efectos else 'Sin efectos activos'),
-                  (w-202, 304, 168, h-480), TEXTO)
+                  (w-202, 434, 168, h-610), TEXTO)
+        u.texto(v, 'W A S D: moverse  |  H: controles', (34, h-188), TENUE, u.pequena)
         principal, orden, detalle = self.contexto(foto)
         u.panel(v, (16, h-144, w-32, 128))
         controles = []
@@ -509,6 +514,7 @@ class Aplicacion:
         for i, o in enumerate(items[self.lista_inicio:self.lista_inicio+visibles]):
             elegido = o.seleccionado or o == self.objetivo
             texto = o.nombre+(' [equipado]' if o.equipado else '')
+            if not inventario: texto = f'{o.indice}. '+texto
             if o.vida is not None: texto += f'  {o.vida}/{o.vida_max}'
             if inventario:
                 texto += f' | Peso: {o.peso if o.peso is not None else "—"} | Valor: {o.valor if o.valor is not None else "—"}'
@@ -576,6 +582,17 @@ class Aplicacion:
             self.ocupado_desde = ahora
         transcurrido = max(0, ahora-self.ocupado_desde)
         u, v = self.ui, self.ventana
+        if not self.menu and self.controlador.respuesta.presentacion is not None and not self.saliendo:
+            if transcurrido < 150:
+                return
+            # Ocupa solo una esquina de la sala; no agrega controles ni bloquea dibujo.
+            r = pygame.Rect(v.get_width()-406, 98, 160, 30)
+            velo = pygame.Surface(r.size, pygame.SRCALPHA)
+            velo.fill((8, 16, 37, 210)); v.blit(velo, r)
+            fase = (transcurrido%1000)/1000*6.283
+            pygame.draw.arc(v, ACENTO, (r.x+8, r.y+7, 16, 16), fase, fase+4.5, 2)
+            u.texto(v, 'Cargando…', (r.x+32, r.y+7), TENUE, u.pequena)
+            return
         r = pygame.Rect((v.get_width()-704)//2, 154, 704, 154)
         u.panel(v, r)
         texto = 'Cerrando la sesión' if self.saliendo else self.operacion_pendiente

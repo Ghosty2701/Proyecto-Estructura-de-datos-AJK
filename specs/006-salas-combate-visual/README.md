@@ -5,9 +5,9 @@ Elecciones confirmadas: sala desde arriba, minimapa, combate en la misma habitac
 vectores por sala y una animación activa. Tras probarla, el usuario sustituyó
 ilustración por pixel art de RPG de 16 bits y pidió comandos compactos.
 
-**Avance estimado: ~90 %**. Funcionalidad integrada y verificada automáticamente;
-revisión interactiva de escritorio y auditoría final pendientes. El porcentaje
-de la base 005 es independiente y no se usa como avance de esta escena.
+**Avance estimado: 100 % del alcance actual**. Funcionalidad integrada, regresión,
+mediciones y revisión nativa completadas. Listo para evaluar integración; `main`
+no se fusiona. Este porcentaje no modifica el estado de la entrega académica.
 
 ## Implementado y probado
 
@@ -33,31 +33,33 @@ de la base 005 es independiente y no se usa como avance de esta escena.
   botones con bisel, sombra, remates y brillo de cursor/selección.
 - Barra de actividad indeterminada y tiempo real durante operaciones lentas,
   con descripción y cierre seguro; nunca porcentaje ficticio ni turnos extra.
-- **858 pruebas con Pygame** y **819 sin Pygame**, con cuatro módulos gráficos
+- Minimapa más alto, controles tenues WASD/H y actividad pequeña en una esquina
+  durante juego. Inicio/cierre conserva detalle. Movimiento 160/80 ms de efecto;
+  combate 500/180 ms. Snapshot idéntico no vuelve a recorrer el mapa.
+- Listas numeradas para objetivos repetidos; al elegir uno se muestra su página.
+- **866 pruebas con Pygame** y **819 sin Pygame**, con cinco módulos gráficos
   omitidos en este último entorno. Matriz con lector real `main@6107b98` incluida.
-- 300 redibujados durante **60,582 s reales** sin cambiar juego, azar ni órdenes.
+- 300 redibujados durante al menos 60 s reales sin cambiar juego, azar ni órdenes;
+  medición actual y mapa de 300 salas registrados por separado de acciones.
 
-Evidencia actual: [regresión y claridad](../../documentacion/evidencia/claridad_revision.md),
+Evidencia actual: [regresión y exploración](../../documentacion/evidencia/exploracion_revision.md),
 [mediciones](../../documentacion/evidencia/escena_mediciones.md),
 [render jugable](../../documentacion/evidencia/retro_jugable.png) y
-[revisión visual y límites](../../documentacion/evidencia/retro_revision_visual.md).
-Las mediciones enlazadas corresponden a la presentación anterior a 16 bits;
-no se presentan como una medición nueva del rediseño.
+[revisión nativa y límites](../../documentacion/evidencia/exploracion_escritorio.md).
 
-## Pendientes reales
+## Cierre y límites
 
-T020: revisión interactiva nativa completa. Se observó la ventana inicial de
-1280 × 800, pero un aviso de actividad de usuario y una captura posterior ajena
-al objetivo impidieron seguir operando con seguridad. No se aprobaron teclado,
-foco, resize y recorrido completo de escritorio por esos intentos.
-
-T023 y T024: documentación actualizada parcialmente y auditoría final todavía
-condicionadas a T020. Las casillas de [tareas](tasks.md) reflejan estas dependencias.
-No se fusionó con `main`; EX-01 no se considera resuelta.
+T020, T023/T024 y T042–T048 cerradas con evidencia. Revisión nativa a dos tamaños,
+combate, inventario, mapa/viaje, historia, retroceso, guardado y selector real.
+El usuario confirmó físicamente WASD/H/Esc porque la herramienta no entregó
+teclado/texto. Se verificó la corrección de página al seleccionar enemigo 31.
+Sin tareas funcionales abiertas del alcance actual. No se probó red real ni se
+garantiza latencia universal; EX-01 permanece. La decisión pendiente es integrar
+o no esta rama en `main`.
 
 ## Arte y SDD
 
-[Spec](spec.md) (21 FR, 23 AC y 10 SC), [plan](plan.md), [investigación](research.md),
+[Spec](spec.md) (25 FR, 27 AC y 12 SC), [plan](plan.md), [investigación](research.md),
 [modelo](data-model.md), [contrato](contracts/escena-animaciones.md) y
 [guía](quickstart.md). Checklist de calidad 16/16. El análisis previo revisó
 20 requisitos y 15 escenarios con 24 tareas y sin bloqueos críticos/altos.
@@ -65,6 +67,8 @@ La revisión de estilo incorpora T025–T032, FR-EV-015/016 y SC-EV-007/008;
 la nueva cobertura documental se comprobó sin introducir estructuras nuevas.
 La revisión de claridad incorpora T033–T041, FR-EV-017–021 y AC-EV-018–023;
 cobertura de todos los identificadores en tareas, sin estructuras nuevas.
+La revisión final T042–T048 amplía minimapa, actividad, controles y exploración,
+con perfil y revisión nativa; 48/48 tareas completadas.
 
 La [referencia conceptual](propuesta-visual.md) precedió al código. El juego usa
 recursos separados en `vista/pygame_ui/assets/`; prompts y procedencia están

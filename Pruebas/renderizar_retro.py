@@ -83,6 +83,7 @@ def ejecutar():
         app.controlador._ejecutar = demorada
         try:
             app.accion(('juego', 'esperar', None, None)); assert entrada.wait(3)
+            pygame.time.wait(170)  # Solo fixture: supera el umbral de dibujo compacto.
             guardar('actividad-juego.png')
             pygame.image.save(app.ventana, 'documentacion/evidencia/actividad_clara.png')
         finally:

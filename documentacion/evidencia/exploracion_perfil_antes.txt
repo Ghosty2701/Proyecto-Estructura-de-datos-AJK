@@ -1,0 +1,36 @@
+Movimiento local entre salas 1/2; paquete lt, semilla 2026; 40 muestras.
+Python 3.13.2; Pygame 2.6.1; SDL dummy.
+Acción medida con cProfile, incluye instrumentación; dibujo separado sin perfil.
+No incluye red, monitor, arranque, PNG ni demora de animación.
+Acción min/mediana/max ms: 0.424/0.513/2.581
+Dibujo min/mediana/max ms: 2.859/3.385/5.627
+         38704 function calls (38051 primitive calls) in 0.026 seconds
+
+   Ordered by: cumulative time
+   List reduced from 179 to 22 due to restriction <22>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       40    0.001    0.000    0.026    0.001 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\controlador\controlador_grafico.py:287(_ejecutar)
+       40    0.000    0.000    0.019    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\controlador\controlador.py:97(procesar)
+       40    0.000    0.000    0.018    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\controlador\controlador.py:113(_procesar)
+       40    0.000    0.000    0.010    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\controlador\controlador.py:36(ejecutar_comando_partida)
+       40    0.000    0.000    0.009    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\controlador\partida.py:451(mover)
+       40    0.000    0.000    0.008    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\controlador\controlador.py:76(_registrar)
+       40    0.000    0.000    0.008    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\controlador\partida.py:118(registrar_orden)
+       40    0.000    0.000    0.008    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\modelo\linea_tiempo.py:104(registrar)
+        4    0.000    0.000    0.007    0.002 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\modelo\linea_tiempo.py:99(_crear_punto)
+        4    0.000    0.000    0.007    0.002 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\controlador\cargar_partida.py:245(_capturar_punto)
+        4    0.002    0.000    0.007    0.002 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\adaptadores\instantanea_inmutable.py:129(capturar_estado)
+       40    0.000    0.000    0.005    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\modelo\motor_eventos.py:865(mover_jugador)
+     3332    0.003    0.000    0.004    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\adaptadores\instantanea_inmutable.py:140(referencia)
+       40    0.001    0.000    0.003    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\controlador\proyeccion_grafica.py:135(proyectar)
+       40    0.000    0.000    0.003    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\controlador\cargar_partida.py:330(preparar_destino)
+       40    0.000    0.000    0.003    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\controlador\cargar_partida.py:540(preparar_sala)
+       39    0.000    0.000    0.003    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\controlador\cargar_partida.py:590(_recuperar_fichas)
+      160    0.001    0.000    0.003    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\controlador\partida.py:237(estado)
+       40    0.000    0.000    0.003    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\adaptadores\cache_catalogo.py:292(verificar_capacidad)
+      361    0.000    0.000    0.002    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\adaptadores\cache_catalogo.py:160(insertar)
+  904/361    0.001    0.000    0.002    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\adaptadores\cache_catalogo.py:163(_insertar)
+      543    0.000    0.000    0.001    0.000 C:\Users\pipro\Downloads\Proyecto-Estructura-de-datos-AJK-pygame\adaptadores\cache_catalogo.py:125(_equilibrar)
+
+

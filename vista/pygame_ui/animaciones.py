@@ -41,6 +41,8 @@ class Animaciones:
             self.saltar()
             return
         duracion = 0.5 if self.modo == 'normal' else 0.18 if self.modo == 'reducida' else 0
+        if any(e.tipo == 'movimiento' for e in respuesta.efectos):
+            duracion = min(duracion, 0.16 if self.modo == 'normal' else 0.08)
         self.actual = (AnimacionActiva(foto.generacion, foto.revision, self.reloj(), duracion,
                                       respuesta.efectos, anterior) if duracion and respuesta.efectos else None)
 
